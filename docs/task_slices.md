@@ -39,19 +39,22 @@ Session-sized, dependency-ordered work units. Each slice is small enough to comp
 
 ## Phase 2 — Data Models & Level Definition Schema
 
+> Table restructured at S2.1 start per the P2 execution plan (adversarial architecture review; decisions dm-0009–dm-0012). S2.1–S2.4 keep their original ids; **S2.5 (world instantiation) is new** — it supplies the runtime-consumption evidence REQ-120/121 completion requires; the verification report moved to S2.6.
+
 | Slice | Title | REQs | Depends | Acceptance criteria | State |
 |-------|-------|------|---------|---------------------|-------|
-| S2.1 | Component data structures (§16 entities as pure data) | REQ-120, REQ-154 | S1.10 | `src/components/*` are logic-free records; typecheck clean. | NOT_STARTED |
-| S2.2 | Level Definition Schema types | REQ-122, REQ-014 | S2.1 | Tilemap, entities, constraints, triggers + GDOS metadata block typed. | NOT_STARTED |
-| S2.3 | Level loader + structural validator | REQ-122 | S2.2 | Rejects malformed payloads with precise errors; accepts valid. | NOT_STARTED |
-| S2.4 | Sample level fixture + round-trip test | REQ-122 | S2.3 | Hand-authored level parses, validates, serializes losslessly. | NOT_STARTED |
-| S2.5 | Phase-2 verification report | REQ-P02 | S2.4 | `docs/verification/P2.md`. | NOT_STARTED |
+| S2.1 | Component data structures (§16 entities as pure data): `EntityId` brand, `TransformDef`, `AabbDef`, `EntityKind`, per-kind `BehaviorDef` payloads | REQ-120, REQ-154 | S1.10 | `src/components/*.ts` export only types/interfaces/const records; automated scan test fails on any function body under `src/components/`; `tsc` clean; every record constructible + deep-freezable in a unit test. | IN_PROGRESS |
+| S2.2 | Level Definition Schema types + canonical serializer (`schemaVersion`, GDOS block, flat-array tilemap + `width/height/tileSize`, entities, constraints, closed trigger union); coordinate convention decided + ledgered | REQ-122, REQ-014 | S2.1 | Schema types compile; `serializeLevel()` byte-identical across repeated calls on equal values (fixed key order); `docs/level_schema.md` documents every field, coordinate convention, versioning policy (dm-0010), axiom boundary (dm-0011). | NOT_STARTED |
+| S2.3 | Level loader + structural validator — `parseLevel(raw: unknown): Result<LevelDefinition, SchemaError[]>` (parse-don't-validate, only construction path) | REQ-122, REQ-120 | S2.2 | Rejects with path-qualified error **+ dedicated failing-fixture test each**: wrong `schemaVersion`, non-finite number, tilemap length ≠ `width×height`, unknown tile id, unknown entity/trigger kind, duplicate `EntityId`, dangling trigger reference, spawn/goal out of bounds, non-increasing emotional-curve keyframes, value outside [0,100]; normalizes `-0`; accepts valid payload as typed value. | NOT_STARTED |
+| S2.4 | Sample level fixture + round-trip test (hand-authored, `test/fixtures/` — schema scaffolding, not P10 content) | REQ-122 | S2.3 | Fixture exercises every entity kind, trigger kind, and the full GDOS block; `deepEqual(parse(serialize(v)), v)`; `serialize(parse(serialize(v))) === serialize(v)` byte-identical. | NOT_STARTED |
+| S2.5 | `WorldState` + deterministic level instantiation — `instantiateWorld(def, …)` in `src/entities/`; frozen `LevelDefinition` reference-shared into state | REQ-120, REQ-121 | S2.3, S2.4 | Same (def, seed) → deep-equal `WorldState` twice; Engine runs N ticks over instantiated world; replay test extended: (fixture file, seed, input tape) → identical final-state hash across two runs; `state.world.level === def` after N ticks (never copied). | NOT_STARTED |
+| S2.6 | Phase-2 verification report | REQ-P02 | S2.5 | `docs/verification/P2.md` maps each P2 REQ to its passing test; REQ-120/121/122/014 re-audited per dm-0008 (REQ-154 stays open — full scope closes in P3); subtractive pass over new modules recorded; PKG hash bumped + consistent. | NOT_STARTED |
 
 ## Phase 3 — Mechanic Library & Deterministic Physics
 
 | Slice | Title | REQs | Depends | Acceptance criteria | State |
 |-------|-------|------|---------|---------------------|-------|
-| S3.1 | Deterministic physics/integration system | REQ-003, REQ-160 | S2.5 | Fixed-step integration; AABB collision; reproducible trajectory. | NOT_STARTED |
+| S3.1 | Deterministic physics/integration system | REQ-003, REQ-160 | S2.6 | Fixed-step integration; AABB collision; reproducible trajectory. | NOT_STARTED |
 | S3.2 | Spatial partition (quadtree) for collision | REQ-162 | S3.1 | Only-neighborhood queries; equivalence test vs brute force. | NOT_STARTED |
 | S3.3 | Player controller: instant accel/decel | REQ-150, REQ-003 | S3.1 | Horizontal control curves; grounded detection. | NOT_STARTED |
 | S3.4 | **Single-jump lock** state machine | REQ-004, REQ-010, REQ-011, REQ-150 | S3.3 | Jump consumable exactly once; locks to horizontal-only; only scene reload refreshes; property test: never >1 jump under fuzzed input. | NOT_STARTED |
@@ -110,7 +113,7 @@ Session-sized, dependency-ordered work units. Each slice is small enough to comp
 
 | Slice | Title | REQs | Depends | State |
 |-------|-------|------|---------|-------|
-| S8.1 | Visual level editor (paint/snap/group/undo-redo/playtest) | REQ-130 | S3.8, S2.5 | NOT_STARTED |
+| S8.1 | Visual level editor (paint/snap/group/undo-redo/playtest) | REQ-130 | S3.8, S2.6 | NOT_STARTED |
 | S8.2 | Debug overlays + runtime inspection | REQ-131 | S3.8 | NOT_STARTED |
 | S8.3 | Profiling instrumentation | REQ-132 | S3.8 | NOT_STARTED |
 | S8.4 | Telemetry → GDOS pipeline | REQ-133 | S6.4 | NOT_STARTED |
@@ -150,10 +153,11 @@ Session-sized, dependency-ordered work units. Each slice is small enough to comp
 
 ## Next-session pick-list (top of queue)
 
-**M0 — Foundation Locked is VERIFIED** (`docs/verification/P1.md`). Phase 1 (S1.1–S1.10) and Phase 0 (S0.1–S0.10) are all `COMPLETED`/`VERIFIED`. P2 — Data Models & Level Definition Schema is now open.
+**M0 — Foundation Locked is VERIFIED** (`docs/verification/P1.md`). P2 is open; its execution plan is authored (see `execution_plan.md` P2 section) and **S2.1 is IN_PROGRESS** (plan stage done; implementation next).
 
-1. **S2.1** — Component data structures (§16 entities as pure data). First P2 slice.
-2. **S2.2** — Level Definition Schema types.
+1. **S2.1** — Component data structures (implement: `src/components/*` + logic-free scan test). IN_PROGRESS.
+2. **S2.2** — Level Definition Schema types + canonical serializer.
 3. **S2.3** — Level loader + structural validator.
 4. **S2.4** — Sample level fixture + round-trip test.
-5. **S2.5** — Phase-2 verification report.
+5. **S2.5** — `WorldState` + deterministic level instantiation *(new slice)*.
+6. **S2.6** — Phase-2 verification report *(was S2.5)*.

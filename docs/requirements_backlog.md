@@ -146,7 +146,7 @@
 | REQ-151 | Environmental elements: static geometry, moving platforms (linear/looping/triggered), collapsing floors, frictionless ice. | §16 | P3 | NOT_STARTED |
 | REQ-152 | Hazards & triggers: static spikes, timed laser arrays, moving hazards (instant defeat on intersection); pressure plates, proximity zones, mechanical doors that modify layout dynamically. | §16 | P3 | NOT_STARTED |
 | REQ-153 | Kinetic modifiers: directional launch springs, gravity-inverting zones, conveyors — alter velocity/inertia without consuming the single jump. | §16 | P3 | NOT_STARTED |
-| REQ-154 | Components fully decoupled/modular; complex puzzles emerge from layering simple systems. | §16 | P3 | NOT_STARTED |
+| REQ-154 | Components fully decoupled/modular; complex puzzles emerge from layering simple systems. | §16 | P3 | IN_PROGRESS |
 
 ## §17 Performance Optimization & Technical Guardrails
 
@@ -183,12 +183,12 @@
 
 ---
 
-## Rollup (M0 close — Phase 1 verification, `docs/verification/P1.md`)
+## Rollup (P2 open — S2.1 in progress; last milestone close was M0, `docs/verification/P1.md`)
 
 | State | Count |
 |-------|------:|
-| NOT_STARTED | 55 |
-| IN_PROGRESS | 9 |
+| NOT_STARTED | 54 |
+| IN_PROGRESS | 10 |
 | COMPLETED | 0 |
 | VERIFIED | 3 |
 | **Total** | **67** |

@@ -91,6 +91,50 @@
       "emotion_targeted": "N/A (governance-process guardrail).",
       "misconception_created": "A future session skimming only execution_plan.md's original (now-annotated) checkpoint line could still assume 'all P1-touched REQs verify at P1 close' — the corrected checkpoint text and this entry both flag that it's per-REQ, not per-phase-list.",
       "why_alternatives_rejected": "Flipping every P1-touched REQ to VERIFIED per the original checklist was rejected as the anti-pattern the protocol explicitly warns against ('marking VERIFIED on unproven behavior -> the four-state ledger becomes fiction'). Leaving ALL of them IN_PROGRESS (never verifying anything at M0) was also rejected as overly conservative — REQ-P01/P05/P10 are genuinely, fully, single-phase-scoped and provably done; refusing to record that would itself be a form of ledger drift (understating real progress)."
+    },
+    {
+      "id": "dm-0009",
+      "date": "2026-07-09",
+      "status": "ACCEPTED",
+      "title": "Static/dynamic split: tilemap is frozen static geometry; everything mutable is an entity",
+      "why_it_exists": "PRD §16 says doors and collapsing floors 'modify layouts dynamically', while dm-0004's immutability contract forbids in-place mutation. If 'layout' meant the tilemap, every collapse would force a full grid copy and the loaded LevelDefinition could never be frozen or reference-shared.",
+      "problem_it_solves": "The tilemap holds only permanently-static geometry and the parsed LevelDefinition is deep-frozen once and reference-shared by every snapshot (state.world.level === def forever, never copied). All dynamic elements — collapsing floors, doors, moving platforms — are entities with runtime state; 'modifying the layout' is an entity state transition. Per-frame copies touch only the small entity array, not the grid, resolving the immutability-vs-cost tension where the game is most dynamic.",
+      "emotion_targeted": "N/A (architectural correctness/performance guardrail).",
+      "misconception_created": "A future session might expect collapsing floors to be tile edits; the schema makes that impossible by construction — they are entity kinds. Documented in docs/level_schema.md at S2.2.",
+      "why_alternatives_rejected": "Mutable tilemap layers were rejected: per-change grid copies, no freezing, and the P8 editor/P4 solver could no longer treat authored geometry as ground truth. Copy-on-write tile chunks were rejected as speculative complexity with no measured need at Jump Once's level sizes."
+    },
+    {
+      "id": "dm-0010",
+      "date": "2026-07-09",
+      "status": "ACCEPTED",
+      "title": "Canonical JSON serialization: finite-floats-only, -0 normalized, fixed key order, schemaVersion hard-reject, zero migration code until v2",
+      "why_it_exists": "REQ-122 demands lossless round-trip serialization feeding deterministic replay. Raw JSON has three determinism holes: NaN/Infinity silently become null, -0 serializes as '0' (breaking Object.is-based hashing), and key order is insertion order so equal values can serialize differently byte-wise.",
+      "problem_it_solves": "Defines round-trip safety precisely and testably: the validator rejects non-finite numbers and normalizes -0 to 0 at the boundary; serializeLevel() emits a fixed field order; acceptance = deepEqual(parse(serialize(v)), v) AND serialize(parse(serialize(v))) === serialize(v). Byte-identity with the hand-authored source file is deliberately NOT required (human whitespace/key order is noise). Versioning: schemaVersion:1 required at root, loader hard-rejects any other value; migrations are pure vN->vN+1 functions written only when v2 exists — explicit accepted debt: no migration framework ships in P2.",
+      "emotion_targeted": "N/A (determinism guardrail).",
+      "misconception_created": "A future session might read 'lossless round-trip' as byte-identity with the authored file — it is value-level lossless plus canonical-form idempotence, per this entry.",
+      "why_alternatives_rejected": "A binary format was rejected (kills hand-authoring, editor iteration, and diffability). A schema library (zod et al.) was rejected: first runtime dependency in shipped core and a second source of truth for types; the hand-rolled validator's drift risk is priced instead by one failing-fixture test per rejection rule. Building a migration framework now was rejected as speculative debt migrating v1 to itself."
+    },
+    {
+      "id": "dm-0011",
+      "date": "2026-07-09",
+      "status": "ACCEPTED",
+      "title": "Data-driven values vs data-driven axioms: the single-jump rule is an engine invariant, never a schema parameter",
+      "why_it_exists": "REQ-120's 'strictly data-driven' read fundamentalistically would put maxJumps in the level constraints block — putting the product's identity (REQ-004/010: exactly one jump, invariant across the campaign) one typo away from falsification by data.",
+      "problem_it_solves": "Draws the boundary: the constraints block carries level bounds, spawn, goal, and par-time tiers (values that vary per level); the jump count is enforced by the P3 jump-lock state machine as an engine invariant and has no schema field. Data-driven means behaviors and geometry are edited via data — not that the game's axioms are runtime-configurable.",
+      "emotion_targeted": "Player trust — the one-jump promise can never be silently broken by a content file.",
+      "misconception_created": "None intended; docs/level_schema.md states the axiom boundary explicitly so nobody 'helpfully' adds maxJumps later.",
+      "why_alternatives_rejected": "Parameterizing jump count 'for flexibility' was rejected: no PRD requirement wants it, every §15 validator assumes exactly one jump, and a jumps:2 level would violate REQ-010/011 by construction."
+    },
+    {
+      "id": "dm-0012",
+      "date": "2026-07-09",
+      "status": "ACCEPTED",
+      "title": "GDOS metadata block typed structurally-minimal in P2; semantic validation deferred to P5; P2 restructured with an instantiation slice (S2.5) as the REQ-120/121 completion evidence",
+      "why_it_exists": "PRD §13 names the GDOS block's four items in one sentence; 'creator moment frame' appears exactly once in the entire PRD and difficulty-vector axes are never enumerated. Typing deep semantic structure now would be guessing on behalf of P5 (zero-assumption violation). Separately, the original S2.1-S2.5 slice plan ended at file round-trip — parsing into types nothing instantiates proves serialization, not REQ-120/121's 'runtime-parsed configuration'.",
+      "problem_it_solves": "Two-layer validation seam: P2 validates structure only (targetKgNode string; difficultyVectors named-axis numeric record; emotionalBudgetCurve as keyframes of the four §6 metrics over normalized progress with strictly-increasing 'at' and [0,100] finite values; creatorMomentFrame minimal {tickWindow, description}); P5 owns semantics/thresholds. If P5 needs more, the escape path is a schemaVersion bump plus one migration function — priced and bounded. The P2 restructure adds S2.5 (WorldState + deterministic instantiateWorld in src/entities/ + engine-consumption replay test) so REQ-120/121 flip on runtime evidence, not parsing alone; verification report moved to S2.6; downstream Depends (S3.1, S8.1) updated in the same change.",
+      "emotion_targeted": "N/A (governance/scoping decision).",
+      "misconception_created": "A future P5 session might assume the GDOS block's shapes are semantically final — they are structurally stable but semantically provisional until P5 confirms them; open questions are logged in the P2 execution plan.",
+      "why_alternatives_rejected": "Fully specifying GDOS semantics now was rejected as invention beyond the PRD text. Omitting the block until P5 was rejected: REQ-122 explicitly requires it in the schema. Leaving P2 without an instantiation slice was rejected because P2 'completes REQ-120/121' (IRD) and would otherwise close on evidence that never runs the engine."
     }
   ],
   "rejected_ideas": [],

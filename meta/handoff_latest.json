@@ -1,36 +1,43 @@
 {
-  "session_end_timestamp": "2026-07-08T00:00:00Z",
+  "session_end_timestamp": "2026-07-09T00:00:00Z",
   "current_milestone": "M1_Simulatable_Game",
   "active_working_branch": "main",
   "completed_since_last_snapshot": [
-    "S1.10 filed: docs/verification/P1.md — maps every P1-touched REQ to its passing test/proof, with an explicit per-REQ verdict on which flip to VERIFIED vs correctly stay open (see its §4 for the full table).",
-    "Backlog flips: REQ-P01 (persistent backlog, four-state model — backlog Phase=P0 only), REQ-P05 (Design Memory ledger — Phase=P0 only), REQ-P10 (StateManager single-source-of-truth/immutability/no-global-state — Phase=P1 only) all flipped IN_PROGRESS -> VERIFIED. Rollup updated: 3 VERIFIED, 9 IN_PROGRESS (was 12), 55 NOT_STARTED, 0 COMPLETED. REQ-120, REQ-121 (span into P2), REQ-160 (owned by P3/P11, not P1), and the seven cross-cutting REQ-P02/03/04/06/07/08/09 (P0-P11 per IRD.md) deliberately left IN_PROGRESS — NOT overclaimed. See dm-0008 for the governing rule (per-REQ backlog Phase-column scope, not the older execution_plan.md checklist wording) and docs/verification/P1.md §4 for the full rationale.",
-    "Subtractive Removal pass (REQ-022) run over src/core + src/systems: 0 findings — every export is consumer/test-referenced, zero TODO/FIXME/console.* markers, no stray files, no duplicated logic. Recorded in docs/verification/P1.md §5.",
-    "Full PRD compliance audit (REQ-P07) recorded for M0 in docs/verification/P1.md §6: 0 violations against §13/§16/§17 (P1-scoped portions) and the Directive's protocol invariants.",
-    "docs/task_slices.md: S1.10 -> COMPLETED. Also corrected two stale rows discovered during the audit: S0.2 (directory structure) and S0.10 (session_protocol.md) were both actually done on disk but still marked IN_PROGRESS/NOT_STARTED — flipped to COMPLETED after verifying against directory_structure.md and reading session_protocol.md in full. Next-session pick-list rewritten to point at S2.1-S2.5.",
-    "docs/IRD.md: P1 marked VERIFIED, current-status section rewritten — M0 VERIFIED, M1 (P2,P3) now the active milestone, P2 the active phase.",
-    "docs/execution_plan.md: marked CLOSED/historical (covered P0+P1 only); all checkpoints C0.1-C1.5 checked off, C1.5's wording corrected to match dm-0008's per-REQ verification rule instead of the original blanket 'flip P1 REQs to VERIFIED' phrasing. A new execution plan for P2 is NOT yet written — that is the first action of S2.1.",
-    "meta/design_memory_ledger.json: dm-0008 recorded — the governance decision resolving the conflict between execution_plan.md's original (simplistic) verification checklist and requirements_backlog.md's authoritative per-REQ Phase column / IRD.md's cross-cutting note. This is the precedent future milestone closures (M1, M2, ...) should follow.",
-    "No source code changed this slice (pure documentation/audit slice) — pkg_hash remains s1-e6f7a8, unchanged. npm test 60/60, typecheck clean, gate:full clean throughout.",
-    "M0 — Foundation Locked is VERIFIED. P2 — Data Models & Level Definition Schema is open."
+    "Reboot lifecycle run clean: pkg_hash s1-e6f7a8 confirmed, npm test 60/60 green.",
+    "Adversarial architecture review of the P2 data model completed (10 challenges -> resolutions): entity identity (branded EntityId + deterministic runtime spawn serials), static/dynamic tilemap split, missing runtime-consumption evidence for REQ-120/121, ECS-vs-classes middle point (kind + component records, closed behavior union), JSON float round-trip holes (non-finite, -0, key order), versioning policy, GDOS metadata underspecification (creator-moment frame appears ONCE in the whole PRD), parse-don't-validate hand-rolled validator, data-driven values vs axioms (no maxJumps field ever), coordinate convention as a hidden P3/P8/P9 dependency.",
+    "P2 execution plan section authored in docs/execution_plan.md (REQ-P02 satisfied for P2): design summary (9 numbered decisions), per-slice deliverables, validation criteria, checkpoints C2.1-C2.6, P2 risk register, open questions, exit condition. File header restructured to hold one section per phase (P0+P1 CLOSED, P2 ACTIVE).",
+    "docs/task_slices.md Phase-2 table restructured: S2.1-S2.4 keep ids with tightened testable acceptance criteria; NEW S2.5 = WorldState + deterministic instantiateWorld() in src/entities/ + engine-consumption replay test (the REQ-120/121 completion evidence); verification report moved to S2.6. Downstream Depends updated in the same change: S3.1 and S8.1 now depend on S2.6 (were S2.5). Pick-list rewritten.",
+    "meta/design_memory_ledger.json: dm-0009 (static tilemap frozen + reference-shared, all dynamics are entities), dm-0010 (canonical JSON: finite-only, -0 normalized, fixed key order; round-trip = value-lossless + byte-idempotent, NOT byte-identical to authored file; schemaVersion:1 hard-reject, zero migration code until v2 = explicit accepted debt), dm-0011 (single-jump is an engine invariant, never a schema parameter), dm-0012 (GDOS block structural-now/semantic-in-P5 + the S2.5 restructure rationale).",
+    "SELECT bookkeeping: S2.1 -> IN_PROGRESS; REQ-154 -> IN_PROGRESS; backlog rollup now 54 NOT_STARTED / 10 IN_PROGRESS / 0 COMPLETED / 3 VERIFIED.",
+    "SDLC stage tracker: S2.1 started via tools/sdlc/stage.js; stages reboot/select/plan done; currently at ANCHOR. No source code changed this session (docs/meta only) — pkg_hash remains s1-e6f7a8."
   ],
   "exact_execution_focus": {
-    "file_path": "docs/execution_plan.md",
-    "target_line_range": "new-content (P2 section)",
-    "pending_logical_transformation": "Start S2.1 (first P2 slice): (1) FIRST author a new P2 execution plan section (per REQ-P02 — a plan before code) covering P2's scope per IRD.md's P2 entry: 'Owns: REQ-122, REQ-014, and completes REQ-120/121. Deliverables: typed, serialized Level Definition Schema (tilemap, entities, constraints, triggers + GDOS metadata: KG node, difficulty vectors, emotional budget curve, creator-moment frame); loader/validator; schema round-trip tests. Exit: a hand-authored sample level parses, validates, and round-trips losslessly; schema documented.' Read docs/task_slices.md's Phase-2 table (S2.1-S2.5) for the slice breakdown before planning. (2) THEN implement S2.1: 'Component data structures (§16 entities as pure data)' — src/components/*.ts, logic-free plain data records only (per directory_structure.md's data/logic decoupling invariant: components must never execute logic/loops/calculations). Read src/core/Vec2.ts and src/core/State.ts first (they're the shape precedent: readonly interfaces, no methods, no side effects) before designing what an entity/component record looks like. Do NOT read ahead into S2.2's schema-typing work until S2.1 is COMPLETED — S2.2 depends on S2.1's component shapes existing first."
+    "file_path": "src/components/",
+    "target_line_range": "new files (directory currently empty)",
+    "pending_logical_transformation": "S2.1 is mid-flight at the ANCHOR stage (meta/active_task.json tracks it). ANCHOR for a new module set = freeze the type boundary first: define EntityId brand, TransformDef, AabbDef, EntityKind, and the per-kind BehaviorDef closed union as pure readonly records per the P2 execution plan's design summary points 1-3 (read execution_plan.md P2 section first — it IS the micro-plan). Then IMPLEMENT: (a) src/components/*.ts logic-free records only (Vec2.ts/State.ts are the shape precedent: readonly interfaces, no methods); (b) the automated scan test that fails on any function body under src/components/ (S2.1 acceptance criterion); (c) unit test constructing + deep-freezing every record. Then stage.js advance through implement/verify, tick criteria REQ-120/REQ-154, flip S2.1 -> COMPLETED in task_slices.md, add the new PKG node(s) + bump pkg_hash, write handoff. Do NOT start S2.2 schema types until S2.1 is COMPLETED."
   },
   "blocked_by": {
     "dependency_node": "none",
-    "reason": "No blockers. M0 is VERIFIED; P2's entry gate ('P0+P1 exit gate VERIFIED') is satisfied per docs/verification/P1.md and docs/IRD.md's updated current-status."
+    "reason": "No blockers. P2 plan exists (REQ-P02 satisfied); S2.1 dependencies met."
   },
   "critical_warnings_for_next_session": [
-    "RUN THE REBOOT LIFECYCLE FIRST: read this handoff, confirm pkg_hash s1-e6f7a8 matches meta/project_knowledge_graph.json (it should — no structural change happened in S1.10), then `npm test` (expect 60 passing). If red, fix before starting S2.1.",
-    "Do NOT begin any level/chapter CONTENT generation — P2 building the *schema* for levels is fine and required, but P10 (actual content) remains hard-gated behind M2 regardless of P2/P3 progress. A hand-authored sample level fixture for S2.4's round-trip test is schema-validation scaffolding, not campaign content, and is explicitly in scope.",
-    "Before flipping any REQ to VERIFIED at a future milestone close, follow dm-0008's rule: check that REQ's OWN Phase column in requirements_backlog.md, not a phase's execution-plan checklist wording, which may be stale/simplistic (this is exactly what was found and corrected for M0).",
-    "REQ-120 and REQ-121 are P2's responsibility to COMPLETE (per IRD.md P2's 'Owns: ... and completes REQ-120/121') — once the Level Definition Schema exists and core data is genuinely runtime-parsed against it, re-audit whether they can finally flip to VERIFIED (probably at P2's own verification report, S2.5, not before).",
-    "Do NOT change FIXED_STEP_SECONDS in Clock.ts or introduce delta-time scaling (dm-0003). Do NOT mutate GameState in place (dm-0004). Engine commits even on a zero-step tick by design (dm-0007). src/components/* must be logic-free plain data (directory_structure.md) — if you're tempted to write a function body inside a component file, it belongs in src/systems/ instead.",
-    "The private npm mirror npm.shootsta.com is broken; .npmrc pins registry.npmjs.org — don't remove it."
+    "RUN THE REBOOT LIFECYCLE FIRST: confirm pkg_hash s1-e6f7a8 still matches meta/project_knowledge_graph.json (no src change happened this session), npm test expect 60 passing. meta/active_task.json holds S2.1 at ANCHOR — resume the stage loop there, do not restart it.",
+    "The Phase-2 slice table was RENUMBERED this session: S2.5 is now the WorldState/instantiation slice and S2.6 is the verification report. Any older notes referring to 'S2.5 verification report' are stale. S3.1 and S8.1 Depends were already updated to S2.6.",
+    "src/components/* must be logic-free plain data (directory_structure.md) — S2.1's own acceptance criteria include an automated scan test enforcing this; write that test, don't skip it.",
+    "Serialization decisions are LOCKED by dm-0010 (finite floats only, -0 normalized, canonical key order, schemaVersion hard-reject, no migration framework) — implement S2.3 against that entry, don't relitigate. Same for dm-0009 (no mutable tiles: collapsing floors/doors are entity kinds) and dm-0011 (never add a maxJumps schema field).",
+    "Coordinate convention and difficulty-vector axis list are OPEN decisions to be made and ledgered at S2.2 (recommendation on record in the P2 plan: y-down, origin top-left, gravity +y, tileSize in world units). 'Creator moment frame' semantics are provisional — typed minimally per dm-0012.",
+    "Do NOT begin any level/chapter CONTENT generation — the S2.4 fixture in test/fixtures/ is schema-validation scaffolding, explicitly in scope; P10 content remains hard-gated behind M2.",
+    "Do NOT change FIXED_STEP_SECONDS in Clock.ts or introduce delta-time scaling (dm-0003). Do NOT mutate GameState in place (dm-0004). Engine commits even on a zero-step tick by design (dm-0007). Per-REQ verification per dm-0008.",
+    "The private npm mirror npm.shootsta.com is broken; .npmrc pins registry.npmjs.org — don't remove it.",
+    "This session's doc/meta changes are uncommitted as of handoff-write time — if they are still uncommitted at next session start (git status will say), commit them as one slice-scoped commit before new work."
   ],
   "pkg_hash_at_handoff": "s1-e6f7a8",
-  "next_session_pick_list": ["S2.1 Component data structures (write the P2 execution plan first, then implement)", "S2.2 Level Definition Schema types", "S2.3 Level loader + structural validator", "S2.4 Sample level fixture + round-trip test", "S2.5 Phase-2 verification report"]
+  "next_session_pick_list": [
+    "S2.1 (resume at ANCHOR/IMPLEMENT): src/components/* pure-data records + logic-free scan test + unit tests",
+    "S2.2 Level Definition Schema types + canonical serializer (+ decide/ledger coordinate convention and difficulty axes)",
+    "S2.3 Level loader + structural validator (parse-don't-validate, per-rule rejection tests)",
+    "S2.4 Sample level fixture + round-trip test",
+    "S2.5 WorldState + deterministic instantiation (engine-consumption evidence for REQ-120/121)",
+    "S2.6 Phase-2 verification report"
+  ]
 }
