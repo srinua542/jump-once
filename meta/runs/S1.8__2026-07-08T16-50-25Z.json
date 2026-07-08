@@ -1,0 +1,67 @@
+{
+  "slice": "S1.8",
+  "title": "Core unit tests",
+  "reqs": [
+    "REQ-P02"
+  ],
+  "started_at": "2026-07-08T16:46:49.034Z",
+  "updated_at": "2026-07-08T16:50:25.741Z",
+  "current_stage": "handoff",
+  "stages": {
+    "reboot": {
+      "status": "done",
+      "at": "2026-07-08T16:46:49.035Z",
+      "note": "Reboot: continuing same session post-S1.7. Handoff/PKG already parsed this session (pkg_hash s1-e6f7a8, matches). npm run gate:full just ran clean (tests-green including 9 Engine tests)."
+    },
+    "select": {
+      "status": "done",
+      "at": "2026-07-08T16:46:53.986Z",
+      "note": "Plan: 6 new test files under test/unit/ — Vec2.test.ts (algebra ops + no-mutation of operands + ZERO/normalize edge case), Rng.test.ts (determinism: same seed -> same sequence across independent createRng calls; no shared/global state; nextInt range + degenerate max<=min case), Clock.test.ts (accumulator banking exact-step boundary, MAX_FRAME_SECONDS spiral-of-death clamp drops excess not banks it, interpolationAlpha fractional progress, stepIndex monotonic), State.test.ts (NEUTRAL_INPUT shape, GameState generic-over-world compiles + readonly), StateManager.test.ts (only-mutation-point / commit swaps current+previous, freezeOnCommit throws on mutation attempt, idempotent re-commit of same object, getPreviousState before any commit equals initial). Files: test/unit/{Vec2,Rng,Clock,State,StateManager}.test.ts (Engine.test.ts already exists from S1.7). Proof: npm test green, full src/core+src/systems coverage."
+    },
+    "plan": {
+      "status": "done",
+      "at": "2026-07-08T16:47:05.404Z",
+      "note": "Anchor: new test files only, no source module internals touched. Type boundaries already captured from full reads this session: Vec2 (pure record ops), Rng (RngState{seed}, nextFloat/nextInt returning {value,next}), Clock (ClockState{accumulator,stepIndex}, advance returning {steps,next}, interpolationAlpha), State (GameState<TWorld>, InputFrame, NEUTRAL_INPUT), StateManager (getState/getPreviousState/commit, freezeOnCommit option, deepFreeze export)."
+    },
+    "anchor": {
+      "status": "done",
+      "at": "2026-07-08T16:47:10.546Z",
+      "note": "Implement: 5 test files written (Vec2, Rng, Clock, State, StateManager). No source changes needed — all six core modules plus System already had complete production logic from prior slices."
+    },
+    "implement": {
+      "status": "done",
+      "at": "2026-07-08T16:48:32.226Z",
+      "note": "Verify: npm test green, 55/55 total (46 new: Vec2 x12, Rng x9, Clock x10, State x4, StateManager x11). typecheck clean. Coverage confirms documented contracts: Vec2 immutability, Rng determinism/no-globals, Clock banking+spiral-of-death clamp+interpolationAlpha, State generic-over-world, StateManager only-mutation-point/idempotent-commit/freeze-throws."
+    },
+    "verify": {
+      "status": "done",
+      "at": "2026-07-08T16:48:59.780Z",
+      "note": "Integrate: no PKG changes required — S1.8 only added tests for already-registered nodes (Vec2, Rng, Clock, State, StateManager, System via Engine), no new structural code, no new/changed dependencies. pkg_hash remains s1-e6f7a8. No new design decisions to record."
+    },
+    "integrate": {
+      "status": "done",
+      "at": "2026-07-08T16:49:26.348Z",
+      "note": "Report: S1.1-S1.6 and S1.8 flipped IN_PROGRESS/NOT_STARTED -> COMPLETED in docs/task_slices.md (all now have passing tests proving their documented contracts). Backlog REQs (REQ-P02, REQ-P08, REQ-P09, REQ-120, REQ-154, etc.) intentionally left IN_PROGRESS/NOT_STARTED — all are cross-phase (P0-P11 or P3) requirements per docs/requirements_backlog.md:196, only flip to VERIFIED at phase closure (S1.10)."
+    },
+    "report": {
+      "status": "done",
+      "at": "2026-07-08T16:49:53.871Z",
+      "note": "Handoff written: 55/55 tests, S1.1-S1.8 all COMPLETED, next focus S1.9 deterministic replay integration test."
+    },
+    "handoff": {
+      "status": "done",
+      "at": "2026-07-08T16:50:25.625Z",
+      "note": "handoff stage complete"
+    }
+  },
+  "acceptance": [
+    {
+      "req": "REQ-P02",
+      "criterion": "(fill in)",
+      "met": false,
+      "note": null
+    }
+  ],
+  "outcome": "completed",
+  "closed_at": "2026-07-08T16:50:25.915Z"
+}

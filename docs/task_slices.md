@@ -26,15 +26,15 @@ Session-sized, dependency-ordered work units. Each slice is small enough to comp
 
 | Slice | Title | REQs | Depends | Acceptance criteria | State |
 |-------|-------|------|---------|---------------------|-------|
-| S1.1 | `Vec2` encapsulated geometry | REQ-P09, REQ-120 | S0.1 | Immutable ops; unit tests cover algebra + no-mutation. | IN_PROGRESS |
-| S1.2 | `Rng` deterministic PRNG | REQ-P08 | S0.1 | Same seed → same sequence; state threaded, no globals; tests. | IN_PROGRESS |
-| S1.3 | `Clock` fixed-timestep accumulator | REQ-121, REQ-160 | S0.1 | Fixed step constant; accumulator banks correctly; spiral-of-death clamp; tests. | IN_PROGRESS |
-| S1.4 | `State` immutable root + `InputFrame` | REQ-120, REQ-P10 | S1.1–S1.3 | Generic over world; readonly; neutral input defined. | IN_PROGRESS |
-| S1.5 | `System` contract | REQ-154, REQ-P09 | S1.4 | Pure `step(state)=>state` interface; documented isolation. | IN_PROGRESS |
-| S1.6 | `StateManager` single source of truth | REQ-P10 | S1.4 | Only mutation point; prev/current; optional deep-freeze; tests prove immutability + idempotent commit. | IN_PROGRESS |
+| S1.1 | `Vec2` encapsulated geometry | REQ-P09, REQ-120 | S0.1 | Immutable ops; unit tests cover algebra + no-mutation. | COMPLETED |
+| S1.2 | `Rng` deterministic PRNG | REQ-P08 | S0.1 | Same seed → same sequence; state threaded, no globals; tests. | COMPLETED |
+| S1.3 | `Clock` fixed-timestep accumulator | REQ-121, REQ-160 | S0.1 | Fixed step constant; accumulator banks correctly; spiral-of-death clamp; tests. | COMPLETED |
+| S1.4 | `State` immutable root + `InputFrame` | REQ-120, REQ-P10 | S1.1–S1.3 | Generic over world; readonly; neutral input defined. | COMPLETED |
+| S1.5 | `System` contract | REQ-154, REQ-P09 | S1.4 | Pure `step(state)=>state` interface; documented isolation. | COMPLETED |
+| S1.6 | `StateManager` single source of truth | REQ-P10 | S1.4 | Only mutation point; prev/current; optional deep-freeze; tests prove immutability + idempotent commit. | COMPLETED |
 | S1.7 | `Engine` Read→Process→Emit loop | REQ-121, REQ-160 | S1.3, S1.5, S1.6 | Runs N fixed steps per tick via Clock; pipes systems; advances tick; zero-alloc-aware. | COMPLETED |
-| S1.8 | Core unit tests | REQ-P02 | S1.1–S1.7 | `test/unit/` covers every core module; `npm test` green. | NOT_STARTED |
-| S1.9 | Deterministic replay integration test | REQ-121 | S1.7, S1.8 | Same (seed, input-tape) → identical final state hash across two runs. | NOT_STARTED |
+| S1.8 | Core unit tests | REQ-P02 | S1.1–S1.7 | `test/unit/` covers every core module; `npm test` green. | COMPLETED |
+| S1.9 | Deterministic replay integration test | REQ-121 | S1.7, S1.8 | Same (seed, input-tape) → identical final state hash across two runs. | COMPLETED |
 | S1.10 | Phase-1 verification report | REQ-P02, REQ-P07 | S1.9 | `docs/verification/P1.md` maps each P1 REQ to its passing test. | NOT_STARTED |
 
 ## Phase 2 — Data Models & Level Definition Schema

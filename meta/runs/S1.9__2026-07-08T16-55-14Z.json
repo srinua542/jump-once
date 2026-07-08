@@ -1,0 +1,67 @@
+{
+  "slice": "S1.9",
+  "title": "Deterministic replay integration test",
+  "reqs": [
+    "REQ-121"
+  ],
+  "started_at": "2026-07-08T16:51:23.335Z",
+  "updated_at": "2026-07-08T16:55:14.157Z",
+  "current_stage": "handoff",
+  "stages": {
+    "reboot": {
+      "status": "done",
+      "at": "2026-07-08T16:51:23.336Z",
+      "note": "Reboot: same session, pkg_hash s1-e6f7a8 matches, 55/55 tests green (gate:full clean). Deps S1.7+S1.8 both COMPLETED."
+    },
+    "select": {
+      "status": "done",
+      "at": "2026-07-08T16:51:31.715Z",
+      "note": "Select: S1.9 committed. Deps S1.7 (Engine) + S1.8 (core tests) both COMPLETED. Phase-1 predecessors done; no gating conflict (integration test, not content)."
+    },
+    "plan": {
+      "status": "done",
+      "at": "2026-07-08T16:51:31.836Z",
+      "note": "Plan: test/integration/DeterministicReplay.test.ts. A pure replaySystem<ReplayWorld> that draws nextFloat(state.rng), threads rng forward, and accumulates world.noise += draw.value and world.position += state.input.moveAxis — exercises RNG threading (rng is part of GameState, not global), input dependence, and immutability through the real Engine+System+Clock+StateManager pipeline. runReplay(seed, tape) builds a fresh StateManager+Engine, and for each {delta,moveAxis} frame commits the input then calls engine.tick(delta). Tape is a hardcoded literal mixing sub-step, multi-step, and a >MAX_FRAME_SECONDS clamped spike, with varying moveAxis. Assertions: (1) two independent runs of identical (seed,tape) are deepEqual AND share an identical FNV-1a state hash (REQ-121 'identical final state hash'); (2) run did real work (tick>0, noise!=0); (3) negative guards — different seed -> different hash, different input-tape (same deltas) -> different hash, proving both determinants genuinely matter. No Math.random/Date anywhere."
+    },
+    "anchor": {
+      "status": "done",
+      "at": "2026-07-08T16:52:29.748Z",
+      "note": "Anchor: new integration test file only, no source internals touched. Boundaries already known from full reads this session — Engine({systems,stateManager}).tick(realDeltaSeconds)=>GameState; StateManager(initial).commit/getState; createClock/createRng; nextFloat(RngState)=>{value,next}; NEUTRAL_INPUT/InputFrame; GameState<TWorld>. Clock constants FIXED_STEP_SECONDS=1/60, MAX_FRAME_SECONDS=0.25 (spike of 1.0 clamps to 15 steps)."
+    },
+    "implement": {
+      "status": "done",
+      "at": "2026-07-08T16:52:29.863Z",
+      "note": "Verify: npm test green 60/60 (5 new integration tests). typecheck clean. Determinism regression assertion in place per dm-0003."
+    },
+    "verify": {
+      "status": "done",
+      "at": "2026-07-08T16:54:13.580Z",
+      "note": "Integrate: no PKG structural change — S1.9 adds an integration test file only, no new source node or dependency (consistent with S1.8's test-only slices). pkg_hash stays s1-e6f7a8. No new design decision (input-injection-between-ticks is a test-harness pattern documented in the test's comments, not an architecture change)."
+    },
+    "integrate": {
+      "status": "done",
+      "at": "2026-07-08T16:54:13.734Z",
+      "note": "Report: S1.9 flipped NOT_STARTED -> COMPLETED in docs/task_slices.md. REQ-121 backlog row left IN_PROGRESS (spans P1+P2; flips to VERIFIED at S1.10 phase closure)."
+    },
+    "report": {
+      "status": "done",
+      "at": "2026-07-08T16:54:33.659Z",
+      "note": "Handoff written: 60/60 tests, S1.1-S1.9 all COMPLETED, next focus S1.10 P1 verification report + M0 closure."
+    },
+    "handoff": {
+      "status": "done",
+      "at": "2026-07-08T16:55:14.042Z",
+      "note": "handoff stage complete"
+    }
+  },
+  "acceptance": [
+    {
+      "req": "REQ-121",
+      "criterion": "Replay determinism proven: identical (seed,tape) -> deepEqual + identical FNV-1a state hash across two independent Engine runs; negative guards confirm both seed and input-tape genuinely determine the outcome. Pipeline exercised end-to-end (RNG threaded through GameState, input folded in, immutable steps).",
+      "met": true,
+      "note": null
+    }
+  ],
+  "outcome": "completed",
+  "closed_at": "2026-07-08T16:55:14.270Z"
+}
