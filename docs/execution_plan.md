@@ -1,6 +1,8 @@
-# Jump Once — Active-Phase Execution Plan
+# Jump Once — Execution Plan: P0 + P1 (M0 — Foundation Locked)
 
-Covers the phases currently in flight: **P0 (Governance & Protocol Infrastructure)** and **P1 (Deterministic Core Architecture)** — together, milestone **M0 — Foundation Locked**. Per the Directive, this plan is written *before* implementation code and defines the work, governing PRD requirements, dependencies, deliverables, validation criteria, and completion checkpoints. A new execution plan will be authored at the start of each subsequent phase.
+**Status: CLOSED — M0 is VERIFIED, see `docs/verification/P1.md`.** Retained as the historical record of the P0+P1 plan and its checkpoints. The active phase is now **P2 — Data Models & Level Definition Schema**; its execution plan is authored at the start of S2.1, per the Directive's per-phase planning requirement (REQ-P02).
+
+Covers the phases that were in flight: **P0 (Governance & Protocol Infrastructure)** and **P1 (Deterministic Core Architecture)** — together, milestone **M0 — Foundation Locked**. Per the Directive, this plan is written *before* implementation code and defines the work, governing PRD requirements, dependencies, deliverables, validation criteria, and completion checkpoints. A new execution plan will be authored at the start of each subsequent phase.
 
 ---
 
@@ -35,8 +37,8 @@ None beyond the PRD and the skill reference files.
 
 ### Checkpoints
 - **C0.1** Governance docs cross-reference consistently (backlog ↔ IRD ↔ slices). ✅
-- **C0.2** Meta JSON files valid + internally consistent with the docs. *(this session)*
-- **C0.3** Handoff written last, capturing the exact resume point. *(this session)*
+- **C0.2** Meta JSON files valid + internally consistent with the docs. ✅
+- **C0.3** Handoff written last, capturing the exact resume point. ✅ (written at every session end throughout P0/P1)
 
 ---
 
@@ -56,10 +58,10 @@ P0 governance exists; toolchain builds.
 
 ### Deliverables
 - `src/core/Vec2.ts` (**done**), `src/core/Rng.ts` (**done**), `src/core/Clock.ts` (**done**), `src/core/State.ts` (**done**), `src/systems/System.ts` (**done**), `src/core/StateManager.ts` (**done**).
-- `src/core/Engine.ts` — the loop that pulls fixed-step count from `Clock`, threads systems, advances `tick`, commits via `StateManager`. *(next session — S1.7)*
-- `test/unit/*` — one suite per core module. *(S1.8)*
-- `test/integration/replay.test.ts` — determinism proof. *(S1.9)*
-- `docs/verification/P1.md` — verification report. *(S1.10)*
+- `src/core/Engine.ts` — the loop that pulls fixed-step count from `Clock`, threads systems, advances `tick`, commits via `StateManager`. (**done** — S1.7)
+- `test/unit/*` — one suite per core module. (**done** — S1.8, 55 unit tests)
+- `test/integration/DeterministicReplay.test.ts` — determinism proof. (**done** — S1.9, 5 tests)
+- `docs/verification/P1.md` — verification report. (**done** — S1.10)
 
 ### Validation criteria
 - **Determinism:** two independent runs of the same seed + input tape produce an identical serialized final state. *(REQ-121)*
@@ -70,11 +72,11 @@ P0 governance exists; toolchain builds.
 - **Green build:** `npm test` exits 0 with every core module covered.
 
 ### Checkpoints
-- **C1.1** All six leaf/core modules compile under `strict` with no unused-symbol errors. *(pending first `tsc` run next session)*
-- **C1.2** `Engine.ts` lands and the loop advances `tick` by exactly the Clock's step count.
-- **C1.3** Unit suites green for every `src/core` module.
-- **C1.4** Replay integration test proves bit-identical determinism.
-- **C1.5** Verification report filed; P1 REQs flipped `NOT_STARTED/IN_PROGRESS → VERIFIED`; M0 closes.
+- **C1.1** ✅ All six leaf/core modules (+ Engine) compile under `strict` with no unused-symbol errors.
+- **C1.2** ✅ `Engine.ts` lands and the loop advances `tick` by exactly the Clock's step count.
+- **C1.3** ✅ Unit suites green for every `src/core` module (55 tests).
+- **C1.4** ✅ Replay integration test proves bit-identical determinism (5 tests).
+- **C1.5** ✅ Verification report filed (`docs/verification/P1.md`); the P1 REQs whose *full* Phase-column scope closes at M0 (REQ-P01, REQ-P05, REQ-P10) flipped to `VERIFIED` — REQ-120/121 (span into P2), REQ-160 (owned by P3/P11, not P1), and the cross-cutting REQ-P02/03/04/06/07/08/09 (P0–P11, perpetual per `IRD.md`) correctly remain `IN_PROGRESS`, per the verification report's per-REQ rationale. M0 closes.
 
 ---
 

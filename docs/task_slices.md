@@ -12,7 +12,7 @@ Session-sized, dependency-ordered work units. Each slice is small enough to comp
 | Slice | Title | REQs | Depends | Acceptance criteria | State |
 |-------|-------|------|---------|---------------------|-------|
 | S0.1 | Toolchain + build/test harness | REQ-P02, REQ-121 | — | `package.json`, `tsconfig.json`, `.npmrc` present; `npx tsc` runs; `npm test` wired to `node --test dist/test/`. | COMPLETED |
-| S0.2 | Directory structure per skill spec | REQ-P09 | S0.1 | `src/{core,systems,components,entities}`, `test/{unit,integration}`, `tools/`, `docs/`, `meta/` exist and match `directory_structure.md`. | IN_PROGRESS |
+| S0.2 | Directory structure per skill spec | REQ-P09 | S0.1 | `src/{core,systems,components,entities}`, `test/{unit,integration}`, `tools/`, `docs/`, `meta/` exist and match `directory_structure.md`. | COMPLETED |
 | S0.3 | PRD requirements backlog (four-state) | REQ-P01 | — | Every PRD section mapped to REQ ids with a state; rollup table present. | COMPLETED |
 | S0.4 | Implementation Roadmap (IRD) | REQ-P02 | S0.3 | Phase DAG, gates, milestones, ordering-reconciliation documented. | COMPLETED |
 | S0.5 | Task slices (this document) | REQ-P01 | S0.4 | Every phase has slices with REQs + acceptance criteria. | COMPLETED |
@@ -20,7 +20,7 @@ Session-sized, dependency-ordered work units. Each slice is small enough to comp
 | S0.7 | Project Knowledge Graph seeded | REQ-P03 | S0.2 | `meta/project_knowledge_graph.json` lists every existing module as a node with deps/dependents/gdos_alignment. | COMPLETED |
 | S0.8 | Design Memory ledger seeded | REQ-P05, REQ-051, REQ-111 | — | `meta/design_memory_ledger.json` records Session-1 decisions with full Intent Repository fields. | COMPLETED |
 | S0.9 | Session-1 handoff snapshot | REQ-P04 | S0.7 | `meta/handoff_latest.json` valid against schema; names exact resume point. | COMPLETED |
-| S0.10 | Reboot lifecycle dry-run doc | REQ-P06 | S0.9 | `docs/session_protocol.md` documents the start-of-session sequence future sessions execute. | NOT_STARTED |
+| S0.10 | Reboot lifecycle dry-run doc | REQ-P06 | S0.9 | `docs/session_protocol.md` documents the start-of-session sequence future sessions execute. | COMPLETED |
 
 ## Phase 1 — Deterministic Core Architecture
 
@@ -35,7 +35,7 @@ Session-sized, dependency-ordered work units. Each slice is small enough to comp
 | S1.7 | `Engine` Read→Process→Emit loop | REQ-121, REQ-160 | S1.3, S1.5, S1.6 | Runs N fixed steps per tick via Clock; pipes systems; advances tick; zero-alloc-aware. | COMPLETED |
 | S1.8 | Core unit tests | REQ-P02 | S1.1–S1.7 | `test/unit/` covers every core module; `npm test` green. | COMPLETED |
 | S1.9 | Deterministic replay integration test | REQ-121 | S1.7, S1.8 | Same (seed, input-tape) → identical final state hash across two runs. | COMPLETED |
-| S1.10 | Phase-1 verification report | REQ-P02, REQ-P07 | S1.9 | `docs/verification/P1.md` maps each P1 REQ to its passing test. | NOT_STARTED |
+| S1.10 | Phase-1 verification report | REQ-P02, REQ-P07 | S1.9 | `docs/verification/P1.md` maps each P1 REQ to its passing test. | COMPLETED |
 
 ## Phase 2 — Data Models & Level Definition Schema
 
@@ -150,10 +150,10 @@ Session-sized, dependency-ordered work units. Each slice is small enough to comp
 
 ## Next-session pick-list (top of queue)
 
-1. **S1.7** — `Engine` Read→Process→Emit loop.
-2. **S1.8** — core unit tests for every module in `src/core`.
-3. **S1.9** — deterministic replay integration test.
-4. **S1.10** — Phase-1 verification report, then flip P1 REQs to `VERIFIED`.
-5. **S0.10** — session protocol doc (can be done anytime).
+**M0 — Foundation Locked is VERIFIED** (`docs/verification/P1.md`). Phase 1 (S1.1–S1.10) and Phase 0 (S0.1–S0.10) are all `COMPLETED`/`VERIFIED`. P2 — Data Models & Level Definition Schema is now open.
 
-Only after S1.10 verifies does M0 close and P2 open.
+1. **S2.1** — Component data structures (§16 entities as pure data). First P2 slice.
+2. **S2.2** — Level Definition Schema types.
+3. **S2.3** — Level loader + structural validator.
+4. **S2.4** — Sample level fixture + round-trip test.
+5. **S2.5** — Phase-2 verification report.

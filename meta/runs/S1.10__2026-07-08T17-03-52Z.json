@@ -1,0 +1,74 @@
+{
+  "slice": "S1.10",
+  "title": "Phase-1 verification report + M0 closure",
+  "reqs": [
+    "REQ-P02",
+    "REQ-P07"
+  ],
+  "started_at": "2026-07-08T16:56:32.616Z",
+  "updated_at": "2026-07-08T17:03:52.184Z",
+  "current_stage": "handoff",
+  "stages": {
+    "reboot": {
+      "status": "done",
+      "at": "2026-07-08T16:56:32.617Z",
+      "note": "Reboot: same session, pkg_hash s1-e6f7a8 matches, 60/60 tests green (gate:full clean)."
+    },
+    "select": {
+      "status": "done",
+      "at": "2026-07-08T16:58:57.807Z",
+      "note": "Select: S1.10 committed. Dep S1.9 COMPLETED. This is the milestone-closing slice for M0 (P0+P1)."
+    },
+    "plan": {
+      "status": "done",
+      "at": "2026-07-08T16:58:57.906Z",
+      "note": "Plan: (1) Read backlog Phase columns + IRD Owns/cross-cutting notes to determine which REQs' FULL phase-scope closes at M0 vs which are multi-phase/perpetual. (2) Write docs/verification/P1.md mapping every P1-touched REQ to its passing tests, with an explicit per-REQ verdict (VERIFY now vs remains open + why). (3) Flip only REQ-P01, REQ-P05, REQ-P10 to VERIFIED in requirements_backlog.md (each has a single-phase P0-or-P1-only scope per its own Phase column and is demonstrably fully satisfied); leave REQ-120/121 (span into P2), REQ-160 (not even P1-owned per backlog, P3/P11), and all REQ-P02/03/04/06/07/08/09 (P0-P11 perpetual invariants per IRD line 76) as IN_PROGRESS. (4) Run a Subtractive Removal pass over src/core+src/systems for dead/unused exports. (5) Update IRD.md Current-status + execution_plan.md checkpoints to match reality, and task_slices.md S1.10 -> COMPLETED. (6) Write handoff opening P2/S2.1."
+    },
+    "anchor": {
+      "status": "done",
+      "at": "2026-07-08T16:58:57.998Z",
+      "note": "Anchor: no refactor of existing internals — S1.10 is a documentation/audit slice (verification report, backlog/IRD/execution_plan updates) plus a read-only Subtractive Removal sweep. Sweep result: 0 findings — every exported symbol across src/core+src/systems is used by =2 files (its own module + at least one consumer/test); no TODO/FIXME/console.* markers; no stray files."
+    },
+    "implement": {
+      "status": "done",
+      "at": "2026-07-08T16:59:27.049Z",
+      "note": "Verify: npm test 60/60 green, typecheck clean, gate:full clean after all doc edits (verification report, backlog flips, IRD/execution_plan/task_slices updates). No source code changed this slice, so no regression risk beyond doc consistency, which was hand-cross-checked."
+    },
+    "verify": {
+      "status": "done",
+      "at": "2026-07-08T17:02:36.415Z",
+      "note": "Integrate: no source/PKG structural change this slice (pkg_hash stays s1-e6f7a8, no new nodes/edges). Recorded dm-0008: the governance judgment call for which REQs verify at milestone close (per-REQ backlog Phase-column scope, not the older execution_plan checklist wording)."
+    },
+    "integrate": {
+      "status": "done",
+      "at": "2026-07-08T17:03:07.536Z",
+      "note": "Report: docs/verification/P1.md filed. requirements_backlog.md: REQ-P01/REQ-P05/REQ-P10 -> VERIFIED (3 total), rollup updated. task_slices.md: S1.10 -> COMPLETED; also corrected stale S0.2/S0.10 rows (IN_PROGRESS/NOT_STARTED -> COMPLETED, both demonstrably done on disk) and rewrote the next-session pick-list for P2. IRD.md: P1/current-status -> VERIFIED, M0 VERIFIED, M1/P2 opened. execution_plan.md: marked CLOSED/historical, checkpoints C0.1-C1.5 all checked off with corrected C1.5 wording matching dm-0008's per-REQ rule."
+    },
+    "report": {
+      "status": "done",
+      "at": "2026-07-08T17:03:14.361Z",
+      "note": "Handoff written: M0 VERIFIED, M1/P2 opened, next focus S2.1 (write P2 execution plan first, then Component data structures)."
+    },
+    "handoff": {
+      "status": "done",
+      "at": "2026-07-08T17:03:52.098Z",
+      "note": "handoff stage complete"
+    }
+  },
+  "acceptance": [
+    {
+      "req": "REQ-P02",
+      "criterion": "This IS the phase execution-report obligation for P1 (docs/verification/P1.md filed) plus the corrected execution_plan.md checkpoints/status.",
+      "met": true,
+      "note": null
+    },
+    {
+      "req": "REQ-P07",
+      "criterion": "Full PRD compliance audit for M0 recorded in docs/verification/P1.md §6 (0 violations) plus Subtractive Removal pass §5 (0 findings).",
+      "met": true,
+      "note": null
+    }
+  ],
+  "outcome": "completed",
+  "closed_at": "2026-07-08T17:03:52.278Z"
+}

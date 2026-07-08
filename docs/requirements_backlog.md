@@ -170,27 +170,27 @@
 
 | ID | Requirement | Source | Phase | State |
 |----|-------------|--------|-------|-------|
-| REQ-P01 | Maintain a persistent PRD-derived backlog with the four-state model; nothing marked Completed until implemented+tested+reviewed+verified. | Directive | P0 | IN_PROGRESS |
+| REQ-P01 | Maintain a persistent PRD-derived backlog with the four-state model; nothing marked Completed until implemented+tested+reviewed+verified. | Directive | P0 | VERIFIED |
 | REQ-P02 | Produce a per-phase execution plan before coding and a verification report after each phase. | Directive | P0–P11 | IN_PROGRESS |
 | REQ-P03 | Maintain the Project Knowledge Graph; update immediately on any structural code change. | Skill | P0–P11 | IN_PROGRESS |
 | REQ-P04 | Write `/meta/handoff_latest.json` on every session end. | Skill | P0–P11 | IN_PROGRESS |
-| REQ-P05 | Maintain the persistent Design Memory ledger of accepted/rejected decisions. | Skill/§6 | P0 | IN_PROGRESS |
+| REQ-P05 | Maintain the persistent Design Memory ledger of accepted/rejected decisions. | Skill/§6 | P0 | VERIFIED |
 | REQ-P06 | Run the Reboot Lifecycle (read handoff → parse PKG → run tests) at every session start. | Skill | P0–P11 | IN_PROGRESS |
 | REQ-P07 | Perform a full PRD compliance audit at every milestone. | Directive | P0–P11 | NOT_STARTED |
 | REQ-P08 | Uphold cognitive invariants: zero-assumption execution, idempotency, no debt/placeholders, preserve design intent. | Skill | P0–P11 | IN_PROGRESS |
 | REQ-P09 | Enforce architectural isolation: data/logic decoupling, system isolation, encapsulated geometry (per directory_structure). | Skill | P0–P11 | IN_PROGRESS |
-| REQ-P10 | Enforce state-management invariants: single source of truth in StateManager, immutability baseline, no global/leaked state. | Skill | P1 | IN_PROGRESS |
+| REQ-P10 | Enforce state-management invariants: single source of truth in StateManager, immutability baseline, no global/leaked state. | Skill | P1 | VERIFIED |
 
 ---
 
-## Rollup (Session 1 close)
+## Rollup (M0 close — Phase 1 verification, `docs/verification/P1.md`)
 
 | State | Count |
 |-------|------:|
 | NOT_STARTED | 55 |
-| IN_PROGRESS | 12 |
+| IN_PROGRESS | 9 |
 | COMPLETED | 0 |
-| VERIFIED | 0 |
+| VERIFIED | 3 |
 | **Total** | **67** |
 
-No requirement is yet **Completed** or **Verified** — the Session-1 core modules are foundational scaffolding toward REQ-120/121/P08/P09/P10 and are still `IN_PROGRESS` until Phase 1 exits with its verification report. See [IRD.md](IRD.md) for phase gating and [execution_plan.md](execution_plan.md) for the active-phase plan.
+**VERIFIED this milestone:** REQ-P01 (persistent backlog, four-state model — P0-scoped, satisfied), REQ-P05 (persistent Design Memory ledger — P0-scoped, satisfied), REQ-P10 (StateManager single-source-of-truth / immutability / no-global-state — P1-scoped, satisfied; see `docs/verification/P1.md` §4 for the full per-REQ rationale, including why REQ-120/121/160 and the cross-cutting REQ-P02/03/04/06/07/08/09 correctly remain `IN_PROGRESS` rather than being overclaimed). See [IRD.md](IRD.md) for phase gating and [execution_plan.md](execution_plan.md) for the active-phase plan.

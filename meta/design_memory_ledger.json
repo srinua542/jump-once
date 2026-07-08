@@ -80,6 +80,17 @@
       "emotion_targeted": "N/A (correctness guardrail for the deterministic Read->Process->Emit loop).",
       "misconception_created": "A future reader might assume 'commit' only ever means 'a fixed step ran'; it also means 'the clock's banked time was persisted' even when zero steps ran this call.",
       "why_alternatives_rejected": "Giving Engine its own private clock field outside GameState was rejected — it would create a second, un-threaded source of truth for clock state, violating single-source-of-truth and breaking replay (the clock would no longer be part of the (seed, inputs) => state pure function)."
+    },
+    {
+      "id": "dm-0008",
+      "date": "2026-07-08",
+      "status": "ACCEPTED",
+      "title": "At milestone close, a REQ flips to VERIFIED only when its OWN backlog Phase-column scope is fully satisfied by the closing phase(s) — not whenever the phase's older execution-plan checklist said so",
+      "why_it_exists": "execution_plan.md's original P1 checkpoint C1.5 (authored session-1, before IRD.md's cross-cutting note existed) said 'P1 REQs flipped NOT_STARTED/IN_PROGRESS -> VERIFIED' without qualification. Taken literally at M0 close, that would have flipped REQ-120/121 (backlog Phase = P1,P2 — half their scope is still unbuilt) and REQ-P08/P09 (backlog Phase = P0-P11, and IRD.md line 76 names REQ-P01-P10 as cross-cutting every phase) to VERIFIED on unproven/perpetually-open behavior.",
+      "problem_it_solves": "Resolves a genuine conflict between two governance docs (execution_plan.md's simplified checklist vs. requirements_backlog.md's authoritative per-REQ Phase column + IRD.md's cross-cutting note) in favor of the more precise, per-REQ source of truth, so the four-state ledger never becomes fiction. Established the rule for all future milestone closures: read the backlog's own Phase column per REQ; flip to VERIFIED only if the closing phase(s) cover that REQ's ENTIRE Phase-column scope. At M0 this meant only REQ-P01, REQ-P05 (both backlog-scoped to P0 alone) and REQ-P10 (backlog-scoped to P1 alone) verified; REQ-120/121/160 and the seven P0-P11 protocol REQs correctly stayed IN_PROGRESS. Full rationale in docs/verification/P1.md section 4.",
+      "emotion_targeted": "N/A (governance-process guardrail).",
+      "misconception_created": "A future session skimming only execution_plan.md's original (now-annotated) checkpoint line could still assume 'all P1-touched REQs verify at P1 close' — the corrected checkpoint text and this entry both flag that it's per-REQ, not per-phase-list.",
+      "why_alternatives_rejected": "Flipping every P1-touched REQ to VERIFIED per the original checklist was rejected as the anti-pattern the protocol explicitly warns against ('marking VERIFIED on unproven behavior -> the four-state ledger becomes fiction'). Leaving ALL of them IN_PROGRESS (never verifying anything at M0) was also rejected as overly conservative — REQ-P01/P05/P10 are genuinely, fully, single-phase-scoped and provably done; refusing to record that would itself be a form of ledger drift (understating real progress)."
     }
   ],
   "rejected_ideas": [],

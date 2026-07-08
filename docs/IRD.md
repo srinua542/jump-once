@@ -87,7 +87,7 @@ Each phase lists its owned requirements, its **entry gate** (what must be true t
 - **Deliverables:** toolchain + build/test harness; directory structure; `docs/` (backlog, IRD, task_slices, execution_plan); `meta/` (PKG, design_memory_ledger, handoff).
 - **Exit:** all governance docs exist and are internally consistent; PKG parses; `npm test` harness runs; handoff written.
 
-### P1 — Deterministic Core Architecture  *(Session 1 — started)*
+### P1 — Deterministic Core Architecture  *(Session 1 — VERIFIED, M0 closed)*
 - **Owns:** REQ-120, REQ-121, REQ-P08, REQ-P09, REQ-P10.
 - **Entry:** P0 governance exists.
 - **Deliverables:** `Vec2`, `Rng`, `Clock`, `State`, `System`, `StateManager`, `Engine` (Read→Process→Emit loop); unit tests proving determinism, immutability, fixed-step, idempotency; one integration replay test.
@@ -163,9 +163,10 @@ Each milestone triggers a mandatory **Subtractive Removal pass (REQ-022)** and a
 
 ## 5. Current status (Session 1)
 
-- **Active milestone:** M0 — Foundation Locked.
-- **P0:** in progress — governance docs and meta-infrastructure being written this session.
-- **P1:** started — core modules (`Vec2`, `Rng`, `Clock`, `State`, `System`, `StateManager`) landed; `Engine` loop + test suite pending next session.
-- **All later phases:** NOT_STARTED and correctly gated behind M0.
+- **M0 — Foundation Locked: VERIFIED.** See `docs/verification/P1.md`.
+- **P0:** VERIFIED — governance docs + meta-infrastructure exist and are internally consistent (folded into the P1 report since M0 = P0+P1).
+- **P1:** VERIFIED — all six core modules + `Engine` landed; 60/60 tests green (55 unit + 5 integration deterministic-replay); immutability, idempotency, and isolation each proven; Subtractive Removal pass and PRD compliance audit recorded (0 findings, no violations).
+- **Active milestone:** M1 — Simulatable Game (P2, P3) is now open. P2 — Data Models & Level Definition Schema is the active phase; next slice is S2.1.
+- **All later phases (P3–P11):** still NOT_STARTED and correctly gated.
 
 See [task_slices.md](task_slices.md) for the session-sized work units and [execution_plan.md](execution_plan.md) for the detailed plan of the active phases.
