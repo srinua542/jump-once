@@ -1,0 +1,79 @@
+{
+  "schema_version": "1.0",
+  "notes": "Persistent version control for creative + architectural intent (PRD §6 Design Memory, §12 Design Intent Repository). Every accepted or rejected decision is recorded with the five Intent Repository fields. Parse this before proposing new designs to prevent regression and repetition. In Phase 5 this file becomes the store backing the executable GDOS Design Memory; for now it is the authoritative human/agent-readable ledger.",
+  "intent_repository_fields": ["why_it_exists", "problem_it_solves", "emotion_targeted", "misconception_created", "why_alternatives_rejected"],
+  "decisions": [
+    {
+      "id": "dm-0001",
+      "date": "2026-07-08",
+      "status": "ACCEPTED",
+      "title": "TypeScript compiled by tsc, tested with node:test on compiled output",
+      "why_it_exists": "The protocol schema references .ts/.d.ts and demands strict typing and data/logic decoupling; the runtime target is the web.",
+      "problem_it_solves": "Provides strict static typing and a zero-extra-dependency test loop that runs on the available Node 20.10 (which cannot strip TS types natively).",
+      "emotion_targeted": "N/A (engineering-infrastructure decision).",
+      "misconception_created": "None for players; for future sessions, the compiled CommonJS output is a test/runtime detail — the web build (ESM/bundled) is a separate P11 concern.",
+      "why_alternatives_rejected": "tsx/ts-node need installs that the broken private mirror blocked; plain JS forfeits the strict typing the protocol requires; Node native type-strip requires Node 22.6+."
+    },
+    {
+      "id": "dm-0002",
+      "date": "2026-07-08",
+      "status": "ACCEPTED",
+      "title": "Core engine generic over an abstract world type (GameState<TWorld>)",
+      "why_it_exists": "To keep src/core fully decoupled from gameplay systems and content per the directory isolation rules.",
+      "problem_it_solves": "Lets the deterministic loop, clock, and RNG be built and verified in isolation with zero gameplay code present, and lets physics/gameplay plug in later without redesigning core.",
+      "emotion_targeted": "N/A.",
+      "misconception_created": "None.",
+      "why_alternatives_rejected": "A concrete monolithic GameState would couple core to gameplay and force placeholder gameplay stubs now — forbidden by the no-placeholder invariant."
+    },
+    {
+      "id": "dm-0003",
+      "date": "2026-07-08",
+      "status": "ACCEPTED",
+      "title": "Explicitly threaded RNG + Clock state (no hidden globals)",
+      "why_it_exists": "PRD Principle 5 (Surprise Through Context, Never Randomness) and §15 (reproducible agent simulation) require the whole pipeline to be a pure function of its seed and inputs.",
+      "problem_it_solves": "Guarantees bit-identical replay for the validation agents and for level generation, which are deterministic functions of a seed.",
+      "emotion_targeted": "Player trust — no outcome is ever attributable to hidden randomness.",
+      "misconception_created": "None intended.",
+      "why_alternatives_rejected": "Global Math.random / a singleton generator would make replays and generated levels non-reproducible and silently break the trajectory solver."
+    },
+    {
+      "id": "dm-0004",
+      "date": "2026-07-08",
+      "status": "ACCEPTED",
+      "title": "Immutability is the correctness contract; zero-allocation is a deferred hot-path optimization",
+      "why_it_exists": "The PRD requires BOTH an immutability baseline (return modified copies) and a zero-allocation runtime loop (§17); these are in direct tension for a per-frame full-tree copy.",
+      "problem_it_solves": "Resolves the tension by scoping: correctness/determinism via immutability now; zero-allocation applied in P11 to pooled hot entities (particles/projectiles) and hot inner loops, not the top-level snapshot swap.",
+      "emotion_targeted": "N/A (technical guardrail).",
+      "misconception_created": "A future session might read §17 and prematurely mutate the state tree in place — the handoff warns against this.",
+      "why_alternatives_rejected": "Mutating the shared tree now to chase zero-allocation would destroy determinism and the immutability invariant before any gameplay exists to justify the optimization."
+    },
+    {
+      "id": "dm-0005",
+      "date": "2026-07-08",
+      "status": "ACCEPTED",
+      "title": "Split GDOS delivery: governance substrate now (P0), scoring engine later (P5)",
+      "why_it_exists": "PRD §9 wants GDOS early, but §6's quality gates take a level asset as input, which requires the §13 schema and §16 physics to exist first.",
+      "problem_it_solves": "Honors the hard constraint (no content before GDOS/validation/tools) while scheduling the executable gates where their inputs actually exist.",
+      "emotion_targeted": "N/A.",
+      "misconception_created": "None — documented as a merge of interlocking requirements, not a reinterpretation.",
+      "why_alternatives_rejected": "Building scoring gates in P0 with no level to score would be placeholder work; deferring all GDOS would violate the design-memory-from-first-commit requirement."
+    }
+,
+    {
+      "id": "dm-0006",
+      "date": "2026-07-08",
+      "status": "ACCEPTED",
+      "title": "Deterministic SDLC gate (Node + YAML recipe), default enforcement = warn",
+      "why_it_exists": "Soft enforcement (CLAUDE.md, skills, reminders) relies on the model choosing to comply; mid-complex-task under context pressure it drifts (edits src without updating the PKG, marks work done without tests, skips the handoff).",
+      "problem_it_solves": "Adds a hard, model-independent check (tools/sdlc/gate.js driven by tools/sdlc/sdlc.yaml) wired to a Stop hook that surfaces drift at every code turn's end, plus a manual CLI (npm run gate / gate:full).",
+      "emotion_targeted": "N/A (engineering guardrail).",
+      "misconception_created": "None. Note: default is 'warn' (non-blocking) because a Stop hook fires on EVERY turn incl. conversational ones and mid-task question pauses; hard-blocking those would loop and fight the workflow. Flip enforcement: block in sdlc.yaml once the gates are trusted.",
+      "why_alternatives_rejected": "Rust binary rejected for now: robust but not installed and adds a toolchain+build step for I/O-light glue. Pure YAML rejected: declarative only, cannot execute. Node chosen: zero new toolchain, cross-platform, dependency-free so it runs even if the project build is broken."
+    }
+  ],
+  "rejected_ideas": [],
+  "mechanic_lifecycle_registry": {
+    "notes": "Populated from Phase 3 onward. Tracks each mechanic across the 9-stage spectrum (Introduction→Reinforcement→Expansion→Combination→Subversion→Mastery→Dormancy→Reintroduction→Retirement).",
+    "mechanics": []
+  }
+}

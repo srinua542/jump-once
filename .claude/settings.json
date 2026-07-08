@@ -1,0 +1,28 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/session_start.js",
+            "timeout": 15,
+            "statusMessage": "Jump Once: loading reboot lifecycle + handoff"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node tools/sdlc/gate.js --hook stop",
+            "timeout": 20,
+            "statusMessage": "Jump Once: SDLC drift check"
+          }
+        ]
+      }
+    ]
+  }
+}

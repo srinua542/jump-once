@@ -1,0 +1,143 @@
+{
+  "schema_version": "1.0",
+  "generated_by_session": "2026-07-08T-session-1",
+  "pkg_hash": "s1-c3d4e5",
+  "notes": "Machine-readable mirror of the codebase. Read at every session start; update immediately on any structural code change (new module, changed dependency, changed GDOS mapping). See references/pkg_schema.md.",
+  "nodes": [
+    {
+      "node_id": "core/vec2",
+      "type": "SystemNode",
+      "file_path": "src/core/Vec2.ts",
+      "functional_summary": "Immutable 2D vector algebra primitive (encapsulated geometry). Pure math, no system logic. Operations return new records; never mutate operands.",
+      "gdos_alignment": "Section_13_Encapsulated_Geometry",
+      "dependencies": [],
+      "dependents": [],
+      "volatile_state_flags": { "has_side_effects": false, "state_dependencies": [] },
+      "last_verified_commit": "uncommitted-session-1",
+      "backlog_refs": ["REQ-120", "REQ-P09"]
+    },
+    {
+      "node_id": "core/rng",
+      "type": "SystemNode",
+      "file_path": "src/core/Rng.ts",
+      "functional_summary": "Deterministic seedable PRNG (mulberry32). Generator state carried as an explicit value and threaded by callers; no hidden global entropy. Guarantees replayable design tooling and agent simulation.",
+      "gdos_alignment": "Section_15_Reproducible_Agent_Simulation",
+      "dependencies": [],
+      "dependents": [],
+      "volatile_state_flags": { "has_side_effects": false, "state_dependencies": [] },
+      "last_verified_commit": "uncommitted-session-1",
+      "backlog_refs": ["REQ-P08"]
+    },
+    {
+      "node_id": "core/clock",
+      "type": "SystemNode",
+      "file_path": "src/core/Clock.ts",
+      "functional_summary": "Fixed-timestep accumulator. Banks variable real delta and emits a whole number of fixed simulation steps (FIXED_STEP_SECONDS = 1/60). Clamps to MAX_FRAME_SECONDS to prevent spiral-of-death. Pure value state.",
+      "gdos_alignment": "Section_16_Deterministic_Physics_Clock",
+      "dependencies": [],
+      "dependents": ["core/engine"],
+      "volatile_state_flags": { "has_side_effects": false, "state_dependencies": [] },
+      "last_verified_commit": "uncommitted-session-1",
+      "backlog_refs": ["REQ-121", "REQ-160"]
+    },
+    {
+      "node_id": "core/state",
+      "type": "SystemNode",
+      "file_path": "src/core/State.ts",
+      "functional_summary": "Immutable root state tree GameState<TWorld> plus InputFrame. Core owns tick/clock/rng/input; gameplay-specific data lives in the abstract world slot so core is decoupled from systems and content.",
+      "gdos_alignment": "Section_13_Data_Driven_Architecture",
+      "dependencies": ["core/clock", "core/rng"],
+      "dependents": ["systems/system", "core/state_manager", "core/engine"],
+      "volatile_state_flags": { "has_side_effects": false, "state_dependencies": [] },
+      "last_verified_commit": "uncommitted-session-1",
+      "backlog_refs": ["REQ-120", "REQ-P10"]
+    },
+    {
+      "node_id": "systems/system",
+      "type": "SystemNode",
+      "file_path": "src/systems/System.ts",
+      "functional_summary": "The System<TWorld> contract: a pure step(state)=>state function for one fixed step. Systems are stateless between frames and never read another system's internals.",
+      "gdos_alignment": "Section_16_Modular_Decoupled_Components",
+      "dependencies": ["core/state"],
+      "dependents": ["core/engine"],
+      "volatile_state_flags": { "has_side_effects": false, "state_dependencies": [] },
+      "last_verified_commit": "uncommitted-session-1",
+      "backlog_refs": ["REQ-154", "REQ-P09"]
+    },
+    {
+      "node_id": "core/state_manager",
+      "type": "SystemNode",
+      "file_path": "src/core/StateManager.ts",
+      "functional_summary": "Single source of truth. Holds current + previous snapshots and is the only place the current snapshot is swapped (commit). Optional deep-freeze on commit catches accidental mutation in tests. Idempotent commit.",
+      "gdos_alignment": "State_Management_Invariants",
+      "dependencies": ["core/state"],
+      "dependents": ["core/engine"],
+      "volatile_state_flags": { "has_side_effects": true, "state_dependencies": ["current_snapshot", "previous_snapshot"] },
+      "last_verified_commit": "uncommitted-session-1",
+      "backlog_refs": ["REQ-P10"]
+    },
+    {
+      "node_id": "tools/sdlc/gate",
+      "type": "SystemNode",
+      "file_path": "tools/sdlc/gate.js",
+      "functional_summary": "Deterministic SDLC drift gate. Dependency-free Node runner that checks pkg-covers-src, pkg-not-stale, no-placeholders, handoff-fresh, backlog-integrity, stage-consistency (vs meta/active_task.json), and (manual) tests-green against live repo state. CLI + Stop-hook modes; fails open on internal error, loud on findings. Reads policy from tools/sdlc/sdlc.yaml.",
+      "gdos_alignment": "Protocol_Enforcement_REQ_P02_P03_P08",
+      "dependencies": ["tools/sdlc/recipe"],
+      "dependents": [],
+      "volatile_state_flags": { "has_side_effects": true, "state_dependencies": ["git_working_tree", "meta_files", "backlog"] },
+      "last_verified_commit": "uncommitted-session-1",
+      "backlog_refs": ["REQ-P02", "REQ-P03", "REQ-P08"]
+    },
+    {
+      "node_id": "tools/sdlc/stage",
+      "type": "SystemNode",
+      "file_path": "tools/sdlc/stage.js",
+      "functional_summary": "SDLC Stage Manager. Tracks the active task slice through the nine-stage loop and persists it to meta/active_task.json (live) + meta/runs/ (archive) for mid-slice resumability. Enforces stage order; records acceptance-criteria state. CLI: start/advance/criterion/status/done/abort.",
+      "gdos_alignment": "Protocol_Enforcement_REQ_P02_P04",
+      "dependencies": [],
+      "dependents": [],
+      "volatile_state_flags": { "has_side_effects": true, "state_dependencies": ["meta/active_task.json", "meta/runs"] },
+      "last_verified_commit": "uncommitted-session-1",
+      "backlog_refs": ["REQ-P02", "REQ-P04"]
+    },
+    {
+      "node_id": "tools/sdlc/recipe",
+      "type": "SystemNode",
+      "file_path": "tools/sdlc/sdlc.yaml",
+      "functional_summary": "Declarative SDLC gate policy: enforcement level (warn|block) and per-gate severity/enabled/when overrides. Override-only over gate.js built-in defaults, so a malformed line degrades safely toward enforcement.",
+      "gdos_alignment": "Protocol_Enforcement_REQ_P02",
+      "dependencies": [],
+      "dependents": ["tools/sdlc/gate"],
+      "volatile_state_flags": { "has_side_effects": false, "state_dependencies": [] },
+      "last_verified_commit": "uncommitted-session-1",
+      "backlog_refs": ["REQ-P02"]
+    },
+    {
+      "node_id": "hooks/session_start",
+      "type": "SystemNode",
+      "file_path": ".claude/hooks/session_start.js",
+      "functional_summary": "SessionStart hook. Deterministically injects the Reboot-Lifecycle reminder plus a live summary of meta/handoff_latest.json into context at every session start. Fails soft if the handoff is missing.",
+      "gdos_alignment": "Protocol_Enforcement_REQ_P04_P06",
+      "dependencies": [],
+      "dependents": [],
+      "volatile_state_flags": { "has_side_effects": true, "state_dependencies": ["handoff_file"] },
+      "last_verified_commit": "uncommitted-session-1",
+      "backlog_refs": ["REQ-P04", "REQ-P06"]
+    }
+  ],
+  "edges": [
+    { "type": "DependencyEdge", "from": "core/state", "to": "core/clock", "kind": "type_import" },
+    { "type": "DependencyEdge", "from": "core/state", "to": "core/rng", "kind": "type_import" },
+    { "type": "DependencyEdge", "from": "systems/system", "to": "core/state", "kind": "type_import" },
+    { "type": "DependencyEdge", "from": "core/state_manager", "to": "core/state", "kind": "type_import" }
+  ],
+  "gdos_anchors": [
+    { "type": "GDOSAnchor", "section": "Section_13_Data_Driven_Architecture", "implemented_by": ["core/state", "core/vec2"] },
+    { "type": "GDOSAnchor", "section": "Section_16_Deterministic_Physics_Clock", "implemented_by": ["core/clock"] },
+    { "type": "GDOSAnchor", "section": "State_Management_Invariants", "implemented_by": ["core/state_manager"] },
+    { "type": "GDOSAnchor", "section": "Section_15_Reproducible_Agent_Simulation", "implemented_by": ["core/rng"] }
+  ],
+  "pending_nodes": [
+    { "node_id": "core/engine", "planned_slice": "S1.7", "reason": "Read-Process-Emit loop not yet written." }
+  ]
+}

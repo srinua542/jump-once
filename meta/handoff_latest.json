@@ -1,0 +1,34 @@
+{
+  "session_end_timestamp": "2026-07-08T00:00:00Z",
+  "current_milestone": "M0_Foundation_Locked",
+  "active_working_branch": "main",
+  "completed_since_last_snapshot": [
+    "P0 governance infrastructure authored: docs/requirements_backlog.md (67 REQs, four-state), docs/IRD.md (12-phase roadmap + DAG + milestones), docs/task_slices.md (session-sized units), docs/execution_plan.md (P0+P1), docs/session_protocol.md",
+    "Meta layer seeded: meta/project_knowledge_graph.json (6 nodes), meta/design_memory_ledger.json (5 accepted decisions dm-0001..dm-0005)",
+    "Toolchain: package.json, tsconfig.json (strict), .npmrc pinned to public registry, .gitignore; TypeScript 5.9.3 installed; git initialised on main",
+    "Directory skeleton created per references/directory_structure.md",
+    "P1 core modules landed (NOT yet compiled/tested): src/core/Vec2.ts, src/core/Rng.ts, src/core/Clock.ts, src/core/State.ts, src/systems/System.ts, src/core/StateManager.ts",
+    "Protocol enforcement layer added: CLAUDE.md (auto-loaded), .claude/settings.json SessionStart hook running .claude/hooks/session_start.js (injects reboot reminder + this handoff every session), plus the new .claude/skills/jump-once-task SDLC skill for driving one slice end-to-end",
+    "Deterministic SDLC gate added: tools/sdlc/gate.js + tools/sdlc/sdlc.yaml (recipe), wired to a Stop hook (warn mode) and `npm run gate` / `npm run gate:full`. Catches drift: src changed w/o PKG, placeholders, stale handoff, backlog VERIFIED without report, red tests. Design in dm-0006. Gate currently GREEN (fast gates); tests-green fails as expected until P1 tests exist.",
+    "Stage-management system added: tools/sdlc/stage.js tracks the active slice through the 9 stages, persisting meta/active_task.json (live) + meta/runs/ (archive) for mid-slice resumability. New gate `stage-consistency` cross-checks stage claims vs reality. session_start hook now surfaces any mid-flight slice + its current stage. Use: `node tools/sdlc/stage.js start|advance|criterion|status|done|abort`, `npm run stage`."
+  ],
+  "exact_execution_focus": {
+    "file_path": "src/core/Engine.ts",
+    "target_line_range": "new-file",
+    "pending_logical_transformation": "Implement slice S1.7: the Read->Process->Emit loop. It must (1) call Clock.advance(realDelta) to get a whole step count, (2) for each step, run the registered System pipeline as pure state->state transforms, incrementing tick by exactly 1 per step, (3) commit each new snapshot through StateManager, (4) expose interpolationAlpha for the renderer. Keep it allocation-aware; no gameplay assumptions (stays generic over TWorld)."
+  },
+  "blocked_by": {
+    "dependency_node": "none",
+    "reason": "No blockers. Engine (S1.7) depends only on already-written Clock, System, StateManager."
+  },
+  "critical_warnings_for_next_session": [
+    "RUN THE REBOOT LIFECYCLE FIRST: the P1 core modules have NOT yet been compiled or tested. Before writing Engine.ts, run `npm run typecheck` to confirm the six landed modules build under strict mode; tsconfig has noUnusedLocals/noUnusedParameters ON, so unused symbols will error.",
+    "Do NOT change FIXED_STEP_SECONDS in Clock.ts or introduce delta-time scaling to smooth motion — it reintroduces hardware dependence and breaks deterministic replay + the future trajectory solver (design memory dm-0003).",
+    "Do NOT mutate the GameState tree in place to chase §17 zero-allocation. Immutability is the current correctness contract; zero-allocation is deferred to P11 and scoped to pooled entities only (design memory dm-0004).",
+    "The private npm mirror npm.shootsta.com is broken; .npmrc pins registry.npmjs.org. Do not remove it or installs will fail.",
+    "Content generation (P10) is HARD-GATED behind milestone M2 (GDOS + validation + tools verified). Do not generate any level/chapter content before then, per the Directive and PRD §9.",
+    "The SessionStart hook was created mid-session; Claude Code's settings watcher may not register it until the user opens /hooks once or restarts. If this reminder text is visible to you, the hook IS firing."
+  ],
+  "pkg_hash_at_handoff": "s1-c3d4e5",
+  "next_session_pick_list": ["S1.7 Engine loop", "S1.8 core unit tests", "S1.9 replay integration test", "S1.10 P1 verification report -> close M0"]
+}

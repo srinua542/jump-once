@@ -1,0 +1,21 @@
+{
+  "name": "jump-once",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A 2D one-jump puzzle-platformer engineered for premium web portals. Built on a deterministic, data-driven engine governed by the Game Design Operating System (GDOS).",
+  "license": "UNLICENSED",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "npm run build && node --test dist/test/",
+    "test:unit": "npm run build && node --test dist/test/unit/",
+    "test:integration": "npm run build && node --test dist/test/integration/",
+    "gate": "node tools/sdlc/gate.js",
+    "gate:full": "node tools/sdlc/gate.js --with-tests",
+    "stage": "node tools/sdlc/stage.js status",
+    "clean": "node -e \"require('fs').rmSync('dist',{recursive:true,force:true})\""
+  },
+  "devDependencies": {
+    "typescript": "^5.4.0"
+  }
+}

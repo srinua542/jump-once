@@ -1,0 +1,78 @@
+# Jump Once — SDLC Gate Recipe
+#
+# Declarative policy for the deterministic SDLC gate. It is EXECUTED by
+# tools/sdlc/gate.js (YAML cannot enforce on its own — this file only declares
+# what to check; the runner does the checking). The runner keeps built-in
+# defaults for every gate, so this file is override-only: even if a line here is
+# malformed, the gate still runs at safe defaults (fail-safe toward enforcement).
+#
+# enforcement:
+#   warn  = report drift as a non-blocking systemMessage (default; safe).
+#   block = the Stop hook returns decision:"block" and forces the model to fix
+#           drift before the turn can end. Powerful, but can loop if a gate is
+#           unsatisfiable — only switch to block once you trust the gates.
+#
+# gate fields:
+#   id        - matches a check implemented in gate.js
+#   severity  - block | warn  (block counts toward turn-blocking in block mode)
+#   enabled   - true | false
+#   when      - always | src-dirty | manual
+#               src-dirty: only runs when src/ has uncommitted changes
+#               manual:    only runs via the CLI with --with-tests (never on turn end)
+
+version: 1
+enforcement: warn
+
+stages:
+  - reboot
+  - select
+  - plan
+  - anchor
+  - implement
+  - verify
+  - integrate
+  - report
+  - handoff
+
+gates:
+  - id: pkg-covers-src
+    severity: block
+    enabled: true
+    when: src-dirty
+    description: Every src/**/*.ts file maps to a PKG node, and no PKG node points at a deleted file.
+
+  - id: pkg-not-stale
+    severity: block
+    enabled: true
+    when: src-dirty
+    description: If src/ has uncommitted changes, the Project Knowledge Graph must also have changed.
+
+  - id: no-placeholders
+    severity: block
+    enabled: true
+    when: always
+    description: No TODO / FIXME / XXX / "not implemented" markers in tracked src files.
+
+  - id: handoff-fresh
+    severity: warn
+    enabled: true
+    when: always
+    description: handoff_latest.json pkg_hash_at_handoff matches the PKG pkg_hash.
+
+  - id: backlog-integrity
+    severity: warn
+    enabled: true
+    when: always
+    description: No REQ marked VERIFIED in the backlog without a docs/verification report referencing it.
+
+  - id: stage-consistency
+    severity: warn
+    enabled: true
+    when: always
+    description: The active task's stages advance in order (no skips) and a completed "verify" stage has real test files behind it.
+
+  - id: tests-green
+    severity: block
+    enabled: true
+    when: manual
+    description: npm test exits 0. Run in the VERIFY stage via `npm run gate:full`; too heavy for every turn end.
