@@ -14,6 +14,7 @@ project_root/
 │   ├── core/                       # Core engine loop and boot state
 │   ├── systems/                    # Game loops (Physics, Input, Render)
 │   ├── components/                 # Pure data structures
+│   ├── schema/                     # Definition-time schema I/O (serialize/parse/validate)
 │   └── entities/                   # Game world entity initializers
 ├── test/                           # Automated verification engine
 │   ├── unit/                       # Component-level isolated tests
@@ -25,7 +26,8 @@ project_root/
 
 ## Architectural separation invariants
 
-- **Data/logic decoupling.** Everything under `src/components/` is strictly a plain data structure. It must never execute logic, loops, calculations, or system queries. If you find yourself writing a function body inside a component, it belongs in `src/systems/` instead.
+- **Data/logic decoupling.** Everything under `src/components/` is strictly a plain data structure. It must never execute logic, loops, calculations, or system queries. If you find yourself writing a function body inside a component, it belongs in `src/systems/` (per-frame behavior) or `src/schema/` (definition-time I/O) instead.
+- **Schema I/O isolation.** `src/schema/` holds definition-time logic only — serialization, parsing, structural validation of data payloads (added at P2 start, dm-0013). It is not a per-frame system (never called from the engine loop) and never imports from `src/systems/`. The types it validates live in `src/components/`; world construction from validated definitions lives in `src/entities/`.
 - **System isolation.** Everything under `src/systems/` must operate completely independently of every other system. A physics system must never read input state directly — it parses decoupled data interfaces managed by the core engine loop, not another system's internals.
 - **Encapsulated geometry.** Tilemaps, hazard coordinate spaces, and visual parameters are raw data injections, not hardcoded values. Hardcoding spatial layout dimensions into functional code is a critical architectural violation — it silently couples level design to code and breaks the level editor's ability to iterate independently.
 

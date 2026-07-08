@@ -135,6 +135,28 @@
       "emotion_targeted": "N/A (governance/scoping decision).",
       "misconception_created": "A future P5 session might assume the GDOS block's shapes are semantically final — they are structurally stable but semantically provisional until P5 confirms them; open questions are logged in the P2 execution plan.",
       "why_alternatives_rejected": "Fully specifying GDOS semantics now was rejected as invention beyond the PRD text. Omitting the block until P5 was rejected: REQ-122 explicitly requires it in the schema. Leaving P2 without an instantiation slice was rejected because P2 'completes REQ-120/121' (IRD) and would otherwise close on evidence that never runs the engine."
+    },
+    {
+      "id": "dm-0013",
+      "date": "2026-07-09",
+      "status": "ACCEPTED",
+      "title": "New src/schema/ directory for definition-time schema I/O; serializer/validator can never live in src/components/",
+      "why_it_exists": "The first draft of the P2 plan placed serializeLevel() in src/components/LevelDefinition.ts — a function body in the logic-free directory, which S2.1's own scan test would fail. No existing directory fits schema I/O: src/components/ is logic-free data, src/systems/ is per-frame step functions (a loader is never called from the engine loop), src/core/ must stay gameplay-agnostic and generic over TWorld, and src/entities/'s charter is world construction, not payload I/O.",
+      "problem_it_solves": "Gives serialize/parse/validate a sanctioned, isolated home: src/schema/ holds definition-time logic only, never imports from src/systems/, and is never called per-frame. The split is now unambiguous — schema TYPES in src/components/, schema I/O FUNCTIONS in src/schema/, world construction (instantiateWorld) in src/entities/. directory_structure.md's tree and invariants were updated in the same change.",
+      "emotion_targeted": "N/A (architectural placement decision).",
+      "misconception_created": "A future session might place P8 editor export or P4 replay-tape I/O in src/schema/ by analogy — plausible and probably correct for payload formats, but each addition must be ledgered and PKG-noded like any structural change.",
+      "why_alternatives_rejected": "Stretching src/entities/'s charter to 'data initialization incl. I/O' was rejected — charter creep in directory contracts is exactly the drift the protocol warns about. Putting the loader in src/core/ was rejected: core is generic over TWorld and must not know Jump-Once-specific payload shapes. Leaving the contradiction unresolved until S2.2 was rejected: it would be discovered mid-implementation and resolved under pressure."
+    },
+    {
+      "id": "dm-0014",
+      "date": "2026-07-09",
+      "status": "ACCEPTED",
+      "title": "Round-trip hardening addenda to dm-0010: strict unknown-key rejection, committed golden hash of canonical form, seeded fuzz test",
+      "why_it_exists": "dm-0010 left three holes. (1) Unknown-key policy was unspecified: a lenient parser re-serializing a future-version file would silently drop its unknown fields — a 'lossless' round-trip that loses data. (2) 'Byte-identical across repeated calls' is trivially true for a pure function and does not catch someone CHANGING the canonical form (key reorder), which would invalidate every stored level hash downstream. (3) Enumerated rejection fixtures only cover shapes someone thought of.",
+      "problem_it_solves": "(1) parseLevel strictly rejects unknown/extra keys at every path with a path-qualified error, so version drift fails loudly at parse time instead of corrupting data at re-serialize time. (2) A golden hash of the serialized sample fixture is committed; any change to the canonical form (key order, number formatting) fails a test and forces a deliberate, ledgered decision. (3) A deterministic fuzz test drives seeded mutations of the valid fixture (wrong types, nulls, truncations, injected keys) through parseLevel using src/core/Rng — every outcome must be a Result error or a valid value, never a throw, never a false accept.",
+      "emotion_targeted": "N/A (determinism/robustness guardrail).",
+      "misconception_created": "Strict rejection means v1 loaders refuse v1.x-authored files even when the additions look harmless — that is the intended behavior, not a bug; the escape path is a schemaVersion bump per dm-0010.",
+      "why_alternatives_rejected": "Lenient ignore-unknown-keys parsing (the common JSON default) was rejected for the silent-data-loss failure mode above. Preserving unknown keys opaquely through round-trip was rejected: it smuggles unvalidated data past the parse-don't-validate boundary and makes the canonical form input-dependent. Property-based testing libraries were rejected (dependency-free discipline); the seeded in-house fuzz over src/core/Rng is sufficient and replayable by seed."
     }
   ],
   "rejected_ideas": [],
