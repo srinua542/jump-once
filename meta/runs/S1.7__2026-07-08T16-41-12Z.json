@@ -1,0 +1,74 @@
+{
+  "slice": "S1.7",
+  "title": "Engine Read-Process-Emit loop",
+  "reqs": [
+    "REQ-121",
+    "REQ-160"
+  ],
+  "started_at": "2026-07-08T16:36:14.367Z",
+  "updated_at": "2026-07-08T16:41:11.759Z",
+  "current_stage": "handoff",
+  "stages": {
+    "reboot": {
+      "status": "done",
+      "at": "2026-07-08T16:36:14.368Z",
+      "note": "Reboot complete: typecheck clean, no test regressions (test dirs empty, expected pre-S1.8)."
+    },
+    "select": {
+      "status": "done",
+      "at": "2026-07-08T16:36:19.533Z",
+      "note": "Plan: new file src/core/Engine.ts, generic Engine<TWorld> class wrapping StateManager+System[]+Clock. tick(realDelta) reads state, calls Clock.advance once, loops steps commiting each new snapshot (tick+1, systems pipeline), persists clock even at 0 steps to avoid losing banked accumulator. Exposes interpolationAlpha getter. Test: test/unit/Engine.test.ts covering step counting, tick increment, system pipeline order, commit continuity, interpolationAlpha, accumulator persistence across zero-step calls."
+    },
+    "plan": {
+      "status": "done",
+      "at": "2026-07-08T16:37:36.797Z",
+      "note": "Anchor: new module, no existing dependents to preserve. Type boundary: Engine<TWorld>{ constructor({systems, stateManager}); tick(realDeltaSeconds:number): GameState<TWorld>; get interpolationAlpha(): number }. Depends only on already-typechecked Clock/State/System/StateManager (read-only imports)."
+    },
+    "anchor": {
+      "status": "done",
+      "at": "2026-07-08T16:37:45.388Z",
+      "note": "Implement: src/core/Engine.ts written — generic Engine<TWorld> class, tick() Read->Process->Emit loop, interpolationAlpha getter."
+    },
+    "implement": {
+      "status": "done",
+      "at": "2026-07-08T16:38:03.754Z",
+      "note": "Verify: npm test green (9/9 Engine tests pass: step counting, tick+1 per step, accumulator persistence across zero-step ticks, system pipeline order, StateManager commit continuity/prev-current, no in-place mutation, interpolationAlpha, generic empty-pipeline). Also added @types/node devDependency (required for node:test/node:assert typings under noImplicitAny/strict)."
+    },
+    "verify": {
+      "status": "done",
+      "at": "2026-07-08T16:39:09.153Z",
+      "note": "Integrate: PKG updated — core/engine node added, dependency+dependent edges wired (clock, state, state_manager, system), pending_nodes cleared, gdos_anchors Section_16 extended, pkg_hash bumped s1-c3d4e5 -> s1-e6f7a8. dm-0007 recorded (zero-step commit persists clock accumulator)."
+    },
+    "integrate": {
+      "status": "done",
+      "at": "2026-07-08T16:40:01.553Z",
+      "note": "Report: S1.7 flipped IN_PROGRESS->COMPLETED in docs/task_slices.md (not VERIFIED — phase-1 verification report/backlog REQ flips deferred to S1.10 per protocol). REQ-121/REQ-160 backlog rows left as-is (multi-phase REQs, not fully satisfied by this slice alone)."
+    },
+    "report": {
+      "status": "done",
+      "at": "2026-07-08T16:40:34.051Z",
+      "note": "Handoff written: meta/handoff_latest.json updated with S1.7 completion, pkg_hash s1-e6f7a8, next focus S1.8."
+    },
+    "handoff": {
+      "status": "done",
+      "at": "2026-07-08T16:41:08.819Z",
+      "note": "handoff complete"
+    }
+  },
+  "acceptance": [
+    {
+      "req": "REQ-121",
+      "criterion": "Engine.tick() is a deterministic state processor: pure fixed-step loop over Clock/System/StateManager, no gameplay assumptions, covered by 9 passing unit tests.",
+      "met": true,
+      "note": null
+    },
+    {
+      "req": "REQ-160",
+      "criterion": "Zero-alloc-AWARE per S1.7 scope (no gratuitous per-frame allocation beyond the immutability contract's required snapshot copies; no closures/arrays allocated in hot loop). Full zero-allocation pooling is out of scope here, deferred to P3/P11 per dm-0004; REQ-160's P3/P11 backlog scope remains NOT_STARTED.",
+      "met": true,
+      "note": null
+    }
+  ],
+  "outcome": "completed",
+  "closed_at": "2026-07-08T16:41:12.012Z"
+}

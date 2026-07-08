@@ -69,6 +69,17 @@
       "emotion_targeted": "N/A (engineering guardrail).",
       "misconception_created": "None. Note: default is 'warn' (non-blocking) because a Stop hook fires on EVERY turn incl. conversational ones and mid-task question pauses; hard-blocking those would loop and fight the workflow. Flip enforcement: block in sdlc.yaml once the gates are trusted.",
       "why_alternatives_rejected": "Rust binary rejected for now: robust but not installed and adds a toolchain+build step for I/O-light glue. Pure YAML rejected: declarative only, cannot execute. Node chosen: zero new toolchain, cross-platform, dependency-free so it runs even if the project build is broken."
+    },
+    {
+      "id": "dm-0007",
+      "date": "2026-07-08",
+      "status": "ACCEPTED",
+      "title": "Engine commits a snapshot even on a zero-step tick, to persist the banked clock accumulator",
+      "why_it_exists": "Clock.advance()'s accumulator is threaded through GameState.clock like tick/rng/input (see State.ts), and Engine only ever reads state via StateManager.getState() at the start of tick(). If a frame's real delta banks less than one fixed step, that leftover time must still reach the next tick() call.",
+      "problem_it_solves": "Without committing on a 0-step tick, the advanced ClockState (with the updated accumulator) is computed but discarded, and the next tick() call reads the STALE pre-advance clock from StateManager — banked time is silently lost every zero-step frame and, at low frame rates, the simulation can stall permanently at effectively zero steps.",
+      "emotion_targeted": "N/A (correctness guardrail for the deterministic Read->Process->Emit loop).",
+      "misconception_created": "A future reader might assume 'commit' only ever means 'a fixed step ran'; it also means 'the clock's banked time was persisted' even when zero steps ran this call.",
+      "why_alternatives_rejected": "Giving Engine its own private clock field outside GameState was rejected — it would create a second, un-threaded source of truth for clock state, violating single-source-of-truth and breaking replay (the clock would no longer be part of the (seed, inputs) => state pure function)."
     }
   ],
   "rejected_ideas": [],

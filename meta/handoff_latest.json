@@ -3,32 +3,32 @@
   "current_milestone": "M0_Foundation_Locked",
   "active_working_branch": "main",
   "completed_since_last_snapshot": [
-    "P0 governance infrastructure authored: docs/requirements_backlog.md (67 REQs, four-state), docs/IRD.md (12-phase roadmap + DAG + milestones), docs/task_slices.md (session-sized units), docs/execution_plan.md (P0+P1), docs/session_protocol.md",
-    "Meta layer seeded: meta/project_knowledge_graph.json (6 nodes), meta/design_memory_ledger.json (5 accepted decisions dm-0001..dm-0005)",
-    "Toolchain: package.json, tsconfig.json (strict), .npmrc pinned to public registry, .gitignore; TypeScript 5.9.3 installed; git initialised on main",
-    "Directory skeleton created per references/directory_structure.md",
-    "P1 core modules landed (NOT yet compiled/tested): src/core/Vec2.ts, src/core/Rng.ts, src/core/Clock.ts, src/core/State.ts, src/systems/System.ts, src/core/StateManager.ts",
-    "Protocol enforcement layer added: CLAUDE.md (auto-loaded), .claude/settings.json SessionStart hook running .claude/hooks/session_start.js (injects reboot reminder + this handoff every session), plus the new .claude/skills/jump-once-task SDLC skill for driving one slice end-to-end",
-    "Deterministic SDLC gate added: tools/sdlc/gate.js + tools/sdlc/sdlc.yaml (recipe), wired to a Stop hook (warn mode) and `npm run gate` / `npm run gate:full`. Catches drift: src changed w/o PKG, placeholders, stale handoff, backlog VERIFIED without report, red tests. Design in dm-0006. Gate currently GREEN (fast gates); tests-green fails as expected until P1 tests exist.",
-    "Stage-management system added: tools/sdlc/stage.js tracks the active slice through the 9 stages, persisting meta/active_task.json (live) + meta/runs/ (archive) for mid-slice resumability. New gate `stage-consistency` cross-checks stage claims vs reality. session_start hook now surfaces any mid-flight slice + its current stage. Use: `node tools/sdlc/stage.js start|advance|criterion|status|done|abort`, `npm run stage`."
+    "S1.7 Engine loop implemented: src/core/Engine.ts — generic Engine<TWorld> class. tick(realDeltaSeconds) reads current state from StateManager, calls Clock.advance() once, runs the ordered System pipeline once per whole fixed step (tick incremented by exactly 1 per step), commits every resulting snapshot through StateManager, and exposes an interpolationAlpha getter for the renderer. Also commits on a zero-step tick to persist the Clock's banked accumulator (see dm-0007) so leftover real time is never silently lost across calls.",
+    "test/unit/Engine.test.ts added: 9 passing tests covering step counting, zero-step accumulator persistence across calls, tick+1-per-step semantics (never skipped/double-counted), system pipeline ordering, StateManager commit continuity (previous/current shift correctly), no in-place mutation of prior snapshots, interpolationAlpha correctness, and the generic/no-gameplay-assumptions contract (works with an empty system list).",
+    "Added @types/node as a devDependency (was missing; required for node:test / node:assert/strict typings to compile under strict + noImplicitAny). package.json and package-lock.json updated.",
+    "meta/project_knowledge_graph.json updated: new node core/engine (deps: core/clock, core/state, core/state_manager, systems/system; no dependents yet), 4 new DependencyEdges, pending_nodes cleared, Section_16 gdos_anchor extended, pkg_hash bumped s1-c3d4e5 -> s1-e6f7a8.",
+    "meta/design_memory_ledger.json: added dm-0007 (why Engine commits even on a zero-step tick — persisting the Clock accumulator through the single-source-of-truth GameState tree rather than a private un-threaded Engine field).",
+    "docs/task_slices.md: S1.7 flipped NOT_STARTED -> COMPLETED (not VERIFIED — phase closure is S1.10's job). REQ-121/REQ-160 backlog rows intentionally left as-is: both are multi-phase REQs (REQ-121 spans P1+P2, REQ-160 spans P3+P11) not fully satisfied by this single slice.",
+    "meta/active_task.json / meta/runs/: S1.7 tracked through stage manager (reboot->select->plan->anchor->implement->verify->integrate->report all recorded with notes); both acceptance criteria (REQ-121, REQ-160-scoped-to-S1.7) marked met."
   ],
   "exact_execution_focus": {
-    "file_path": "src/core/Engine.ts",
-    "target_line_range": "new-file",
-    "pending_logical_transformation": "Implement slice S1.7: the Read->Process->Emit loop. It must (1) call Clock.advance(realDelta) to get a whole step count, (2) for each step, run the registered System pipeline as pure state->state transforms, incrementing tick by exactly 1 per step, (3) commit each new snapshot through StateManager, (4) expose interpolationAlpha for the renderer. Keep it allocation-aware; no gameplay assumptions (stays generic over TWorld)."
+    "file_path": "test/unit/",
+    "target_line_range": "new-files",
+    "pending_logical_transformation": "Run S1.8: write test/unit/Vec2.test.ts, Rng.test.ts, Clock.test.ts, State.test.ts, StateManager.test.ts, System.test.ts (Engine.test.ts already exists from S1.7). Each must prove its module's documented contract — Vec2: immutable algebra + no-mutation; Rng: same-seed->same-sequence, no globals; Clock: fixed-step banking correctness + MAX_FRAME_SECONDS spiral-of-death clamp; State: NEUTRAL_INPUT shape + generic-over-world compiles; StateManager: only-mutation-point semantics, prev/current shift, deep-freeze option throws on mutation attempt when enabled, idempotent commit (committing the same object twice is a no-op beyond shifting previous). Then flip S1.1-S1.6 and S1.8 to COMPLETED in docs/task_slices.md once `npm test` is green with full coverage across src/core and src/systems."
   },
   "blocked_by": {
     "dependency_node": "none",
-    "reason": "No blockers. Engine (S1.7) depends only on already-written Clock, System, StateManager."
+    "reason": "No blockers. S1.8 depends only on already-implemented S1.1-S1.7, all of which now typecheck and (for Engine) have passing tests."
   },
   "critical_warnings_for_next_session": [
-    "RUN THE REBOOT LIFECYCLE FIRST: the P1 core modules have NOT yet been compiled or tested. Before writing Engine.ts, run `npm run typecheck` to confirm the six landed modules build under strict mode; tsconfig has noUnusedLocals/noUnusedParameters ON, so unused symbols will error.",
-    "Do NOT change FIXED_STEP_SECONDS in Clock.ts or introduce delta-time scaling to smooth motion — it reintroduces hardware dependence and breaks deterministic replay + the future trajectory solver (design memory dm-0003).",
-    "Do NOT mutate the GameState tree in place to chase §17 zero-allocation. Immutability is the current correctness contract; zero-allocation is deferred to P11 and scoped to pooled entities only (design memory dm-0004).",
-    "The private npm mirror npm.shootsta.com is broken; .npmrc pins registry.npmjs.org. Do not remove it or installs will fail.",
-    "Content generation (P10) is HARD-GATED behind milestone M2 (GDOS + validation + tools verified). Do not generate any level/chapter content before then, per the Directive and PRD §9.",
-    "The SessionStart hook was created mid-session; Claude Code's settings watcher may not register it until the user opens /hooks once or restarts. If this reminder text is visible to you, the hook IS firing."
+    "RUN THE REBOOT LIFECYCLE FIRST, as always: read this handoff, confirm pkg_hash s1-e6f7a8 matches meta/project_knowledge_graph.json, then `npm test` (should show 9 passing Engine tests; if red, fix before writing S1.8).",
+    "Do NOT change FIXED_STEP_SECONDS in Clock.ts or introduce delta-time scaling — breaks deterministic replay + the future trajectory solver (dm-0003). Engine.ts now depends on this constant being load-bearing; a spiral-of-death/accumulator test in S1.8 must exercise MAX_FRAME_SECONDS clamping without touching this constant.",
+    "Do NOT mutate the GameState tree in place. Engine.ts already respects this (every step is a fresh shallow-spread object); S1.8's StateManager tests should include a case with freezeOnCommit:true asserting that attempting in-place mutation of a committed snapshot throws.",
+    "Engine commits a snapshot even when Clock.advance() yields 0 steps (dm-0007) — this is intentional and required for accumulator continuity, not a bug. Don't 'simplify' it away in a later refactor without re-reading dm-0007.",
+    "REQ-121 and REQ-160 remain NOT fully VERIFIED in docs/requirements_backlog.md — they're multi-phase requirements; only flip them once their full phase scope (REQ-121: P1+P2; REQ-160: P3+P11) is actually done. Don't let S1.7's completion cause a premature backlog flip.",
+    "The private npm mirror npm.shootsta.com is broken; .npmrc pins registry.npmjs.org. @types/node was installed successfully via the public registry this session — don't remove the .npmrc override.",
+    "Content generation (P10) remains HARD-GATED behind milestone M2. Do not generate any level/chapter content before then."
   ],
-  "pkg_hash_at_handoff": "s1-c3d4e5",
-  "next_session_pick_list": ["S1.7 Engine loop", "S1.8 core unit tests", "S1.9 replay integration test", "S1.10 P1 verification report -> close M0"]
+  "pkg_hash_at_handoff": "s1-e6f7a8",
+  "next_session_pick_list": ["S1.8 core unit tests (Vec2, Rng, Clock, State, StateManager, System)", "S1.9 replay integration test", "S1.10 P1 verification report -> close M0"]
 }

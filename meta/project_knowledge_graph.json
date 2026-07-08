@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
   "generated_by_session": "2026-07-08T-session-1",
-  "pkg_hash": "s1-c3d4e5",
+  "pkg_hash": "s1-e6f7a8",
   "notes": "Machine-readable mirror of the codebase. Read at every session start; update immediately on any structural code change (new module, changed dependency, changed GDOS mapping). See references/pkg_schema.md.",
   "nodes": [
     {
@@ -77,6 +77,18 @@
       "backlog_refs": ["REQ-P10"]
     },
     {
+      "node_id": "core/engine",
+      "type": "SystemNode",
+      "file_path": "src/core/Engine.ts",
+      "functional_summary": "Deterministic Read->Process->Emit runtime loop. tick(realDeltaSeconds) reads the current snapshot from StateManager, calls Clock.advance() once to get a whole fixed-step count, runs the ordered System pipeline once per step (tick incremented by exactly 1 per step), and commits every resulting snapshot through StateManager. Commits even on a zero-step tick to persist the banked clock accumulator (dm-0007). Exposes interpolationAlpha for the renderer. Generic over TWorld; no gameplay assumptions.",
+      "gdos_alignment": "Section_16_Deterministic_Physics_Clock",
+      "dependencies": ["core/clock", "core/state", "core/state_manager", "systems/system"],
+      "dependents": [],
+      "volatile_state_flags": { "has_side_effects": true, "state_dependencies": ["core/state_manager"] },
+      "last_verified_commit": "uncommitted-session-1",
+      "backlog_refs": ["REQ-121", "REQ-160"]
+    },
+    {
       "node_id": "tools/sdlc/gate",
       "type": "SystemNode",
       "file_path": "tools/sdlc/gate.js",
@@ -129,15 +141,17 @@
     { "type": "DependencyEdge", "from": "core/state", "to": "core/clock", "kind": "type_import" },
     { "type": "DependencyEdge", "from": "core/state", "to": "core/rng", "kind": "type_import" },
     { "type": "DependencyEdge", "from": "systems/system", "to": "core/state", "kind": "type_import" },
-    { "type": "DependencyEdge", "from": "core/state_manager", "to": "core/state", "kind": "type_import" }
+    { "type": "DependencyEdge", "from": "core/state_manager", "to": "core/state", "kind": "type_import" },
+    { "type": "DependencyEdge", "from": "core/engine", "to": "core/clock", "kind": "value_import" },
+    { "type": "DependencyEdge", "from": "core/engine", "to": "core/state", "kind": "type_import" },
+    { "type": "DependencyEdge", "from": "core/engine", "to": "core/state_manager", "kind": "type_import" },
+    { "type": "DependencyEdge", "from": "core/engine", "to": "systems/system", "kind": "type_import" }
   ],
   "gdos_anchors": [
     { "type": "GDOSAnchor", "section": "Section_13_Data_Driven_Architecture", "implemented_by": ["core/state", "core/vec2"] },
-    { "type": "GDOSAnchor", "section": "Section_16_Deterministic_Physics_Clock", "implemented_by": ["core/clock"] },
+    { "type": "GDOSAnchor", "section": "Section_16_Deterministic_Physics_Clock", "implemented_by": ["core/clock", "core/engine"] },
     { "type": "GDOSAnchor", "section": "State_Management_Invariants", "implemented_by": ["core/state_manager"] },
     { "type": "GDOSAnchor", "section": "Section_15_Reproducible_Agent_Simulation", "implemented_by": ["core/rng"] }
   ],
-  "pending_nodes": [
-    { "node_id": "core/engine", "planned_slice": "S1.7", "reason": "Read-Process-Emit loop not yet written." }
-  ]
+  "pending_nodes": []
 }
