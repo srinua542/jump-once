@@ -1,0 +1,74 @@
+{
+  "slice": "S2.2",
+  "title": "Level Definition Schema types + canonical serializer",
+  "reqs": [
+    "REQ-122",
+    "REQ-014"
+  ],
+  "started_at": "2026-07-08T21:50:14.793Z",
+  "updated_at": "2026-07-08T21:57:06.932Z",
+  "current_stage": "handoff",
+  "stages": {
+    "reboot": {
+      "status": "done",
+      "at": "2026-07-08T21:50:14.794Z",
+      "note": "Reboot done at session start (66/66 green after S2.1; pkg s2-b3c9d1)"
+    },
+    "select": {
+      "status": "done",
+      "at": "2026-07-08T21:50:14.880Z",
+      "note": "SELECT: S2.2 + REQ-122/REQ-014 -> IN_PROGRESS, rollup 52/12/0/3"
+    },
+    "plan": {
+      "status": "done",
+      "at": "2026-07-08T21:51:09.795Z",
+      "note": "PLAN: P2 execution-plan S2.2 entry + dm-0015 (coordinate convention y-down, tile ids 0/1, standalone TriggerDef wiring, waypoint polylines, 4 provisional difficulty axes)"
+    },
+    "anchor": {
+      "status": "done",
+      "at": "2026-07-08T21:51:09.881Z",
+      "note": "ANCHOR: schema type boundary frozen — Tilemap/Trigger/Gdos/Level.ts pure-data records in src/components/ (tile ids 0/1, TriggerDef wiring + action-target table, provisional 4-axis GDOS block, LevelDefinition root with axiom-boundary note)"
+    },
+    "implement": {
+      "status": "done",
+      "at": "2026-07-08T21:52:34.786Z",
+      "note": "IMPLEMENT: src/schema/Serialize.ts canonical serializer, test/helpers/Samples.ts shared fixture builders (Components.test refactored to import), Serialize.test.ts (6 tests), docs/level_schema.md normative doc"
+    },
+    "verify": {
+      "status": "done",
+      "at": "2026-07-08T21:54:55.353Z",
+      "note": "VERIFY: 73/73 green incl. 6 serializer tests"
+    },
+    "integrate": {
+      "status": "done",
+      "at": "2026-07-08T21:56:52.130Z",
+      "note": "INTEGRATE: PKG +5 nodes (tilemap/trigger/gdos/level/serialize), +14 edges, dependents refreshed, hash s2-b3c9d1 -> s2-c4d0e2"
+    },
+    "report": {
+      "status": "done",
+      "at": "2026-07-08T21:56:52.208Z",
+      "note": "REPORT: S2.2 -> COMPLETED (criteria met: types compile, scan test green, serializer byte-stable, level_schema.md filed, dm-0015 ledgered)"
+    },
+    "handoff": {
+      "status": "done",
+      "at": "2026-07-08T21:57:06.845Z",
+      "note": "HANDOFF: deferred to end-of-turn (multi-slice session)"
+    }
+  },
+  "acceptance": [
+    {
+      "req": "REQ-122",
+      "criterion": "(fill in)",
+      "met": true,
+      "note": null
+    },
+    {
+      "req": "REQ-014",
+      "criterion": "(fill in)",
+      "met": true,
+      "note": null
+    }
+  ],
+  "outcome": "completed",
+  "closed_at": "2026-07-08T21:57:07.041Z"
+}

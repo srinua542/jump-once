@@ -161,12 +161,12 @@ Each milestone triggers a mandatory **Subtractive Removal pass (REQ-022)** and a
 
 ---
 
-## 5. Current status (Session 1)
+## 5. Current status (Session 2)
 
 - **M0 — Foundation Locked: VERIFIED.** See `docs/verification/P1.md`.
-- **P0:** VERIFIED — governance docs + meta-infrastructure exist and are internally consistent (folded into the P1 report since M0 = P0+P1).
-- **P1:** VERIFIED — all six core modules + `Engine` landed; 60/60 tests green (55 unit + 5 integration deterministic-replay); immutability, idempotency, and isolation each proven; Subtractive Removal pass and PRD compliance audit recorded (0 findings, no violations).
-- **Active milestone:** M1 — Simulatable Game (P2, P3) is now open. P2 — Data Models & Level Definition Schema is the active phase; next slice is S2.1.
-- **All later phases (P3–P11):** still NOT_STARTED and correctly gated.
+- **P0, P1:** VERIFIED (see M0 report).
+- **P2 — Data Models & Level Definition Schema: VERIFIED.** See `docs/verification/P2.md`. All six slices (S2.1–S2.6, restructured at phase start) landed: pure-data components with a machine-enforced logic-free gate, the Level Definition Schema with full GDOS block, canonical serializer + strict parse-don't-validate loader (golden-hash-anchored, fuzz-tested), the all-kinds fixture round-tripping losslessly, and deterministic world instantiation driving the engine from a level file. 118/118 tests green. REQ-120/121/122 flipped VERIFIED per dm-0008.
+- **Active milestone:** M1 — Simulatable Game (P2 ✓, P3). **P3 — Mechanic Library & Deterministic Physics is the active phase**; next slice is S3.1, whose first action is authoring the P3 execution-plan section (REQ-P02).
+- **All later phases (P4–P11):** still NOT_STARTED and correctly gated.
 
 See [task_slices.md](task_slices.md) for the session-sized work units and [execution_plan.md](execution_plan.md) for the detailed plan of the active phases.

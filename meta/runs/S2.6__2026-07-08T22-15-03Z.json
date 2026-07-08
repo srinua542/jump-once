@@ -1,0 +1,67 @@
+{
+  "slice": "S2.6",
+  "title": "Phase-2 verification report",
+  "reqs": [
+    "REQ-P02"
+  ],
+  "started_at": "2026-07-08T22:12:01.143Z",
+  "updated_at": "2026-07-08T22:15:03.643Z",
+  "current_stage": "handoff",
+  "stages": {
+    "reboot": {
+      "status": "done",
+      "at": "2026-07-08T22:12:01.144Z",
+      "note": "Reboot done this session (118/118, pkg s2-e6f2a4)"
+    },
+    "select": {
+      "status": "done",
+      "at": "2026-07-08T22:12:01.235Z",
+      "note": "SELECT: deps met (S2.5 COMPLETED)"
+    },
+    "plan": {
+      "status": "done",
+      "at": "2026-07-08T22:12:01.323Z",
+      "note": "PLAN: per-REQ audit per dm-0008 (122/120/121 full-scope -> VERIFIED candidates; 014/154 stay open), subtractive pass, docs/verification/P2.md, IRD/backlog/pick-list updates, final handoff"
+    },
+    "anchor": {
+      "status": "done",
+      "at": "2026-07-08T22:12:01.403Z",
+      "note": "ANCHOR: n/a (documentation slice; no module boundary changes beyond one subtractive removal)"
+    },
+    "implement": {
+      "status": "done",
+      "at": "2026-07-08T22:12:01.481Z",
+      "note": "IMPLEMENT: P2.md report + backlog flips (120/121/122 VERIFIED, rollup 52/9/0/6) + IRD/execution-plan/pick-list updates + subtractive removal (TriggerSourceKind)"
+    },
+    "verify": {
+      "status": "done",
+      "at": "2026-07-08T22:15:03.239Z",
+      "note": "VERIFY: 118/118 green after removal"
+    },
+    "integrate": {
+      "status": "done",
+      "at": "2026-07-08T22:15:03.317Z",
+      "note": "INTEGRATE: no PKG change needed for S2.6 (docs + one dead-type removal; Trigger node summary already accurate)"
+    },
+    "report": {
+      "status": "done",
+      "at": "2026-07-08T22:15:03.398Z",
+      "note": "REPORT: S2.6 -> COMPLETED; P2 -> VERIFIED"
+    },
+    "handoff": {
+      "status": "done",
+      "at": "2026-07-08T22:15:03.567Z",
+      "note": "HANDOFF: meta/handoff_latest.json written pointing at P3/S3.1 plan-first"
+    }
+  },
+  "acceptance": [
+    {
+      "req": "REQ-P02",
+      "criterion": "(fill in)",
+      "met": true,
+      "note": null
+    }
+  ],
+  "outcome": "completed",
+  "closed_at": "2026-07-08T22:15:03.719Z"
+}

@@ -28,7 +28,7 @@
 | REQ-011 | Exclude upgrades, power-ups, double/wall jumps, jump-refreshing lives, temporary exceptions. | §2 | P3 | NOT_STARTED |
 | REQ-012 | Every challenge isolates/amplifies/tests the one-jump constraint; omit anything that does not. | §2 | P5,P10 | NOT_STARTED |
 | REQ-013 | Understandable within seconds; difficulty from player decisions and spatial puzzles. | §2 | P10 | NOT_STARTED |
-| REQ-014 | The structural puzzle *is* the level layout itself. | §2 | P2,P10 | NOT_STARTED |
+| REQ-014 | The structural puzzle *is* the level layout itself. | §2 | P2,P10 | IN_PROGRESS |
 | REQ-015 | Deliberate six-phase emotional arc: Curiosity, Confidence, Surprise/Betrayal, Realization, Mastery, Renewed Uncertainty. | §2 | P5,P10 | NOT_STARTED |
 | REQ-016 | No arbitrary trolling/random penalties; failure information always visually present on screen. | §2 | P5,P9,P10 | NOT_STARTED |
 
@@ -117,9 +117,9 @@
 
 | ID | Requirement | PRD | Phase | State |
 |----|-------------|-----|-------|-------|
-| REQ-120 | Strictly data-driven: no gameplay behaviors, asset relationships, geometries, or mechanical values hardcoded in core scripts; all as runtime-parsed structured payloads. | §13 | P1,P2 | IN_PROGRESS |
-| REQ-121 | Core engine is a deterministic state processor reading external configuration; pacing/paths/curves/hazards edited via data only. | §13 | P1,P2 | IN_PROGRESS |
-| REQ-122 | Level Definition Schema: full serialization incl. GDOS metadata (target KG node, difficulty vectors, emotional budget curves, creator-moment frame), tilemaps, entities, constraints, triggers. | §13 | P2 | NOT_STARTED |
+| REQ-120 | Strictly data-driven: no gameplay behaviors, asset relationships, geometries, or mechanical values hardcoded in core scripts; all as runtime-parsed structured payloads. | §13 | P1,P2 | VERIFIED |
+| REQ-121 | Core engine is a deterministic state processor reading external configuration; pacing/paths/curves/hazards edited via data only. | §13 | P1,P2 | VERIFIED |
+| REQ-122 | Level Definition Schema: full serialization incl. GDOS metadata (target KG node, difficulty vectors, emotional budget curves, creator-moment frame), tilemaps, entities, constraints, triggers. | §13 | P2 | VERIFIED |
 
 ## §14 Internal Production Tools & Developer Environment
 
@@ -183,14 +183,14 @@
 
 ---
 
-## Rollup (P2 open — S2.1 in progress; last milestone close was M0, `docs/verification/P1.md`)
+## Rollup (P2 VERIFIED — `docs/verification/P2.md`; last milestone close was M0, `docs/verification/P1.md`)
 
 | State | Count |
 |-------|------:|
-| NOT_STARTED | 54 |
-| IN_PROGRESS | 10 |
+| NOT_STARTED | 52 |
+| IN_PROGRESS | 9 |
 | COMPLETED | 0 |
-| VERIFIED | 3 |
+| VERIFIED | 6 |
 | **Total** | **67** |
 
-**VERIFIED this milestone:** REQ-P01 (persistent backlog, four-state model — P0-scoped, satisfied), REQ-P05 (persistent Design Memory ledger — P0-scoped, satisfied), REQ-P10 (StateManager single-source-of-truth / immutability / no-global-state — P1-scoped, satisfied; see `docs/verification/P1.md` §4 for the full per-REQ rationale, including why REQ-120/121/160 and the cross-cutting REQ-P02/03/04/06/07/08/09 correctly remain `IN_PROGRESS` rather than being overclaimed). See [IRD.md](IRD.md) for phase gating and [execution_plan.md](execution_plan.md) for the active-phase plan.
+**VERIFIED at M0:** REQ-P01, REQ-P05, REQ-P10 (see `docs/verification/P1.md` §4 for the per-REQ rationale). **VERIFIED at P2 close:** REQ-120, REQ-121 (P1,P2 spans now fully covered — runtime-parsed data drives the engine, proven by the file→parse→instantiate→replay integration test), REQ-122 (P2-scoped, fully delivered; see `docs/verification/P2.md` §3). REQ-014 (P2,P10) and REQ-154 (P3) correctly remain `IN_PROGRESS` — their remaining phase scope is unbuilt. See [IRD.md](IRD.md) for phase gating and [execution_plan.md](execution_plan.md) for the active-phase plan.

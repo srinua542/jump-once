@@ -1,0 +1,530 @@
+{
+    "schemaVersion": 1,
+    "levelId": "fixture-all-kinds",
+    "title": "Schema fixture: every kind and action",
+    "gdos": {
+        "targetKgNode": "kg:test/fixture",
+        "difficultyVectors": {
+            "executionPrecision": 0.4,
+            "readingComplexity": 0.3,
+            "timingStrictness": 0.5,
+            "routeAmbiguity": 0.2
+        },
+        "emotionalBudgetCurve": [
+            {
+                "at": 0,
+                "curiosity": 92,
+                "confidence": 95,
+                "surprise": 10,
+                "mastery": 20
+            },
+            {
+                "at": 0.5,
+                "curiosity": 90,
+                "confidence": 70,
+                "surprise": 96,
+                "mastery": 50
+            },
+            {
+                "at": 1,
+                "curiosity": 85,
+                "confidence": 90,
+                "surprise": 40,
+                "mastery": 96
+            }
+        ],
+        "creatorMomentFrame": {
+            "tickWindow": [
+                120,
+                180
+            ],
+            "description": "The floor the obvious route depends on collapses."
+        }
+    },
+    "tilemap": {
+        "width": 12,
+        "height": 8,
+        "tileSize": 1,
+        "tiles": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+        ]
+    },
+    "entities": [
+        {
+            "id": "e-movingPlatform",
+            "transform": {
+                "position": {
+                    "x": 3,
+                    "y": 5
+                },
+                "facing": 1
+            },
+            "collider": {
+                "halfExtents": {
+                    "x": 0.5,
+                    "y": 0.5
+                },
+                "offset": {
+                    "x": 0,
+                    "y": 0
+                }
+            },
+            "behavior": {
+                "kind": "movingPlatform",
+                "waypoints": [
+                    {
+                        "x": 0,
+                        "y": 0
+                    },
+                    {
+                        "x": 4,
+                        "y": 0
+                    }
+                ],
+                "speed": 2,
+                "mode": "looping"
+            }
+        },
+        {
+            "id": "e-collapsingFloor",
+            "transform": {
+                "position": {
+                    "x": 5,
+                    "y": 6
+                },
+                "facing": 1
+            },
+            "collider": {
+                "halfExtents": {
+                    "x": 0.5,
+                    "y": 0.5
+                },
+                "offset": {
+                    "x": 0,
+                    "y": 0
+                }
+            },
+            "behavior": {
+                "kind": "collapsingFloor",
+                "collapseDelaySeconds": 0.25
+            }
+        },
+        {
+            "id": "e-iceSurface",
+            "transform": {
+                "position": {
+                    "x": 7,
+                    "y": 6
+                },
+                "facing": 1
+            },
+            "collider": {
+                "halfExtents": {
+                    "x": 0.5,
+                    "y": 0.5
+                },
+                "offset": {
+                    "x": 0,
+                    "y": 0
+                }
+            },
+            "behavior": {
+                "kind": "iceSurface"
+            }
+        },
+        {
+            "id": "e-spike",
+            "transform": {
+                "position": {
+                    "x": 9,
+                    "y": 6
+                },
+                "facing": 1
+            },
+            "collider": {
+                "halfExtents": {
+                    "x": 0.5,
+                    "y": 0.5
+                },
+                "offset": {
+                    "x": 0,
+                    "y": 0
+                }
+            },
+            "behavior": {
+                "kind": "spike"
+            }
+        },
+        {
+            "id": "e-laser",
+            "transform": {
+                "position": {
+                    "x": 2,
+                    "y": 3
+                },
+                "facing": 1
+            },
+            "collider": {
+                "halfExtents": {
+                    "x": 0.5,
+                    "y": 0.5
+                },
+                "offset": {
+                    "x": 0,
+                    "y": 0
+                }
+            },
+            "behavior": {
+                "kind": "laser",
+                "periodSeconds": 2,
+                "onFractionOfPeriod": 0.5,
+                "phaseSeconds": 0.5
+            }
+        },
+        {
+            "id": "e-movingHazard",
+            "transform": {
+                "position": {
+                    "x": 4,
+                    "y": 3
+                },
+                "facing": 1
+            },
+            "collider": {
+                "halfExtents": {
+                    "x": 0.5,
+                    "y": 0.5
+                },
+                "offset": {
+                    "x": 0,
+                    "y": 0
+                }
+            },
+            "behavior": {
+                "kind": "movingHazard",
+                "waypoints": [
+                    {
+                        "x": 0,
+                        "y": 0
+                    },
+                    {
+                        "x": 0,
+                        "y": 3
+                    }
+                ],
+                "speed": 1.5,
+                "mode": "linear"
+            }
+        },
+        {
+            "id": "e-pressurePlate",
+            "transform": {
+                "position": {
+                    "x": 6,
+                    "y": 6
+                },
+                "facing": 1
+            },
+            "collider": {
+                "halfExtents": {
+                    "x": 0.5,
+                    "y": 0.5
+                },
+                "offset": {
+                    "x": 0,
+                    "y": 0
+                }
+            },
+            "behavior": {
+                "kind": "pressurePlate"
+            }
+        },
+        {
+            "id": "e-proximityZone",
+            "transform": {
+                "position": {
+                    "x": 8,
+                    "y": 3
+                },
+                "facing": 1
+            },
+            "collider": {
+                "halfExtents": {
+                    "x": 0.5,
+                    "y": 0.5
+                },
+                "offset": {
+                    "x": 0,
+                    "y": 0
+                }
+            },
+            "behavior": {
+                "kind": "proximityZone"
+            }
+        },
+        {
+            "id": "e-door",
+            "transform": {
+                "position": {
+                    "x": 10,
+                    "y": 5
+                },
+                "facing": 1
+            },
+            "collider": {
+                "halfExtents": {
+                    "x": 0.5,
+                    "y": 0.5
+                },
+                "offset": {
+                    "x": 0,
+                    "y": 0
+                }
+            },
+            "behavior": {
+                "kind": "door",
+                "initiallyOpen": false
+            }
+        },
+        {
+            "id": "e-spring",
+            "transform": {
+                "position": {
+                    "x": 3,
+                    "y": 6
+                },
+                "facing": 1
+            },
+            "collider": {
+                "halfExtents": {
+                    "x": 0.5,
+                    "y": 0.5
+                },
+                "offset": {
+                    "x": 0,
+                    "y": 0
+                }
+            },
+            "behavior": {
+                "kind": "spring",
+                "launchVelocity": {
+                    "x": 0,
+                    "y": -12
+                }
+            }
+        },
+        {
+            "id": "e-gravityZone",
+            "transform": {
+                "position": {
+                    "x": 5,
+                    "y": 2
+                },
+                "facing": 1
+            },
+            "collider": {
+                "halfExtents": {
+                    "x": 0.5,
+                    "y": 0.5
+                },
+                "offset": {
+                    "x": 0,
+                    "y": 0
+                }
+            },
+            "behavior": {
+                "kind": "gravityZone",
+                "gravityScale": -1
+            }
+        },
+        {
+            "id": "e-conveyor",
+            "transform": {
+                "position": {
+                    "x": 7,
+                    "y": 2
+                },
+                "facing": 1
+            },
+            "collider": {
+                "halfExtents": {
+                    "x": 0.5,
+                    "y": 0.5
+                },
+                "offset": {
+                    "x": 0,
+                    "y": 0
+                }
+            },
+            "behavior": {
+                "kind": "conveyor",
+                "surfaceVelocityX": 3
+            }
+        }
+    ],
+    "triggers": [
+        {
+            "id": "t-open",
+            "source": "e-pressurePlate",
+            "targets": [
+                "e-door"
+            ],
+            "action": "openDoor",
+            "once": false
+        },
+        {
+            "id": "t-close",
+            "source": "e-proximityZone",
+            "targets": [
+                "e-door"
+            ],
+            "action": "closeDoor",
+            "once": false
+        },
+        {
+            "id": "t-toggle",
+            "source": "e-pressurePlate",
+            "targets": [
+                "e-door"
+            ],
+            "action": "toggleDoor",
+            "once": true
+        },
+        {
+            "id": "t-collapse",
+            "source": "e-proximityZone",
+            "targets": [
+                "e-collapsingFloor"
+            ],
+            "action": "collapseFloor",
+            "once": true
+        },
+        {
+            "id": "t-activate",
+            "source": "e-pressurePlate",
+            "targets": [
+                "e-movingPlatform"
+            ],
+            "action": "activatePlatform",
+            "once": false
+        }
+    ],
+    "constraints": {
+        "spawn": {
+            "x": 1.5,
+            "y": 6
+        },
+        "goal": {
+            "position": {
+                "x": 10.5,
+                "y": 2
+            },
+            "halfExtents": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        "parTimeTiersSeconds": [
+            30,
+            20,
+            12,
+            8,
+            5
+        ]
+    }
+}

@@ -1,0 +1,67 @@
+{
+  "slice": "S2.4",
+  "title": "Sample level fixture + round-trip test",
+  "reqs": [
+    "REQ-122"
+  ],
+  "started_at": "2026-07-08T22:05:58.592Z",
+  "updated_at": "2026-07-08T22:07:46.991Z",
+  "current_stage": "handoff",
+  "stages": {
+    "reboot": {
+      "status": "done",
+      "at": "2026-07-08T22:05:58.593Z",
+      "note": "Reboot done this session (101/101, pkg s2-d5e1f3)"
+    },
+    "select": {
+      "status": "done",
+      "at": "2026-07-08T22:05:58.676Z",
+      "note": "SELECT: deps met (S2.3 COMPLETED); REQ-122 already IN_PROGRESS"
+    },
+    "plan": {
+      "status": "done",
+      "at": "2026-07-08T22:05:58.757Z",
+      "note": "PLAN: per execution plan S2.4 — fixture in test/fixtures (4-space authored formatting != canonical), value round-trip + byte idempotence + committed golden sha256 + programmatic closed-list coverage"
+    },
+    "anchor": {
+      "status": "done",
+      "at": "2026-07-08T22:05:58.838Z",
+      "note": "ANCHOR: fixture format + golden-hash anchor defined in test header"
+    },
+    "implement": {
+      "status": "done",
+      "at": "2026-07-08T22:06:52.934Z",
+      "note": "IMPLEMENT: test/fixtures/fixture-all-kinds.level.json (4-space authored) + LevelRoundTrip.test.ts (9 tests)"
+    },
+    "verify": {
+      "status": "done",
+      "at": "2026-07-08T22:06:53.075Z",
+      "note": "VERIFY: 110/110 green (9 new round-trip/golden/coverage tests)"
+    },
+    "integrate": {
+      "status": "done",
+      "at": "2026-07-08T22:07:46.284Z",
+      "note": "INTEGRATE: no new src modules (fixture+tests only), PKG unchanged s2-d5e1f3"
+    },
+    "report": {
+      "status": "done",
+      "at": "2026-07-08T22:07:46.428Z",
+      "note": "REPORT: S2.4 -> COMPLETED"
+    },
+    "handoff": {
+      "status": "done",
+      "at": "2026-07-08T22:07:46.867Z",
+      "note": "HANDOFF: deferred to end-of-turn"
+    }
+  },
+  "acceptance": [
+    {
+      "req": "REQ-122",
+      "criterion": "(fill in)",
+      "met": true,
+      "note": null
+    }
+  ],
+  "outcome": "completed",
+  "closed_at": "2026-07-08T22:07:47.195Z"
+}

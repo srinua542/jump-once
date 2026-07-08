@@ -1,0 +1,74 @@
+{
+  "slice": "S2.5",
+  "title": "WorldState + deterministic level instantiation",
+  "reqs": [
+    "REQ-120",
+    "REQ-121"
+  ],
+  "started_at": "2026-07-08T22:08:22.810Z",
+  "updated_at": "2026-07-08T22:11:19.362Z",
+  "current_stage": "handoff",
+  "stages": {
+    "reboot": {
+      "status": "done",
+      "at": "2026-07-08T22:08:22.812Z",
+      "note": "Reboot done this session (110/110, pkg s2-d5e1f3)"
+    },
+    "select": {
+      "status": "done",
+      "at": "2026-07-08T22:08:22.899Z",
+      "note": "SELECT: deps met (S2.3, S2.4 COMPLETED); REQ-120/121 already IN_PROGRESS"
+    },
+    "plan": {
+      "status": "done",
+      "at": "2026-07-08T22:08:22.981Z",
+      "note": "PLAN: per execution plan S2.5 — WorldState {level frozen+shared, entities runtime records, player fields, nextSpawnSerial}, instantiateWorld pure fn in src/entities/, engine-consumption replay integration test; Engine.ts read (zero-assumption)"
+    },
+    "anchor": {
+      "status": "done",
+      "at": "2026-07-08T22:08:23.067Z",
+      "note": "ANCHOR: WorldState/EntityState/JumpOnceState boundary defined in src/entities/World.ts"
+    },
+    "implement": {
+      "status": "done",
+      "at": "2026-07-08T22:09:46.567Z",
+      "note": "IMPLEMENT: instantiateWorld + createInitialState + LevelInstantiation.test.ts (8 tests: purity, freeze+reference-share, spawn states, file-driven replay, seed sensitivity, non-vacuous, data-driven scalar)"
+    },
+    "verify": {
+      "status": "done",
+      "at": "2026-07-08T22:09:46.658Z",
+      "note": "VERIFY: 118/118 green (8 new instantiation/replay tests)"
+    },
+    "integrate": {
+      "status": "done",
+      "at": "2026-07-08T22:11:18.956Z",
+      "note": "INTEGRATE: PKG +entities/world node, +7 edges, 7 dependents refreshed, hash -> s2-e6f2a4"
+    },
+    "report": {
+      "status": "done",
+      "at": "2026-07-08T22:11:19.035Z",
+      "note": "REPORT: S2.5 -> COMPLETED"
+    },
+    "handoff": {
+      "status": "done",
+      "at": "2026-07-08T22:11:19.282Z",
+      "note": "HANDOFF: deferred to end-of-turn"
+    }
+  },
+  "acceptance": [
+    {
+      "req": "REQ-120",
+      "criterion": "(fill in)",
+      "met": true,
+      "note": null
+    },
+    {
+      "req": "REQ-121",
+      "criterion": "(fill in)",
+      "met": true,
+      "note": null
+    }
+  ],
+  "outcome": "completed",
+  "closed_at": "2026-07-08T22:11:19.438Z"
+}
