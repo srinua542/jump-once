@@ -46,6 +46,13 @@ export interface TuningDef {
    * after the countdown even if support is lost meanwhile (dm-0020).
    */
   readonly anticipationTicks: number;
+  /**
+   * Horizontal acceleration while standing on frictionless ice, world units
+   * per second². Ice is momentum-preserving: input accelerates toward
+   * ±runSpeed at this rate and releasing input does NOT decelerate (the one
+   * surface that ramps instead of instant-set — REQ-151, S3.6). Positive.
+   */
+  readonly iceAccel: number;
   /** Terminal fall speed: +y velocity is clamped to this, world units per second. Strictly positive. */
   readonly maxFallSpeed: number;
   /**
@@ -61,6 +68,7 @@ export const TUNING: TuningDef = {
   runSpeed: 8,
   jumpSpeed: 18,
   anticipationTicks: 4,
+  iceAccel: 24,
   maxFallSpeed: 30,
   playerHalfExtents: { x: 0.35, y: 0.45 },
 };

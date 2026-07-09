@@ -68,8 +68,32 @@ export interface EntityState {
   readonly id: EntityId;
   /** Current center position in world units. Spawns at the authored transform position. */
   readonly position: Vec2;
-  /** Current velocity in world units per second. Spawns at zero. */
+  /**
+   * Current velocity in world units per second. Spawns at zero. For movers
+   * this is the DERIVED per-tick delta / dt written by EntityKinematics
+   * (dm-0016: derive, don't integrate) — used for platform carry, never an
+   * integrated truth.
+   */
   readonly velocity: Vec2;
+  /**
+   * Activation game-tick for a `triggered` mover (S3.6): `null` = dormant
+   * (sits at waypoint[0]); a tick = the mover's path elapses from there.
+   * Set by the S3.7 `activatePlatform` trigger. Unused by auto modes
+   * (linear/looping derive elapsed from world.spawnTick).
+   */
+  readonly activationTick: number | null;
+  /**
+   * The game-tick a collapsing floor was first stood on (S3.6): `null` until
+   * contact; then it collapses `collapseDelaySeconds` later. Non-collapsing
+   * entities keep `null` forever.
+   */
+  readonly firstContactTick: number | null;
+  /**
+   * True once a collapsing floor has collapsed (derived each tick by
+   * EntityKinematics from firstContactTick + delay). A collapsed floor is
+   * non-solid and stays collapsed for the life. Always false for other kinds.
+   */
+  readonly collapsed: boolean;
 }
 
 /** Jump Once's concrete world payload for GameState<TWorld>. */
@@ -87,6 +111,13 @@ export interface WorldState {
    * becomes true on the first supported step (S3.1).
    */
   readonly playerGrounded: boolean;
+  /**
+   * Index into entities of the solid entity the player is currently grounded
+   * on, or -1 for a tile / no support (S3.6). Drives platform carry, the ice
+   * surface branch, and collapsing-floor contact. Meaningful only when
+   * playerGrounded is true; -1 otherwise.
+   */
+  readonly playerGroundEntity: number;
   /** The single-jump lock (S3.5). Fresh worlds start 'available'. */
   readonly jumpLock: JumpLockState;
   /** Run lifecycle phase (S3.4). Fresh worlds start 'playing'. */
@@ -115,7 +146,14 @@ export function instantiateWorld(def: LevelDefinition): WorldState {
   const level = deepFreeze(def);
   const entities: EntityState[] = [];
   for (const e of level.entities) {
-    entities.push({ id: e.id, position: e.transform.position, velocity: ZERO });
+    entities.push({
+      id: e.id,
+      position: e.transform.position,
+      velocity: ZERO,
+      activationTick: null,
+      firstContactTick: null,
+      collapsed: false,
+    });
   }
   return {
     level,
@@ -123,6 +161,7 @@ export function instantiateWorld(def: LevelDefinition): WorldState {
     playerPosition: level.constraints.spawn,
     playerVelocity: ZERO,
     playerGrounded: false,
+    playerGroundEntity: -1,
     jumpLock: JUMP_AVAILABLE,
     runState: 'playing',
     attemptCount: 0,

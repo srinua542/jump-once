@@ -1,0 +1,67 @@
+{
+  "slice": "S3.6",
+  "title": "Environmental elements: moving platforms + carry, collapsing floors, ice",
+  "reqs": [
+    "REQ-151"
+  ],
+  "started_at": "2026-07-09T10:01:22.168Z",
+  "updated_at": "2026-07-09T10:12:41.669Z",
+  "current_stage": "handoff",
+  "stages": {
+    "reboot": {
+      "status": "done",
+      "at": "2026-07-09T10:01:22.169Z",
+      "note": "REBOOT held (161/161, pkg s3-e1a5b3)"
+    },
+    "select": {
+      "status": "done",
+      "at": "2026-07-09T10:01:22.317Z",
+      "note": "SELECT: S3.6; deps S3.1+S3.3 COMPLETED. REQ-151 -> IN_PROGRESS"
+    },
+    "plan": {
+      "status": "done",
+      "at": "2026-07-09T10:01:22.445Z",
+      "note": "PLAN: EntityState += activationTick|null (triggered movers), firstContactTick|null (collapse), collapsed:bool; WorldState += playerGroundEntity (index or -1). New src/systems/EntityKinematics.ts (closed-form, dm-0016): mover world pos = transform + arc-length point over local-space waypoint polyline; looping=wrap, linear/triggered=ping-pong; elapsed = tick-spawnTick (auto) or tick-activationTick (triggered, dormant if null); velocity = per-tick delta; collapse: firstContactTick set from last-tick grounding, collapsed = elapsed>=delay. PlayerPhysics: carry (ground entity velocity*dt folded into sweep) + record playerGroundEntity + collapsed floors non-solid. PlayerControl: ice branch (on iceSurface ground -> ramp vx by TUNING.iceAccel, momentum-preserving) else instant-set. Arc-length arithmetic only (no trig, dm-0017)."
+    },
+    "anchor": {
+      "status": "done",
+      "at": "2026-07-09T10:01:22.576Z",
+      "note": "ANCHOR: additive WorldState/EntityState/TUNING extensions; instantiateWorld initializes new fields; sweepAxis extended to report blocker entity index; existing 161-test suite is the regression gate (fixture player rests on tile, carry/collapse inert there)"
+    },
+    "implement": {
+      "status": "done",
+      "at": "2026-07-09T10:01:22.717Z",
+      "note": "IMPLEMENT: EntityKinematics.ts (closed-form movers + collapse); WorldState.playerGroundEntity + EntityState activationTick/firstContactTick/collapsed; PlayerPhysics carry (two-phase Y) + ground-entity record + collapsed-non-solid; PlayerControl ice ramp; TUNING.iceAccel"
+    },
+    "verify": {
+      "status": "done",
+      "at": "2026-07-09T10:11:42.893Z",
+      "note": "VERIFY: 171/171 (+10: looping wrap + linear ping-pong period exactness, dormant triggered mover, horizontal carry tracks exactly, upward-platform grounding robust, collapse latch+delay+fall-through, ice momentum-preserved + iceAccel-dt ramp, full-pipeline replay determinism, purity)"
+    },
+    "integrate": {
+      "status": "done",
+      "at": "2026-07-09T10:11:42.979Z",
+      "note": "INTEGRATE: PKG +systems/entity_kinematics, 5 nodes updated (clock/behavior/vec2/state/tuning/world/physics/control), player_control gained core/clock dep, edges both directions incl. pre-existing tools/sdlc gate->recipe edge reconciled, pkg_hash -> s3-f2b6c4 (31 nodes, 78 edges)"
+    },
+    "report": {
+      "status": "done",
+      "at": "2026-07-09T10:11:43.178Z",
+      "note": "REPORT: S3.6 -> COMPLETED; REQ-151 stays IN_PROGRESS until S3.9 phase report (dm-0008)"
+    },
+    "handoff": {
+      "status": "done",
+      "at": "2026-07-09T10:11:43.273Z",
+      "note": "HANDOFF updated: S3.1-S3.6 complete, resume at S3.7 (hazards+triggers)"
+    }
+  },
+  "acceptance": [
+    {
+      "req": "REQ-151",
+      "criterion": "(fill in)",
+      "met": true,
+      "note": null
+    }
+  ],
+  "outcome": "completed",
+  "closed_at": "2026-07-09T10:12:41.750Z"
+}

@@ -37,7 +37,7 @@
 
 import { FIXED_STEP_SECONDS } from '../core/Clock';
 import type { GameState } from '../core/State';
-import { vec2, type Vec2 } from '../core/Vec2';
+import { vec2, ZERO, type Vec2 } from '../core/Vec2';
 import { TILE_KIND_BY_ID } from '../components/Tilemap';
 import { TUNING } from '../components/Tuning';
 import { COLLISION_CLASS_BY_KIND } from '../components/CollisionClass';
@@ -83,6 +83,7 @@ function isSolidEntity(world: WorldState, i: number): boolean {
   const cls = COLLISION_CLASS_BY_KIND[def.behavior.kind];
   if (cls !== 'solid') return false;
   if (def.behavior.kind === 'door') return !def.behavior.initiallyOpen;
+  if (def.behavior.kind === 'collapsingFloor') return !world.entities[i].collapsed;
   return true;
 }
 
@@ -90,6 +91,8 @@ interface AxisResult {
   /** New center coordinate on the swept axis. */
   readonly center: number;
   readonly blocked: boolean;
+  /** Index of the solid ENTITY that clamped the sweep, or -1 (tile / none). */
+  readonly blocker: number;
 }
 
 /**
@@ -111,7 +114,7 @@ function sweepAxis(
   delta: number,
   candidates: readonly number[],
 ): AxisResult {
-  if (delta === 0) return { center: axis === 'x' ? center.x : center.y, blocked: false };
+  if (delta === 0) return { center: axis === 'x' ? center.x : center.y, blocked: false, blocker: -1 };
 
   const level = world.level;
   const ts = level.tilemap.tileSize;
@@ -130,6 +133,7 @@ function sweepAxis(
 
   // Nearest blocking face in travel order; NaN = none found yet.
   let clampFace = Number.NaN;
+  let clampBlocker = -1; // entity index that set clampFace, or -1 for a tile
 
   // ── Tiles ──
   if (dir > 0) {
@@ -179,22 +183,35 @@ function sweepAxis(
 
     const face = eCenterAlong - dir * eHalfAlong;
     if (dir > 0) {
-      if (face >= curEdge && face < newEdge && !(face >= clampFace)) clampFace = face;
+      if (face >= curEdge && face < newEdge && !(face >= clampFace)) {
+        clampFace = face;
+        clampBlocker = i;
+      }
     } else {
-      if (face <= curEdge && face > newEdge && !(face <= clampFace)) clampFace = face;
+      if (face <= curEdge && face > newEdge && !(face <= clampFace)) {
+        clampFace = face;
+        clampBlocker = i;
+      }
     }
   }
 
   if (Number.isNaN(clampFace)) {
-    return { center: along + delta, blocked: false };
+    return { center: along + delta, blocked: false, blocker: -1 };
   }
-  return { center: clampFace - dir * alongHalf, blocked: true };
+  return { center: clampFace - dir * alongHalf, blocked: true, blocker: clampBlocker };
 }
 
 /**
- * Advance the player body by exactly one fixed step: symplectic-Euler
- * velocity update (gravity, terminal-fall clamp), then swept X move, then
- * swept Y move. Pure — returns a new WorldState.
+ * Advance the player body by exactly one fixed step: platform carry, then
+ * symplectic-Euler velocity update (gravity, terminal-fall clamp), then swept
+ * X move, then swept Y move. Pure — returns a new WorldState.
+ *
+ * Platform carry (S3.6): if the player was grounded on an entity last tick,
+ * that entity's derived per-tick delta (velocity × dt, set by
+ * EntityKinematics; zero for static entities) is folded into the sweep so a
+ * riding player travels with a moving platform. Being swept, carry-into-wall
+ * stops the player at the wall. Static ground contributes zero, so this is a
+ * no-op except on movers.
  */
 export function stepPlayerPhysics(world: WorldState): WorldState {
   if (world.runState !== 'playing') return world; // frozen outside a live run (S3.4)
@@ -205,32 +222,44 @@ export function stepPlayerPhysics(world: WorldState): WorldState {
   const vy = Math.min(world.playerVelocity.y + TUNING.gravityY * dt, TUNING.maxFallSpeed);
   const vx = world.playerVelocity.x;
 
-  // Broad phase (REQ-162): quadtree query over the union of the player's
-  // start AABB and its full-step destination AABB — a conservative superset
-  // of everything either axis sweep can touch. Narrow phase stays exact.
+  // Platform carry: last tick's ground entity delta (0 for tile / static).
+  const ground = world.playerGroundEntity;
+  const carry = world.playerGrounded && ground >= 0 ? world.entities[ground].velocity : ZERO;
+  const carryDx = carry.x * dt;
+  const carryDy = carry.y * dt;
+  const moveDx = carryDx + vx * dt; // horizontal carry and input merge on one axis
+  const gravDy = vy * dt;
+
+  // Broad phase (REQ-162): quadtree query over a box covering the whole
+  // step — horizontal (carry + input) and both vertical phases (carry, then
+  // gravity). Conservative superset; the narrow phase stays exact.
   const p = world.playerPosition;
-  const dx = vx * dt;
-  const dy = vy * dt;
+  const yReach0 = Math.min(p.y, p.y + carryDy, p.y + carryDy + gravDy);
+  const yReach1 = Math.max(p.y, p.y + carryDy, p.y + carryDy + gravDy);
   const tree = buildEntityQuadtree(world);
   const candidates = queryQuadtree(
     tree,
-    Math.min(p.x, p.x + dx) - half.x,
-    Math.min(p.y, p.y + dy) - half.y,
-    Math.max(p.x, p.x + dx) + half.x,
-    Math.max(p.y, p.y + dy) + half.y,
+    Math.min(p.x, p.x + moveDx) - half.x,
+    yReach0 - half.y,
+    Math.max(p.x, p.x + moveDx) + half.x,
+    yReach1 + half.y,
   );
 
-  // Axis-separated swept movement: X, then Y against the post-X position.
-  const xRes = sweepAxis(world, p, half, 'x', dx, candidates);
-  const afterX = vec2(xRes.center, p.y);
-  const yRes = sweepAxis(world, afterX, half, 'y', vy * dt, candidates);
+  // X (carry + input merged), then Y in two phases against the post-X column:
+  // vertical carry first (ride the platform), then gravity (always probes
+  // downward when falling, so grounding stays robust even under an
+  // upward-moving platform).
+  const xRes = sweepAxis(world, p, half, 'x', moveDx, candidates);
+  const yCarry = sweepAxis(world, vec2(xRes.center, p.y), half, 'y', carryDy, candidates);
+  const yGrav = sweepAxis(world, vec2(xRes.center, yCarry.center), half, 'y', gravDy, candidates);
 
-  const grounded = yRes.blocked && vy > 0;
+  const grounded = yGrav.blocked && vy > 0;
   return {
     ...world,
-    playerPosition: vec2(xRes.center, yRes.center),
-    playerVelocity: vec2(xRes.blocked ? 0 : vx, yRes.blocked ? 0 : vy),
+    playerPosition: vec2(xRes.center, yGrav.center),
+    playerVelocity: vec2(xRes.blocked ? 0 : vx, yGrav.blocked ? 0 : vy),
     playerGrounded: grounded,
+    playerGroundEntity: grounded ? yGrav.blocker : -1,
   };
 }
 
