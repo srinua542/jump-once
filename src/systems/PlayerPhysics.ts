@@ -82,7 +82,7 @@ function isSolidEntity(world: WorldState, i: number): boolean {
   const def = world.level.entities[i];
   const cls = COLLISION_CLASS_BY_KIND[def.behavior.kind];
   if (cls !== 'solid') return false;
-  if (def.behavior.kind === 'door') return !def.behavior.initiallyOpen;
+  if (def.behavior.kind === 'door') return !world.entities[i].doorOpen;
   if (def.behavior.kind === 'collapsingFloor') return !world.entities[i].collapsed;
   return true;
 }
@@ -256,6 +256,7 @@ export function stepPlayerPhysics(world: WorldState): WorldState {
   const grounded = yGrav.blocked && vy > 0;
   return {
     ...world,
+    playerPrevPosition: p,
     playerPosition: vec2(xRes.center, yGrav.center),
     playerVelocity: vec2(xRes.blocked ? 0 : vx, yGrav.blocked ? 0 : vy),
     playerGrounded: grounded,

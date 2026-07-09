@@ -94,6 +94,11 @@ export interface EntityState {
    * non-solid and stays collapsed for the life. Always false for other kinds.
    */
   readonly collapsed: boolean;
+  /**
+   * Whether a door is open (S3.7): open doors are non-solid. Initialized from
+   * door.initiallyOpen; toggled by trigger actions. False for non-door kinds.
+   */
+  readonly doorOpen: boolean;
 }
 
 /** Jump Once's concrete world payload for GameState<TWorld>. */
@@ -105,6 +110,13 @@ export interface WorldState {
   readonly playerPosition: Vec2;
   /** Player velocity in world units per second. Spawns at zero. */
   readonly playerVelocity: Vec2;
+  /**
+   * The player's center at the START of the last physics step (S3.7). The
+   * swept lethal check (hazardsAndGoal) tests the segment
+   * playerPrevPosition → playerPosition so a fast player cannot skip through
+   * a thin hazard between ticks. Spawns at constraints.spawn.
+   */
+  readonly playerPrevPosition: Vec2;
   /**
    * True when the last physics step ended with the player resting on a
    * downward support (solid tile top or solid entity top). Spawns false;
@@ -130,6 +142,17 @@ export interface WorldState {
    * tick - spawnTick (dm-0016: derive, don't duplicate).
    */
   readonly spawnTick: number;
+  /**
+   * Per-trigger "was the source active last tick" flags (S3.7), index-aligned
+   * with level.triggers. Drives rising-edge firing so a held plate does not
+   * re-fire every tick. All false in a fresh world.
+   */
+  readonly triggerActivePrev: readonly boolean[];
+  /**
+   * Per-trigger "has this `once` trigger already fired this life" flags (S3.7),
+   * index-aligned with level.triggers. All false in a fresh world.
+   */
+  readonly triggerFired: readonly boolean[];
   /** Deterministic counter for runtime-spawned entity ids (`rt:<serial>`). */
   readonly nextSpawnSerial: number;
 }
@@ -153,6 +176,7 @@ export function instantiateWorld(def: LevelDefinition): WorldState {
       activationTick: null,
       firstContactTick: null,
       collapsed: false,
+      doorOpen: e.behavior.kind === 'door' ? e.behavior.initiallyOpen : false,
     });
   }
   return {
@@ -160,12 +184,15 @@ export function instantiateWorld(def: LevelDefinition): WorldState {
     entities,
     playerPosition: level.constraints.spawn,
     playerVelocity: ZERO,
+    playerPrevPosition: level.constraints.spawn,
     playerGrounded: false,
     playerGroundEntity: -1,
     jumpLock: JUMP_AVAILABLE,
     runState: 'playing',
     attemptCount: 0,
     spawnTick: 0,
+    triggerActivePrev: level.triggers.map(() => false),
+    triggerFired: level.triggers.map(() => false),
     nextSpawnSerial: 0,
   };
 }

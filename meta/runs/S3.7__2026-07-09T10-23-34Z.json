@@ -1,0 +1,67 @@
+{
+  "slice": "S3.7",
+  "title": "Hazards + triggers: lethal hazards, plates/proximity/doors",
+  "reqs": [
+    "REQ-152"
+  ],
+  "started_at": "2026-07-09T10:14:23.745Z",
+  "updated_at": "2026-07-09T10:23:34.771Z",
+  "current_stage": "handoff",
+  "stages": {
+    "reboot": {
+      "status": "done",
+      "at": "2026-07-09T10:14:23.747Z",
+      "note": "REBOOT held (171/171, pkg s3-f2b6c4)"
+    },
+    "select": {
+      "status": "done",
+      "at": "2026-07-09T10:14:23.911Z",
+      "note": "SELECT: S3.7; deps S3.4+S3.6 COMPLETED. REQ-152 -> IN_PROGRESS"
+    },
+    "plan": {
+      "status": "done",
+      "at": "2026-07-09T10:14:24.099Z",
+      "note": "PLAN: (1) hazardsAndGoal += lethal check — spike/movingHazard always lethal, laser lethal only on-phase (pure fn of tick: (tick-spawnTick)*dt + phaseSeconds mod periodSeconds < onFractionOfPeriod*periodSeconds); player SWEPT segment (playerPrevPosition->playerPosition) vs Minkowski-enlarged hazard AABB (+hazard per-tick delta) so miss=skip is impossible; lethal -> defeated, before goal. (2) NEW Sensors.ts (pipeline: after physics, before hazardsAndGoal): plate/zone source active when player overlaps its AABB; fire TriggerDefs in AUTHORED ORDER on rising edge (once=first-ever, else each edge); actions open/close/toggleDoor, collapseFloor (set firstContactTick=tick), activatePlatform (set activationTick=tick). WorldState += playerPrevPosition + triggerActivePrev[] + triggerFired[]; EntityState += doorOpen (init initiallyOpen); isSolidEntity door reads doorOpen. Layering test >=3 mechanics."
+    },
+    "anchor": {
+      "status": "done",
+      "at": "2026-07-09T10:14:24.272Z",
+      "note": "ANCHOR: additive WorldState/EntityState extensions; new Sensors module; hazardsAndGoal extended (outcome contract unchanged: -> defeated/completed); 171-test suite is regression gate (door tests currently read initiallyOpen == doorOpen at init, so no behavior change)"
+    },
+    "implement": {
+      "status": "done",
+      "at": "2026-07-09T10:14:24.435Z",
+      "note": "IMPLEMENT: HazardsAndGoal lethal swept check (laser pure-fn-of-tick, segment-vs-Minkowski-AABB slab test) + Sensors.ts (rising-edge triggers, authored order, closed action union); WorldState += playerPrevPosition/triggerActivePrev/triggerFired; EntityState += doorOpen; isSolidEntity door reads doorOpen"
+    },
+    "verify": {
+      "status": "done",
+      "at": "2026-07-09T10:22:26.856Z",
+      "note": "VERIFY: 180/180 (+9: spike swept pass-through, laser on/off phase timing, moving-hazard defeat, plate->openDoor non-solid + once-latch, toggle rising-edge-not-flicker, activatePlatform wakes dormant mover + collapseFloor, 3-mechanic layering, pipeline replay determinism, purity)"
+    },
+    "integrate": {
+      "status": "done",
+      "at": "2026-07-09T10:22:27.002Z",
+      "note": "INTEGRATE: PKG +systems/sensors, hazards_and_goal deps expanded (clock/vec2/collision_class/behavior), entities/world + door/trigger summaries, edges both directions, pkg_hash -> s3-a3c7d5 (32 nodes, 88 edges)"
+    },
+    "report": {
+      "status": "done",
+      "at": "2026-07-09T10:22:27.444Z",
+      "note": "REPORT: S3.7 -> COMPLETED; REQ-152 stays IN_PROGRESS until S3.9 (dm-0008)"
+    },
+    "handoff": {
+      "status": "done",
+      "at": "2026-07-09T10:22:27.602Z",
+      "note": "HANDOFF updated: S3.1-S3.7 complete, resume at S3.8"
+    }
+  },
+  "acceptance": [
+    {
+      "req": "REQ-152",
+      "criterion": "(fill in)",
+      "met": true,
+      "note": null
+    }
+  ],
+  "outcome": "completed",
+  "closed_at": "2026-07-09T10:23:34.916Z"
+}

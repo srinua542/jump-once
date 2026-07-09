@@ -144,7 +144,7 @@
 |----|-------------|-----|-------|-------|
 | REQ-150 | Player Character Controller: instant horizontal accel/decel; single jump with anticipation frames, squash-and-stretch, particle burst, camera tracking; jump state locks (horizontal-only) until scene reload. | §16 | P3,P9 | IN_PROGRESS |
 | REQ-151 | Environmental elements: static geometry, moving platforms (linear/looping/triggered), collapsing floors, frictionless ice. | §16 | P3 | IN_PROGRESS |
-| REQ-152 | Hazards & triggers: static spikes, timed laser arrays, moving hazards (instant defeat on intersection); pressure plates, proximity zones, mechanical doors that modify layout dynamically. | §16 | P3 | NOT_STARTED |
+| REQ-152 | Hazards & triggers: static spikes, timed laser arrays, moving hazards (instant defeat on intersection); pressure plates, proximity zones, mechanical doors that modify layout dynamically. | §16 | P3 | IN_PROGRESS |
 | REQ-153 | Kinetic modifiers: directional launch springs, gravity-inverting zones, conveyors — alter velocity/inertia without consuming the single jump. | §16 | P3 | NOT_STARTED |
 | REQ-154 | Components fully decoupled/modular; complex puzzles emerge from layering simple systems. | §16 | P3 | IN_PROGRESS |
 
@@ -187,8 +187,8 @@
 
 | State | Count |
 |-------|------:|
-| NOT_STARTED | 44 |
-| IN_PROGRESS | 17 |
+| NOT_STARTED | 43 |
+| IN_PROGRESS | 18 |
 | COMPLETED | 0 |
 | VERIFIED | 6 |
 | **Total** | **67** |

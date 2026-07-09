@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
   "generated_by_session": "2026-07-09T-session-3",
-  "pkg_hash": "s3-f2b6c4",
+  "pkg_hash": "s3-a3c7d5",
   "notes": "Machine-readable mirror of the codebase. Read at every session start; update immediately on any structural code change (new module, changed dependency, changed GDOS mapping). See references/pkg_schema.md.",
   "nodes": [
     {
@@ -11,7 +11,7 @@
       "functional_summary": "Immutable 2D vector algebra primitive (encapsulated geometry). Pure math, no system logic. Operations return new records; never mutate operands.",
       "gdos_alignment": "Section_13_Encapsulated_Geometry",
       "dependencies": [],
-      "dependents": ["components/transform", "components/collider", "components/behavior", "components/level", "components/tuning", "schema/serialize", "schema/parse", "entities/world", "systems/player_physics", "systems/player_control", "systems/entity_kinematics"],
+      "dependents": ["components/transform", "components/collider", "components/behavior", "components/level", "components/tuning", "schema/serialize", "schema/parse", "entities/world", "systems/player_physics", "systems/player_control", "systems/entity_kinematics", "systems/hazards_and_goal"],
       "volatile_state_flags": { "has_side_effects": false, "state_dependencies": [] },
       "last_verified_commit": "uncommitted-session-1",
       "backlog_refs": ["REQ-120", "REQ-P09"]
@@ -35,7 +35,7 @@
       "functional_summary": "Fixed-timestep accumulator. Banks variable real delta and emits a whole number of fixed simulation steps (FIXED_STEP_SECONDS = 1/60). Clamps to MAX_FRAME_SECONDS to prevent spiral-of-death. Pure value state.",
       "gdos_alignment": "Section_16_Deterministic_Physics_Clock",
       "dependencies": [],
-      "dependents": ["core/state", "core/engine", "entities/world", "systems/player_physics", "systems/player_control", "systems/entity_kinematics"],
+      "dependents": ["core/state", "core/engine", "entities/world", "systems/player_physics", "systems/player_control", "systems/entity_kinematics", "systems/hazards_and_goal"],
       "volatile_state_flags": { "has_side_effects": false, "state_dependencies": [] },
       "last_verified_commit": "uncommitted-session-1",
       "backlog_refs": ["REQ-121", "REQ-160"]
@@ -47,7 +47,7 @@
       "functional_summary": "Immutable root state tree GameState<TWorld> plus InputFrame. Core owns tick/clock/rng/input; gameplay-specific data lives in the abstract world slot so core is decoupled from systems and content.",
       "gdos_alignment": "Section_13_Data_Driven_Architecture",
       "dependencies": ["core/clock", "core/rng"],
-      "dependents": ["systems/system", "core/state_manager", "core/engine", "entities/world", "systems/player_physics", "systems/player_control", "systems/lifecycle", "systems/hazards_and_goal", "systems/entity_kinematics"],
+      "dependents": ["systems/system", "core/state_manager", "core/engine", "entities/world", "systems/player_physics", "systems/player_control", "systems/lifecycle", "systems/hazards_and_goal", "systems/entity_kinematics", "systems/sensors"],
       "volatile_state_flags": { "has_side_effects": false, "state_dependencies": [] },
       "last_verified_commit": "uncommitted-session-1",
       "backlog_refs": ["REQ-120", "REQ-P10"]
@@ -59,7 +59,7 @@
       "functional_summary": "The System<TWorld> contract: a pure step(state)=>state function for one fixed step. Systems are stateless between frames and never read another system's internals.",
       "gdos_alignment": "Section_16_Modular_Decoupled_Components",
       "dependencies": ["core/state"],
-      "dependents": ["core/engine", "systems/player_physics", "systems/player_control", "systems/lifecycle", "systems/hazards_and_goal", "systems/entity_kinematics"],
+      "dependents": ["core/engine", "systems/player_physics", "systems/player_control", "systems/lifecycle", "systems/hazards_and_goal", "systems/entity_kinematics", "systems/sensors"],
       "volatile_state_flags": { "has_side_effects": false, "state_dependencies": [] },
       "last_verified_commit": "uncommitted-session-1",
       "backlog_refs": ["REQ-154", "REQ-P09"]
@@ -131,7 +131,7 @@
       "functional_summary": "Branded stable EntityId type + RUNTIME_SPAWN_ID_PREFIX const. Pure data declarations. Authored ids minted only by the schema validator (S2.3); runtime ids from WorldState's deterministic spawn counter in the disjoint rt: namespace.",
       "gdos_alignment": "Section_13_Level_Definition_Schema",
       "dependencies": [],
-      "dependents": ["components/entity", "components/trigger", "schema/parse", "entities/world"],
+      "dependents": ["components/entity", "components/trigger", "schema/parse", "entities/world", "systems/sensors"],
       "volatile_state_flags": { "has_side_effects": false, "state_dependencies": [] },
       "last_verified_commit": "uncommitted-session-2",
       "backlog_refs": ["REQ-120", "REQ-122"]
@@ -167,7 +167,7 @@
       "functional_summary": "BehaviorDef: closed discriminated union of the 12 PRD-§16 entity behavior payloads (environmental, hazards, interactive, kinetic modifiers) + EntityKind + ENTITY_KINDS iteration list (test-enforced exhaustive over the union). Time fields authored in seconds; dynamics-are-entities per dm-0009.",
       "gdos_alignment": "Section_16_Modular_Decoupled_Components",
       "dependencies": ["core/vec2"],
-      "dependents": ["components/entity", "components/collision_class", "schema/serialize", "schema/parse", "systems/entity_kinematics"],
+      "dependents": ["components/entity", "components/collision_class", "schema/serialize", "schema/parse", "systems/entity_kinematics", "systems/hazards_and_goal"],
       "volatile_state_flags": { "has_side_effects": false, "state_dependencies": [] },
       "last_verified_commit": "uncommitted-session-2",
       "backlog_refs": ["REQ-120", "REQ-154", "REQ-151", "REQ-152", "REQ-153"]
@@ -203,7 +203,7 @@
       "functional_summary": "TriggerDef: standalone interconnection wiring records {id, source, targets, action, once} with TriggerId brand, closed TriggerActionKind union + TRIGGER_ACTIONS list + TRIGGER_ACTION_TARGET_KIND compatibility table (dm-0015). Decouples signal sources from effects (REQ-154).",
       "gdos_alignment": "Section_13_Level_Definition_Schema",
       "dependencies": ["components/entity_id"],
-      "dependents": ["components/level", "schema/serialize", "schema/parse"],
+      "dependents": ["components/level", "schema/serialize", "schema/parse", "systems/sensors"],
       "volatile_state_flags": { "has_side_effects": false, "state_dependencies": [] },
       "last_verified_commit": "uncommitted-session-2",
       "backlog_refs": ["REQ-122", "REQ-154"]
@@ -260,10 +260,10 @@
       "node_id": "entities/world",
       "type": "SystemNode",
       "file_path": "src/entities/World.ts",
-      "functional_summary": "Jump Once's concrete TWorld: WorldState {level (deep-frozen, reference-shared LevelDefinition — dm-0009), entities runtime records INDEX-ALIGNED with level.entities (S3.1 invariant systems pair def↔state by), player position/velocity/grounded/groundEntity (S3.6: index of the solid entity underfoot or -1 — drives carry/ice/collapse), jumpLock (S3.5 — THE AXIOM's machine state: phase available|anticipating|spent + ticksUntilImpulse; forward-only within a life), runState/attemptCount/spawnTick (S3.4 lifecycle: RunState = playing|defeated|completed; elapsed life time DERIVED as tick - spawnTick), nextSpawnSerial}. EntityState += activationTick|null (triggered-mover activation), firstContactTick|null + collapsed (collapsing floors, S3.6). + RunState + JumpPhase + JumpLockState + JumpOnceState alias. instantiateWorld(def): pure deterministic instantiation (freezes def, idempotent) — reload IS this function, so per-life state (incl. the S3.5 jump lock) resets by construction (dm-0018); createInitialState(def, seed): full GameState composition. The runtime-consumption evidence for REQ-120/121 (dm-0012).",
+      "functional_summary": "Jump Once's concrete TWorld: WorldState {level (deep-frozen, reference-shared LevelDefinition — dm-0009), entities runtime records INDEX-ALIGNED with level.entities (S3.1 invariant systems pair def↔state by), player position/prevPosition/velocity/grounded/groundEntity (S3.6-7: prevPosition feeds the swept lethal check; groundEntity drives carry/ice/collapse), jumpLock (S3.5 — THE AXIOM's machine state), runState/attemptCount/spawnTick (S3.4 lifecycle), triggerActivePrev[]/triggerFired[] (S3.7 rising-edge + once tracking), nextSpawnSerial}. EntityState += activationTick|null, firstContactTick|null, collapsed (S3.6), doorOpen (S3.7 door runtime). + RunState + JumpPhase + JumpLockState + JumpOnceState alias. instantiateWorld(def): pure deterministic instantiation (freezes def, idempotent) — reload IS this function, so per-life state (incl. the S3.5 jump lock) resets by construction (dm-0018); createInitialState(def, seed): full GameState composition. The runtime-consumption evidence for REQ-120/121 (dm-0012).",
       "gdos_alignment": "Section_13_Data_Driven_Architecture",
       "dependencies": ["core/state_manager", "core/clock", "core/rng", "core/state", "core/vec2", "components/entity_id", "components/level"],
-      "dependents": ["systems/player_physics", "systems/spatial_partition", "systems/player_control", "systems/lifecycle", "systems/hazards_and_goal", "systems/entity_kinematics"],
+      "dependents": ["systems/player_physics", "systems/spatial_partition", "systems/player_control", "systems/lifecycle", "systems/hazards_and_goal", "systems/entity_kinematics", "systems/sensors"],
       "volatile_state_flags": { "has_side_effects": false, "state_dependencies": [] },
       "last_verified_commit": "uncommitted-session-3",
       "backlog_refs": ["REQ-120", "REQ-121"]
@@ -275,7 +275,7 @@
       "functional_summary": "TUNING — the single normative campaign-global physics/feel record (dm-0018): gravityY (+y down), runSpeed (instant accel/decel, S3.3), jumpSpeed + anticipationTicks (THE jump, S3.5), iceAccel (frictionless-ice ramp, S3.6), maxFallSpeed, playerHalfExtents. Pure data (logic-free scan applies); values are ledgered decisions, not tweaks (changes invalidate replays/goldens). Fields are added per P3 slice as they gain a consumer. Per-level overrides would be a schema version bump, deliberately not data here.",
       "gdos_alignment": "Section_13_Data_Driven_Architecture",
       "dependencies": ["core/vec2"],
-      "dependents": ["systems/player_physics", "systems/player_control", "systems/hazards_and_goal"],
+      "dependents": ["systems/player_physics", "systems/player_control", "systems/hazards_and_goal", "systems/sensors"],
       "volatile_state_flags": { "has_side_effects": false, "state_dependencies": [] },
       "last_verified_commit": "uncommitted-session-3",
       "backlog_refs": ["REQ-120", "REQ-150"]
@@ -287,7 +287,7 @@
       "functional_summary": "COLLISION_CLASS_BY_KIND — closed, total classification of every EntityKind as solid | lethal | sensor (P3 plan point 3; REQ-154 systems key on data classification, never entity identity). Runtime state refines (door open, floor collapsed, laser phase) but never overrides the static class. Totality asserted by unit test against ENTITY_KINDS.",
       "gdos_alignment": "Section_16_Modular_Decoupled_Components",
       "dependencies": ["components/behavior"],
-      "dependents": ["systems/player_physics"],
+      "dependents": ["systems/player_physics", "systems/hazards_and_goal"],
       "volatile_state_flags": { "has_side_effects": false, "state_dependencies": [] },
       "last_verified_commit": "uncommitted-session-3",
       "backlog_refs": ["REQ-154", "REQ-151", "REQ-152", "REQ-153"]
@@ -303,6 +303,18 @@
       "volatile_state_flags": { "has_side_effects": false, "state_dependencies": [] },
       "last_verified_commit": "uncommitted-session-3",
       "backlog_refs": ["REQ-003", "REQ-160", "REQ-121", "REQ-162"]
+    },
+    {
+      "node_id": "systems/sensors",
+      "type": "SystemNode",
+      "file_path": "src/systems/Sensors.ts",
+      "functional_summary": "sensorsSystem (S3.7): after playerPhysics, before hazardsAndGoal. Signal sources (pressurePlate/proximityZone) are ACTIVE when the player strictly overlaps their AABB; triggers fire on the RISING EDGE (held plates don't re-fire), `once` triggers at most once/life, in AUTHORED ARRAY ORDER (deterministic cascades). Closed action union edits target runtime: open/close/toggleDoor -> doorOpen; collapseFloor -> firstContactTick; activatePlatform -> activationTick (wakes a dormant triggered mover). Trusts the validator's referential integrity (dm-0015). Pure; same snapshot when nothing fires.",
+      "gdos_alignment": "Section_16_Deterministic_Physics_Clock",
+      "dependencies": ["core/state", "components/entity_id", "components/trigger", "components/tuning", "entities/world", "systems/system"],
+      "dependents": [],
+      "volatile_state_flags": { "has_side_effects": false, "state_dependencies": [] },
+      "last_verified_commit": "uncommitted-session-3",
+      "backlog_refs": ["REQ-152", "REQ-154"]
     },
     {
       "node_id": "systems/entity_kinematics",
@@ -332,9 +344,9 @@
       "node_id": "systems/hazards_and_goal",
       "type": "SystemNode",
       "file_path": "src/systems/HazardsAndGoal.ts",
-      "functional_summary": "hazardsAndGoalSystem (S3.4 share): LAST in the canonical pipeline — judges the post-physics position. Goal strict-AABB overlap vs constraints.goal -> 'completed' (freezes world until reset); player fully below the tilemap bottom edge -> 'defeated' (Lifecycle reloads next tick). Defeat checked before goal (conservative precedence). S3.7 adds hazard lethality (spike/laser/movingHazard) to this same system.",
+      "functional_summary": "hazardsAndGoalSystem (S3.4 + S3.7 lethal): LAST in the canonical pipeline — judges the post-physics position. LETHAL HAZARDS (S3.7): spike/movingHazard always lethal, laser lethal only on-phase (pure fn of tick); a SWEPT test (player centre segment playerPrevPosition->playerPosition vs Minkowski-enlarged hazard AABB grown by the hazard's per-tick motion; slab method, arithmetic only) -> 'defeated', so a fast player cannot skip a thin hazard. Goal strict-AABB overlap vs constraints.goal -> 'completed' (freezes world until reset); player fully below the tilemap bottom edge -> 'defeated'. Defeat (hazard or fall-out) checked before goal.",
       "gdos_alignment": "Section_16_Deterministic_Physics_Clock",
-      "dependencies": ["core/state", "components/tuning", "entities/world", "systems/system"],
+      "dependencies": ["core/clock", "core/state", "core/vec2", "components/tuning", "components/collision_class", "components/behavior", "entities/world", "systems/system"],
       "dependents": [],
       "volatile_state_flags": { "has_side_effects": false, "state_dependencies": [] },
       "last_verified_commit": "uncommitted-session-3",
@@ -455,11 +467,21 @@
     { "type": "DependencyEdge", "from": "systems/entity_kinematics", "to": "components/behavior", "kind": "type_import" },
     { "type": "DependencyEdge", "from": "systems/entity_kinematics", "to": "entities/world", "kind": "type_import" },
     { "type": "DependencyEdge", "from": "systems/entity_kinematics", "to": "systems/system", "kind": "type_import" },
+    { "type": "DependencyEdge", "from": "systems/hazards_and_goal", "to": "core/clock", "kind": "value_import" },
+    { "type": "DependencyEdge", "from": "systems/hazards_and_goal", "to": "core/vec2", "kind": "value_import" },
+    { "type": "DependencyEdge", "from": "systems/hazards_and_goal", "to": "components/collision_class", "kind": "value_import" },
+    { "type": "DependencyEdge", "from": "systems/hazards_and_goal", "to": "components/behavior", "kind": "type_import" },
+    { "type": "DependencyEdge", "from": "systems/sensors", "to": "core/state", "kind": "type_import" },
+    { "type": "DependencyEdge", "from": "systems/sensors", "to": "components/entity_id", "kind": "type_import" },
+    { "type": "DependencyEdge", "from": "systems/sensors", "to": "components/trigger", "kind": "type_import" },
+    { "type": "DependencyEdge", "from": "systems/sensors", "to": "components/tuning", "kind": "value_import" },
+    { "type": "DependencyEdge", "from": "systems/sensors", "to": "entities/world", "kind": "type_import" },
+    { "type": "DependencyEdge", "from": "systems/sensors", "to": "systems/system", "kind": "type_import" },
     { "type": "DependencyEdge", "from": "tools/sdlc/gate", "to": "tools/sdlc/recipe", "kind": "value_import" }
   ],
   "gdos_anchors": [
     { "type": "GDOSAnchor", "section": "Section_13_Data_Driven_Architecture", "implemented_by": ["core/state", "core/vec2", "entities/world", "components/tuning"] },
-    { "type": "GDOSAnchor", "section": "Section_16_Deterministic_Physics_Clock", "implemented_by": ["core/clock", "core/engine", "systems/player_physics", "systems/player_control", "systems/lifecycle", "systems/hazards_and_goal", "systems/entity_kinematics"] },
+    { "type": "GDOSAnchor", "section": "Section_16_Deterministic_Physics_Clock", "implemented_by": ["core/clock", "core/engine", "systems/player_physics", "systems/player_control", "systems/lifecycle", "systems/hazards_and_goal", "systems/entity_kinematics", "systems/sensors"] },
     { "type": "GDOSAnchor", "section": "State_Management_Invariants", "implemented_by": ["core/state_manager"] },
     { "type": "GDOSAnchor", "section": "Section_15_Reproducible_Agent_Simulation", "implemented_by": ["core/rng"] },
     { "type": "GDOSAnchor", "section": "Section_16_Modular_Decoupled_Components", "implemented_by": ["components/entity_id", "components/transform", "components/collider", "components/behavior", "components/entity", "components/collision_class"] },
