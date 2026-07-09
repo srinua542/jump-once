@@ -1,0 +1,67 @@
+{
+  "slice": "S3.8",
+  "title": "Kinetic modifiers: springs, gravity zones, conveyors",
+  "reqs": [
+    "REQ-153"
+  ],
+  "started_at": "2026-07-09T10:25:30.028Z",
+  "updated_at": "2026-07-09T10:29:57.057Z",
+  "current_stage": "handoff",
+  "stages": {
+    "reboot": {
+      "status": "done",
+      "at": "2026-07-09T10:25:30.030Z",
+      "note": "REBOOT held (180/180, pkg s3-a3c7d5)"
+    },
+    "select": {
+      "status": "done",
+      "at": "2026-07-09T10:25:30.173Z",
+      "note": "SELECT: S3.8; deps S3.5 COMPLETED. REQ-153 -> IN_PROGRESS"
+    },
+    "plan": {
+      "status": "done",
+      "at": "2026-07-09T10:25:30.322Z",
+      "note": "PLAN (dm-0021): fold kinetic modifiers into the systems where they integrate correctly rather than a separate surfaceEffects system — spring + conveyor into PlayerControl (the velocity authority; a post-physics system would be overwritten by control's instant-set), gravity zones into PlayerPhysics (sampled as effective gravity BEFORE the vy update so integration stays correct). Spring: grounded-on-spring -> velocity = launchVelocity (jump impulse still overrides vy if it fires — axiom precedence). Conveyor: grounded-on-conveyor -> vx = moveAxis*runSpeed + surfaceVelocityX. Gravity zone: player center inside zone AABB -> gravityY *= product of gravityScales. Values are per-entity DATA (launchVelocity/surfaceVelocityX/gravityScale), not TUNING. INVARIANT: none touch world.jumpLock — property test asserts jumpLock bit-identical before/after each modifier."
+    },
+    "anchor": {
+      "status": "done",
+      "at": "2026-07-09T10:25:30.463Z",
+      "note": "ANCHOR: no new WorldState fields (modifiers are stateless velocity edits from entity data); PlayerControl/PlayerPhysics extended; 180-test suite is the regression gate"
+    },
+    "implement": {
+      "status": "done",
+      "at": "2026-07-09T10:25:30.609Z",
+      "note": "IMPLEMENT: spring + conveyor folded into PlayerControl (grounded-on-surface velocity edits), gravity zones into PlayerPhysics (effective-gravity sampling before vy update); per-entity data values, no new state (dm-0021)"
+    },
+    "verify": {
+      "status": "done",
+      "at": "2026-07-09T10:28:55.320Z",
+      "note": "VERIFY: 186/186 (+6: spring upward launch, gravity-zone inversion rises, conveyor composes with walking, THE INVARIANT jumpLock bit-identical across 60 ticks x 3 modifiers + one-jump-retained, spring-launch-then-still-jump-once, all-modifier pipeline replay determinism)"
+    },
+    "integrate": {
+      "status": "done",
+      "at": "2026-07-09T10:28:55.457Z",
+      "note": "INTEGRATE: PKG player_control + player_physics summaries updated (no new nodes/edges — modifiers read entity data via existing deps), pkg_hash -> s3-b4d8e6; ledger dm-0021 (fold rationale + never-touch-jumpLock invariant)"
+    },
+    "report": {
+      "status": "done",
+      "at": "2026-07-09T10:28:55.758Z",
+      "note": "REPORT: S3.8 -> COMPLETED; REQ-153 stays IN_PROGRESS until S3.9 phase report (dm-0008)"
+    },
+    "handoff": {
+      "status": "done",
+      "at": "2026-07-09T10:28:55.887Z",
+      "note": "HANDOFF updated: S3.1-S3.8 complete, resume at S3.9 (verification, closes M1)"
+    }
+  },
+  "acceptance": [
+    {
+      "req": "REQ-153",
+      "criterion": "(fill in)",
+      "met": true,
+      "note": null
+    }
+  ],
+  "outcome": "completed",
+  "closed_at": "2026-07-09T10:29:57.185Z"
+}

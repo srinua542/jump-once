@@ -42,16 +42,28 @@ import { TUNING } from '../components/Tuning';
 import type { JumpLockState, WorldState } from '../entities/World';
 import type { System } from './System';
 
-/**
- * Horizontal intent velocity for this step. Off ice: instant set. On ice:
- * momentum-preserving ramp toward the input target, capped at ±runSpeed.
- */
-function horizontalVelocity(world: WorldState, moveAxis: -1 | 0 | 1): number {
+/** The behavior kind the player is grounded on this tick, or null (tile / airborne). */
+function groundKind(world: WorldState): string | null {
   const ground = world.playerGroundEntity;
-  const onIce =
-    world.playerGrounded && ground >= 0 && world.level.entities[ground].behavior.kind === 'iceSurface';
+  return world.playerGrounded && ground >= 0 ? world.level.entities[ground].behavior.kind : null;
+}
+
+/**
+ * Horizontal intent velocity for this step. Off ice: instant set (+ conveyor
+ * surface velocity if riding one, S3.8). On ice: momentum-preserving ramp
+ * toward the input target, capped at ±runSpeed.
+ */
+function horizontalVelocity(world: WorldState, moveAxis: -1 | 0 | 1, kind: string | null): number {
   const target = moveAxis * TUNING.runSpeed;
-  if (!onIce) return target;
+
+  if (kind === 'conveyor') {
+    // Conveyor adds its surface velocity to normal walking (REQ-153).
+    const ground = world.playerGroundEntity;
+    const behavior = world.level.entities[ground].behavior;
+    return behavior.kind === 'conveyor' ? target + behavior.surfaceVelocityX : target;
+  }
+
+  if (kind !== 'iceSurface') return target;
 
   const vx = world.playerVelocity.x;
   const step = TUNING.iceAccel * FIXED_STEP_SECONDS;
@@ -68,8 +80,24 @@ export const playerControlSystem: System<WorldState> = {
     const world = state.world;
     if (world.runState !== 'playing') return state; // frozen outside a live run (S3.4)
 
-    const vx = horizontalVelocity(world, state.input.moveAxis);
+    // Surface-based base velocity (S3.8 kinetic modifiers, none touch jumpLock).
+    const kind = groundKind(world);
+    let vx: number;
     let vy = world.playerVelocity.y;
+    if (kind === 'spring') {
+      // Directional launch spring: set both axes to the authored launch
+      // velocity (a jump impulse this tick still overrides vy below — the
+      // axiom takes precedence). REQ-153: never consumes the jump.
+      const behavior = world.level.entities[world.playerGroundEntity].behavior;
+      if (behavior.kind === 'spring') {
+        vx = behavior.launchVelocity.x;
+        vy = behavior.launchVelocity.y;
+      } else {
+        vx = horizontalVelocity(world, state.input.moveAxis, kind);
+      }
+    } else {
+      vx = horizontalVelocity(world, state.input.moveAxis, kind);
+    }
 
     // The single-jump lock machine (forward-only: available → anticipating → spent).
     let lock: JumpLockState = world.jumpLock;

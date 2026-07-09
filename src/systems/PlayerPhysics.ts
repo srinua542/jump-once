@@ -87,6 +87,29 @@ function isSolidEntity(world: WorldState, i: number): boolean {
   return true;
 }
 
+/**
+ * Product of gravityScale over every gravity zone whose AABB contains the
+ * player centre (S3.8 kinetic modifier; a scale of -1 inverts gravity). 1 if
+ * the player is in no zone. Reads entity data only — never touches jumpLock.
+ */
+function gravityScaleAt(world: WorldState): number {
+  const p = world.playerPosition;
+  let scale = 1;
+  for (let i = 0; i < world.level.entities.length; i++) {
+    const def = world.level.entities[i];
+    if (def.behavior.kind !== 'gravityZone') continue;
+    const cx = world.entities[i].position.x + def.collider.offset.x;
+    const cy = world.entities[i].position.y + def.collider.offset.y;
+    if (
+      Math.abs(p.x - cx) < def.collider.halfExtents.x &&
+      Math.abs(p.y - cy) < def.collider.halfExtents.y
+    ) {
+      scale *= def.behavior.gravityScale;
+    }
+  }
+  return scale;
+}
+
 interface AxisResult {
   /** New center coordinate on the swept axis. */
   readonly center: number;
@@ -218,8 +241,11 @@ export function stepPlayerPhysics(world: WorldState): WorldState {
   const dt = FIXED_STEP_SECONDS;
   const half = TUNING.playerHalfExtents;
 
-  // Velocity first (semi-implicit Euler), fall speed clamped.
-  const vy = Math.min(world.playerVelocity.y + TUNING.gravityY * dt, TUNING.maxFallSpeed);
+  // Velocity first (semi-implicit Euler). Gravity is scaled by any gravity
+  // zone the player is inside (S3.8); the terminal-fall clamp only bounds
+  // downward speed, so inverted gravity accelerates upward unclamped.
+  const gravity = TUNING.gravityY * gravityScaleAt(world);
+  const vy = Math.min(world.playerVelocity.y + gravity * dt, TUNING.maxFallSpeed);
   const vx = world.playerVelocity.x;
 
   // Platform carry: last tick's ground entity delta (0 for tile / static).

@@ -10,22 +10,24 @@
     "S3.4 COMPLETED: WorldState += runState/attemptCount/spawnTick; Lifecycle.ts (first in pipeline: defeated/resetPressed -> pure re-instantiation, one-tick instant iteration) + HazardsAndGoal.ts (last: goal strict-overlap -> completed/freeze, fall-out -> defeated); runState guards in control/physics. +6 tests incl. cross-reload replay determinism. Committed.",
     "S3.5 COMPLETED (THE AXIOM): TUNING += jumpSpeed/anticipationTicks; WorldState += jumpLock {phase, ticksUntilImpulse}; single-jump machine in PlayerControl (grounded press -> anticipating(N) -> ONE impulse -> spent forever until reload; air presses ignored-not-consumed; committed anticipation; no coyote/no buffering — dm-0020). +8 tests incl. THE PROPERTY (40 fuzz tapes across defeat/reset -> never >1 impulse/life). Committed.",
     "S3.6 COMPLETED: EntityKinematics.ts (closed-form movers via arc-length over waypoint polyline — looping wrap / linear|triggered ping-pong; collapse latch+derive). WorldState.playerGroundEntity; EntityState += activationTick/firstContactTick/collapsed; PlayerPhysics platform CARRY (two-phase Y keeps grounding robust under an upward platform) + ground-entity record + collapsed-floors-non-solid; PlayerControl frictionless-ice branch (momentum-preserving, TUNING.iceAccel). +10 tests. Committed.",
-    "S3.7 COMPLETED: HazardsAndGoal lethal swept check (laser lethal only on-phase, pure fn of tick; segment-vs-Minkowski-AABB slab test so a fast player can't skip a thin hazard) -> defeated. NEW Sensors.ts (after physics, before hazardsAndGoal): plate/zone rising-edge triggers in AUTHORED ORDER, once-per-life or per-edge, closed action union open/close/toggleDoor + collapseFloor + activatePlatform. WorldState += playerPrevPosition/triggerActivePrev[]/triggerFired[]; EntityState += doorOpen (isSolidEntity door now reads it). +9 tests incl. 3-mechanic layering. 180/180 green. (COMMIT PENDING.)",
+    "S3.7 COMPLETED: HazardsAndGoal lethal swept check (laser on-phase pure fn of tick; segment-vs-Minkowski-AABB slab) + Sensors.ts (rising-edge triggers, authored order, closed action union). WorldState += playerPrevPosition/triggerActivePrev/triggerFired; EntityState += doorOpen. +9 tests incl. 3-mechanic layering. Committed.",
+    "S3.8 COMPLETED: kinetic modifiers folded (dm-0021) — spring + conveyor into PlayerControl (grounded-on-surface velocity edits), gravity zones into PlayerPhysics (effective-gravity sampling); per-entity data, no new state. +6 tests incl. THE INVARIANT (jumpLock bit-identical across every modifier interaction — REQ-153 never consumes the jump). 186/186 green. Ledger dm-0021. (COMMIT PENDING.)",
     "PKG: +6 nodes total this session (tuning, collision_class, player_physics, spatial_partition, player_control, lifecycle, hazards_and_goal — 7 actually; entities/world extended repeatedly), all edges both directions, pkg_hash s2-e6f2a4 -> s3-a7c1d9 -> s3-b8d2e0 -> s3-c9e3f1 -> s3-d0f4a2 -> s3-e1a5b3 (current). Reconciled pre-existing session-1 drift (core/clock, core/rng dependents missing core/state)."
   ],
   "exact_execution_focus": {
     "file_path": "docs/task_slices.md",
-    "target_line_range": "Phase 3 table (S3.8 row)",
-    "pending_logical_transformation": "S3.1-S3.7 COMPLETED (180/180, pkg s3-a3c7d5). Next slice S3.8 — Kinetic modifiers (REQ-153): springs (directional launch), gravity zones (invert/scale gravity inside AABB), conveyors (add horizontal surface velocity to a grounded rider). These alter velocity/inertia but MUST NEVER consume the single jump — the required property test asserts jumpLock is bit-identical before/after any modifier interaction. Design: a NEW src/systems/SurfaceEffects.ts in the pipeline AFTER playerPhysics (per P3 plan canonical order: ...physics -> surfaceEffects -> sensors -> hazardsAndGoal) — reorder: put surfaceEffects between physics and sensors. Spring: on contact/overlap set playerVelocity = spring.launchVelocity (fires while overlapping; consider edge vs continuous — launch should fire on contact, likely rising-edge or while grounded-on-spring). Gravity zone: gravityScale applied to gravity — but gravity lives in PlayerPhysics; cleanest is PlayerPhysics samples an effective gravity from any gravityZone the player is inside (add a helper reading zones), OR SurfaceEffects adjusts velocity post-physics. DECIDE at plan: sampling gravity inside PlayerPhysics keeps integration correct (recommend: PlayerPhysics queries gravity zones for effective gravityY before the vy update). Conveyor: add surfaceVelocityX to a grounded rider's vx (like carry but horizontal-only, in SurfaceEffects or PlayerControl). Whichever placement, NONE may touch jumpLock. Then S3.9 verification report closes M1.",
+    "target_line_range": "Phase 3 table (S3.9 row)",
+    "pending_logical_transformation": "S3.1-S3.8 COMPLETED (186/186, pkg s3-b4d8e6) — the entire P3 mechanic library is built and green. LAST slice S3.9 — Phase-3 verification report (docs/verification/P3.md): map each P3 REQ (003,004,010,011,150,151,152,153,154,160,162) to its passing test(s) per dm-0008; flip REQ-004/010/011/150(P3 share)/151/152/153/154 to VERIFIED (REQ-003 spans P10, REQ-160 spans P11, REQ-162 spans P9/P11 — those stay IN_PROGRESS); run the Subtractive Removal pass over the new P3 systems (grep for dead exports, unused fields, transcendental fns in src/systems/ per dm-0017 audit); PRD compliance audit for M1; record save-persistence ownership -> P9/REQ-171. Then close M1 in IRD.md + execution_plan.md P3 section, update rollup. This closes MILESTONE M1 — Simulatable Game.",
     "pkg_hash_note": "no structural change may land without a PKG node+edges update in the same change"
   },
   "blocked_by": {
     "dependency_node": "none",
-    "reason": "No blockers. S3.1-S3.7 COMPLETED, suite green (180/180). Milestone M1 needs S3.8-S3.9 to close."
+    "reason": "No blockers. S3.1-S3.8 COMPLETED, suite green (186/186). Milestone M1 needs only S3.9 (verification report) to close — no more mechanic code."
   },
   "critical_warnings_for_next_session": [
-    "RUN THE REBOOT LIFECYCLE FIRST: confirm pkg_hash s3-a3c7d5 matches meta/project_knowledge_graph.json, npm test expect 180 passing.",
-    "IF S3.7 IS UNCOMMITTED: commit it first (git status shows HazardsAndGoal.ts, Sensors.ts, PlayerPhysics.ts, World.ts, HazardsTriggers.test.ts, meta/*). It reached done in the stage tracker.",
+    "RUN THE REBOOT LIFECYCLE FIRST: confirm pkg_hash s3-b4d8e6 matches meta/project_knowledge_graph.json, npm test expect 186 passing.",
+    "IF S3.8 IS UNCOMMITTED: commit it first (git status shows PlayerControl.ts, PlayerPhysics.ts, KineticModifiers.test.ts, meta/*). It reached done in the stage tracker.",
+    "S3.9 is a VERIFICATION slice (docs + audit, no new mechanic code). It closes M1 — run the Subtractive Removal pass (REQ-022) and the transcendental-function grep audit (dm-0017) over src/systems/ as part of it.",
     "S3.8 KINETIC MODIFIERS MUST NEVER CONSUME THE JUMP (REQ-153): springs/gravity zones/conveyors alter velocity/inertia only; the required property test asserts world.jumpLock is bit-identical before/after any modifier interaction. This is the axiom's boundary — do not let a spring reset or a gravity flip touch the lock machine.",
     "THE AXIOM (dm-0020): the single-jump lock is engine logic in PlayerControl + WorldState.jumpLock, NEVER a schema field (dm-0011 — no maxJumps ever). Refresh happens ONLY because reload re-instantiates WorldState (dm-0018 — no reset code exists). No coyote time, no input buffering — adopting either is a P5/GDOS decision that must still consume the single jump and pass the property test.",
     "CANONICAL PIPELINE ORDER (normative, P3 plan): lifecycle -> entityKinematics(S3.6) -> playerControl -> playerPhysics -> surfaceEffects(S3.6 ice/S3.8) -> sensors(S3.7) -> hazardsAndGoal. System composition order is a determinism parameter — the Engine must pipe systems in exactly this order; assert it when the full pipeline is assembled.",
@@ -38,10 +40,9 @@
     "Do NOT change FIXED_STEP_SECONDS (dm-0003); never mutate GameState in place (dm-0004).",
     "The private npm mirror npm.shootsta.com is broken; .npmrc pins registry.npmjs.org — don't remove it."
   ],
-  "pkg_hash_at_handoff": "s3-a3c7d5",
+  "pkg_hash_at_handoff": "s3-b4d8e6",
   "next_session_pick_list": [
-    "COMMIT S3.7 if uncommitted (git status check)",
-    "S3.8 Kinetic modifiers (springs/gravity zones/conveyors; NEVER-consumes-jump property test — the axiom boundary)",
-    "S3.9 Phase-3 verification report (closes M1: subtractive pass + compliance audit + save-persistence ownership -> P9/REQ-171)"
+    "COMMIT S3.8 if uncommitted (git status check)",
+    "S3.9 Phase-3 verification report -> docs/verification/P3.md (closes M1: per-REQ mapping, subtractive pass, compliance audit, save-persistence ownership -> P9/REQ-171)"
   ]
 }

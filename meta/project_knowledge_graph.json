@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
   "generated_by_session": "2026-07-09T-session-3",
-  "pkg_hash": "s3-a3c7d5",
+  "pkg_hash": "s3-b4d8e6",
   "notes": "Machine-readable mirror of the codebase. Read at every session start; update immediately on any structural code change (new module, changed dependency, changed GDOS mapping). See references/pkg_schema.md.",
   "nodes": [
     {
@@ -296,7 +296,7 @@
       "node_id": "systems/player_physics",
       "type": "SystemNode",
       "file_path": "src/systems/PlayerPhysics.ts",
-      "functional_summary": "playerPhysicsSystem + stepPlayerPhysics(world): deterministic fixed-step player body physics (S3.1, +S3.6 carry). Platform CARRY: last-tick ground entity's derived delta folded into the sweep (0 for tile/static). Semi-implicit (symplectic) Euler with terminal-fall clamp; swept, axis-separated resolution — X (carry+input merged) then Y in two phases (carry, then gravity so grounding stays robust under an upward platform) — clamping to the nearest solid face (tiles via range scan, solid entities via per-axis face test over the S3.2 quadtree candidate set), exact snapping, no tunneling at any speed (dm-0017). Records playerGroundEntity (the clamping entity index or -1); collapsed floors are non-solid. Blocked axes zero their velocity. Reads state.world ONLY — never state.input (S3.3 owns input).",
+      "functional_summary": "playerPhysicsSystem + stepPlayerPhysics(world): deterministic fixed-step player body physics (S3.1, +S3.6 carry). Platform CARRY: last-tick ground entity's derived delta folded into the sweep (0 for tile/static). Semi-implicit (symplectic) Euler with terminal-fall clamp; swept, axis-separated resolution — X (carry+input merged) then Y in two phases (carry, then gravity so grounding stays robust under an upward platform) — clamping to the nearest solid face (tiles via range scan, solid entities via per-axis face test over the S3.2 quadtree candidate set), exact snapping, no tunneling at any speed (dm-0017). Records playerGroundEntity (the clamping entity index or -1); collapsed floors are non-solid; open doors are non-solid (runtime doorOpen, S3.7). Gravity is scaled by any gravityZone the player centre is inside (S3.8 kinetic modifier, dm-0021 — reads entity data, never jumpLock). Blocked axes zero their velocity. Reads state.world ONLY — never state.input (S3.3 owns input).",
       "gdos_alignment": "Section_16_Deterministic_Physics_Clock",
       "dependencies": ["core/clock", "core/state", "core/vec2", "components/tilemap", "components/tuning", "components/collision_class", "components/level", "entities/world", "systems/system", "systems/spatial_partition"],
       "dependents": [],
@@ -356,7 +356,7 @@
       "node_id": "systems/player_control",
       "type": "SystemNode",
       "file_path": "src/systems/PlayerControl.ts",
-      "functional_summary": "playerControlSystem (S3.3 + S3.5 + S3.6 ice): consumer of moveAxis and jumpPressed under the by-field input split (dm-0019; Lifecycle owns resetPressed). Off ice: instant horizontal accel/decel (REQ-150) — playerVelocity.x SET to moveAxis × TUNING.runSpeed, never ramped; horizontal control never locks. On frictionless ice (grounded on iceSurface last tick, REQ-151): momentum-preserving ramp by TUNING.iceAccel·dt toward ±runSpeed, no decel on release. Drives THE AXIOM's single-jump lock machine (dm-0020): grounded press -> anticipating(TUNING.anticipationTicks) -> ONE impulse vy=-TUNING.jumpSpeed -> spent forever until reload re-instantiates (dm-0018); air presses ignored-not-consumed; committed anticipation; no coyote/no buffering. Runs BEFORE playerPhysicsSystem. Pure; returns the same snapshot when nothing changes.",
+      "functional_summary": "playerControlSystem (S3.3/5/6 + S3.8 spring/conveyor): consumer of moveAxis and jumpPressed under the by-field input split (dm-0019; Lifecycle owns resetPressed). Surface-based base velocity: instant accel/decel off ice (REQ-150); frictionless-ice momentum ramp (S3.6); grounded-on-conveyor adds surfaceVelocityX; grounded-on-spring sets velocity = launchVelocity (S3.8 kinetic modifiers, per-entity data, dm-0021 — NONE touch jumpLock). Drives THE AXIOM's single-jump lock machine (dm-0020): grounded press -> anticipating(TUNING.anticipationTicks) -> ONE impulse vy=-TUNING.jumpSpeed (overrides any spring vy — axiom precedence) -> spent forever until reload re-instantiates (dm-0018); air presses ignored-not-consumed; no coyote/no buffering. Runs BEFORE playerPhysicsSystem. Pure.",
       "gdos_alignment": "Section_16_Deterministic_Physics_Clock",
       "dependencies": ["core/clock", "core/state", "core/vec2", "components/tuning", "entities/world", "systems/system"],
       "dependents": [],

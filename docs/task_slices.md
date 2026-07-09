@@ -63,7 +63,7 @@ Session-sized, dependency-ordered work units. Each slice is small enough to comp
 | S3.5 | **Single-jump lock** state machine (the axiom) | REQ-004, REQ-010, REQ-011, REQ-150 | S3.3, S3.4 | Anticipation ticks → single impulse → locked (horizontal-only); lock state lives in `WorldState` so reload-refresh holds by construction (dm-0018); property test: never >1 jump per life under fuzzed input tapes. | COMPLETED |
 | S3.6 | Environmental elements | REQ-151 | S3.1, S3.3 | Tick-parametric (closed-form, dm-0016) moving platforms (linear/looping/triggered) + platform carry (incl. platform-into-wall); collapsing floors; frictionless ice — data-driven; isolated tests. | COMPLETED |
 | S3.7 | Hazards + triggers | REQ-152 | S3.4, S3.6 | Spikes/lasers (pure fn of tick)/moving hazards → defeat via **swept** lethal check; plates/proximity/doors execute the closed trigger-action union in authored order; layering test ≥3 mechanics. | COMPLETED |
-| S3.8 | Kinetic modifiers | REQ-153 | S3.5 | Springs/gravity zones/conveyors alter velocity/inertia; lock state bit-identical before/after (never consumes jump — asserted). | NOT_STARTED |
+| S3.8 | Kinetic modifiers | REQ-153 | S3.5 | Springs/gravity zones/conveyors alter velocity/inertia; lock state bit-identical before/after (never consumes jump — asserted). | COMPLETED |
 | S3.9 | Phase-3 verification report | REQ-P02 | S3.5–S3.8 | `docs/verification/P3.md`; one-jump invariant proven across full library; M1 exit items (subtractive pass, compliance audit, save-persistence ownership → P9/REQ-171). | NOT_STARTED |
 
 ## Phase 4 — Evaluation & Validation Framework
