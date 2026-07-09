@@ -1,0 +1,74 @@
+{
+  "slice": "S4.6",
+  "title": "Macro curriculum validation (4 criteria)",
+  "reqs": [
+    "REQ-140",
+    "REQ-142"
+  ],
+  "started_at": "2026-07-09T16:13:53.548Z",
+  "updated_at": "2026-07-09T16:16:50.783Z",
+  "current_stage": "handoff",
+  "stages": {
+    "reboot": {
+      "status": "done",
+      "at": "2026-07-09T16:13:53.549Z",
+      "note": "REBOOT: 231/231, pkg s4-e5b6c7, S4.5 archived"
+    },
+    "select": {
+      "status": "done",
+      "at": "2026-07-09T16:13:53.624Z",
+      "note": "SELECT: S4.6 dep S4.2 COMPLETED"
+    },
+    "plan": {
+      "status": "done",
+      "at": "2026-07-09T16:13:53.693Z",
+      "note": "PLAN: resolve open-q#2 (chapter input = minimal ordered CurriculumLevel[] built from local verdicts + GDOS; P6/P10 adopt/version). Four criteria: Cognitive Structural Mapping, Cross-Chapter Degradation, Curiosity Progression, Graduation Assessment. Isolated in src/eval/macro/, consumes verdicts as data, no sim re-run. src/eval/macro/Curriculum.ts + unit test; extend EvalIsolation for macro."
+    },
+    "anchor": {
+      "status": "done",
+      "at": "2026-07-09T16:13:53.769Z",
+      "note": "ANCHOR: validateCurriculum(chapter,opts)->MacroVerdict{4 criteria + overallPass}; pure over CurriculumLevel[]."
+    },
+    "implement": {
+      "status": "done",
+      "at": "2026-07-09T16:13:53.836Z",
+      "note": "IMPLEMENT: src/eval/macro/Curriculum.ts + test/unit/Curriculum.test.ts + macro-isolation scan in EvalIsolation"
+    },
+    "verify": {
+      "status": "done",
+      "at": "2026-07-09T16:16:50.311Z",
+      "note": "VERIFY: 240/240 green (+9). Healthy chapter passes 4 criteria; each criterion fails on targeted defect; broken level fails health; macro import-isolation scan green; determinism."
+    },
+    "integrate": {
+      "status": "done",
+      "at": "2026-07-09T16:16:50.384Z",
+      "note": "INTEGRATE: PKG +eval/macro/curriculum hash s4-f6c7d8; ledger dm-0029; REQ-140/142 IN_PROGRESS."
+    },
+    "report": {
+      "status": "done",
+      "at": "2026-07-09T16:16:50.476Z",
+      "note": "REPORT: S4.6 COMPLETED."
+    },
+    "handoff": {
+      "status": "done",
+      "at": "2026-07-09T16:16:50.708Z",
+      "note": "HANDOFF: deferred to session end (multi-slice)."
+    }
+  },
+  "acceptance": [
+    {
+      "req": "REQ-140",
+      "criterion": "(fill in)",
+      "met": true,
+      "note": null
+    },
+    {
+      "req": "REQ-142",
+      "criterion": "(fill in)",
+      "met": true,
+      "note": null
+    }
+  ],
+  "outcome": "completed",
+  "closed_at": "2026-07-09T16:16:50.859Z"
+}

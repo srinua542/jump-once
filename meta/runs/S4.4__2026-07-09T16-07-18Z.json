@@ -1,0 +1,67 @@
+{
+  "slice": "S4.4",
+  "title": "Exploit filtration",
+  "reqs": [
+    "REQ-141"
+  ],
+  "started_at": "2026-07-09T15:58:08.657Z",
+  "updated_at": "2026-07-09T16:07:18.340Z",
+  "current_stage": "handoff",
+  "stages": {
+    "reboot": {
+      "status": "done",
+      "at": "2026-07-09T15:58:08.658Z",
+      "note": "REBOOT: 222/222, pkg s4-c3f0d1, S4.3 archived"
+    },
+    "select": {
+      "status": "done",
+      "at": "2026-07-09T15:58:08.739Z",
+      "note": "SELECT: S4.4 dep S4.1; reuses Search + new forbidden constraint"
+    },
+    "plan": {
+      "status": "done",
+      "at": "2026-07-09T15:58:08.806Z",
+      "note": "PLAN: resolve open-q#4 (envelope=lethal-hazard AABBs on the spawn-goal corridor, expanded by margin). Skip-constrained search (forbidden=envelope). Exploit = goal reachable while avoiding envelope. src/eval/local/Exploit.ts + unit test (bypassable-ledge fixture flagged, must-engage fixture clean)."
+    },
+    "anchor": {
+      "status": "done",
+      "at": "2026-07-09T15:58:08.876Z",
+      "note": "ANCHOR: Search gains optional forbidden predicate (macro tainting); auditExploit(def,opts)->ExploitVerdict{hasExploit,applicable,bypassedHazardIds,skipWitness?}."
+    },
+    "implement": {
+      "status": "done",
+      "at": "2026-07-09T15:58:08.952Z",
+      "note": "IMPLEMENT: Search+forbidden option; src/eval/local/Exploit.ts + test/unit/Exploit.test.ts"
+    },
+    "verify": {
+      "status": "done",
+      "at": "2026-07-09T16:07:17.948Z",
+      "note": "VERIFY: 226/226 green (+4). Ceiling-spike-over-goal clean (must engage); jumped-pit exploitable w/ skip witness completing; no-hazard N/A; determinism."
+    },
+    "integrate": {
+      "status": "done",
+      "at": "2026-07-09T16:07:18.045Z",
+      "note": "INTEGRATE: PKG +eval/local/exploit, search summary updated, hash s4-d4a1b2; ledger dm-0027 (envelope def, open-q#4 resolved)."
+    },
+    "report": {
+      "status": "done",
+      "at": "2026-07-09T16:07:18.132Z",
+      "note": "REPORT: S4.4 COMPLETED."
+    },
+    "handoff": {
+      "status": "done",
+      "at": "2026-07-09T16:07:18.233Z",
+      "note": "HANDOFF: deferred to session end (multi-slice)."
+    }
+  },
+  "acceptance": [
+    {
+      "req": "REQ-141",
+      "criterion": "(fill in)",
+      "met": false,
+      "note": null
+    }
+  ],
+  "outcome": "completed",
+  "closed_at": "2026-07-09T16:07:18.433Z"
+}

@@ -16,7 +16,11 @@
 import type { LevelDefinition } from '../../src/components/Level';
 import { parseLevel } from '../../src/schema/Parse';
 
-export function buildGridLevel(levelId: string, rows: readonly string[]): LevelDefinition {
+export function buildGridLevel(
+  levelId: string,
+  rows: readonly string[],
+  parTimeTiersSeconds: readonly number[] = [30, 10],
+): LevelDefinition {
   const height = rows.length;
   if (height === 0) throw new Error(`${levelId}: empty grid`);
   const width = rows[0].length;
@@ -65,7 +69,7 @@ export function buildGridLevel(levelId: string, rows: readonly string[]): LevelD
     constraints: {
       spawn,
       goal: { position: goal, halfExtents: { x: 0.5, y: 0.5 } },
-      parTimeTiersSeconds: [30, 10],
+      parTimeTiersSeconds: [...parTimeTiersSeconds],
     },
   };
 

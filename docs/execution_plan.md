@@ -5,7 +5,7 @@ This document holds one section per phase, authored *before* that phase's implem
 - **P0 + P1 (M0 — Foundation Locked): CLOSED.** M0 is VERIFIED, see `docs/verification/P1.md`. Retained below as the historical record.
 - **P2 — Data Models & Level Definition Schema: CLOSED — VERIFIED**, see `docs/verification/P2.md`. Checkpoints C2.1–C2.6 all passed (118/118 tests). Retained below as the historical record.
 - **P3 — Mechanic Library & Deterministic Physics: CLOSED — VERIFIED**, see `docs/verification/P3.md`. Authored at S3.1 start via adversarial review (dm-0016–dm-0021; table restructured to S3.1–S3.9). All checkpoints C3.1–C3.9 passed (186/186 tests). **Milestone M1 — Simulatable Game CLOSED.**
-- **P4 — Evaluation & Validation Framework: IN FLIGHT** (opens milestone M2 — Design Intelligence Operational). Section below authored at S4.1 start per REQ-P02, via the same adversarial review P2/P3 got (dm-0022–dm-0024).
+- **P4 — Evaluation & Validation Framework: CLOSED — VERIFIED**, see `docs/verification/P4.md`. Section authored at S4.1 start per REQ-P02 via the same adversarial review P2/P3 got (dm-0022–dm-0029). All seven slices S4.1–S4.7 ran the nine-stage SDLC loop (archives in `meta/runs/S4.*`); checkpoints C4.1–C4.7 passed (240/240 tests). **Milestone M2 remains OPEN** — P5 + P6 still required before the content gate opens.
 
 Covers the phases that were in flight: **P0 (Governance & Protocol Infrastructure)** and **P1 (Deterministic Core Architecture)** — together, milestone **M0 — Foundation Locked**. Per the Directive, this plan is written *before* implementation code and defines the work, governing PRD requirements, dependencies, deliverables, validation criteria, and completion checkpoints. A new execution plan will be authored at the start of each subsequent phase.
 
@@ -296,7 +296,9 @@ All checkpoints C3.1–C3.9 pass; the axiom's fuzz property holds across the ful
 ---
 ---
 
-# P4 — Evaluation & Validation Framework  *(IN FLIGHT — authored at S4.1 start per REQ-P02; adversarial review ledgered dm-0022–dm-0024)*
+# P4 — Evaluation & Validation Framework  *(CLOSED — VERIFIED, `docs/verification/P4.md`; authored at S4.1 start per REQ-P02; adversarial review ledgered dm-0022–dm-0029)*
+
+> **CLOSED at S4.7.** All seven slices COMPLETED, checkpoints C4.1–C4.7 passed, 240/240 tests green. Five archetypes drive the frozen sim headlessly and replay bit-identically; the solvability audit treats exactly-one-jump as ground truth (a two-jump level is unsolvable by construction); softlock, exploit, and five-tier optimization audits classify their fixture sets correctly; the macro curriculum pass runs isolated. REQ-140/141 VERIFIED; REQ-142/101/102 hold their P4 share (P6/P10 remainder open). **Milestone M2 stays OPEN** (P5 + P6 remain); the content gate is still closed. Retained below as the historical record.
 
 ## Governing requirements
 
@@ -360,13 +362,13 @@ P2+P3 VERIFIED, M1 CLOSED (satisfied). Consumes: the frozen deterministic sim (`
 
 ## Checkpoints
 
-- **C4.1** Harness + five archetypes + tape I/O land; determinism, replay-equality, distinctness, and budget-halt tests green.
-- **C4.2** Solvability audit classifies fixture sets correctly with witness tapes.
-- **C4.3** Softlock detector flags the dead-zone fixture, passes clean fixtures.
-- **C4.4** Exploit filter catches the path-skip fixture, passes intended routes.
-- **C4.5** Tier routing + delta computed; minimal-delta fixture rejected.
-- **C4.6** Macro pass audits a fixture chapter sequence against all four criteria.
-- **C4.7** `docs/verification/P4.md` filed; P4 REQs advanced per dm-0008; PKG consistent; subtractive pass recorded.
+- **C4.1** ✅ Harness + five archetypes + tape I/O landed; determinism, live≡replay equality, pairwise distinctness, and budget-halt tests green.
+- **C4.2** ✅ Solvability audit classifies the fixture sets correctly with witness tapes; the two-jump level is unsolvable by construction.
+- **C4.3** ✅ Softlock detector flags the oubliette dead-zone (with deepest-trapped evidence), passes clean fixtures under exhaustive search.
+- **C4.4** ✅ Exploit filter catches the jumped-clean-over pit, treats the ceiling-spike-guarded goal as clean.
+- **C4.5** ✅ Five-tier routing + delta computed; flat minimal-delta fixture rejected (REQ-102); par cross-check flags an impossible optimal par.
+- **C4.6** ✅ Macro pass audits a fixture chapter against all four criteria, each failing on a targeted defect; import isolation scan green.
+- **C4.7** ✅ `docs/verification/P4.md` filed; REQ-140/141 → VERIFIED (dm-0008); PKG consistent (`s4-f6c7d8`); subtractive pass (0 findings) recorded.
 
 ## Risk register (P4)
 

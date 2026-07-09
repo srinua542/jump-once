@@ -75,10 +75,10 @@ Session-sized, dependency-ordered work units. Each slice is small enough to comp
 | S4.1 | Agent-archetype simulator harness | REQ-141 | S3.8 | `src/eval/` opened (dm-0022, one-way dependency); replay-tape format + strict canonical I/O in `src/schema/TapeIO.ts` (dm-0023); five data-parameterized archetypes (First-Time/Cautious/Experienced/Expert-Speedrunner/Curious-Explorer) over one decision core drive the sim headlessly in the canonical pipeline order; agent RNG is a separate threaded stream (dm-0024); per archetype: identical tape across two runs, live≡replay bit-equality, pairwise-distinct tapes on a discriminating fixture; budgeted halt (`'timeout'`) on unreachable/always-lethal fixtures; whitelist math only. | COMPLETED |
 | S4.2 | Solvability audit (exactly-one-jump) | REQ-141 | S4.1 | Bounded deterministic search + archetype fast path; classifies known-solvable/known-unsolvable fixture sets with zero misclassification; every 'solvable' verdict carries a replayable witness tape; the axiom is ground truth read from `world.jumpLock`, never re-implemented. | COMPLETED |
 | S4.3 | Softlock detection | REQ-141 | S4.1 | Detects dead zones (can neither die nor reach goal within budget) from classified timeouts + region evidence; flags the dead-zone fixture, passes clean ones. | COMPLETED |
-| S4.4 | Exploit filtration | REQ-141 | S4.1 | Detects boundary path-skips bypassing authored hazards (completion tapes that never intersect the challenge envelope); catches the skip fixture, passes intended routes. | NOT_STARTED |
-| S4.5 | Optimization windows + five-tier routing + delta | REQ-101, REQ-102 | S4.2 | Five tier times from the archetype spread (Discovery≈First-Time, WR≈Expert best); delta = T_Discovery − T_WR; rejects the minimal-delta fixture, passes the wide-delta one; `parTimeTiersSeconds` cross-checked. | NOT_STARTED |
-| S4.6 | Macro curriculum validation (4 criteria) | REQ-140, REQ-142 | S4.2 | Isolated macro pass (`src/eval/macro/`) audits ordered local-verdict sequences against the four §15 criteria; consumes verdicts as data, never re-runs sims; import isolation scan-tested. | NOT_STARTED |
-| S4.7 | Phase-4 verification report | REQ-P02 | S4.2–S4.6 | `docs/verification/P4.md`; per-REQ mapping (dm-0008); subtractive pass; PKG hash consistent. | NOT_STARTED |
+| S4.4 | Exploit filtration | REQ-141 | S4.1 | Detects boundary path-skips bypassing authored hazards (completion tapes that never intersect the challenge envelope); catches the skip fixture, passes intended routes. | COMPLETED |
+| S4.5 | Optimization windows + five-tier routing + delta | REQ-101, REQ-102 | S4.2 | Five tier times from the archetype spread (Discovery≈First-Time, WR≈Expert best); delta = T_Discovery − T_WR; rejects the minimal-delta fixture, passes the wide-delta one; `parTimeTiersSeconds` cross-checked. | COMPLETED |
+| S4.6 | Macro curriculum validation (4 criteria) | REQ-140, REQ-142 | S4.2 | Isolated macro pass (`src/eval/macro/`) audits ordered local-verdict sequences against the four §15 criteria; consumes verdicts as data, never re-runs sims; import isolation scan-tested. | COMPLETED |
+| S4.7 | Phase-4 verification report | REQ-P02 | S4.2–S4.6 | `docs/verification/P4.md`; per-REQ mapping (dm-0008); subtractive pass; PKG hash consistent. | COMPLETED |
 
 ## Phase 5 — GDOS Scoring Engine
 
@@ -158,11 +158,11 @@ Session-sized, dependency-ordered work units. Each slice is small enough to comp
 
 ## Next-session pick-list (top of queue)
 
-**P3 — Mechanic Library & Deterministic Physics is VERIFIED** (`docs/verification/P3.md`); all nine P3 slices COMPLETED, 186/186 tests green. **Milestone M1 — Simulatable Game is CLOSED** (P2 ✓ + P3 ✓). The next phase is **P4 — Evaluation & Validation Framework** (opening M2 — Design Intelligence Operational).
+**P4 — Evaluation & Validation Framework is VERIFIED** (`docs/verification/P4.md`); all seven P4 slices COMPLETED, 240/240 tests green, pkg `s4-f6c7d8`. **Milestone M2 — Design Intelligence Operational is still OPEN** — P4 is one of its three pillars (P4 + P5 + P6). The next phase is **P5 — GDOS Scoring Engine** (its entry condition, P4-VERIFIED, is satisfied).
 
-1. **S4.2** — Solvability audit (exactly-one-jump): bounded deterministic search + archetype fast path over the S4.1 harness. (P4 plan authored ✓; S4.1 COMPLETED ✓ — 210/210 tests, pkg s4-d1f7a3.)
-2. **S4.2** — Solvability audit (exactly-one-jump) — now testable against the real P3 mechanic library.
-3. **S4.3–S4.6** — Softlock detection, exploit filtration, optimization windows + five-tier routing, macro curriculum validation.
-4. **S4.7** — Phase-4 verification report.
+1. **Author the P5 execution-plan section FIRST** (REQ-P02) — consider the same adversarial review P2/P3/P4 got; P5 owns emotional-threshold gates, streamability matrix, IDS regulator, economy-of-mechanics metric, novelty/emergent-fun search, CDRE loop, Kill Switch + First-Party filter, subtractive-removal engine, design-space coverage. P5's gates consume the P4 verdicts (solvability/optimization/curriculum) as inputs.
+2. **S5.1** — Design-space coverage matrix + economy-of-mechanics metric (REQ-040/041/042).
+3. **S5.2–S5.5** — emotional-threshold gates, streamability matrix, IDS regulator, novelty + emergent-fun search.
+4. Then **P6 — Campaign Intelligence** closes M2; only then does the content gate open.
 
-*(Content generation stays hard-gated until M2 — P4+P5+P6 — is VERIFIED.)*
+*(Content generation stays hard-gated until M2 — P4+P5+P6 — is VERIFIED. P4 done, P5+P6 remain.)*

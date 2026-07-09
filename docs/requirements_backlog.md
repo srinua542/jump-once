@@ -103,8 +103,8 @@
 | ID | Requirement | PRD | Phase | State |
 |----|-------------|-----|-------|-------|
 | REQ-100 | Dual-Path axiom: every level supports Discovery Path and Mastery Path in one physical space. | §11 | P10 | NOT_STARTED |
-| REQ-101 | Optimization Space Model: five routing tiers (Discovery, Good, Fast, Expert, World Record). | §11 | P4,P10 | NOT_STARTED |
-| REQ-102 | Optimization delta metric (Time_Discovery − Time_WorldRecord); reject layouts with zero/minimal delta. | §11 | P4,P10 | NOT_STARTED |
+| REQ-101 | Optimization Space Model: five routing tiers (Discovery, Good, Fast, Expert, World Record). | §11 | P4,P10 | IN_PROGRESS |
+| REQ-102 | Optimization delta metric (Time_Discovery − Time_WorldRecord); reject layouts with zero/minimal delta. | §11 | P4,P10 | IN_PROGRESS |
 
 ## §12 20 Core Principles & Design Intent Repository
 
@@ -134,9 +134,9 @@
 
 | ID | Requirement | PRD | Phase | State |
 |----|-------------|-----|-------|-------|
-| REQ-140 | Two isolated validation passes: Local Spatial Verification and Macro Curriculum Validation. | §15 | P4 | NOT_STARTED |
-| REQ-141 | Local: five agent archetypes (First-Time, Cautious, Experienced, Expert Speedrunner, Curious Explorer); Solvability audit (exactly one jump), Softlock detection, Exploit filtration, Optimization windows. | §15 | P4 | IN_PROGRESS |
-| REQ-142 | Macro: curriculum progress arc; four criteria — Cognitive Structural Mapping, Cross-Chapter Degradation Analysis, Curiosity Progression Curves, Graduation Assessment Verification. | §15 | P4,P6 | NOT_STARTED |
+| REQ-140 | Two isolated validation passes: Local Spatial Verification and Macro Curriculum Validation. | §15 | P4 | VERIFIED |
+| REQ-141 | Local: five agent archetypes (First-Time, Cautious, Experienced, Expert Speedrunner, Curious Explorer); Solvability audit (exactly one jump), Softlock detection, Exploit filtration, Optimization windows. | §15 | P4 | VERIFIED |
+| REQ-142 | Macro: curriculum progress arc; four criteria — Cognitive Structural Mapping, Cross-Chapter Degradation Analysis, Curiosity Progression Curves, Graduation Assessment Verification. | §15 | P4,P6 | IN_PROGRESS |
 
 ## §16 Gameplay Systems & Modular Components
 
@@ -183,14 +183,14 @@
 
 ---
 
-## Rollup (P3 VERIFIED — `docs/verification/P3.md`; milestone M1 — Simulatable Game CLOSED with P2 ✓ + P3 ✓)
+## Rollup (P4 VERIFIED — `docs/verification/P4.md`; milestone M2 — Design Intelligence Operational still OPEN, P5 + P6 remain)
 
 | State | Count |
 |-------|------:|
-| NOT_STARTED | 40 |
-| IN_PROGRESS | 14 |
+| NOT_STARTED | 35 |
+| IN_PROGRESS | 17 |
 | COMPLETED | 0 |
-| VERIFIED | 13 |
+| VERIFIED | 15 |
 | **Total** | **67** |
 
-**VERIFIED at M0:** REQ-P01, REQ-P05, REQ-P10 (see `docs/verification/P1.md` §4 for the per-REQ rationale). **VERIFIED at P2 close:** REQ-120, REQ-121 (P1,P2 spans now fully covered — runtime-parsed data drives the engine, proven by the file→parse→instantiate→replay integration test), REQ-122 (P2-scoped, fully delivered; see `docs/verification/P2.md` §3). REQ-014 (P2,P10) and REQ-154 (P3) correctly remain `IN_PROGRESS` — their remaining phase scope is unbuilt. See [IRD.md](IRD.md) for phase gating and [execution_plan.md](execution_plan.md) for the active-phase plan.
+**VERIFIED at M0:** REQ-P01, REQ-P05, REQ-P10 (see `docs/verification/P1.md` §4 for the per-REQ rationale). **VERIFIED at P2 close:** REQ-120, REQ-121 (P1,P2 spans now fully covered — runtime-parsed data drives the engine, proven by the file→parse→instantiate→replay integration test), REQ-122 (P2-scoped, fully delivered; see `docs/verification/P2.md` §3). **VERIFIED at P3 close:** REQ-004/010/011/150(sim)/151/152/153/154 (see `docs/verification/P3.md` §3). **VERIFIED at P4 close:** REQ-140, REQ-141 (P4-scoped; see `docs/verification/P4.md` §3). REQ-142 (P4,P6), REQ-101/102 (P4,P10) correctly remain `IN_PROGRESS` — P4 delivers their share; the P6/P10 remainder is unbuilt. See [IRD.md](IRD.md) for phase gating and [execution_plan.md](execution_plan.md) for the active-phase plan.

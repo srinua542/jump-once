@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
   "generated_by_session": "2026-07-09T-session-4",
-  "pkg_hash": "s4-c3f0d1",
+  "pkg_hash": "s4-f6c7d8",
   "notes": "Machine-readable mirror of the codebase. Read at every session start; update immediately on any structural code change (new module, changed dependency, changed GDOS mapping). See references/pkg_schema.md.",
   "nodes": [
     {
@@ -74,7 +74,8 @@
         "systems/entity_kinematics",
         "systems/hazards_and_goal",
         "eval/agent_harness",
-        "eval/local/search"
+        "eval/local/search",
+        "eval/local/optimization"
       ],
       "volatile_state_flags": {
         "has_side_effects": false,
@@ -492,7 +493,9 @@
         "eval/agent_harness",
         "eval/local/search",
         "eval/local/solvability",
-        "eval/local/softlock"
+        "eval/local/softlock",
+        "eval/local/exploit",
+        "eval/local/optimization"
       ],
       "volatile_state_flags": {
         "has_side_effects": false,
@@ -588,7 +591,8 @@
         "eval/agent_policy",
         "eval/archetypes",
         "eval/agent_harness",
-        "eval/local/search"
+        "eval/local/search",
+        "eval/local/exploit"
       ],
       "volatile_state_flags": {
         "has_side_effects": false,
@@ -614,7 +618,8 @@
         "systems/player_control",
         "systems/hazards_and_goal",
         "systems/sensors",
-        "eval/archetypes"
+        "eval/archetypes",
+        "eval/local/exploit"
       ],
       "volatile_state_flags": {
         "has_side_effects": false,
@@ -638,7 +643,8 @@
       "dependents": [
         "systems/player_physics",
         "systems/hazards_and_goal",
-        "eval/archetypes"
+        "eval/archetypes",
+        "eval/local/exploit"
       ],
       "volatile_state_flags": {
         "has_side_effects": false,
@@ -875,7 +881,8 @@
       "dependents": [
         "eval/agent_harness",
         "eval/local/solvability",
-        "eval/local/softlock"
+        "eval/local/softlock",
+        "eval/local/exploit"
       ],
       "volatile_state_flags": {
         "has_side_effects": false,
@@ -926,7 +933,8 @@
         "eval/agent_policy"
       ],
       "dependents": [
-        "eval/local/solvability"
+        "eval/local/solvability",
+        "eval/local/optimization"
       ],
       "volatile_state_flags": {
         "has_side_effects": false,
@@ -962,7 +970,8 @@
       ],
       "dependents": [
         "eval/local/search",
-        "eval/local/solvability"
+        "eval/local/solvability",
+        "eval/local/optimization"
       ],
       "volatile_state_flags": {
         "has_side_effects": false,
@@ -977,7 +986,7 @@
       "node_id": "eval/local/search",
       "type": "SystemNode",
       "file_path": "src/eval/local/Search.ts",
-      "functional_summary": "Bounded deterministic reachability search (dm-0025): macro-action BFS (hold one InputFrame holdTicks steps; 6 fixed actions moveAxis×jumpPressed) over the frozen sim, quantized-signature dedup (sub-tile lattice + jumpLock phase + persistent entity flags), death/goal as terminal leaves (one-life space, dm-0018). searchReachability(def,seed,opts)->{nodes,goalIndex,exhausted,truncated}; reconstructFrames walks parent pointers to a witness. THE AXIOM is engine truth: jumpLock.phase in the signature makes 'available' vs 'spent' distinct states; never counts/caps jumps. Whitelist math; always halts (node cap + visited set).",
+      "functional_summary": "Bounded deterministic reachability search (dm-0025): macro-action BFS (hold one InputFrame holdTicks steps; 6 fixed actions moveAxis×jumpPressed) over the frozen sim, quantized-signature dedup (sub-tile lattice + jumpLock phase + persistent entity flags), death/goal as terminal leaves (one-life space, dm-0018). searchReachability(def,seed,opts)->{nodes,goalIndex,exhausted,truncated}; reconstructFrames walks parent pointers to a witness. THE AXIOM is engine truth: jumpLock.phase in the signature makes 'available' vs 'spent' distinct states; never counts/caps jumps. Whitelist math; always halts (node cap + visited set). S4.4: gained an optional `forbidden` predicate — any macro whose swept path touches a forbidden state is tainted and pruned (used by exploit filtration for skip-constrained reachability).",
       "gdos_alignment": "Section_15_Local_Spatial_Verification",
       "dependencies": [
         "core/clock",
@@ -990,7 +999,8 @@
       ],
       "dependents": [
         "eval/local/solvability",
-        "eval/local/softlock"
+        "eval/local/softlock",
+        "eval/local/exploit"
       ],
       "volatile_state_flags": {
         "has_side_effects": false,
@@ -1044,6 +1054,71 @@
       "last_verified_commit": "uncommitted-session-4",
       "backlog_refs": [
         "REQ-141"
+      ]
+    },
+    {
+      "node_id": "eval/local/exploit",
+      "type": "SystemNode",
+      "file_path": "src/eval/local/Exploit.ts",
+      "functional_summary": "Exploit filtration (REQ-141, dm-0027). Challenge envelope = union of corridor lethal-hazard AABBs (on the spawn->goal box, expanded by corridorMargin) padded by envelopeMargin, tracking live entity positions. auditExploit(def,opts)->ExploitVerdict{hasExploit,applicable,bypassedHazardIds,skipWitness?}: runs the S4.2 search with forbidden=envelope; a goal reachable while avoiding the envelope is an exploit (the authored danger is fully bypassable) with the skip tape as cheese; every-completion-engages => clean. Whitelist math.",
+      "gdos_alignment": "Section_15_Exploit_Filtration",
+      "dependencies": [
+        "components/level",
+        "components/collision_class",
+        "components/tuning",
+        "schema/tape_io",
+        "entities/world",
+        "eval/local/search"
+      ],
+      "dependents": [],
+      "volatile_state_flags": {
+        "has_side_effects": false,
+        "state_dependencies": []
+      },
+      "last_verified_commit": "uncommitted-session-4",
+      "backlog_refs": [
+        "REQ-141"
+      ]
+    },
+    {
+      "node_id": "eval/local/optimization",
+      "type": "SystemNode",
+      "file_path": "src/eval/local/Optimization.ts",
+      "functional_summary": "Optimization-space model (REQ-101/102, dm-0028). computeOptimizationWindow(def,opts)->OptimizationVerdict{applicable,tiers,deltaSeconds,rejected,parPlausible,completions}. Runs the five archetypes; tiers anchored to the spread — Discovery=First-Time clear, WorldRecord=Expert-Speedrunner clear, Good/Fast/Expert interpolated at 1/4,1/2,3/4; Curious-Explorer excluded from anchoring. delta=Discovery-WR seconds; reject when delta<minDeltaSeconds (default 0.25) — REQ-102 flat-layout rejection. Cross-checks authored parTimeTiersSeconds: parPlausible=false when authored optimal par < sim WR. Times via FIXED_STEP_SECONDS; whitelist math.",
+      "gdos_alignment": "Section_11_Optimization_Space",
+      "dependencies": [
+        "core/clock",
+        "components/level",
+        "eval/archetypes",
+        "eval/agent_harness"
+      ],
+      "dependents": [],
+      "volatile_state_flags": {
+        "has_side_effects": false,
+        "state_dependencies": []
+      },
+      "last_verified_commit": "uncommitted-session-4",
+      "backlog_refs": [
+        "REQ-101",
+        "REQ-102"
+      ]
+    },
+    {
+      "node_id": "eval/macro/curriculum",
+      "type": "SystemNode",
+      "file_path": "src/eval/macro/Curriculum.ts",
+      "functional_summary": "Macro Curriculum Validation — the SECOND (macro) validation pass (REQ-140/142, dm-0029). PURE data logic over an ordered CurriculumLevel[] (the minimal chapter contract: per-level local verdicts + difficulty + required/introduced mechanics + curiosity); runs NO simulation and imports nothing from the sim or the local pass (isolation is import-enforced). validateCurriculum(chapter,opts)->MacroVerdict with the four §15 criteria: Cognitive Structural Mapping (no orphan mechanic requirement; bounded new concepts/level), Cross-Chapter Degradation (no difficulty spike or end-degradation), Curiosity Progression (stays above floor; not monotonically dead), Graduation Assessment (finale is a capstone combining prior mechanics), plus a chapter-health precondition (all solvable, no softlock/exploit). Whitelist math.",
+      "gdos_alignment": "Section_15_Macro_Curriculum_Validation",
+      "dependencies": [],
+      "dependents": [],
+      "volatile_state_flags": {
+        "has_side_effects": false,
+        "state_dependencies": []
+      },
+      "last_verified_commit": "uncommitted-session-4",
+      "backlog_refs": [
+        "REQ-140",
+        "REQ-142"
       ]
     }
   ],
@@ -1832,6 +1907,66 @@
       "type": "DependencyEdge",
       "from": "eval/local/softlock",
       "to": "eval/local/search",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "eval/local/exploit",
+      "to": "components/level",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "eval/local/exploit",
+      "to": "components/collision_class",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "eval/local/exploit",
+      "to": "components/tuning",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "eval/local/exploit",
+      "to": "schema/tape_io",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "eval/local/exploit",
+      "to": "entities/world",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "eval/local/exploit",
+      "to": "eval/local/search",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "eval/local/optimization",
+      "to": "core/clock",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "eval/local/optimization",
+      "to": "components/level",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "eval/local/optimization",
+      "to": "eval/archetypes",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "eval/local/optimization",
+      "to": "eval/agent_harness",
       "kind": "value_import"
     }
   ],

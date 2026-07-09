@@ -1,43 +1,47 @@
 {
-  "session_end_timestamp": "2026-07-09T21:30:00Z",
+  "session_end_timestamp": "2026-07-09T23:30:00Z",
   "current_milestone": "M2_Design_Intelligence_Operational",
   "active_working_branch": "main",
   "completed_since_last_snapshot": [
-    "P4 EXECUTION-PLAN SECTION AUTHORED (REQ-P02) via adversarial review, same treatment P2/P3 got — 11 findings, decisions dm-0022–dm-0024. Replay-tape serialization ownership (open since P2 OQ#5) ASSIGNED to P4/S4.1. Governing REQs, per-slice deliverables S4.1–S4.7, validation criteria, checkpoints C4.1–C4.7, risk register, 4 open questions (tier interpolation → S4.5, chapter manifest shape → S4.6, search budget → S4.2, challenge envelope → S4.4).",
-    "Directory contract updated: new src/eval/ (dm-0022) with the one-way isolation rule (sim never imports eval); task_slices P4 table criteria detailed per plan; REQ-141 → IN_PROGRESS.",
-    "S4.1 — AGENT-ARCHETYPE SIMULATOR HARNESS: COMPLETED through the full nine-stage loop (archive meta/runs/ via stage.js done). New modules: src/schema/TapeIO.ts (ReplayTape v1, canonical strict I/O, dm-0023), src/eval/AgentPolicy.ts (pure decide(state,memory) contract, dm-0024), src/eval/Archetypes.ts (five frozen ArchetypeParams over ONE decision core: firstTime/cautious/experienced/expertSpeedrunner/curiousExplorer), src/eval/AgentHarness.ts (runAgent + replayTape + exported CANONICAL_PIPELINE + EvalBudget).",
-    "Tests 186 → 210, all green first run. New: test/unit/TapeIO.test.ts (round-trip value+byte, full rejection coverage, never-throws), test/unit/EvalIsolation.test.ts (one-way import scan + math-whitelist scan over src/eval/), test/integration/AgentArchetypes.test.ts (all five complete corridor + spiked-gap room with jumpLock 'spent'; pairwise-distinct tapes; expert strictly fastest / explorer strictly slowest; byte-identical tape twice; live ≡ replay bit-equality per archetype; exact tick-budget halt on sealed room; attempt-budget halt on spike carpet; tape round-trips with correct metadata).",
-    "PKG: +4 nodes (schema/tape_io, eval/agent_policy, eval/archetypes, eval/agent_harness), +27 edges (both directions on all touched nodes), 36 nodes / 115 edges, pkg_hash s3-c5e9f7 → s4-d1f7a3. Ledger: dm-0022 (src/eval placement + one-way rule), dm-0023 (tape ownership + format), dm-0024 (agent determinism: pure policies, param records, separate RNG stream). Gate: 0 blocking."
+    "ENTIRE PHASE P4 COMPLETED AND VERIFIED this session (docs/verification/P4.md). All seven slices S4.1-S4.7 ran the full nine-stage SDLC loop; per-slice archives in meta/runs/S4.*.json. Suite grew 186 -> 240, all green. P4 is the FIRST of the three M2 pillars — MILESTONE M2 stays OPEN (P5 + P6 remain); the content-generation hard gate is STILL CLOSED.",
+    "P4 execution plan authored via adversarial review (dm-0022-dm-0029): opened src/eval/ under a one-way dependency rule (sim never imports eval); assigned replay-tape serialization ownership (open since P2) to src/schema/TapeIO.ts; separated the agent RNG stream from the sim RNG; resolved the exploit-envelope, tier-interpolation, and chapter-input open questions.",
+    "S4.1 harness: src/schema/TapeIO.ts (versioned canonical replay tape, strict P2-style parse) + src/eval/{AgentPolicy,Archetypes,AgentHarness}.ts — five data-parameterized archetypes (firstTime/cautious/experienced/expertSpeedrunner/curiousExplorer) over one decision core drive the sim headlessly in CANONICAL_PIPELINE order; live-run === tape-replay bit-equality per archetype; budgeted 'timeout' halting.",
+    "S4.2 solvability: src/eval/local/Search.ts (bounded deterministic macro-action BFS, quantized dedup, death/goal leaves, optional forbidden constraint) + Solvability.ts (archetype fast path + search; witness tapes; a TWO-JUMP level is UNSOLVABLE by construction — the axiom is read from world.jumpLock, never re-implemented).",
+    "S4.3 softlock: src/eval/local/Softlock.ts (exhaustive graph + backward reachability of goal/death; trapped = reaches neither; death=escape). S4.4 exploit: Exploit.ts (challenge envelope = corridor lethal-hazard danger zones; skip-constrained search finds hazard-avoiding completions). S4.5 optimization: Optimization.ts (five tiers from archetype spread, delta=Discovery-WR, minimal-delta rejection, par cross-check).",
+    "S4.6 macro: src/eval/macro/Curriculum.ts — PURE Macro Curriculum Validation over an ordered CurriculumLevel[] (the minimal chapter contract, dm-0029); four §15 criteria (Cognitive Structural Mapping, Cross-Chapter Degradation, Curiosity Progression, Graduation Assessment) + chapter-health precondition; import-isolation scan-enforced (REQ-140).",
+    "S4.7: docs/verification/P4.md filed; REQ-140/141 -> VERIFIED (dm-0008); REQ-142/101/102 correctly stay IN_PROGRESS (P6/P10 remainder); subtractive pass 0 findings; eval math-whitelist audit clean; IRD + execution_plan P4 section CLOSED; backlog rollup 35/17/0/15.",
+    "PKG: +10 nodes this session (schema/tape_io; eval/agent_policy, eval/archetypes, eval/agent_harness; eval/local/{search,solvability,softlock,exploit,optimization}; eval/macro/curriculum), all edges both directions, pkg_hash s3-c5e9f7 -> s4-f6c7d8 (current). Ledger dm-0022..dm-0029 recorded. Directory contract updated: +src/eval/ with the one-way-dependency + evaluation-isolation invariants."
   ],
   "exact_execution_focus": {
-    "file_path": "docs/task_slices.md",
-    "target_line_range": "Phase 4 table — S4.2 row",
-    "pending_logical_transformation": "S4.1 COMPLETED (210/210, pkg s4-d1f7a3). Next: S4.2 — Solvability audit (exactly-one-jump). Per the P4 plan (finding 7 + open question 3): a bounded deterministic search over input space with archetype runs as fast path / witness generator, classifying known-solvable and known-unsolvable in-code fixtures with zero misclassification; every 'solvable' verdict carries a replayable witness tape (ReplayTape, dm-0023). Decide + ledger the search-budget envelope (branching per tick, horizon) at S4.2 start. Build ON the S4.1 harness: consume runAgent/replayTape/CANONICAL_PIPELINE/EvalBudget from src/eval/AgentHarness.ts — do not re-assemble the engine by hand. Verdicts are pure data records under src/eval/local/ (REQ-140 isolation: local vs macro).",
+    "file_path": "docs/execution_plan.md",
+    "target_line_range": "new-content (P5 section)",
+    "pending_logical_transformation": "P4 VERIFIED (240/240, pkg s4-f6c7d8). Open P5 — GDOS Scoring Engine (second phase of M2). FIRST author the P5 execution-plan section (REQ-P02) covering IRD P5: emotional-threshold gates (REQ-055), streamability matrix (REQ-056), Information Density regulator (REQ-061), economy-of-mechanics metric + design-space coverage matrix (REQ-040/041/042), novelty search + emergent-fun search (REQ-053/054), the CDRE loop, Kill Switch + First-Party filter, subtractive removal engine (REQ-020/021/022), and the executable GDOS Design Memory (REQ-050/051/052; the design_memory_ledger.json becomes its backing store per its own header note). Consider the same adversarial review P2/P3/P4 got. P5's gates CONSUME the P4 verdicts (solvability/softlock/exploit/optimization + macro curriculum) as inputs — the scoring engine judges a level using the validation framework's outputs. THEN implement S5.1 (design-space coverage matrix + economy-of-mechanics metric). Content generation STAYS hard-gated until M2 (P4+P5+P6) is fully VERIFIED.",
     "pkg_hash_note": "no structural change may land without a PKG node+edges update in the same change"
   },
   "blocked_by": {
     "dependency_node": "none",
-    "reason": "No blockers. S4.1 (the dependency of S4.2/S4.3/S4.4) is COMPLETED."
+    "reason": "No blockers. P4 VERIFIED; P5's entry condition (P4 verified) is satisfied."
   },
   "critical_warnings_for_next_session": [
-    "RUN THE REBOOT LIFECYCLE FIRST: confirm pkg_hash s4-d1f7a3 matches meta/project_knowledge_graph.json, npm test expect 210 passing.",
-    "CONTENT GENERATION STAYS HARD-GATED until M2 (P4+P5+P6) is VERIFIED — do NOT author any level/chapter content in P4. All S4.x fixtures are in-code unit scaffolding (see AgentArchetypes.test.ts buildLevel) or test/fixtures/ — keep it that way.",
-    "THE AXIOM is P4's ground truth, not its parameter (dm-0020/dm-0024): S4.2's solvability audit reads world.jumpLock — never re-implements the lock, never counts jumps by parsing tapes, and no maxJumps-like knob may exist in eval config (dm-0011).",
-    "ENGINE ASSEMBLY: use CANONICAL_PIPELINE exported from src/eval/AgentHarness.ts (normative order lifecycle → entityKinematics → playerControl → playerPhysics → sensors → hazardsAndGoal, dm-0021). Hand-assembling a different order is a different simulation.",
-    "ONE-WAY DEPENDENCY (dm-0022, scan-enforced by EvalIsolation.test.ts): nothing under src/{core,systems,components,entities,schema} may import from src/eval/. The math whitelist now covers src/eval/ too (allowed: sqrt/min/max/abs/floor/ceil/trunc; no Math.random) — also scan-enforced.",
-    "AGENT DETERMINISM (dm-0024): agents thread their OWN RNG stream via AgentMemory (agentStreamSeed derivation); state.rng belongs to the sim alone. Any new agent/solver must preserve live≡replay bit-equality — it is an acceptance test, keep it that way in S4.2+.",
-    "REPLAY TAPES (dm-0023): ReplayTape v1 stores the NORMALIZED uint32 seed (may differ from a raw caller seed); frames[i] drove tick i+1; a tape references levelId, it does not embed the level. ARCHETYPES params are FROZEN — editing them invalidates every recorded tape (ledger a decision if ever needed).",
-    "Golden canonical sha256 c0ec3b1f... (LevelRoundTrip) still anchored. Schema locks dm-0009..dm-0015 in force. Save/progress persistence owned by P9/REQ-171; replay-tape serialization now OWNED (dm-0023) — do not redefine it in P8/P9.",
+    "RUN THE REBOOT LIFECYCLE FIRST: confirm pkg_hash s4-f6c7d8 matches meta/project_knowledge_graph.json, npm test expect 240 passing.",
+    "CONTENT GENERATION STAYS HARD-GATED until M2 (P4+P5+P6) is fully VERIFIED. P4 is done; P5 and P6 remain. Do NOT author any level/chapter content in P5. Fixtures remain unit scaffolding only.",
+    "ONE-WAY DEPENDENCY (dm-0022): nothing under src/{core,systems,components,entities,schema} may import from src/eval/. The EvalIsolation scan test enforces this and the math whitelist — keep both green. P5 scoring code likely also belongs in src/eval/ (evaluation-time), preserving the one-way rule.",
+    "THE AXIOM is P4's ground truth (dm-0011/dm-0020): solvability reads world.jumpLock and lets the engine's lock enforce exactly one jump — a two-jump level is unsolvable by construction. Never add a maxJumps field; never re-implement a jump counter in eval.",
+    "DETERMINISM: agents drive the sim via InputFrames only and draw from their OWN threaded RngState (dm-0024), never state.rng — this is what makes tape-replay === live-run bit-identical. Never introduce Math.random or delta-time; the eval math whitelist (dm-0017) extends to src/eval/.",
+    "CANONICAL PIPELINE ORDER (normative, dm-0021): lifecycle -> entityKinematics -> playerControl -> playerPhysics -> sensors -> hazardsAndGoal. Exported once as CANONICAL_PIPELINE from src/eval/AgentHarness.ts; any engine assembly (P5 harnesses too) must use it.",
+    "P4 verdicts are the P5 inputs: SolvabilityVerdict, SoftlockVerdict, ExploitVerdict, OptimizationVerdict, and the macro CurriculumLevel[]/MacroVerdict are the data P5's gates score. Reuse them; do not re-run or re-implement the audits inside P5.",
+    "Replay-tape serialization is now OWNED (dm-0023, src/schema/TapeIO.ts) — P8 recorder and P9 saves consume this format; they do not redefine it. Golden canonical sha256 c0ec3b1f... (LevelRoundTrip) still anchored; schema locks dm-0009..dm-0015 in force.",
     "Do NOT change FIXED_STEP_SECONDS (dm-0003); never mutate GameState in place (dm-0004).",
     "The private npm mirror npm.shootsta.com is broken; .npmrc pins registry.npmjs.org — don't remove it."
   ],
-  "pkg_hash_at_handoff": "s4-d1f7a3",
+  "pkg_hash_at_handoff": "s4-f6c7d8",
   "next_session_pick_list": [
-    "S4.2 Solvability audit (exactly-one-jump): bounded deterministic search + archetype fast path; witness tapes; decide+ledger the search-budget envelope (P4 plan OQ#3)",
-    "S4.3 Softlock detection (dead zones from classified timeouts + region evidence)",
-    "S4.4 Exploit filtration (path-skips vs the challenge envelope — decide envelope definition, P4 plan OQ#4)",
-    "S4.5 Optimization windows + five-tier routing + delta (REQ-101/102; decide tier interpolation, P4 plan OQ#1)",
-    "S4.6 Macro curriculum validation (REQ-140/142; isolated src/eval/macro/; minimal ordered-verdict input type, P4 plan OQ#2)",
-    "S4.7 Phase-4 verification report (docs/verification/P4.md)"
+    "Open P5 — author the P5 execution-plan section FIRST (REQ-P02; consider adversarial review; wire P5 gates to consume the P4 verdicts)",
+    "S5.1 Design-space coverage matrix + economy-of-mechanics metric (REQ-040/041/042)",
+    "S5.2 Emotional-threshold gates (REQ-055)",
+    "S5.3 Streamability matrix (REQ-056)",
+    "S5.4 Information Density regulator (REQ-061)",
+    "S5.5 Novelty search + Emergent Fun search (REQ-053/054)",
+    "Then P6 Campaign Intelligence to close M2 and open the content gate"
   ]
 }

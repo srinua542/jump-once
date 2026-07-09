@@ -161,14 +161,15 @@ Each milestone triggers a mandatory **Subtractive Removal pass (REQ-022)** and a
 
 ---
 
-## 5. Current status (Session 3)
+## 5. Current status (Session 4)
 
 - **M0 — Foundation Locked: VERIFIED.** See `docs/verification/P1.md`.
 - **P0, P1:** VERIFIED (see M0 report).
 - **P2 — Data Models & Level Definition Schema: VERIFIED.** See `docs/verification/P2.md`. 118/118 at close; REQ-120/121/122 VERIFIED per dm-0008.
 - **P3 — Mechanic Library & Deterministic Physics: VERIFIED.** See `docs/verification/P3.md`. All nine slices (S3.1–S3.9, restructured at phase start via adversarial review — dm-0016–dm-0021) landed: deterministic physics core (symplectic Euler + swept axis-separated collision, no tunneling), deterministic quadtree, the player controller, the run lifecycle (goal/defeat/instant reload), **the single-jump lock axiom** (fuzz-proven never >1 jump per life), the full §16 mechanic library (moving platforms + carry, collapsing floors, ice, spikes/lasers/moving hazards, plates/proximity/doors, springs/gravity zones/conveyors), all data-driven and layering-tested. 186/186 tests green. REQ-004/010/011/151/152/153/154 flipped VERIFIED per dm-0008.
 - **M1 — Simulatable Game: CLOSED (VERIFIED).** P2 ✓ + P3 ✓ — a data-defined level is playable and physically deterministic with the one-jump lock.
-- **Active milestone:** M2 — Design Intelligence Operational (P4, P5, P6). **P4 — Evaluation & Validation Framework is the next phase**; its execution-plan section must be authored before S4.1 code (REQ-P02). The content-generation hard gate stays closed until M2 is VERIFIED.
+- **P4 — Evaluation & Validation Framework: VERIFIED.** See `docs/verification/P4.md`. All seven slices (S4.1–S4.7, section authored before code via adversarial review — dm-0022–dm-0029) landed: the replay-tape format (`src/schema/TapeIO.ts`), five data-parameterized agent archetypes driving the sim headlessly (`src/eval/`), the Local Spatial Verification pass (bounded deterministic solvability search treating exactly-one-jump as ground truth, softlock/dead-zone detection, exploit filtration, five-tier optimization routing + delta), and the isolated Macro Curriculum Validation pass (four §15 criteria). 240/240 tests green. REQ-140/141 flipped VERIFIED per dm-0008; REQ-142/101/102 correctly stay IN_PROGRESS (P6/P10 remainder).
+- **Active milestone:** M2 — Design Intelligence Operational (P4 ✓, P5, P6). **P5 — GDOS Scoring Engine is the next phase** (entry condition P4-VERIFIED satisfied); its execution-plan section must be authored before S5.1 code (REQ-P02). The content-generation hard gate stays closed until M2 is fully VERIFIED (P5 + P6 remain).
 - **All later phases (P5–P11):** still NOT_STARTED and correctly gated.
 
 See [task_slices.md](task_slices.md) for the session-sized work units and [execution_plan.md](execution_plan.md) for the detailed plan of the active phases.

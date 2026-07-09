@@ -1,0 +1,74 @@
+{
+  "slice": "S4.5",
+  "title": "Optimization windows + five-tier routing + delta",
+  "reqs": [
+    "REQ-101",
+    "REQ-102"
+  ],
+  "started_at": "2026-07-09T16:08:28.909Z",
+  "updated_at": "2026-07-09T16:12:57.099Z",
+  "current_stage": "handoff",
+  "stages": {
+    "reboot": {
+      "status": "done",
+      "at": "2026-07-09T16:08:28.910Z",
+      "note": "REBOOT: 226/226, pkg s4-d4a1b2, S4.4 archived"
+    },
+    "select": {
+      "status": "done",
+      "at": "2026-07-09T16:08:28.993Z",
+      "note": "SELECT: S4.5 dep S4.2 COMPLETED"
+    },
+    "plan": {
+      "status": "done",
+      "at": "2026-07-09T16:08:29.061Z",
+      "note": "PLAN: resolve open-q#1 (tiers). Discovery=firstTime clear, WR=expertSpeedrunner clear, Good/Fast/Expert interpolated; delta=D-W; reject delta<minDelta; parTime cross-check. src/eval/local/Optimization.ts + unit test."
+    },
+    "anchor": {
+      "status": "done",
+      "at": "2026-07-09T16:08:29.134Z",
+      "note": "ANCHOR: computeOptimizationWindow(def,opts)->OptimizationVerdict{applicable,tiers,deltaSeconds,rejected,parPlausible,completions}."
+    },
+    "implement": {
+      "status": "done",
+      "at": "2026-07-09T16:08:29.200Z",
+      "note": "IMPLEMENT: src/eval/local/Optimization.ts + test/unit/Optimization.test.ts; GridLevel helper gained optional parTimes arg"
+    },
+    "verify": {
+      "status": "done",
+      "at": "2026-07-09T16:12:56.671Z",
+      "note": "VERIFY: 231/231 green (+5). Five tiers monotonic; gap positive delta not rejected; flat delta=0 rejected (REQ-102); impossible par flagged; determinism."
+    },
+    "integrate": {
+      "status": "done",
+      "at": "2026-07-09T16:12:56.742Z",
+      "note": "INTEGRATE: PKG +eval/local/optimization hash s4-e5b6c7; ledger dm-0028; REQ-101/102 IN_PROGRESS."
+    },
+    "report": {
+      "status": "done",
+      "at": "2026-07-09T16:12:56.818Z",
+      "note": "REPORT: S4.5 COMPLETED."
+    },
+    "handoff": {
+      "status": "done",
+      "at": "2026-07-09T16:12:57.030Z",
+      "note": "HANDOFF: deferred to session end (multi-slice)."
+    }
+  },
+  "acceptance": [
+    {
+      "req": "REQ-101",
+      "criterion": "(fill in)",
+      "met": true,
+      "note": null
+    },
+    {
+      "req": "REQ-102",
+      "criterion": "(fill in)",
+      "met": true,
+      "note": null
+    }
+  ],
+  "outcome": "completed",
+  "closed_at": "2026-07-09T16:12:57.178Z"
+}

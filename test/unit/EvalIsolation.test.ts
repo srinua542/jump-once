@@ -74,6 +74,22 @@ test('one-way dependency: no sim directory imports from src/eval/ (dm-0022)', ()
   }
 });
 
+test('macro isolation: src/eval/macro/ imports nothing from the sim or the local pass (REQ-140)', () => {
+  const macroDir = join(SRC, 'eval', 'macro');
+  const files = tsFiles(macroDir);
+  assert.ok(files.length > 0, 'no .ts files under src/eval/macro — scan would be vacuous');
+  for (const file of files) {
+    const raw = readFileSync(join(macroDir, file), 'utf8');
+    // The macro pass consumes local verdicts as DATA; it must not reach into
+    // the harness, the search, or any simulation module.
+    const forbidden = /from\s+['"][^'"]*\/(core|systems|entities|schema|eval\/(AgentHarness|AgentPolicy|Archetypes|local))/;
+    assert.ok(
+      !forbidden.test(raw),
+      `src/eval/macro/${file} imports simulation/local-pass code — the macro pass must stay isolated (REQ-140)`,
+    );
+  }
+});
+
 test('math whitelist holds in src/eval/: no transcendental Math calls, no Math.random (dm-0017)', () => {
   const evalDir = join(SRC, 'eval');
   for (const file of tsFiles(evalDir)) {
