@@ -1,0 +1,74 @@
+{
+  "slice": "S3.3",
+  "title": "Player controller: instant accel/decel (sole input consumer)",
+  "reqs": [
+    "REQ-150",
+    "REQ-003"
+  ],
+  "started_at": "2026-07-09T04:26:36.420Z",
+  "updated_at": "2026-07-09T04:28:54.544Z",
+  "current_stage": "handoff",
+  "stages": {
+    "reboot": {
+      "status": "done",
+      "at": "2026-07-09T04:26:36.421Z",
+      "note": "REBOOT held (141/141 green, pkg s3-b8d2e0)"
+    },
+    "select": {
+      "status": "done",
+      "at": "2026-07-09T04:26:36.492Z",
+      "note": "SELECT: S3.3; depends S3.1 COMPLETED. REQ-150 -> IN_PROGRESS (P3 sim share)"
+    },
+    "plan": {
+      "status": "done",
+      "at": "2026-07-09T04:26:36.559Z",
+      "note": "PLAN: TUNING.runSpeed (gains consumer now, dm-0018); src/systems/PlayerControl.ts — the ONLY input consumer (dm-0019 boundary): playerVelocity.x = input.moveAxis * TUNING.runSpeed each step (instant accel/decel, REQ-150); ordered BEFORE playerPhysics. Tests: axis mapping, instant flip/stop, y untouched, purity, walk-to-wall pipeline composition + replay determinism."
+    },
+    "anchor": {
+      "status": "done",
+      "at": "2026-07-09T04:26:36.666Z",
+      "note": "ANCHOR: new module; boundary = System<WorldState> with step touching only world.playerVelocity.x; TUNING interface extension is additive"
+    },
+    "implement": {
+      "status": "done",
+      "at": "2026-07-09T04:26:36.732Z",
+      "note": "IMPLEMENT: TUNING.runSpeed=8 + src/systems/PlayerControl.ts (sole input consumer, instant set-not-ramp)"
+    },
+    "verify": {
+      "status": "done",
+      "at": "2026-07-09T04:28:54.115Z",
+      "note": "VERIFY: 147/147 green (+6: axis map, instant flip/stop, y untouched, purity/no-op identity, walk-to-wall pipeline replay, exact data-driven step distance)"
+    },
+    "integrate": {
+      "status": "done",
+      "at": "2026-07-09T04:28:54.204Z",
+      "note": "INTEGRATE: PKG +systems/player_control node, tuning summary updated, edges both directions, pkg_hash -> s3-c9e3f1"
+    },
+    "report": {
+      "status": "done",
+      "at": "2026-07-09T04:28:54.423Z",
+      "note": "REPORT: S3.3 -> COMPLETED; REQ-150 stays IN_PROGRESS (P9 visual share + S3.5 jump clauses); REQ-003 stays IN_PROGRESS (S3.4 instant iteration + P10)"
+    },
+    "handoff": {
+      "status": "done",
+      "at": "2026-07-09T04:28:54.483Z",
+      "note": "HANDOFF updated (resume at S3.4)"
+    }
+  },
+  "acceptance": [
+    {
+      "req": "REQ-150",
+      "criterion": "(fill in)",
+      "met": true,
+      "note": null
+    },
+    {
+      "req": "REQ-003",
+      "criterion": "(fill in)",
+      "met": true,
+      "note": null
+    }
+  ],
+  "outcome": "completed",
+  "closed_at": "2026-07-09T04:28:54.605Z"
+}

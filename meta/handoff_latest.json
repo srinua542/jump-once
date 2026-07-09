@@ -10,8 +10,8 @@
   ],
   "exact_execution_focus": {
     "file_path": "docs/task_slices.md",
-    "target_line_range": "Phase 3 table (S3.3 row)",
-    "pending_logical_transformation": "S3.2 COMPLETED (SpatialPartition.ts quadtree + PlayerPhysics broad-phase wiring, 141/141, pkg s3-b8d2e0). Next: S3.3 player controller — new src/systems/PlayerControl.ts consuming state.input (the ONLY input consumer): instant horizontal accel/decel (playerVelocity.x = moveAxis * TUNING.runSpeed — add runSpeed to Tuning.ts now that it gains a consumer); runs BEFORE playerPhysics in the pipeline. Then S3.4 run lifecycle, S3.5 jump lock.",
+    "target_line_range": "Phase 3 table (S3.4 row)",
+    "pending_logical_transformation": "S3.2 + S3.3 COMPLETED (quadtree broad-phase; PlayerControl.ts sole input consumer, instant accel/decel; 147/147, pkg s3-c9e3f1). Next: S3.4 run lifecycle — WorldState gains runState ('playing'|'defeated'|'completed'), attemptCount, spawnTick; new src/systems/Lifecycle.ts FIRST in pipeline: resetPressed or 'defeated' -> next-tick pure re-instantiation via instantiateWorld(level) (attemptCount+1, same frozen level ref, REQ-003 instant iteration); goal overlap (strict AABB vs constraints.goal) -> 'completed' (freeze world). Then S3.5 jump lock (needs reload to exist).",
     "pkg_hash_note": "no structural change may land without a PKG node+edges update in the same change"
   },
   "blocked_by": {

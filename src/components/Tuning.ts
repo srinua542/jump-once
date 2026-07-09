@@ -28,6 +28,12 @@ import type { Vec2 } from '../core/Vec2';
 export interface TuningDef {
   /** Gravitational acceleration, world units per second², +y (downward). Strictly positive. */
   readonly gravityY: number;
+  /**
+   * Horizontal run speed, world units per second. Applied INSTANTLY by the
+   * player controller (REQ-150: instant accel/decel — velocity is set, not
+   * ramped); frictionless-ice ramping (S3.6) is the only exception.
+   */
+  readonly runSpeed: number;
   /** Terminal fall speed: +y velocity is clamped to this, world units per second. Strictly positive. */
   readonly maxFallSpeed: number;
   /**
@@ -40,6 +46,7 @@ export interface TuningDef {
 /** The one normative tuning record (dm-0018). Deep-frozen by consumers' instantiation path. */
 export const TUNING: TuningDef = {
   gravityY: 60,
+  runSpeed: 8,
   maxFallSpeed: 30,
   playerHalfExtents: { x: 0.35, y: 0.45 },
 };
