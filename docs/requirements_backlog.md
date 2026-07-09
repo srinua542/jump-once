@@ -16,7 +16,7 @@
 |----|-------------|-----|-------|-------|
 | REQ-001 | 2D puzzle-platformer targeting premium web portals (Poki, CrazyGames); retention decided in first 30s. | §1 | P9,P11 | NOT_STARTED |
 | REQ-002 | Eliminate operational friction: no long loads, no complex progression, no text-heavy tutorials. | §1 | P9,P10 | NOT_STARTED |
-| REQ-003 | Prioritize continuous kinetic momentum and instant gameplay iteration. | §1 | P3,P10 | NOT_STARTED |
+| REQ-003 | Prioritize continuous kinetic momentum and instant gameplay iteration. | §1 | P3,P10 | IN_PROGRESS |
 | REQ-004 | Single unchanging structural constraint: exactly one jump per level. | §1 | P3 | NOT_STARTED |
 | REQ-005 | Depth via level design (Level Devil–style subversion), not expanded power sets; logical fairness; deterministic rules. | §1 | P10 | NOT_STARTED |
 
@@ -142,7 +142,7 @@
 
 | ID | Requirement | PRD | Phase | State |
 |----|-------------|-----|-------|-------|
-| REQ-150 | Player Character Controller: instant horizontal accel/decel; single jump with anticipation frames, squash-and-stretch, particle burst, camera tracking; jump state locks (horizontal-only) until scene reload. | §16 | P3 | NOT_STARTED |
+| REQ-150 | Player Character Controller: instant horizontal accel/decel; single jump with anticipation frames, squash-and-stretch, particle burst, camera tracking; jump state locks (horizontal-only) until scene reload. | §16 | P3,P9 | NOT_STARTED |
 | REQ-151 | Environmental elements: static geometry, moving platforms (linear/looping/triggered), collapsing floors, frictionless ice. | §16 | P3 | NOT_STARTED |
 | REQ-152 | Hazards & triggers: static spikes, timed laser arrays, moving hazards (instant defeat on intersection); pressure plates, proximity zones, mechanical doors that modify layout dynamically. | §16 | P3 | NOT_STARTED |
 | REQ-153 | Kinetic modifiers: directional launch springs, gravity-inverting zones, conveyors — alter velocity/inertia without consuming the single jump. | §16 | P3 | NOT_STARTED |
@@ -152,7 +152,7 @@
 
 | ID | Requirement | PRD | Phase | State |
 |----|-------------|-----|-------|-------|
-| REQ-160 | Zero-allocation runtime loop; preallocate all structural arrays/state objects upfront. | §17 | P3,P11 | NOT_STARTED |
+| REQ-160 | Zero-allocation runtime loop; preallocate all structural arrays/state objects upfront. | §17 | P3,P11 | IN_PROGRESS |
 | REQ-161 | Global object-pooling framework for particles, visual impacts, projectiles. | §17 | P9,P11 | NOT_STARTED |
 | REQ-162 | Render batching for static geometry/background; spatial partitioning (quadtree) so collision evaluates only the player's neighborhood. | §17 | P3,P9,P11 | NOT_STARTED |
 | REQ-163 | Async asset delivery; continuous performance monitoring with automatic scale-back of non-critical visuals below target fps. | §17 | P9,P11 | NOT_STARTED |
@@ -183,12 +183,12 @@
 
 ---
 
-## Rollup (P2 VERIFIED — `docs/verification/P2.md`; last milestone close was M0, `docs/verification/P1.md`)
+## Rollup (P3 in flight since S3.1; P2 VERIFIED — `docs/verification/P2.md`; last milestone close was M0, `docs/verification/P1.md`)
 
 | State | Count |
 |-------|------:|
-| NOT_STARTED | 52 |
-| IN_PROGRESS | 9 |
+| NOT_STARTED | 50 |
+| IN_PROGRESS | 11 |
 | COMPLETED | 0 |
 | VERIFIED | 6 |
 | **Total** | **67** |

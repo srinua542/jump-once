@@ -1,0 +1,74 @@
+{
+  "slice": "S3.1",
+  "title": "Deterministic physics & collision core (P3 plan authored first)",
+  "reqs": [
+    "REQ-003",
+    "REQ-160"
+  ],
+  "started_at": "2026-07-09T04:04:12.532Z",
+  "updated_at": "2026-07-09T04:21:17.944Z",
+  "current_stage": "handoff",
+  "stages": {
+    "reboot": {
+      "status": "done",
+      "at": "2026-07-09T04:04:12.533Z",
+      "note": "REBOOT done: pkg_hash s2-e6f2a4 confirmed, 118/118 tests green, P2 work committed (tree clean)"
+    },
+    "select": {
+      "status": "done",
+      "at": "2026-07-09T04:04:12.604Z",
+      "note": "SELECT: S3.1 chosen; deps S2.6 VERIFIED; P3 entry gate satisfied (P2 VERIFIED). REQ-003/REQ-160 flip to IN_PROGRESS with plan authoring."
+    },
+    "plan": {
+      "status": "done",
+      "at": "2026-07-09T04:04:22.737Z",
+      "note": "PLAN: P3 execution-plan section authored (adversarial review, dm-0016..dm-0019); slice table restructured S3.1-S3.9; backlog flips + rollup updated. S3.1 micro-plan: Tuning.ts data record; WorldState physics fields; PlayerPhysics system (symplectic Euler, swept axis-separated tile collision, solid entities, grounding); tests incl. no-tunneling property + trajectory replay."
+    },
+    "anchor": {
+      "status": "done",
+      "at": "2026-07-09T04:09:06.391Z",
+      "note": "ANCHOR: World.ts dependents mapped (PKG: none in src; tests via LevelInstantiation). WorldState extension is additive (playerGrounded). New boundaries frozen: components/Tuning.ts TuningDef record; components/CollisionClass.ts closed total table over EntityKind; systems/PlayerPhysics.ts System<WorldState> pure step. Physics reads world only (never state.input — isolation rule)."
+    },
+    "implement": {
+      "status": "done",
+      "at": "2026-07-09T04:11:05.666Z",
+      "note": "IMPLEMENT: Tuning.ts + CollisionClass.ts (pure data), WorldState.playerGrounded + index-alignment invariant, systems/PlayerPhysics.ts (symplectic Euler, swept axis-separated tile+entity resolution, exact face snapping, math whitelist)"
+    },
+    "verify": {
+      "status": "done",
+      "at": "2026-07-09T04:17:23.564Z",
+      "note": "VERIFY: 134/134 green (+16: PlayerPhysics unit incl. 300-case seeded no-tunneling fuzz at 1200 u/s, exact-snap/grounded/purity/trajectory-determinism; PhysicsReplay integration bit-identical over fixture file)"
+    },
+    "integrate": {
+      "status": "done",
+      "at": "2026-07-09T04:17:23.664Z",
+      "note": "INTEGRATE: PKG +3 nodes (components/tuning, components/collision_class, systems/player_physics), entities/world updated (playerGrounded + index-alignment), all edges both directions, anchors updated, pkg_hash s2-e6f2a4 -> s3-a7c1d9. Ledger dm-0016..dm-0019 recorded at PLAN."
+    },
+    "report": {
+      "status": "done",
+      "at": "2026-07-09T04:19:55.694Z",
+      "note": "REPORT: S3.1 -> COMPLETED in task_slices.md (VERIFIED at S3.9 phase review per dm-0008); REQ-003/REQ-160 IN_PROGRESS (multi-phase); rollup updated at plan time"
+    },
+    "handoff": {
+      "status": "done",
+      "at": "2026-07-09T04:20:37.168Z",
+      "note": "HANDOFF: meta/handoff_latest.json written (S3.1 complete, resume at S3.2)"
+    }
+  },
+  "acceptance": [
+    {
+      "req": "REQ-003",
+      "criterion": "(fill in)",
+      "met": true,
+      "note": null
+    },
+    {
+      "req": "REQ-160",
+      "criterion": "(fill in)",
+      "met": false,
+      "note": null
+    }
+  ],
+  "outcome": "completed",
+  "closed_at": "2026-07-09T04:21:18.018Z"
+}

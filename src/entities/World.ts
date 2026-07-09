@@ -20,9 +20,15 @@
  *    counter IN state, so spawning is a pure, replayable transition
  *    (P2 plan point 2). The validator guarantees authored ids never
  *    collide with that namespace.
- *  - P3 will extend EntityState/WorldState with physics fields (grounded,
- *    jump-lock machine, etc.) — that is expected evolution, recorded in the
- *    PKG when it happens; the level/entities/player/serial split is stable.
+ *  - P3 extends EntityState/WorldState with physics fields as slices land
+ *    (S3.1 added playerGrounded; jump-lock machine and entity activation
+ *    follow in later P3 slices) — expected evolution, PKG-recorded per
+ *    change; the level/entities/player/serial split is stable.
+ *  - world.entities is INDEX-ALIGNED with level.entities: entities[i] is the
+ *    runtime record of level.entities[i]. instantiateWorld establishes the
+ *    alignment; runtime-spawned entities (rt: namespace) append after the
+ *    authored range, so the alignment holds for indices < level.entities
+ *    .length. Systems rely on this for def↔state pairing (asserted in tests).
  */
 
 import { deepFreeze } from '../core/StateManager';
@@ -51,6 +57,12 @@ export interface WorldState {
   readonly playerPosition: Vec2;
   /** Player velocity in world units per second. Spawns at zero. */
   readonly playerVelocity: Vec2;
+  /**
+   * True when the last physics step ended with the player resting on a
+   * downward support (solid tile top or solid entity top). Spawns false;
+   * becomes true on the first supported step (S3.1).
+   */
+  readonly playerGrounded: boolean;
   /** Deterministic counter for runtime-spawned entity ids (`rt:<serial>`). */
   readonly nextSpawnSerial: number;
 }
@@ -74,6 +86,7 @@ export function instantiateWorld(def: LevelDefinition): WorldState {
     entities,
     playerPosition: level.constraints.spawn,
     playerVelocity: ZERO,
+    playerGrounded: false,
     nextSpawnSerial: 0,
   };
 }

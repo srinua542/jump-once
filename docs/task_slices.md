@@ -52,16 +52,19 @@ Session-sized, dependency-ordered work units. Each slice is small enough to comp
 
 ## Phase 3 — Mechanic Library & Deterministic Physics
 
+> Table restructured at S3.1 start per the P3 execution plan (adversarial review; decisions dm-0016–dm-0019). Two gaps closed: **S3.4 (run lifecycle) is new** — goal/defeat/scene-reload had no owner, yet REQ-010/011's "refresh only on reload" is untestable without it; input-system ownership is resolved by decision (controller consumes `state.input`; live capture → P9, replay tapes → P4 — dm-0019). Jump lock moved S3.4→S3.5; env/hazards/kinetic shifted to S3.6–S3.8; verification report → S3.9. Dependencies tightened (riding/plates need the controller, not just physics).
+
 | Slice | Title | REQs | Depends | Acceptance criteria | State |
 |-------|-------|------|---------|---------------------|-------|
-| S3.1 | Deterministic physics/integration system | REQ-003, REQ-160 | S2.6 | Fixed-step integration; AABB collision; reproducible trajectory. | NOT_STARTED |
-| S3.2 | Spatial partition (quadtree) for collision | REQ-162 | S3.1 | Only-neighborhood queries; equivalence test vs brute force. | NOT_STARTED |
-| S3.3 | Player controller: instant accel/decel | REQ-150, REQ-003 | S3.1 | Horizontal control curves; grounded detection. | NOT_STARTED |
-| S3.4 | **Single-jump lock** state machine | REQ-004, REQ-010, REQ-011, REQ-150 | S3.3 | Jump consumable exactly once; locks to horizontal-only; only scene reload refreshes; property test: never >1 jump under fuzzed input. | NOT_STARTED |
-| S3.5 | Environmental elements | REQ-151 | S3.1 | Static, moving (linear/looping/triggered), collapsing, ice — data-driven; isolated tests. | NOT_STARTED |
-| S3.6 | Hazards + triggers | REQ-152 | S3.1 | Spikes/lasers/moving hazards → defeat; plates/proximity/doors mutate layout. | NOT_STARTED |
-| S3.7 | Kinetic modifiers | REQ-153 | S3.4 | Springs/gravity/conveyors alter velocity without consuming jump (asserted). | NOT_STARTED |
-| S3.8 | Phase-3 verification report | REQ-P02 | S3.4–S3.7 | `docs/verification/P3.md`; one-jump invariant proven. | NOT_STARTED |
+| S3.1 | Deterministic physics & collision core | REQ-003, REQ-160 | S2.6 | `src/components/Tuning.ts` pure-data tuning record; `WorldState` physics fields (PKG-recorded); semi-implicit Euler at fixed step; **swept, axis-separated** AABB-vs-tilemap resolution + solid-entity collision; grounding; no-tunneling property test at ≥spring velocities; trajectory replay bit-identical; no transcendental fn in `src/systems/` (dm-0017). | COMPLETED |
+| S3.2 | Spatial partition (quadtree) for collision | REQ-162 | S3.1 | Deterministic build (fixed insertion order/capacity/depth); only-neighborhood queries; equivalence-vs-brute-force under seeded fuzz. | NOT_STARTED |
+| S3.3 | Player controller: instant accel/decel | REQ-150, REQ-003 | S3.1 | Consumes `state.input` (`InputFrame`) — the P3 input boundary (dm-0019); instant horizontal accel/decel from Tuning; grounded detection; replay assertion. | NOT_STARTED |
+| S3.4 | Run lifecycle: goal, defeat, instant scene reload | REQ-003 | S3.1, S3.3 | Goal overlap → `completed`; `defeated` → next-tick pure re-instantiation (attemptCount+1, same frozen level ref); `resetPressed` honored; reload determinism proven by replay. | NOT_STARTED |
+| S3.5 | **Single-jump lock** state machine (the axiom) | REQ-004, REQ-010, REQ-011, REQ-150 | S3.3, S3.4 | Anticipation ticks → single impulse → locked (horizontal-only); lock state lives in `WorldState` so reload-refresh holds by construction (dm-0018); property test: never >1 jump per life under fuzzed input tapes. | NOT_STARTED |
+| S3.6 | Environmental elements | REQ-151 | S3.1, S3.3 | Tick-parametric (closed-form, dm-0016) moving platforms (linear/looping/triggered) + platform carry (incl. platform-into-wall); collapsing floors; frictionless ice — data-driven; isolated tests. | NOT_STARTED |
+| S3.7 | Hazards + triggers | REQ-152 | S3.4, S3.6 | Spikes/lasers (pure fn of tick)/moving hazards → defeat via **swept** lethal check; plates/proximity/doors execute the closed trigger-action union in authored order; layering test ≥3 mechanics. | NOT_STARTED |
+| S3.8 | Kinetic modifiers | REQ-153 | S3.5 | Springs/gravity zones/conveyors alter velocity/inertia; lock state bit-identical before/after (never consumes jump — asserted). | NOT_STARTED |
+| S3.9 | Phase-3 verification report | REQ-P02 | S3.5–S3.8 | `docs/verification/P3.md`; one-jump invariant proven across full library; M1 exit items (subtractive pass, compliance audit, save-persistence ownership → P9/REQ-171). | NOT_STARTED |
 
 ## Phase 4 — Evaluation & Validation Framework
 
@@ -155,9 +158,10 @@ Session-sized, dependency-ordered work units. Each slice is small enough to comp
 
 **P2 — Data Models & Level Definition Schema is VERIFIED** (`docs/verification/P2.md`); all six P2 slices COMPLETED, 118/118 tests green. P3 — Mechanic Library & Deterministic Physics is now the active phase.
 
-1. **S3.1** — Deterministic physics/integration system. First P3 slice — **author the P3 execution-plan section first** (REQ-P02), then implement.
+1. **S3.1** — Deterministic physics & collision core (P3 execution-plan section authored ✓).
 2. **S3.2** — Spatial partition (quadtree) for collision.
 3. **S3.3** — Player controller: instant accel/decel.
-4. **S3.4** — **Single-jump lock** state machine (the game's axiom, REQ-004).
-5. **S3.5–S3.7** — Environmental elements, hazards + triggers, kinetic modifiers.
-6. **S3.8** — Phase-3 verification report.
+4. **S3.4** — Run lifecycle: goal, defeat, instant scene reload.
+5. **S3.5** — **Single-jump lock** state machine (the game's axiom, REQ-004).
+6. **S3.6–S3.8** — Environmental elements, hazards + triggers, kinetic modifiers.
+7. **S3.9** — Phase-3 verification report (closes M1).

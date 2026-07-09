@@ -4,7 +4,7 @@ This document holds one section per phase, authored *before* that phase's implem
 
 - **P0 + P1 (M0 — Foundation Locked): CLOSED.** M0 is VERIFIED, see `docs/verification/P1.md`. Retained below as the historical record.
 - **P2 — Data Models & Level Definition Schema: CLOSED — VERIFIED**, see `docs/verification/P2.md`. Checkpoints C2.1–C2.6 all passed (118/118 tests). Retained below as the historical record.
-- **P3 — Mechanic Library & Deterministic Physics: NEXT.** Its execution-plan section must be authored at the start of S3.1, before any P3 code (REQ-P02).
+- **P3 — Mechanic Library & Deterministic Physics: IN FLIGHT.** Section authored at S3.1 start, before any P3 code (REQ-P02), via adversarial review of the original S3.1–S3.8 slice table (decisions dm-0016–dm-0019; table restructured to S3.1–S3.9).
 
 Covers the phases that were in flight: **P0 (Governance & Protocol Infrastructure)** and **P1 (Deterministic Core Architecture)** — together, milestone **M0 — Foundation Locked**. Per the Directive, this plan is written *before* implementation code and defines the work, governing PRD requirements, dependencies, deliverables, validation criteria, and completion checkpoints. A new execution plan will be authored at the start of each subsequent phase.
 
@@ -186,3 +186,106 @@ P0+P1 VERIFIED (satisfied — M0 closed). No external dependencies; the validato
 ## Exit condition for P2
 
 All six checkpoints C2.1–C2.6 pass; the hand-authored sample level parses, validates, round-trips losslessly, and drives the engine deterministically; the schema is documented; the verification report is filed. Only then does **P3 — Mechanic Library & Deterministic Physics** open (completing milestone M1 requires both).
+
+---
+---
+
+# P3 — Mechanic Library & Deterministic Physics  *(IN FLIGHT; authored at S3.1 start per REQ-P02)*
+
+## Governing requirements
+
+| Phase | REQs governing the work |
+|-------|--------------------------|
+| P3 | REQ-004, REQ-010, REQ-011, REQ-150, REQ-151, REQ-152, REQ-153, REQ-154 (owned); REQ-003 (P3 scope: kinetic momentum + instant iteration); REQ-160, REQ-162 (partial — P3 owns the simulation-side share) |
+
+## Work
+
+Turn the data-defined level into a *playable, physically deterministic* game: a physics/collision core, the player controller with the **single-jump lock** (the game's axiom), the full §16 mechanic library (platforms, hazards, triggers, kinetic modifiers), and the run lifecycle (goal, defeat, instant scene reload) — all data-driven over the P2 schema, all pure systems over `WorldState`. P3 closes milestone **M1 — Simulatable Game**.
+
+This plan was produced by an adversarial review of the original P3 slice table (S3.1–S3.8), the same treatment P2 got. The review found two structural gaps (no slice owned the run lifecycle; input-system ownership was undefined), several under-specified dependencies, and five places where a stronger technique than the one implied by the slice text is warranted. Decisions are ledgered as dm-0016–dm-0019. The slice table is restructured to **S3.1–S3.9** (see `docs/task_slices.md`).
+
+## Adversarial review — findings and upgrades over the original slice table
+
+1. **Missing slice: run lifecycle (goal / defeat / scene reload).** No original slice owned goal-reach detection, the defeat state, or scene reload — yet REQ-010/011's acceptance ("jump refreshes *only* on scene reload") is untestable without a reload mechanism, and REQ-003's "instant gameplay iteration" is precisely the defeat→reload loop. **Fix:** new slice S3.4 (run lifecycle) before the jump-lock slice.
+2. **Input-system ownership was undefined.** `LevelInstantiation.test.ts` injects `InputFrame`s manually and noted "the input system doesn't exist until P3". **Decision (dm-0019):** the *simulation-side* input contract already exists — `GameState.input: InputFrame` (S1.4); P3's player controller consumes it and nothing else. Live device capture (keyboard/touch → `InputFrame`) is render/SDK territory: P9 (REQ-170/171). Serialized replay tapes are P4's (assigned at P4 planning per the P2 open question). No new P3 slice needed; the boundary is now explicit.
+3. **Integration technique upgraded: closed-form tick-parametric kinematics (dm-0016).** Movers (platforms/hazards), timed lasers, and collapse timers are *derived from the tick* (`position = pathPosition(elapsedTicks)`), never incrementally integrated. This eliminates float accumulation drift, makes every entity's state exactly reproducible at any tick, and makes scene reload trivially correct. Only the player (input-coupled) is integrated.
+4. **Collision technique upgraded: swept, axis-separated resolution (dm-0017).** The original criterion said "AABB collision"; naive discrete overlap tunnels through thin tiles at spring-launch velocities. Player-vs-tilemap movement is resolved per axis by scanning the swept tile range and clamping to the first solid boundary — correct at any speed, no epsilon nudges (contact snaps exactly to tile edges, which is float-exact). Player-vs-entity lethal/contact checks use the Minkowski-sum swept test where miss = exploit (hazards).
+5. **Cross-engine float determinism hardened (dm-0017).** Simulation math is restricted to IEEE-754-exact operations: `+ − × ÷`, `Math.sqrt`, comparisons, `Math.min/max/abs/floor/ceil/trunc`. **Transcendental functions (`Math.sin/cos/tan/pow/exp/hypot/…`) are banned in `src/systems/`** — they are not correctly-rounded and vary across JS engines, which would silently break replay hashes between Node (P4 solvers) and browsers. Waypoint traversal uses arc-length arithmetic, not trig. Semi-implicit (symplectic) Euler is the integrator: velocity first, then position — stable under constant gravity at fixed step.
+6. **Jump-lock refresh is correct by construction (dm-0018).** All jump-lock state lives in `WorldState`; scene reload = `instantiateWorld(level)` (pure, already proven deterministic). The "refreshes only on reload" invariant therefore cannot be violated by a forgotten reset — there is no reset code to forget.
+7. **Tuning values are data, not literals (dm-0018).** Gravity, run speed, jump velocity, anticipation ticks etc. live in a frozen pure-data record `src/components/Tuning.ts` (logic-free; the S2.1 scan test covers it automatically). They are campaign-global by design — per-level physics would fragment game feel; if GDOS ever demands per-level overrides, that is a schema-version bump (dm-0010 path). No `maxJumps`-like field exists anywhere (dm-0011 holds).
+8. **Dependencies tightened.** Environmental elements (riding a moving platform, collapsing on stand) and triggers (plates need the player standing on them) require the *controller and grounding*, not just the physics core — original table under-declared this. New table declares the true edges.
+9. **Canonical system pipeline order is fixed data.** With seven systems, composition order is a determinism parameter. The order below is normative; the Engine pipes systems in exactly this order.
+10. **Quadtree kept, made deterministic.** REQ-162 names a quadtree; intent is neighborhood-only collision queries. The tilemap needs no partition (the grid *is* one — O(1) lookup); the quadtree covers *entities*: rebuilt per query set as a pure function, fixed insertion order (array order), fixed node capacity and max depth, so structure is replay-identical. Equivalence-vs-brute-force under seeded fuzz is the acceptance test.
+11. **REQ-150 visual sub-clauses re-scoped.** Squash-and-stretch, particle burst, camera tracking are render-side; P3 owns the *simulation* share (anticipation ticks, lock machine, instant accel/decel) and exposes the state P9 animates from. Backlog Phase column amended to `P3,P9` so P3's close doesn't falsely verify the visual clauses (dm-0008 discipline).
+
+## Design summary (the compact model the code is written from)
+
+1. **`WorldState` grows physics fields** (expected evolution, `World.ts` header): player `grounded`, `jumpLock` machine state, `runState` (`playing | defeated | completed`), `attemptCount`, `spawnTick` (for elapsed-time derivation), per-entity runtime extras (mover activation tick, collapse first-contact tick, door open flag, plate pressed flag). Everything else about entities is *derived from tick + level data* (dm-0016).
+2. **Systems (all pure `step(state) => state`, canonical order):**
+   `lifecycle` (reset/defeat/goal → possibly fresh world) → `entityKinematics` (tick-parametric mover/laser/collapse state) → `playerControl` (horizontal intent + jump machine) → `playerPhysics` (gravity-zone sample, symplectic integrate, swept collide vs tiles + solid entities, grounding, platform carry) → `surfaceEffects` (ice/conveyor/spring velocity edits) → `sensors` (plates/proximity → trigger actions → door/platform/floor state) → `hazardsAndGoal` (lethal overlap → defeated; goal overlap → completed).
+3. **Solidity is data.** A pure-data table classifies each entity kind as solid / lethal / sensor; door and collapsing-floor solidity additionally depends on their runtime flag. Systems key on this table + component presence, never on entity identity (REQ-154).
+4. **Kinetic modifiers never touch the jump machine (REQ-153).** Springs/gravity zones/conveyors edit velocity/inertia only; the property test asserts the lock state is bit-identical before/after any modifier interaction.
+5. **Defeat is instant iteration (REQ-003).** `defeated` → next tick the lifecycle system re-instantiates the world (attemptCount+1, same frozen level reference). `resetPressed` does the same from any state. Completion freezes the world (win state consumed by P4/P8).
+6. **Determinism assertions ride along every slice.** Each slice's tests include a replay bit-equality assertion over its new mechanics; no `Math.random`, no delta-time, no transcendental calls (scan-testable).
+
+## Dependencies
+
+P2 VERIFIED (satisfied). No external dependencies. Consumes: `WorldState`/`instantiateWorld` (S2.5), behavior payloads (S2.1/S2.2), `TILE_KIND_BY_ID` tilemap semantics, normative y-down coordinate convention (`docs/level_schema.md`), `System` contract (S1.5), `FIXED_STEP_SECONDS` (dm-0003).
+
+## Deliverables (one per slice — see `docs/task_slices.md` Phase 3, restructured)
+
+- **S3.1** Physics & collision core: `src/components/Tuning.ts` (pure-data tuning), `WorldState` physics fields, `src/systems/PlayerPhysics.ts` (symplectic Euler + swept axis-separated tile collision + grounding), no-tunneling property test, trajectory replay test.
+- **S3.2** `src/systems/SpatialPartition.ts` (or module folder): deterministic quadtree over entity AABBs; equivalence-vs-brute-force seeded fuzz.
+- **S3.3** `src/systems/PlayerControl.ts`: consumes `state.input`; instant horizontal accel/decel; grounded detection consumed from physics; input-boundary decision documented in-code.
+- **S3.4** Run lifecycle: goal detection, defeat state, deterministic instant reload (`lifecycle` system); attemptCount; reload-refreshes-everything-by-construction test.
+- **S3.5** **Single-jump lock** state machine (the axiom): anticipation ticks → impulse → locked; refresh only via reload; fuzzed-input property test (never >1 jump per life, ever).
+- **S3.6** Environmental elements: tick-parametric moving platforms (linear/looping/triggered), platform carry, collapsing floors, frictionless ice.
+- **S3.7** Hazards + triggers: spikes, timed lasers (pure function of tick), moving hazards (swept lethal check); plates/proximity/doors executing the closed trigger-action union.
+- **S3.8** Kinetic modifiers: springs, gravity zones, conveyors; never-consumes-jump property test.
+- **S3.9** `docs/verification/P3.md` — per-REQ verification report (dm-0008); M1 closes here (plus the M1 exit items below).
+
+## Validation criteria
+
+- **The axiom (REQ-004/010/011):** under seeded fuzzed input tapes across all mechanic fixtures, the player never gains a second jump impulse within one life; jump state refreshes only via reload; no upgrade/power-up/exception path exists in code.
+- **Determinism (REQ-121 inheritance):** every slice's mechanics replay bit-identically from (level file, seed, input tape); no transcendental function appears under `src/systems/` (grep-able); trajectory goldens stable.
+- **No tunneling:** property test launches the player at ≥ spring-magnitude velocities at 1-tile-thick walls/floors from fuzzed positions; the player never crosses a solid tile boundary.
+- **Data-driven (REQ-120/154):** no gameplay numeral in system code — values come from `Tuning.ts` or the level payload; solidity/lethality from the data table; systems keyed on component presence.
+- **Layering (REQ-154):** integration tests compose ≥3 mechanics (e.g. plate → door → moving platform over spikes with a spring) and assert emergent behavior from data wiring alone.
+- **Kinetic modifiers (REQ-153):** lock-state bit-identical across modifier interactions.
+- **Quadtree (REQ-162 partial):** neighborhood query results ≡ brute force under seeded fuzz.
+- **Zero-allocation (REQ-160 partial):** P3 stance per dm-0004 — immutability is the correctness contract; allocation optimization stays deferred to P11. P3's REQ-160 share is *structural preallocation only* (fixed-size tile-scan without per-tile closures); no premature pooling.
+- **Green build:** `npm test` exits 0; every new module covered.
+
+## Checkpoints
+
+- **C3.1** Physics core lands; no-tunneling + trajectory replay green. ✅*(pending)*
+- **C3.2** Quadtree equivalence green.
+- **C3.3** Controller consumes real `InputFrame`s; instant accel/decel proven.
+- **C3.4** Lifecycle: defeat→instant reload→fresh world; goal→completed; deterministic across replays.
+- **C3.5** Single-jump lock fuzz property green — the axiom holds.
+- **C3.6–C3.8** Mechanic library complete, each isolated + layered tests green.
+- **C3.9** `docs/verification/P3.md` filed; P3 REQs flipped per dm-0008; PKG consistent; subtractive pass recorded; **M1 — Simulatable Game closes.**
+
+## Risk register (P3)
+
+| Risk | Mitigation |
+|------|------------|
+| Spring velocities tunnel through thin geometry. | Swept axis-separated tile resolution (dm-0017); no-tunneling property test is an acceptance criterion. |
+| Float drift diverges long replays. | Closed-form kinematics for everything non-player (dm-0016); transcendental ban (dm-0017); replay assertions per slice. |
+| Jump-lock refresh bug (the axiom fails silently). | Lock state lives in `WorldState`; reload re-instantiates — refresh by construction (dm-0018); fuzz property test. |
+| System-order nondeterminism as systems accumulate. | Canonical pipeline order is normative in this plan; Engine test asserts the order. |
+| Tuning values creep into logic as literals. | `Tuning.ts` is the single source; review + grep for numeric literals in `src/systems/` at C3.9. |
+| Trigger cascades (plate→door→platform) create order-dependent behavior. | Triggers fire in authored array order (dm-0015 wiring is first-class data); cascade resolution is single-pass per tick, documented; layering tests pin behavior. |
+| Moving-platform carry interacts badly with swept collision. | Carry delta applied from closed-form mover delta *before* player sweep (design summary order); dedicated riding tests incl. platform-into-wall. |
+
+## Open questions (carried into P3 implementation)
+
+1. **Mover mode semantics** — `linear` = ping-pong, `looping` = closed-circuit wrap, `triggered` = dormant until activated then ping-pong. PROVISIONAL (ledgered in dm-0016); P5/GDOS confirm alongside dm-0012's items.
+2. **Platform solidity model** — full-solid (not jump-through) in P3; revisit only if GDOS level grammar demands one-way platforms (schema bump).
+3. **Defeat→reload latency** — instant (1 tick) per REQ-003; if P5's emotional pacing wants a death beat, that is render-side (P9), not sim-side.
+4. **Save-game persistence ownership** (P2 open question, must resolve before M1 close): assigned to **P9** under REQ-171 (SDK lifecycle hooks own session persistence). Recorded here; backlog note at S3.9.
+5. **Replay-tape serialization** — still P4's, assign at P4 planning (unchanged).
+
+## Exit condition for P3
+
+All checkpoints C3.1–C3.9 pass; the axiom's fuzz property holds across the full mechanic library; a data-defined level is playable start (spawn) → finish (goal) with defeat/reload loops, deterministically, bit-identical under replay. **M1 — Simulatable Game** closes (requires the M1-scope audit: subtractive pass, compliance audit, save-persistence ownership recorded). Only then does P4 open.

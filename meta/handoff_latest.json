@@ -1,47 +1,41 @@
 {
-  "session_end_timestamp": "2026-07-09T12:00:00Z",
+  "session_end_timestamp": "2026-07-09T15:00:00Z",
   "current_milestone": "M1_Simulatable_Game",
   "active_working_branch": "main",
   "completed_since_last_snapshot": [
-    "ENTIRE PHASE P2 COMPLETED AND VERIFIED this session (docs/verification/P2.md). All six slices S2.1-S2.6 ran through the full nine-stage SDLC loop; per-slice run archives in meta/runs/S2.*.json. Suite grew 60 -> 118 tests, all green.",
-    "S2.1: src/components/{EntityId,Transform,Collider,Behavior,Entity}.ts — logic-free pure-data records (branded EntityId + rt: runtime namespace const, TransformDef, AabbDef, 12-kind closed BehaviorDef union + ENTITY_KINDS, EntityDef with behavior.kind as the single discriminant — no redundant kind field). Machine-enforced decoupling: ComponentsLogicFree.test.ts scans src/components/ source (comments/strings stripped) and fails on function/=>/class.",
-    "S2.2: schema types (Tilemap 0=empty/1=solid closed ids; TriggerDef standalone wiring + TRIGGER_ACTION_TARGET_KIND table; GdosMetadata 4 provisional axes + emotional keyframes + minimal creatorMomentFrame; LevelDefinition root with levelId/title, LEVEL_SCHEMA_VERSION=1) + src/schema/Serialize.ts canonical serializer (fixed key order, 2-space, -0 normalized) + docs/level_schema.md (NORMATIVE: y-down/top-left/gravity+y coordinate convention, versioning policy, canonical form, axiom boundary, full field reference). dm-0015 records the five S2.2 shape decisions.",
-    "S2.3: src/schema/Parse.ts — parseLevel/parseLevelText, the ONLY construction path (parse-don't-validate, mints EntityId/TriggerId brands). Never throws; collects ALL errors with JSON-pointer paths; strict unknown-key rejection; finite-only numbers, -0 normalized; schemaVersion hard-reject; id uniqueness + rt: guard; trigger referential integrity + kind-compatibility. 27 rejection/accept tests + 300-mutant seeded fuzz (createRng(20260709)).",
-    "S2.4: test/fixtures/fixture-all-kinds.level.json (4-space authored formatting, value-twin of test/helpers/Samples.makeSampleLevel) + LevelRoundTrip.test.ts: value round-trip, byte idempotence, GOLDEN CANONICAL SHA256 c0ec3b1f89033e73b2f6d5819090c2cfcaf18a342b2c4dbf4cf5baa2ada8174e (re-anchoring = ledgered decision only), programmatic closed-list coverage, authored!=canonical pinned.",
-    "S2.5: src/entities/World.ts — WorldState {level frozen+reference-shared (dm-0009), entities runtime records, playerPosition/Velocity, nextSpawnSerial} + instantiateWorld (pure, freezes def idempotently) + createInitialState. LevelInstantiation.test.ts proves REQ-120/121 completion: (fixture FILE, seed, input tape) -> bit-identical replay across independent runs under freezeOnCommit, world.level === def after 240 ticks, movement scalar read from level data.",
-    "S2.6: docs/verification/P2.md filed. Per dm-0008: REQ-120, REQ-121, REQ-122 -> VERIFIED; REQ-014 (P2,P10) and REQ-154 (P3) correctly stay IN_PROGRESS. Rollup: 52/9/0/6. Subtractive pass: 1 finding (dead TriggerSourceKind export) removed, suite re-verified green. IRD current-status rewritten (P2 VERIFIED, P3 active); execution_plan.md P2 section CLOSED with C2.1-C2.6 all checked; task_slices pick-list -> S3.x.",
-    "PKG: +11 nodes this session (5 components S2.1, 4 components + serialize S2.2, parse S2.3, entities/world S2.5), all edges both directions, GDOS anchors updated. pkg_hash s1-e6f7a8 -> s2-b3c9d1 -> s2-c4d0e2 -> s2-d5e1f3 -> s2-e6f2a4 (current).",
-    "Ledger: dm-0009..dm-0015 recorded across planning + implementation (see earlier handoff entries + dm-0015 for S2.2 shape decisions).",
-    "Earlier this session (before implementation): P2 execution plan authored via adversarial architecture review + second-pass self-review (6 amendments incl. src/schema/ directory creation, dm-0013/0014)."
+    "P3 execution-plan section authored (docs/execution_plan.md) via adversarial review of the original S3.1-S3.8 slice table — the same treatment P2 got. Findings: no slice owned run lifecycle (goal/defeat/reload — REQ-010/011 untestable without it); input-system ownership undefined; five technique upgrades (closed-form tick-parametric kinematics dm-0016; swept axis-separated collision + transcendental-function ban + symplectic Euler dm-0017; jump-lock-in-WorldState + Tuning.ts data record dm-0018; slice restructure + REQ-150 re-scope to P3,P9 dm-0019). Slice table restructured S3.1-S3.9 (S3.4 run lifecycle NEW; jump lock -> S3.5; env/hazards/kinetic -> S3.6-S3.8; report -> S3.9).",
+    "S3.1 COMPLETED: src/components/Tuning.ts (TUNING: gravityY 60, maxFallSpeed 30, playerHalfExtents 0.35/0.45 — dm-0018 single normative feel source), src/components/CollisionClass.ts (COLLISION_CLASS_BY_KIND total over EntityKind: solid|lethal|sensor), WorldState.playerGrounded + index-alignment invariant documented in World.ts, src/systems/PlayerPhysics.ts (semi-implicit Euler, swept axis-separated tile+entity resolution, exact face snapping, math whitelist). Tests 118 -> 134: unit (300-case seeded no-tunneling fuzz at 1200 u/s, exact snaps, entity solidity incl. door open/closed + spike pass-through + stand-on-entity, purity, 240-step trajectory determinism) + integration PhysicsReplay (fixture file bit-identical replay, exact floor rest).",
+    "PKG: +3 nodes, entities/world updated, all edges both directions, pkg_hash s2-e6f2a4 -> s3-a7c1d9. Also reconciled pre-existing session-1 drift: core/clock and core/rng dependents were missing core/state.",
+    "Ledger: dm-0016..dm-0019 recorded at PLAN stage."
   ],
   "exact_execution_focus": {
-    "file_path": "docs/execution_plan.md",
-    "target_line_range": "new-content (P3 section)",
-    "pending_logical_transformation": "Start S3.1 (first P3 slice): (1) FIRST author the P3 execution-plan section (REQ-P02) covering IRD.md's P3 entry: deterministic physics system, player controller with the single-jump lock (REQ-004/010/011 — anticipation/lock/horizontal-only-until-reload), platforms/hazards/triggers/kinetic modifiers, all data-driven over the P2 schema. Read docs/task_slices.md Phase-3 table (S3.1-S3.8) and consider whether it needs the same adversarial review + restructure P2 got (e.g. where does the input system slice live? P3 has no explicit input-system slice but LevelInstantiation.test.ts injects input manually and notes 'the input system doesn't exist until P3'). (2) THEN implement S3.1 (deterministic physics/integration, AABB vs tilemap + entities). Physics systems consume WorldState from src/entities/World.ts (P3 will extend EntityState/WorldState with physics fields — expected evolution, PKG-recorded when it happens) and the frozen level via state.world.level. Coordinate convention is NORMATIVE in docs/level_schema.md: y-down, gravity +y, tile (col,row) world rect [col*ts,(col+1)*ts) x [row*ts,(row+1)*ts).",
+    "file_path": "docs/task_slices.md",
+    "target_line_range": "Phase 3 table (S3.2 row)",
+    "pending_logical_transformation": "Start S3.2 — deterministic quadtree spatial partition over entity AABBs (REQ-162 P3 share): pure build function, fixed insertion order (array order), fixed node capacity + max depth, neighborhood query; acceptance = equivalence-vs-brute-force under seeded fuzz. Then S3.3 player controller (consumes state.input, instant accel/decel from Tuning — add runSpeed field when consumed), S3.4 run lifecycle, S3.5 jump lock.",
     "pkg_hash_note": "no structural change may land without a PKG node+edges update in the same change"
   },
   "blocked_by": {
     "dependency_node": "none",
-    "reason": "No blockers. P2 exit gate VERIFIED (docs/verification/P2.md); P3's entry condition is satisfied."
+    "reason": "No blockers. S3.1 COMPLETED, suite green (134/134)."
   },
   "critical_warnings_for_next_session": [
-    "RUN THE REBOOT LIFECYCLE FIRST: confirm pkg_hash s2-e6f2a4 matches meta/project_knowledge_graph.json, npm test expect 118 passing. If red, fix before S3.1.",
-    "The canonical serialization form is ANCHORED: golden sha256 c0ec3b1f... in test/integration/LevelRoundTrip.test.ts. If a serializer change breaks that test, the change altered the canonical form — revert it, or deliberately re-anchor AND record a ledger entry. Never casually update the hash.",
-    "Schema decisions are LOCKED by ledger: dm-0009 (no mutable tiles — collapsing floors/doors are entity state transitions in P3 systems), dm-0010+dm-0014 (canonical JSON, strict unknown keys, version hard-reject, no migration code until v2), dm-0011 (NEVER add maxJumps or any axiom field to the schema — the single-jump lock is S3.4's engine invariant), dm-0013 (schema I/O functions in src/schema/, components stay logic-free — the scan test enforces it), dm-0015 (y-down coordinates, 4 provisional difficulty axes, standalone trigger wiring).",
-    "P3 will extend EntityState/WorldState in src/entities/World.ts with physics fields (grounded, jump-lock state, entity activation) — that is expected and documented in World.ts's header, but it is a structural change: update the PKG node + bump pkg_hash in the same change, and keep instantiateWorld pure/deterministic.",
-    "GDOS block semantics are PROVISIONAL (dm-0012): difficulty axes + creatorMomentFrame shape need P5 confirmation; open questions live in execution_plan.md P2 section (also: replay-tape serialization is unowned — assign at P4 planning; save-game persistence unowned — assign before M1 close).",
-    "Do NOT begin any level/chapter CONTENT generation — P10 remains hard-gated behind M2. test/fixtures/fixture-all-kinds.level.json is validation scaffolding, not content.",
-    "Do NOT change FIXED_STEP_SECONDS (dm-0003), do NOT mutate GameState in place (dm-0004), Engine commits on zero-step ticks by design (dm-0007), per-REQ verification per dm-0008.",
-    "The private npm mirror npm.shootsta.com is broken; .npmrc pins registry.npmjs.org — don't remove it.",
-    "ALL of this session's work (P2 planning + full P2 implementation) is uncommitted. First action next session (or on user request now): commit as slice-scoped commits or one P2 phase commit before starting P3."
+    "RUN THE REBOOT LIFECYCLE FIRST: confirm pkg_hash s3-a7c1d9 matches meta/project_knowledge_graph.json, npm test expect 134 passing.",
+    "P3 slice ids were RENUMBERED at S3.1 (dm-0019): S3.4 is now run lifecycle, S3.5 is the single-jump lock, S3.6-S3.8 env/hazards/kinetic, S3.9 verification. Do not use the old pick-list meanings.",
+    "TUNING (src/components/Tuning.ts) is the single normative feel source (dm-0018): editing values invalidates replay goldens — ledgered decision only. Add fields per slice only when consumed (subtractive discipline).",
+    "Math whitelist in src/systems/ (dm-0017): NO transcendental functions (Math.sin/cos/tan/pow/exp/hypot banned) — only + - * / %, Math.sqrt/min/max/abs/floor/ceil/trunc. Cross-engine replay integrity depends on it; S3.9 audits by grep.",
+    "PlayerPhysics must NEVER read state.input (isolation rule; S3.3's controller is the sole input consumer). Systems pair entity def<->state by INDEX (World.ts invariant).",
+    "Golden canonical sha256 c0ec3b1f... (LevelRoundTrip) still anchored — never casually update. Schema locks dm-0009..dm-0015 all still in force (no maxJumps field ever, dm-0011).",
+    "Do NOT begin level/chapter CONTENT generation — P10 hard-gated behind M2.",
+    "Do NOT change FIXED_STEP_SECONDS (dm-0003); never mutate GameState in place (dm-0004).",
+    "The private npm mirror npm.shootsta.com is broken; .npmrc pins registry.npmjs.org — don't remove it."
   ],
-  "pkg_hash_at_handoff": "s2-e6f2a4",
+  "pkg_hash_at_handoff": "s3-a7c1d9",
   "next_session_pick_list": [
-    "Commit the P2 work (uncommitted on main)",
-    "S3.1 Deterministic physics/integration system (author P3 execution-plan section FIRST, incl. reviewing whether the P3 slice table needs an input-system slice)",
-    "S3.2 Spatial partition (quadtree)",
-    "S3.3 Player controller (instant accel/decel)",
-    "S3.4 Single-jump lock state machine (the axiom, REQ-004/010/011)",
-    "S3.5-S3.8 environmental/hazards/kinetic + P3 verification report"
+    "S3.2 Spatial partition (deterministic quadtree, equivalence-vs-brute-force fuzz)",
+    "S3.3 Player controller (consumes state.input; instant accel/decel; TUNING.runSpeed added here)",
+    "S3.4 Run lifecycle (goal/defeat/instant reload)",
+    "S3.5 Single-jump lock state machine (the axiom, REQ-004/010/011)",
+    "S3.6-S3.8 environmental/hazards+triggers/kinetic modifiers",
+    "S3.9 Phase-3 verification report (closes M1: subtractive pass + compliance audit + persistence ownership note)"
   ]
 }
