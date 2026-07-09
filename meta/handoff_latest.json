@@ -1,43 +1,43 @@
 {
-  "session_end_timestamp": "2026-07-09T19:00:00Z",
+  "session_end_timestamp": "2026-07-09T21:30:00Z",
   "current_milestone": "M2_Design_Intelligence_Operational",
   "active_working_branch": "main",
   "completed_since_last_snapshot": [
-    "ENTIRE PHASE P3 COMPLETED AND VERIFIED this session (docs/verification/P3.md). All nine slices S3.1-S3.9 ran the full nine-stage SDLC loop; per-slice archives in meta/runs/S3.*.json. Suite grew 118 -> 186, all green. MILESTONE M1 — Simulatable Game is CLOSED (P2 + P3).",
-    "P3 execution plan authored via adversarial review (dm-0016-dm-0021): closed-form tick-parametric kinematics, swept axis-separated collision + transcendental ban + symplectic Euler, jump-lock-by-construction + Tuning data record, slice restructure (added S3.4 run lifecycle; input ownership by-field), kinetic-modifier fold.",
-    "S3.1 physics core (PlayerPhysics: symplectic Euler, swept resolution, no-tunneling fuzz) + Tuning.ts + CollisionClass.ts + SpatialPartition quadtree (S3.2, fuzz equivalence).",
-    "S3.3 PlayerControl (sole input consumer, instant accel/decel). S3.4 Lifecycle + HazardsAndGoal (goal/defeat/instant reload). S3.5 THE AXIOM — single-jump lock (fuzz property: never >1 impulse/life).",
-    "S3.6 EntityKinematics (closed-form movers + carry + collapse) + ice. S3.7 lethal hazards (swept) + Sensors (triggers, authored order). S3.8 kinetic modifiers (springs/gravity zones/conveyors; never-consumes-jump invariant).",
-    "S3.9 docs/verification/P3.md filed; REQ-004/010/011/151/152/153/154 -> VERIFIED (dm-0008); subtractive pass 0 findings; transcendental-function audit clean; save-persistence ownership assigned to P9/REQ-171. IRD + execution_plan P3 section CLOSED; rollup corrected to 40/14/0/13.",
-    "PKG: +7 system/component nodes across the session (tuning, collision_class, player_physics, spatial_partition, player_control, lifecycle, hazards_and_goal, entity_kinematics, sensors), entities/world extended per slice, all edges both directions, pkg_hash s2-e6f2a4 -> s3-c5e9f7 (current). Reconciled two pre-existing session-1 drifts (clock/rng->state reverse deps; tools/sdlc gate->recipe edge). Ledger dm-0016..dm-0021 recorded."
+    "P4 EXECUTION-PLAN SECTION AUTHORED (REQ-P02) via adversarial review, same treatment P2/P3 got — 11 findings, decisions dm-0022–dm-0024. Replay-tape serialization ownership (open since P2 OQ#5) ASSIGNED to P4/S4.1. Governing REQs, per-slice deliverables S4.1–S4.7, validation criteria, checkpoints C4.1–C4.7, risk register, 4 open questions (tier interpolation → S4.5, chapter manifest shape → S4.6, search budget → S4.2, challenge envelope → S4.4).",
+    "Directory contract updated: new src/eval/ (dm-0022) with the one-way isolation rule (sim never imports eval); task_slices P4 table criteria detailed per plan; REQ-141 → IN_PROGRESS.",
+    "S4.1 — AGENT-ARCHETYPE SIMULATOR HARNESS: COMPLETED through the full nine-stage loop (archive meta/runs/ via stage.js done). New modules: src/schema/TapeIO.ts (ReplayTape v1, canonical strict I/O, dm-0023), src/eval/AgentPolicy.ts (pure decide(state,memory) contract, dm-0024), src/eval/Archetypes.ts (five frozen ArchetypeParams over ONE decision core: firstTime/cautious/experienced/expertSpeedrunner/curiousExplorer), src/eval/AgentHarness.ts (runAgent + replayTape + exported CANONICAL_PIPELINE + EvalBudget).",
+    "Tests 186 → 210, all green first run. New: test/unit/TapeIO.test.ts (round-trip value+byte, full rejection coverage, never-throws), test/unit/EvalIsolation.test.ts (one-way import scan + math-whitelist scan over src/eval/), test/integration/AgentArchetypes.test.ts (all five complete corridor + spiked-gap room with jumpLock 'spent'; pairwise-distinct tapes; expert strictly fastest / explorer strictly slowest; byte-identical tape twice; live ≡ replay bit-equality per archetype; exact tick-budget halt on sealed room; attempt-budget halt on spike carpet; tape round-trips with correct metadata).",
+    "PKG: +4 nodes (schema/tape_io, eval/agent_policy, eval/archetypes, eval/agent_harness), +27 edges (both directions on all touched nodes), 36 nodes / 115 edges, pkg_hash s3-c5e9f7 → s4-d1f7a3. Ledger: dm-0022 (src/eval placement + one-way rule), dm-0023 (tape ownership + format), dm-0024 (agent determinism: pure policies, param records, separate RNG stream). Gate: 0 blocking."
   ],
   "exact_execution_focus": {
-    "file_path": "docs/execution_plan.md",
-    "target_line_range": "new-content (P4 section)",
-    "pending_logical_transformation": "P3 VERIFIED, M1 CLOSED (186/186, pkg s3-c5e9f7). Open P4 — Evaluation & Validation Framework (first phase of M2). FIRST author the P4 execution-plan section (REQ-P02) covering IRD P4: two isolated validation passes (Local Spatial Verification + Macro Curriculum Validation, REQ-140), five agent archetypes (First-Time/Cautious/Experienced/Expert-Speedrunner/Curious-Explorer) driving the deterministic sim headlessly (REQ-141), solvability audit (exactly-one-jump — now testable against the real P3 mechanic library), softlock detection, exploit filtration, optimization windows + five-tier routing + delta (REQ-101/102). Consider the same adversarial review P2/P3 got — esp. the replay-tape serialization ownership (unowned per P2/P3 open questions; P4 entry is the natural home — assign it here). THEN implement S4.1 (agent-archetype simulator harness). P4 systems consume the frozen deterministic sim (Engine + P3 systems over WorldState); agents produce InputFrames (the sim-side input contract from S1.4/dm-0019).",
+    "file_path": "docs/task_slices.md",
+    "target_line_range": "Phase 4 table — S4.2 row",
+    "pending_logical_transformation": "S4.1 COMPLETED (210/210, pkg s4-d1f7a3). Next: S4.2 — Solvability audit (exactly-one-jump). Per the P4 plan (finding 7 + open question 3): a bounded deterministic search over input space with archetype runs as fast path / witness generator, classifying known-solvable and known-unsolvable in-code fixtures with zero misclassification; every 'solvable' verdict carries a replayable witness tape (ReplayTape, dm-0023). Decide + ledger the search-budget envelope (branching per tick, horizon) at S4.2 start. Build ON the S4.1 harness: consume runAgent/replayTape/CANONICAL_PIPELINE/EvalBudget from src/eval/AgentHarness.ts — do not re-assemble the engine by hand. Verdicts are pure data records under src/eval/local/ (REQ-140 isolation: local vs macro).",
     "pkg_hash_note": "no structural change may land without a PKG node+edges update in the same change"
   },
   "blocked_by": {
     "dependency_node": "none",
-    "reason": "No blockers. M1 CLOSED; P4's entry condition (M1 verified) is satisfied. P4 opens M2."
+    "reason": "No blockers. S4.1 (the dependency of S4.2/S4.3/S4.4) is COMPLETED."
   },
   "critical_warnings_for_next_session": [
-    "RUN THE REBOOT LIFECYCLE FIRST: confirm pkg_hash s3-c5e9f7 matches meta/project_knowledge_graph.json, npm test expect 186 passing.",
-    "CONTENT GENERATION STAYS HARD-GATED until M2 (P4+P5+P6) is VERIFIED — do NOT author any level/chapter content in P4. Fixtures remain unit scaffolding only.",
-    "THE AXIOM is now engine-verified (dm-0020): the single-jump lock lives in PlayerControl + WorldState.jumpLock, refreshed only by reload's pure re-instantiation. P4's solvability audit must treat 'exactly one jump' as the ground-truth constraint. Never add a maxJumps schema field (dm-0011).",
-    "CANONICAL PIPELINE ORDER (normative): lifecycle -> entityKinematics -> playerControl -> playerPhysics -> sensors -> hazardsAndGoal. (Kinetic modifiers are folded into playerControl/playerPhysics per dm-0021 — there is NO separate surfaceEffects system.) P4 harnesses that assemble the engine must use this exact order.",
-    "Math whitelist in src/systems/ (dm-0017) is clean and audited — keep it: NO transcendental functions; only + - * / %, Math.sqrt/min/max/abs/floor/ceil. Cross-engine replay integrity (Node solvers vs browser) depends on it.",
-    "Determinism contract: agents must drive the sim via InputFrames only; same (level, seed, input tape) -> bit-identical replay. The whole P4 evaluation framework relies on this — never introduce Math.random or delta-time.",
-    "Golden canonical sha256 c0ec3b1f... (LevelRoundTrip) still anchored. Schema locks dm-0009..dm-0015 in force. Save/progress persistence now owned by P9/REQ-171; replay-tape serialization still unowned -> assign at P4 planning.",
+    "RUN THE REBOOT LIFECYCLE FIRST: confirm pkg_hash s4-d1f7a3 matches meta/project_knowledge_graph.json, npm test expect 210 passing.",
+    "CONTENT GENERATION STAYS HARD-GATED until M2 (P4+P5+P6) is VERIFIED — do NOT author any level/chapter content in P4. All S4.x fixtures are in-code unit scaffolding (see AgentArchetypes.test.ts buildLevel) or test/fixtures/ — keep it that way.",
+    "THE AXIOM is P4's ground truth, not its parameter (dm-0020/dm-0024): S4.2's solvability audit reads world.jumpLock — never re-implements the lock, never counts jumps by parsing tapes, and no maxJumps-like knob may exist in eval config (dm-0011).",
+    "ENGINE ASSEMBLY: use CANONICAL_PIPELINE exported from src/eval/AgentHarness.ts (normative order lifecycle → entityKinematics → playerControl → playerPhysics → sensors → hazardsAndGoal, dm-0021). Hand-assembling a different order is a different simulation.",
+    "ONE-WAY DEPENDENCY (dm-0022, scan-enforced by EvalIsolation.test.ts): nothing under src/{core,systems,components,entities,schema} may import from src/eval/. The math whitelist now covers src/eval/ too (allowed: sqrt/min/max/abs/floor/ceil/trunc; no Math.random) — also scan-enforced.",
+    "AGENT DETERMINISM (dm-0024): agents thread their OWN RNG stream via AgentMemory (agentStreamSeed derivation); state.rng belongs to the sim alone. Any new agent/solver must preserve live≡replay bit-equality — it is an acceptance test, keep it that way in S4.2+.",
+    "REPLAY TAPES (dm-0023): ReplayTape v1 stores the NORMALIZED uint32 seed (may differ from a raw caller seed); frames[i] drove tick i+1; a tape references levelId, it does not embed the level. ARCHETYPES params are FROZEN — editing them invalidates every recorded tape (ledger a decision if ever needed).",
+    "Golden canonical sha256 c0ec3b1f... (LevelRoundTrip) still anchored. Schema locks dm-0009..dm-0015 in force. Save/progress persistence owned by P9/REQ-171; replay-tape serialization now OWNED (dm-0023) — do not redefine it in P8/P9.",
     "Do NOT change FIXED_STEP_SECONDS (dm-0003); never mutate GameState in place (dm-0004).",
     "The private npm mirror npm.shootsta.com is broken; .npmrc pins registry.npmjs.org — don't remove it."
   ],
-  "pkg_hash_at_handoff": "s3-c5e9f7",
+  "pkg_hash_at_handoff": "s4-d1f7a3",
   "next_session_pick_list": [
-    "Open P4 — author the P4 execution-plan section FIRST (REQ-P02; consider adversarial review + assign replay-tape serialization ownership)",
-    "S4.1 Agent-archetype simulator harness (five archetypes drive the deterministic sim headlessly)",
-    "S4.2 Solvability audit (exactly-one-jump) against the real P3 mechanic library",
-    "S4.3-S4.6 softlock detection, exploit filtration, optimization windows + five-tier routing, macro curriculum validation",
-    "S4.7 Phase-4 verification report"
+    "S4.2 Solvability audit (exactly-one-jump): bounded deterministic search + archetype fast path; witness tapes; decide+ledger the search-budget envelope (P4 plan OQ#3)",
+    "S4.3 Softlock detection (dead zones from classified timeouts + region evidence)",
+    "S4.4 Exploit filtration (path-skips vs the challenge envelope — decide envelope definition, P4 plan OQ#4)",
+    "S4.5 Optimization windows + five-tier routing + delta (REQ-101/102; decide tier interpolation, P4 plan OQ#1)",
+    "S4.6 Macro curriculum validation (REQ-140/142; isolated src/eval/macro/; minimal ordered-verdict input type, P4 plan OQ#2)",
+    "S4.7 Phase-4 verification report (docs/verification/P4.md)"
   ]
 }

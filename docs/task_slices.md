@@ -68,15 +68,17 @@ Session-sized, dependency-ordered work units. Each slice is small enough to comp
 
 ## Phase 4 — Evaluation & Validation Framework
 
+> Acceptance criteria detailed at S4.1 start per the P4 execution plan (adversarial review; decisions dm-0022–dm-0024). Replay-tape serialization ownership (open since P2) is assigned to S4.1. Slice ids unchanged.
+
 | Slice | Title | REQs | Depends | Acceptance criteria | State |
 |-------|-------|------|---------|---------------------|-------|
-| S4.1 | Agent-archetype simulator harness | REQ-141 | S3.8 | Five archetypes drive the deterministic sim headlessly. | NOT_STARTED |
-| S4.2 | Solvability audit (exactly-one-jump) | REQ-141 | S4.1 | Classifies solvable/unsolvable fixtures; flags multi-jump requirement. | NOT_STARTED |
-| S4.3 | Softlock detection | REQ-141 | S4.1 | Detects dead zones (can neither die nor reach goal). | NOT_STARTED |
-| S4.4 | Exploit filtration | REQ-141 | S4.1 | Detects boundary path-skips bypassing hazards. | NOT_STARTED |
-| S4.5 | Optimization windows + five-tier routing + delta | REQ-101, REQ-102 | S4.2 | Computes Discovery→WR routes; rejects minimal-delta layouts. | NOT_STARTED |
-| S4.6 | Macro curriculum validation (4 criteria) | REQ-140, REQ-142 | S4.2 | Audits chapter fixtures for the four macro criteria. | NOT_STARTED |
-| S4.7 | Phase-4 verification report | REQ-P02 | S4.2–S4.6 | `docs/verification/P4.md`. | NOT_STARTED |
+| S4.1 | Agent-archetype simulator harness | REQ-141 | S3.8 | `src/eval/` opened (dm-0022, one-way dependency); replay-tape format + strict canonical I/O in `src/schema/TapeIO.ts` (dm-0023); five data-parameterized archetypes (First-Time/Cautious/Experienced/Expert-Speedrunner/Curious-Explorer) over one decision core drive the sim headlessly in the canonical pipeline order; agent RNG is a separate threaded stream (dm-0024); per archetype: identical tape across two runs, live≡replay bit-equality, pairwise-distinct tapes on a discriminating fixture; budgeted halt (`'timeout'`) on unreachable/always-lethal fixtures; whitelist math only. | COMPLETED |
+| S4.2 | Solvability audit (exactly-one-jump) | REQ-141 | S4.1 | Bounded deterministic search + archetype fast path; classifies known-solvable/known-unsolvable fixture sets with zero misclassification; every 'solvable' verdict carries a replayable witness tape; the axiom is ground truth read from `world.jumpLock`, never re-implemented. | COMPLETED |
+| S4.3 | Softlock detection | REQ-141 | S4.1 | Detects dead zones (can neither die nor reach goal within budget) from classified timeouts + region evidence; flags the dead-zone fixture, passes clean ones. | COMPLETED |
+| S4.4 | Exploit filtration | REQ-141 | S4.1 | Detects boundary path-skips bypassing authored hazards (completion tapes that never intersect the challenge envelope); catches the skip fixture, passes intended routes. | NOT_STARTED |
+| S4.5 | Optimization windows + five-tier routing + delta | REQ-101, REQ-102 | S4.2 | Five tier times from the archetype spread (Discovery≈First-Time, WR≈Expert best); delta = T_Discovery − T_WR; rejects the minimal-delta fixture, passes the wide-delta one; `parTimeTiersSeconds` cross-checked. | NOT_STARTED |
+| S4.6 | Macro curriculum validation (4 criteria) | REQ-140, REQ-142 | S4.2 | Isolated macro pass (`src/eval/macro/`) audits ordered local-verdict sequences against the four §15 criteria; consumes verdicts as data, never re-runs sims; import isolation scan-tested. | NOT_STARTED |
+| S4.7 | Phase-4 verification report | REQ-P02 | S4.2–S4.6 | `docs/verification/P4.md`; per-REQ mapping (dm-0008); subtractive pass; PKG hash consistent. | NOT_STARTED |
 
 ## Phase 5 — GDOS Scoring Engine
 
@@ -158,7 +160,7 @@ Session-sized, dependency-ordered work units. Each slice is small enough to comp
 
 **P3 — Mechanic Library & Deterministic Physics is VERIFIED** (`docs/verification/P3.md`); all nine P3 slices COMPLETED, 186/186 tests green. **Milestone M1 — Simulatable Game is CLOSED** (P2 ✓ + P3 ✓). The next phase is **P4 — Evaluation & Validation Framework** (opening M2 — Design Intelligence Operational).
 
-1. **S4.1** — Agent-archetype simulator harness. First P4 slice — **author the P4 execution-plan section first** (REQ-P02), then implement.
+1. **S4.2** — Solvability audit (exactly-one-jump): bounded deterministic search + archetype fast path over the S4.1 harness. (P4 plan authored ✓; S4.1 COMPLETED ✓ — 210/210 tests, pkg s4-d1f7a3.)
 2. **S4.2** — Solvability audit (exactly-one-jump) — now testable against the real P3 mechanic library.
 3. **S4.3–S4.6** — Softlock detection, exploit filtration, optimization windows + five-tier routing, macro curriculum validation.
 4. **S4.7** — Phase-4 verification report.

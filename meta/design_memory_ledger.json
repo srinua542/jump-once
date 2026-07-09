@@ -1,7 +1,13 @@
 {
   "schema_version": "1.0",
   "notes": "Persistent version control for creative + architectural intent (PRD §6 Design Memory, §12 Design Intent Repository). Every accepted or rejected decision is recorded with the five Intent Repository fields. Parse this before proposing new designs to prevent regression and repetition. In Phase 5 this file becomes the store backing the executable GDOS Design Memory; for now it is the authoritative human/agent-readable ledger.",
-  "intent_repository_fields": ["why_it_exists", "problem_it_solves", "emotion_targeted", "misconception_created", "why_alternatives_rejected"],
+  "intent_repository_fields": [
+    "why_it_exists",
+    "problem_it_solves",
+    "emotion_targeted",
+    "misconception_created",
+    "why_alternatives_rejected"
+  ],
   "decisions": [
     {
       "id": "dm-0001",
@@ -57,8 +63,7 @@
       "emotion_targeted": "N/A.",
       "misconception_created": "None — documented as a merge of interlocking requirements, not a reinterpretation.",
       "why_alternatives_rejected": "Building scoring gates in P0 with no level to score would be placeholder work; deferring all GDOS would violate the design-memory-from-first-commit requirement."
-    }
-,
+    },
     {
       "id": "dm-0006",
       "date": "2026-07-08",
@@ -234,6 +239,61 @@
       "emotion_targeted": "Kinetic momentum and surprise (§1, §16) — springs/zones/conveyors add movement variety while the one-jump identity is provably untouched.",
       "misconception_created": "'surfaceEffects' as a named system does not exist — a reader following the P3 plan's canonical pipeline list will not find it; the effects are folded into control/physics. The spring fires on GROUNDING (not arbitrary overlap), so it models floor bounce-pads; wall-mounted sideways springs are out of scope until GDOS asks.",
       "why_alternatives_rejected": "A dedicated post-physics surfaceEffects system was rejected: conveyor edits would be clobbered by PlayerControl's instant-set, and gravity applied post-integration mis-times the fall. Putting gravity-scale in a post-pass and re-integrating was rejected as double integration. Firing springs on any AABB overlap was rejected: the player rests FLUSH on a solid spring (flush is not overlap by the project convention), so grounding is the correct, deterministic contact signal. Adding modifier state to WorldState was rejected: the effects are pure functions of entity data + player position, so no runtime state is needed."
+    },
+    {
+      "id": "dm-0022",
+      "date": "2026-07-09",
+      "status": "ACCEPTED",
+      "title": "Evaluation logic lives in a new src/eval/ directory with a strictly one-way dependency: eval imports the sim, the sim NEVER imports eval",
+      "why_it_exists": "P4's agents and audits fit no existing directory: they are not per-frame systems (src/systems/ runs inside the engine loop; agents drive it from OUTSIDE), not definition-time schema I/O (src/schema/), not domain-agnostic runtime (src/core/), and not data (src/components/). The dm-0013 precedent (schema/ added at P2 start) applies: when a phase introduces a genuinely new KIND of logic, it gets a directory with an explicit isolation rule, not a shoehorn.",
+      "problem_it_solves": "src/eval/ holds evaluation-time logic only: agent policies, archetype parameter records, the headless harness, and (S4.2+) the audit/verdict modules. It consumes the sim strictly through public contracts (createInitialState, Engine, StateManager, FIXED_STEP_SECONDS, read-only GameState). The dependency is ONE-WAY and scan-enforced (test/unit/EvalIsolation.test.ts): nothing under src/{core,systems,components,entities,schema} may import from src/eval/ — the simulation must never know it is being judged, so evaluation can be rewritten wholesale without touching replay-critical code. The dm-0017 math whitelist extends to src/eval/ (also scan-enforced) because agent decisions feed replay tapes that must reproduce cross-engine.",
+      "emotion_targeted": "Trust (Section 15) — verdicts about levels are credible precisely because the judge cannot influence the game it judges.",
+      "misconception_created": "directory_structure.md's test/integration/ label 'solvability agent simulations' refers to TESTS OF the evaluation framework; the framework itself is production code in src/eval/, consumed later by P8 tools and the P10 pipeline. Archetype parameters live in src/eval/ as frozen records, NOT in src/components/ — they are evaluation-model data, not game data, and the one-way rule makes them unreadable from systems by construction.",
+      "why_alternatives_rejected": "Placing agents in src/systems/ was rejected: they are not System<TWorld> steps and would blur the pipeline contract. Placing them under test/ was rejected: P8/P10 consume them at production time, and test code cannot be a production dependency. A tools/ home was rejected: tools/ is process machinery (SDLC gate/stage), not typed engine-consuming logic. Extending src/schema/ was rejected: schema is definition-time I/O with no engine dependency; the harness needs the full runtime."
+    },
+    {
+      "id": "dm-0023",
+      "date": "2026-07-09",
+      "status": "ACCEPTED",
+      "title": "Replay-tape serialization is owned by P4/S4.1: a versioned canonical-JSON ReplayTape {schemaVersion, levelId, seed, frames[]} in src/schema/TapeIO.ts",
+      "why_it_exists": "Unowned since P2 (open question #5, carried through P3): S2.5's integration test built its (seed, input-tape) in code, but P4 solvers, P8 input recording, and P9 saves all need a SERIALIZED replay format, and no REQ owned defining it. The P4 harness is the first producer of tapes, so P4 entry is where the format is fixed — before three consumers invent three formats.",
+      "problem_it_solves": "One tape = one full reproduction recipe: {schemaVersion: 1, levelId, seed (normalized uint32), frames: one InputFrame {moveAxis, jumpPressed, resetPressed} per simulation tick, in tick order}. Determinism contract: same (level, seed, frames) => bit-identical final state on any JS engine. The dm-0010/dm-0014 discipline applies verbatim: fixed canonical key order, strict unknown-key rejection at every path, Result-typed path-qualified errors (never throws, including malformed JSON text), value-lossless + byte-idempotent round-trip, hard version rejection with zero migration code until v2 exists. I/O lives in src/schema/ per dm-0013 (definition-time I/O); P8/P9 adopt this format rather than redefining it.",
+      "emotion_targeted": "Mastery/trust (Sections 11, 15) — speedrun routes, validation verdicts, and bug reproductions are all durable artifacts only if a tape means exactly one run, forever.",
+      "misconception_created": "The tape stores the NORMALIZED uint32 seed (what createRng actually uses), which may differ from the raw number originally passed to the harness — comparing a tape's seed to an unnormalized caller value can mismatch. frames[i] is the input that drove tick i+1 (inputs are committed before the step), not tick i. A tape does not embed the level: it references levelId; replay integrity additionally requires the same level bytes (anchored separately by the P2 golden hash).",
+      "why_alternatives_rejected": "Deferring ownership to P8 (input recording) was rejected: P4 ships tape producers/consumers months earlier, and a later format would orphan every P4 witness tape. A compact encoding (bit-packed or run-length) was rejected as premature: tapes are minutes long at 60 Hz — kilobytes — and the strict-JSON path reuses the audited P2 discipline; compression is a future schema version if ever needed. Embedding the full LevelDefinition in the tape was rejected: duplication invites drift, and the golden-hash + levelId reference already anchors level identity."
+    },
+    {
+      "id": "dm-0024",
+      "date": "2026-07-09",
+      "status": "ACCEPTED",
+      "title": "Agent determinism model: pure decide(state, memory) policies, archetypes as data-parameterized records over one decision core, and an agent RNG stream separate from the sim RNG",
+      "why_it_exists": "REQ-141's five archetypes must drive the sim such that the recorded tape ALONE reproduces the run. Two silent killers were identified adversarially at P4 planning: (1) hidden agent state (a closure counter, a cached plan) makes runs order-dependent and unreproducible; (2) an agent drawing from state.rng advances the sim stream, so a tape replay — which has no agent — leaves the RNG un-advanced and the final state diverges bit-wise, breaking the determinism contract exactly where it matters most.",
+      "problem_it_solves": "Three rules, all test-enforced: (1) policies are pure — decide(state, memory) -> {input, memory}; ALL agent statefulness (held intent, replan/hesitation/pause countdowns, exploration plan, RNG cursor) threads through AgentMemory exactly like sim state threads through GameState; (2) the agent RNG is its own seeded stream, derived from the run seed by a fixed additive offset (agentStreamSeed: +2^32*phi^-1 mod 2^32, whitelist arithmetic) and threaded through memory — state.rng belongs to the simulation alone; live-final-state === replay-final-state (bit equality) is an acceptance test per archetype; (3) archetypes are FROZEN ArchetypeParams data records (replanTicks, hesitationTicks, jumpLookaheadTiles, hazardPauseTicks, cautionRadius, exploreTicks) over ONE shared sensing/decision core — behavioral distinctness is proven by pairwise-distinct tapes on a discriminating fixture, and a sixth archetype is a data change. The core senses jump availability from world.jumpLock.phase: the axiom is engine ground truth, never re-modeled (dm-0020/dm-0011).",
+      "emotion_targeted": "Confidence (Section 15) — a validation verdict is only as trustworthy as its reproducibility; bit-identical replays make every verdict auditable.",
+      "misconception_created": "Archetype runs are behavioral EVIDENCE, not solvability proof — a reactive archetype failing a level proves nothing about the level (S4.2's bounded search owns classification; P4 plan finding 7). The archetypes press jump at most once per life by construction, but that is a consequence of sensing phase==='available', not a rule the engine needs them to follow — the engine's lock is the enforcement. ArchetypeParams are not gameplay tuning and are invisible to src/systems/ (dm-0022 one-way rule).",
+      "why_alternatives_rejected": "Letting agents draw from state.rng was rejected: it breaks live-vs-replay bit equality (the replay has no agent to make the same draws). Giving agents setState-style mutable classes was rejected: hidden state is unreproducible state (dm-0004 spirit). Five hand-written policy classes were rejected: five code forks drift apart and make 'archetype coverage' unmeasurable; parameters over one core keep differences inspectable data. Search-based planning inside S4.1 was rejected as scope creep: the harness/archetype layer ships first and S4.2 builds the solver on top of it."
+    },
+    {
+      "id": "dm-0025",
+      "date": "2026-07-09",
+      "status": "ACCEPTED",
+      "title": "Solvability via a bounded, deterministic macro-action reachability search over the frozen sim; the single-jump axiom is captured by the state signature, never counted",
+      "why_it_exists": "REQ-141's solvability audit must classify a level solvable/unsolvable under the exactly-one-jump rule. Archetype play alone cannot: a reactive agent failing a level is evidence, not proof (P4 plan finding 7). A systematic explorer is needed — but one that is deterministic, always halts, and treats the axiom as engine truth rather than re-deriving a jump counter (which would risk contradicting dm-0020 and re-introducing a maxJumps-shaped rule, dm-0011).",
+      "problem_it_solves": "A breadth-first search over MACRO-ACTIONS: each edge holds one InputFrame for holdTicks steps; the action set is the fixed 6-way cross product moveAxis{-1,0,+1}×jumpPressed{false,true}, so expansion is deterministic. Dedup uses a quantized signature — player position on a sub-tile lattice (tileSize/4), integer-floored velocity, grounded flag, jumpLock.phase + ticksUntilImpulse, and each entity's persistent flags (collapsed/doorOpen/firstContact). Because jumpLock.phase is IN the signature, 'here with the jump available' and 'here with it spent' are distinct search states — the exactly-one-jump structure falls straight out of the simulation; the search never counts or caps jumps (the engine's lock does). Death and goal are terminal leaves: reload re-instantiates an identical world (dm-0018), so crossing a death cannot expand reachable ground — the live search space is one life. Halting is structural: a visited-signature set plus a node-count cap. Verdicts are honest about their bound: goal leaf => solvable (+reconstructed witness tape); emptied frontier => 'unsolvable'; hit the node cap first => 'inconclusive', never a false 'unsolvable'. Whitelist math only (Math.floor for quantization).",
+      "emotion_targeted": "Confidence (Section 15) — a level is certified completable only by an explicit witness the harness can replay, and rejected only when the frontier provably closes.",
+      "misconception_created": "The search is a discretized approximation, not an omniscient oracle: 'unsolvable' means 'no goal reachable under this macro-action/quantization discretization within budget'. For the tiny audit fixtures it is exact (verified by classification tests), but a future generator must size holdTicks/maxNodes to the level or read the 'inconclusive' signal — it must never treat a truncated search as a proof of unsolvability. The macro-action granularity assumes holding an input is a sufficient action vocabulary; frame-perfect input alternations are outside the search's reach by design (they are also outside the intended difficulty envelope, S4.4).",
+      "why_alternatives_rejected": "Per-tick branching was rejected as combinatorially intractable (6^ticks). A jump counter / maxJumps guard was rejected: it duplicates and could contradict the engine's lock (dm-0020) and reintroduces the exact field dm-0011 forbids — the signature-carries-phase approach makes the axiom emergent instead. Exploring past death was rejected: reload resets to an identical spawn state, so multi-life paths add no reachable ground and only inflate the search. Archetype-only classification was rejected (finding 7): it under-approximates and yields false 'unsolvable'. Storing full frame lists per node was rejected for memory; parent pointers + per-edge macro frames reconstruct the witness on demand."
+    },
+    {
+      "id": "dm-0026",
+      "date": "2026-07-09",
+      "status": "ACCEPTED",
+      "title": "Softlock = a reachable state that can reach NEITHER goal NOR death; death is an escape (reload), not a softlock",
+      "why_it_exists": "REQ-141's softlock audit must find dead zones — states a player can enter and never leave. The subtle question is what counts as 'leave'. Reaching the goal obviously escapes. But so does DYING: defeat triggers an instant reload to a fresh life (dm-0018), returning the player to spawn with a new jump. A pit lined with spikes is frustrating but NOT a softlock — the player dies and retries. A pit with a solid floor and no hazard, walls too tall for the one jump, IS a softlock: trapped, alive, forever.",
+      "problem_it_solves": "Over the exhaustive S4.2 reachability graph, two backward-reachability sweeps mark goalReachable and deathReachable nodes (reverse BFS from goal/dead terminal leaves). A trapped node is a reachable, non-terminal state in NEITHER set. detectSoftlock reports hasSoftlock, a representative trappedRegions sample, the deepestTrapped state (the bottom of the dead zone, the most useful single evidence), the trappedCount, and a witness tape that drives the player into the trap. The 'clean' verdict is trustworthy ONLY when the search exhausted its frontier (exhaustive=true); a truncated search reports exhaustive=false and the caller must treat it as inconclusive, never as proven-clean.",
+      "emotion_targeted": "Trust / fairness (Section 15) — a one-jump puzzle that can strand a live player is the single most corrosive feel failure; the audit makes stranding states impossible to ship silently.",
+      "misconception_created": "Softlock detection is independent of solvability: a level can be fully solvable AND still contain a softlock side-region (the oubliette fixture is exactly this). The two audits answer different questions and must both run. 'deathReachable = escape' assumes the death→reload loop is always desirable relief; if a future GDOS rule wants to forbid mandatory-death routes, that is a separate audit, not a redefinition of softlock.",
+      "why_alternatives_rejected": "Treating death as another failure (so 'trapped' = can't-reach-goal only) was rejected: it would flag every spike pit as a softlock and drown the real dead zones in noise. Forward simulation to a fixed horizon per state was rejected: backward reachability over the already-built graph is exact for the discretization and far cheaper. Reporting only a boolean was rejected: a generator needs the trapped region + a witness to diagnose and fix or discard the layout."
     }
   ],
   "rejected_ideas": [],

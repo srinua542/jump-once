@@ -1,0 +1,67 @@
+{
+  "slice": "S4.3",
+  "title": "Softlock detection",
+  "reqs": [
+    "REQ-141"
+  ],
+  "started_at": "2026-07-09T15:47:31.774Z",
+  "updated_at": "2026-07-09T15:53:14.363Z",
+  "current_stage": "handoff",
+  "stages": {
+    "reboot": {
+      "status": "done",
+      "at": "2026-07-09T15:47:31.775Z",
+      "note": "REBOOT: 218/218 green, pkg s4-b2e8c9, S4.2 archived"
+    },
+    "select": {
+      "status": "done",
+      "at": "2026-07-09T15:47:31.827Z",
+      "note": "SELECT: S4.3 dep S4.1 COMPLETED; reuses S4.2 Search graph"
+    },
+    "plan": {
+      "status": "done",
+      "at": "2026-07-09T15:47:31.871Z",
+      "note": "PLAN: src/eval/local/Softlock.ts — exhaustive reachability graph, backward-reachability of goal/death terminals, trapped = reachable non-terminal that reaches neither. Tests: unit/Softlock.test.ts (oubliette trap flagged, corridor clean, inconclusive on truncation)."
+    },
+    "anchor": {
+      "status": "done",
+      "at": "2026-07-09T15:47:31.920Z",
+      "note": "ANCHOR: new module. detectSoftlock(def,opts)->SoftlockVerdict{hasSoftlock,trappedRegions,witness?,exhaustive}."
+    },
+    "implement": {
+      "status": "done",
+      "at": "2026-07-09T15:47:31.991Z",
+      "note": "IMPLEMENT: src/eval/local/Softlock.ts + test/unit/Softlock.test.ts"
+    },
+    "verify": {
+      "status": "done",
+      "at": "2026-07-09T15:53:14.078Z",
+      "note": "VERIFY: 222/222 green (+4). Oubliette trap flagged w/ deepest-trapped + witness; corridor clean (exhaustive); truncation=>exhaustive false; determinism."
+    },
+    "integrate": {
+      "status": "done",
+      "at": "2026-07-09T15:53:14.151Z",
+      "note": "INTEGRATE: PKG +eval/local/softlock, hash s4-c3f0d1; ledger dm-0026 (death=escape)."
+    },
+    "report": {
+      "status": "done",
+      "at": "2026-07-09T15:53:14.218Z",
+      "note": "REPORT: S4.3 COMPLETED."
+    },
+    "handoff": {
+      "status": "done",
+      "at": "2026-07-09T15:53:14.296Z",
+      "note": "HANDOFF: deferred to session end (multi-slice)."
+    }
+  },
+  "acceptance": [
+    {
+      "req": "REQ-141",
+      "criterion": "(fill in)",
+      "met": false,
+      "note": null
+    }
+  ],
+  "outcome": "completed",
+  "closed_at": "2026-07-09T15:53:14.429Z"
+}

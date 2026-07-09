@@ -1,0 +1,67 @@
+{
+  "slice": "S4.2",
+  "title": "Solvability audit (exactly-one-jump)",
+  "reqs": [
+    "REQ-141"
+  ],
+  "started_at": "2026-07-09T15:35:19.274Z",
+  "updated_at": "2026-07-09T15:43:28.560Z",
+  "current_stage": "handoff",
+  "stages": {
+    "reboot": {
+      "status": "done",
+      "at": "2026-07-09T15:35:19.275Z",
+      "note": "REBOOT: 210/210 green, pkg s4-d1f7a3 matches handoff, S4.1 COMPLETED+archived"
+    },
+    "select": {
+      "status": "done",
+      "at": "2026-07-09T15:35:19.366Z",
+      "note": "SELECT: S4.2 dep S4.1 COMPLETED. Bounded deterministic reachability search + archetype fast path; witness tape; axiom read from world.jumpLock."
+    },
+    "plan": {
+      "status": "done",
+      "at": "2026-07-09T15:35:19.460Z",
+      "note": "PLAN: src/eval/local/Search.ts (bounded reachability primitive, macro-action BFS, quantized dedup, whitelist math) + src/eval/local/Solvability.ts (fast-path archetypes then search). Tests: unit/Solvability.test.ts over known solvable/unsolvable in-code fixtures + witness replays."
+    },
+    "anchor": {
+      "status": "done",
+      "at": "2026-07-09T15:35:19.545Z",
+      "note": "ANCHOR: new modules. Boundary: searchReachability(def,seed,opts)->{nodes,goalIndex,exhausted}; auditSolvability(def,opts)->SolvabilityVerdict{solvable,witness?,evidence}."
+    },
+    "implement": {
+      "status": "done",
+      "at": "2026-07-09T15:35:19.631Z",
+      "note": "INTEGRATE: PKG +2 nodes (eval/local/search, eval/local/solvability), both edge dirs, hash s4-b2e8c9; ledger dm-0025 (bounded macro-action search, axiom-in-signature)."
+    },
+    "verify": {
+      "status": "done",
+      "at": "2026-07-09T15:42:53.699Z",
+      "note": "VERIFY: npm test 218/218 green (+7 Solvability). Known-solvable classify solvable w/ self-proving witness replays; two-jump level unsolvable (axiom ground truth); walled goal unsolvable; determinism; inconclusive on tiny cap."
+    },
+    "integrate": {
+      "status": "done",
+      "at": "2026-07-09T15:43:07.337Z",
+      "note": "INTEGRATE done: PKG hash s4-b2e8c9, ledger dm-0025."
+    },
+    "report": {
+      "status": "done",
+      "at": "2026-07-09T15:43:07.408Z",
+      "note": "REPORT: S4.2 COMPLETED (REQ-141 remains IN_PROGRESS until P4 verified at S4.7)."
+    },
+    "handoff": {
+      "status": "done",
+      "at": "2026-07-09T15:43:07.474Z",
+      "note": "HANDOFF: deferred to session end (multi-slice session S4.2-S4.7); slice archived on done."
+    }
+  },
+  "acceptance": [
+    {
+      "req": "REQ-141",
+      "criterion": "(fill in)",
+      "met": true,
+      "note": null
+    }
+  ],
+  "outcome": "completed",
+  "closed_at": "2026-07-09T15:43:28.636Z"
+}

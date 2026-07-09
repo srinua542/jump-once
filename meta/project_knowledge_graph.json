@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
-  "generated_by_session": "2026-07-09T-session-3",
-  "pkg_hash": "s3-c5e9f7",
+  "generated_by_session": "2026-07-09T-session-4",
+  "pkg_hash": "s4-c3f0d1",
   "notes": "Machine-readable mirror of the codebase. Read at every session start; update immediately on any structural code change (new module, changed dependency, changed GDOS mapping). See references/pkg_schema.md.",
   "nodes": [
     {
@@ -11,10 +11,30 @@
       "functional_summary": "Immutable 2D vector algebra primitive (encapsulated geometry). Pure math, no system logic. Operations return new records; never mutate operands.",
       "gdos_alignment": "Section_13_Encapsulated_Geometry",
       "dependencies": [],
-      "dependents": ["components/transform", "components/collider", "components/behavior", "components/level", "components/tuning", "schema/serialize", "schema/parse", "entities/world", "systems/player_physics", "systems/player_control", "systems/entity_kinematics", "systems/hazards_and_goal"],
-      "volatile_state_flags": { "has_side_effects": false, "state_dependencies": [] },
+      "dependents": [
+        "components/transform",
+        "components/collider",
+        "components/behavior",
+        "components/level",
+        "components/tuning",
+        "schema/serialize",
+        "schema/parse",
+        "entities/world",
+        "systems/player_physics",
+        "systems/player_control",
+        "systems/entity_kinematics",
+        "systems/hazards_and_goal",
+        "eval/local/softlock"
+      ],
+      "volatile_state_flags": {
+        "has_side_effects": false,
+        "state_dependencies": []
+      },
       "last_verified_commit": "uncommitted-session-1",
-      "backlog_refs": ["REQ-120", "REQ-P09"]
+      "backlog_refs": [
+        "REQ-120",
+        "REQ-P09"
+      ]
     },
     {
       "node_id": "core/rng",
@@ -23,10 +43,20 @@
       "functional_summary": "Deterministic seedable PRNG (mulberry32). Generator state carried as an explicit value and threaded by callers; no hidden global entropy. Guarantees replayable design tooling and agent simulation.",
       "gdos_alignment": "Section_15_Reproducible_Agent_Simulation",
       "dependencies": [],
-      "dependents": ["core/state", "entities/world"],
-      "volatile_state_flags": { "has_side_effects": false, "state_dependencies": [] },
+      "dependents": [
+        "core/state",
+        "entities/world",
+        "eval/agent_policy",
+        "eval/archetypes"
+      ],
+      "volatile_state_flags": {
+        "has_side_effects": false,
+        "state_dependencies": []
+      },
       "last_verified_commit": "uncommitted-session-1",
-      "backlog_refs": ["REQ-P08"]
+      "backlog_refs": [
+        "REQ-P08"
+      ]
     },
     {
       "node_id": "core/clock",
@@ -35,10 +65,26 @@
       "functional_summary": "Fixed-timestep accumulator. Banks variable real delta and emits a whole number of fixed simulation steps (FIXED_STEP_SECONDS = 1/60). Clamps to MAX_FRAME_SECONDS to prevent spiral-of-death. Pure value state.",
       "gdos_alignment": "Section_16_Deterministic_Physics_Clock",
       "dependencies": [],
-      "dependents": ["core/state", "core/engine", "entities/world", "systems/player_physics", "systems/player_control", "systems/entity_kinematics", "systems/hazards_and_goal"],
-      "volatile_state_flags": { "has_side_effects": false, "state_dependencies": [] },
+      "dependents": [
+        "core/state",
+        "core/engine",
+        "entities/world",
+        "systems/player_physics",
+        "systems/player_control",
+        "systems/entity_kinematics",
+        "systems/hazards_and_goal",
+        "eval/agent_harness",
+        "eval/local/search"
+      ],
+      "volatile_state_flags": {
+        "has_side_effects": false,
+        "state_dependencies": []
+      },
       "last_verified_commit": "uncommitted-session-1",
-      "backlog_refs": ["REQ-121", "REQ-160"]
+      "backlog_refs": [
+        "REQ-121",
+        "REQ-160"
+      ]
     },
     {
       "node_id": "core/state",
@@ -46,11 +92,36 @@
       "file_path": "src/core/State.ts",
       "functional_summary": "Immutable root state tree GameState<TWorld> plus InputFrame. Core owns tick/clock/rng/input; gameplay-specific data lives in the abstract world slot so core is decoupled from systems and content.",
       "gdos_alignment": "Section_13_Data_Driven_Architecture",
-      "dependencies": ["core/clock", "core/rng"],
-      "dependents": ["systems/system", "core/state_manager", "core/engine", "entities/world", "systems/player_physics", "systems/player_control", "systems/lifecycle", "systems/hazards_and_goal", "systems/entity_kinematics", "systems/sensors"],
-      "volatile_state_flags": { "has_side_effects": false, "state_dependencies": [] },
+      "dependencies": [
+        "core/clock",
+        "core/rng"
+      ],
+      "dependents": [
+        "systems/system",
+        "core/state_manager",
+        "core/engine",
+        "entities/world",
+        "systems/player_physics",
+        "systems/player_control",
+        "systems/lifecycle",
+        "systems/hazards_and_goal",
+        "systems/entity_kinematics",
+        "systems/sensors",
+        "schema/tape_io",
+        "eval/agent_policy",
+        "eval/archetypes",
+        "eval/agent_harness",
+        "eval/local/search"
+      ],
+      "volatile_state_flags": {
+        "has_side_effects": false,
+        "state_dependencies": []
+      },
       "last_verified_commit": "uncommitted-session-1",
-      "backlog_refs": ["REQ-120", "REQ-P10"]
+      "backlog_refs": [
+        "REQ-120",
+        "REQ-P10"
+      ]
     },
     {
       "node_id": "systems/system",
@@ -58,11 +129,28 @@
       "file_path": "src/systems/System.ts",
       "functional_summary": "The System<TWorld> contract: a pure step(state)=>state function for one fixed step. Systems are stateless between frames and never read another system's internals.",
       "gdos_alignment": "Section_16_Modular_Decoupled_Components",
-      "dependencies": ["core/state"],
-      "dependents": ["core/engine", "systems/player_physics", "systems/player_control", "systems/lifecycle", "systems/hazards_and_goal", "systems/entity_kinematics", "systems/sensors"],
-      "volatile_state_flags": { "has_side_effects": false, "state_dependencies": [] },
+      "dependencies": [
+        "core/state"
+      ],
+      "dependents": [
+        "core/engine",
+        "systems/player_physics",
+        "systems/player_control",
+        "systems/lifecycle",
+        "systems/hazards_and_goal",
+        "systems/entity_kinematics",
+        "systems/sensors",
+        "eval/agent_harness"
+      ],
+      "volatile_state_flags": {
+        "has_side_effects": false,
+        "state_dependencies": []
+      },
       "last_verified_commit": "uncommitted-session-1",
-      "backlog_refs": ["REQ-154", "REQ-P09"]
+      "backlog_refs": [
+        "REQ-154",
+        "REQ-P09"
+      ]
     },
     {
       "node_id": "core/state_manager",
@@ -70,11 +158,26 @@
       "file_path": "src/core/StateManager.ts",
       "functional_summary": "Single source of truth. Holds current + previous snapshots and is the only place the current snapshot is swapped (commit). Optional deep-freeze on commit catches accidental mutation in tests. Idempotent commit.",
       "gdos_alignment": "State_Management_Invariants",
-      "dependencies": ["core/state"],
-      "dependents": ["core/engine", "entities/world"],
-      "volatile_state_flags": { "has_side_effects": true, "state_dependencies": ["current_snapshot", "previous_snapshot"] },
+      "dependencies": [
+        "core/state"
+      ],
+      "dependents": [
+        "core/engine",
+        "entities/world",
+        "eval/agent_harness",
+        "eval/local/search"
+      ],
+      "volatile_state_flags": {
+        "has_side_effects": true,
+        "state_dependencies": [
+          "current_snapshot",
+          "previous_snapshot"
+        ]
+      },
       "last_verified_commit": "uncommitted-session-1",
-      "backlog_refs": ["REQ-P10"]
+      "backlog_refs": [
+        "REQ-P10"
+      ]
     },
     {
       "node_id": "core/engine",
@@ -82,11 +185,27 @@
       "file_path": "src/core/Engine.ts",
       "functional_summary": "Deterministic Read->Process->Emit runtime loop. tick(realDeltaSeconds) reads the current snapshot from StateManager, calls Clock.advance() once to get a whole fixed-step count, runs the ordered System pipeline once per step (tick incremented by exactly 1 per step), and commits every resulting snapshot through StateManager. Commits even on a zero-step tick to persist the banked clock accumulator (dm-0007). Exposes interpolationAlpha for the renderer. Generic over TWorld; no gameplay assumptions.",
       "gdos_alignment": "Section_16_Deterministic_Physics_Clock",
-      "dependencies": ["core/clock", "core/state", "core/state_manager", "systems/system"],
-      "dependents": [],
-      "volatile_state_flags": { "has_side_effects": true, "state_dependencies": ["core/state_manager"] },
+      "dependencies": [
+        "core/clock",
+        "core/state",
+        "core/state_manager",
+        "systems/system"
+      ],
+      "dependents": [
+        "eval/agent_harness",
+        "eval/local/search"
+      ],
+      "volatile_state_flags": {
+        "has_side_effects": true,
+        "state_dependencies": [
+          "core/state_manager"
+        ]
+      },
       "last_verified_commit": "uncommitted-session-1",
-      "backlog_refs": ["REQ-121", "REQ-160"]
+      "backlog_refs": [
+        "REQ-121",
+        "REQ-160"
+      ]
     },
     {
       "node_id": "tools/sdlc/gate",
@@ -94,11 +213,24 @@
       "file_path": "tools/sdlc/gate.js",
       "functional_summary": "Deterministic SDLC drift gate. Dependency-free Node runner that checks pkg-covers-src, pkg-not-stale, no-placeholders, handoff-fresh, backlog-integrity, stage-consistency (vs meta/active_task.json), and (manual) tests-green against live repo state. CLI + Stop-hook modes; fails open on internal error, loud on findings. Reads policy from tools/sdlc/sdlc.yaml.",
       "gdos_alignment": "Protocol_Enforcement_REQ_P02_P03_P08",
-      "dependencies": ["tools/sdlc/recipe"],
+      "dependencies": [
+        "tools/sdlc/recipe"
+      ],
       "dependents": [],
-      "volatile_state_flags": { "has_side_effects": true, "state_dependencies": ["git_working_tree", "meta_files", "backlog"] },
+      "volatile_state_flags": {
+        "has_side_effects": true,
+        "state_dependencies": [
+          "git_working_tree",
+          "meta_files",
+          "backlog"
+        ]
+      },
       "last_verified_commit": "uncommitted-session-1",
-      "backlog_refs": ["REQ-P02", "REQ-P03", "REQ-P08"]
+      "backlog_refs": [
+        "REQ-P02",
+        "REQ-P03",
+        "REQ-P08"
+      ]
     },
     {
       "node_id": "tools/sdlc/stage",
@@ -108,9 +240,18 @@
       "gdos_alignment": "Protocol_Enforcement_REQ_P02_P04",
       "dependencies": [],
       "dependents": [],
-      "volatile_state_flags": { "has_side_effects": true, "state_dependencies": ["meta/active_task.json", "meta/runs"] },
+      "volatile_state_flags": {
+        "has_side_effects": true,
+        "state_dependencies": [
+          "meta/active_task.json",
+          "meta/runs"
+        ]
+      },
       "last_verified_commit": "uncommitted-session-1",
-      "backlog_refs": ["REQ-P02", "REQ-P04"]
+      "backlog_refs": [
+        "REQ-P02",
+        "REQ-P04"
+      ]
     },
     {
       "node_id": "tools/sdlc/recipe",
@@ -119,10 +260,17 @@
       "functional_summary": "Declarative SDLC gate policy: enforcement level (warn|block) and per-gate severity/enabled/when overrides. Override-only over gate.js built-in defaults, so a malformed line degrades safely toward enforcement.",
       "gdos_alignment": "Protocol_Enforcement_REQ_P02",
       "dependencies": [],
-      "dependents": ["tools/sdlc/gate"],
-      "volatile_state_flags": { "has_side_effects": false, "state_dependencies": [] },
+      "dependents": [
+        "tools/sdlc/gate"
+      ],
+      "volatile_state_flags": {
+        "has_side_effects": false,
+        "state_dependencies": []
+      },
       "last_verified_commit": "uncommitted-session-1",
-      "backlog_refs": ["REQ-P02"]
+      "backlog_refs": [
+        "REQ-P02"
+      ]
     },
     {
       "node_id": "components/entity_id",
@@ -131,10 +279,22 @@
       "functional_summary": "Branded stable EntityId type + RUNTIME_SPAWN_ID_PREFIX const. Pure data declarations. Authored ids minted only by the schema validator (S2.3); runtime ids from WorldState's deterministic spawn counter in the disjoint rt: namespace.",
       "gdos_alignment": "Section_13_Level_Definition_Schema",
       "dependencies": [],
-      "dependents": ["components/entity", "components/trigger", "schema/parse", "entities/world", "systems/sensors"],
-      "volatile_state_flags": { "has_side_effects": false, "state_dependencies": [] },
+      "dependents": [
+        "components/entity",
+        "components/trigger",
+        "schema/parse",
+        "entities/world",
+        "systems/sensors"
+      ],
+      "volatile_state_flags": {
+        "has_side_effects": false,
+        "state_dependencies": []
+      },
       "last_verified_commit": "uncommitted-session-2",
-      "backlog_refs": ["REQ-120", "REQ-122"]
+      "backlog_refs": [
+        "REQ-120",
+        "REQ-122"
+      ]
     },
     {
       "node_id": "components/transform",
@@ -142,11 +302,22 @@
       "file_path": "src/components/Transform.ts",
       "functional_summary": "TransformDef: entity placement record (position Vec2 in world units, facing ±1). Logic-free plain data. Coordinate convention lives solely in docs/level_schema.md (S2.2).",
       "gdos_alignment": "Section_13_Encapsulated_Geometry",
-      "dependencies": ["core/vec2"],
-      "dependents": ["components/entity", "schema/parse"],
-      "volatile_state_flags": { "has_side_effects": false, "state_dependencies": [] },
+      "dependencies": [
+        "core/vec2"
+      ],
+      "dependents": [
+        "components/entity",
+        "schema/parse"
+      ],
+      "volatile_state_flags": {
+        "has_side_effects": false,
+        "state_dependencies": []
+      },
       "last_verified_commit": "uncommitted-session-2",
-      "backlog_refs": ["REQ-120", "REQ-154"]
+      "backlog_refs": [
+        "REQ-120",
+        "REQ-154"
+      ]
     },
     {
       "node_id": "components/collider",
@@ -154,11 +325,22 @@
       "file_path": "src/components/Collider.ts",
       "functional_summary": "AabbDef: axis-aligned collision volume record (halfExtents + offset Vec2s). Geometry data only; overlap/resolution logic belongs to P3 systems. Positivity enforced by the schema validator, not here.",
       "gdos_alignment": "Section_13_Encapsulated_Geometry",
-      "dependencies": ["core/vec2"],
-      "dependents": ["components/entity", "schema/parse"],
-      "volatile_state_flags": { "has_side_effects": false, "state_dependencies": [] },
+      "dependencies": [
+        "core/vec2"
+      ],
+      "dependents": [
+        "components/entity",
+        "schema/parse"
+      ],
+      "volatile_state_flags": {
+        "has_side_effects": false,
+        "state_dependencies": []
+      },
       "last_verified_commit": "uncommitted-session-2",
-      "backlog_refs": ["REQ-120", "REQ-154"]
+      "backlog_refs": [
+        "REQ-120",
+        "REQ-154"
+      ]
     },
     {
       "node_id": "components/behavior",
@@ -166,11 +348,29 @@
       "file_path": "src/components/Behavior.ts",
       "functional_summary": "BehaviorDef: closed discriminated union of the 12 PRD-§16 entity behavior payloads (environmental, hazards, interactive, kinetic modifiers) + EntityKind + ENTITY_KINDS iteration list (test-enforced exhaustive over the union). Time fields authored in seconds; dynamics-are-entities per dm-0009.",
       "gdos_alignment": "Section_16_Modular_Decoupled_Components",
-      "dependencies": ["core/vec2"],
-      "dependents": ["components/entity", "components/collision_class", "schema/serialize", "schema/parse", "systems/entity_kinematics", "systems/hazards_and_goal"],
-      "volatile_state_flags": { "has_side_effects": false, "state_dependencies": [] },
+      "dependencies": [
+        "core/vec2"
+      ],
+      "dependents": [
+        "components/entity",
+        "components/collision_class",
+        "schema/serialize",
+        "schema/parse",
+        "systems/entity_kinematics",
+        "systems/hazards_and_goal"
+      ],
+      "volatile_state_flags": {
+        "has_side_effects": false,
+        "state_dependencies": []
+      },
       "last_verified_commit": "uncommitted-session-2",
-      "backlog_refs": ["REQ-120", "REQ-154", "REQ-151", "REQ-152", "REQ-153"]
+      "backlog_refs": [
+        "REQ-120",
+        "REQ-154",
+        "REQ-151",
+        "REQ-152",
+        "REQ-153"
+      ]
     },
     {
       "node_id": "components/entity",
@@ -178,11 +378,27 @@
       "file_path": "src/components/Entity.ts",
       "functional_summary": "EntityDef: one authored entity as pure data {id, transform, collider, behavior}. behavior.kind is the single discriminant (no redundant kind field — mismatch is unrepresentable).",
       "gdos_alignment": "Section_16_Modular_Decoupled_Components",
-      "dependencies": ["components/entity_id", "components/transform", "components/collider", "components/behavior"],
-      "dependents": ["components/level", "schema/serialize", "schema/parse"],
-      "volatile_state_flags": { "has_side_effects": false, "state_dependencies": [] },
+      "dependencies": [
+        "components/entity_id",
+        "components/transform",
+        "components/collider",
+        "components/behavior"
+      ],
+      "dependents": [
+        "components/level",
+        "schema/serialize",
+        "schema/parse"
+      ],
+      "volatile_state_flags": {
+        "has_side_effects": false,
+        "state_dependencies": []
+      },
       "last_verified_commit": "uncommitted-session-2",
-      "backlog_refs": ["REQ-120", "REQ-122", "REQ-154"]
+      "backlog_refs": [
+        "REQ-120",
+        "REQ-122",
+        "REQ-154"
+      ]
     },
     {
       "node_id": "components/tilemap",
@@ -191,10 +407,23 @@
       "functional_summary": "TilemapDef: flat row-major grid of closed tile-kind ids (TILE_KIND_BY_ID: 0 empty, 1 solid) + width/height/tileSize. Permanently-static geometry only (dm-0009); frozen and reference-shared at runtime. Coordinate convention normatively in docs/level_schema.md (dm-0015).",
       "gdos_alignment": "Section_13_Level_Definition_Schema",
       "dependencies": [],
-      "dependents": ["components/level", "schema/serialize", "schema/parse", "systems/player_physics"],
-      "volatile_state_flags": { "has_side_effects": false, "state_dependencies": [] },
+      "dependents": [
+        "components/level",
+        "schema/serialize",
+        "schema/parse",
+        "systems/player_physics",
+        "eval/archetypes"
+      ],
+      "volatile_state_flags": {
+        "has_side_effects": false,
+        "state_dependencies": []
+      },
       "last_verified_commit": "uncommitted-session-2",
-      "backlog_refs": ["REQ-122", "REQ-120", "REQ-014"]
+      "backlog_refs": [
+        "REQ-122",
+        "REQ-120",
+        "REQ-014"
+      ]
     },
     {
       "node_id": "components/trigger",
@@ -202,11 +431,24 @@
       "file_path": "src/components/Trigger.ts",
       "functional_summary": "TriggerDef: standalone interconnection wiring records {id, source, targets, action, once} with TriggerId brand, closed TriggerActionKind union + TRIGGER_ACTIONS list + TRIGGER_ACTION_TARGET_KIND compatibility table (dm-0015). Decouples signal sources from effects (REQ-154).",
       "gdos_alignment": "Section_13_Level_Definition_Schema",
-      "dependencies": ["components/entity_id"],
-      "dependents": ["components/level", "schema/serialize", "schema/parse", "systems/sensors"],
-      "volatile_state_flags": { "has_side_effects": false, "state_dependencies": [] },
+      "dependencies": [
+        "components/entity_id"
+      ],
+      "dependents": [
+        "components/level",
+        "schema/serialize",
+        "schema/parse",
+        "systems/sensors"
+      ],
+      "volatile_state_flags": {
+        "has_side_effects": false,
+        "state_dependencies": []
+      },
       "last_verified_commit": "uncommitted-session-2",
-      "backlog_refs": ["REQ-122", "REQ-154"]
+      "backlog_refs": [
+        "REQ-122",
+        "REQ-154"
+      ]
     },
     {
       "node_id": "components/gdos",
@@ -215,10 +457,19 @@
       "functional_summary": "GdosMetadata: PRD-§13 GDOS block — targetKgNode, difficultyVectors (closed provisional 4-axis set + DIFFICULTY_AXES list), emotionalBudgetCurve (§6 four-metric keyframes), creatorMomentFrame (minimal shape). Structural in P2, semantic ownership P5 (dm-0012, dm-0015).",
       "gdos_alignment": "Section_13_Level_Definition_Schema",
       "dependencies": [],
-      "dependents": ["components/level", "schema/serialize", "schema/parse"],
-      "volatile_state_flags": { "has_side_effects": false, "state_dependencies": [] },
+      "dependents": [
+        "components/level",
+        "schema/serialize",
+        "schema/parse"
+      ],
+      "volatile_state_flags": {
+        "has_side_effects": false,
+        "state_dependencies": []
+      },
       "last_verified_commit": "uncommitted-session-2",
-      "backlog_refs": ["REQ-122"]
+      "backlog_refs": [
+        "REQ-122"
+      ]
     },
     {
       "node_id": "components/level",
@@ -226,11 +477,34 @@
       "file_path": "src/components/Level.ts",
       "functional_summary": "LevelDefinition schema root: schemaVersion (LEVEL_SCHEMA_VERSION=1, hard-reject policy dm-0010), levelId+title, gdos, tilemap, entities, triggers, constraints (spawn/goal/parTimeTiersSeconds — axiom boundary dm-0011: no maxJumps ever). Pure data.",
       "gdos_alignment": "Section_13_Level_Definition_Schema",
-      "dependencies": ["core/vec2", "components/entity", "components/gdos", "components/tilemap", "components/trigger"],
-      "dependents": ["schema/serialize", "schema/parse", "entities/world", "systems/player_physics"],
-      "volatile_state_flags": { "has_side_effects": false, "state_dependencies": [] },
+      "dependencies": [
+        "core/vec2",
+        "components/entity",
+        "components/gdos",
+        "components/tilemap",
+        "components/trigger"
+      ],
+      "dependents": [
+        "schema/serialize",
+        "schema/parse",
+        "entities/world",
+        "systems/player_physics",
+        "eval/agent_harness",
+        "eval/local/search",
+        "eval/local/solvability",
+        "eval/local/softlock"
+      ],
+      "volatile_state_flags": {
+        "has_side_effects": false,
+        "state_dependencies": []
+      },
       "last_verified_commit": "uncommitted-session-2",
-      "backlog_refs": ["REQ-122", "REQ-014", "REQ-120", "REQ-121"]
+      "backlog_refs": [
+        "REQ-122",
+        "REQ-014",
+        "REQ-120",
+        "REQ-121"
+      ]
     },
     {
       "node_id": "schema/serialize",
@@ -238,11 +512,24 @@
       "file_path": "src/schema/Serialize.ts",
       "functional_summary": "serializeLevel(): canonical JSON serializer — fixed key order via explicit per-record canonicalizers, two-space indent, -0 normalized, exhaustive behavior switch. Definition-time I/O in src/schema/ (dm-0013); never called from the engine loop. Canonical form anchored by S2.4 golden hash (dm-0014).",
       "gdos_alignment": "Section_13_Level_Definition_Schema",
-      "dependencies": ["core/vec2", "components/behavior", "components/entity", "components/gdos", "components/level", "components/tilemap", "components/trigger"],
+      "dependencies": [
+        "core/vec2",
+        "components/behavior",
+        "components/entity",
+        "components/gdos",
+        "components/level",
+        "components/tilemap",
+        "components/trigger"
+      ],
       "dependents": [],
-      "volatile_state_flags": { "has_side_effects": false, "state_dependencies": [] },
+      "volatile_state_flags": {
+        "has_side_effects": false,
+        "state_dependencies": []
+      },
       "last_verified_commit": "uncommitted-session-2",
-      "backlog_refs": ["REQ-122"]
+      "backlog_refs": [
+        "REQ-122"
+      ]
     },
     {
       "node_id": "schema/parse",
@@ -250,11 +537,30 @@
       "file_path": "src/schema/Parse.ts",
       "functional_summary": "parseLevel(unknown)/parseLevelText(string): the ONLY construction path from untrusted input to LevelDefinition (parse-don't-validate). Never throws; collects ALL errors with JSON-pointer paths. Strict unknown-key rejection (dm-0014), finite-only numbers with -0 normalization (dm-0010), schemaVersion hard-reject, id uniqueness + rt: namespace guard, trigger referential integrity + kind-compatibility (dm-0015). Sanctioned minting point for EntityId/TriggerId brands.",
       "gdos_alignment": "Section_13_Level_Definition_Schema",
-      "dependencies": ["core/vec2", "components/entity_id", "components/transform", "components/collider", "components/behavior", "components/entity", "components/trigger", "components/gdos", "components/tilemap", "components/level"],
-      "dependents": [],
-      "volatile_state_flags": { "has_side_effects": false, "state_dependencies": [] },
+      "dependencies": [
+        "core/vec2",
+        "components/entity_id",
+        "components/transform",
+        "components/collider",
+        "components/behavior",
+        "components/entity",
+        "components/trigger",
+        "components/gdos",
+        "components/tilemap",
+        "components/level"
+      ],
+      "dependents": [
+        "schema/tape_io"
+      ],
+      "volatile_state_flags": {
+        "has_side_effects": false,
+        "state_dependencies": []
+      },
       "last_verified_commit": "uncommitted-session-2",
-      "backlog_refs": ["REQ-122", "REQ-120"]
+      "backlog_refs": [
+        "REQ-122",
+        "REQ-120"
+      ]
     },
     {
       "node_id": "entities/world",
@@ -262,11 +568,37 @@
       "file_path": "src/entities/World.ts",
       "functional_summary": "Jump Once's concrete TWorld: WorldState {level (deep-frozen, reference-shared LevelDefinition — dm-0009), entities runtime records INDEX-ALIGNED with level.entities (S3.1 invariant systems pair def↔state by), player position/prevPosition/velocity/grounded/groundEntity (S3.6-7: prevPosition feeds the swept lethal check; groundEntity drives carry/ice/collapse), jumpLock (S3.5 — THE AXIOM's machine state), runState/attemptCount/spawnTick (S3.4 lifecycle), triggerActivePrev[]/triggerFired[] (S3.7 rising-edge + once tracking), nextSpawnSerial}. EntityState += activationTick|null, firstContactTick|null, collapsed (S3.6), doorOpen (S3.7 door runtime). + RunState + JumpPhase + JumpLockState + JumpOnceState alias. instantiateWorld(def): pure deterministic instantiation (freezes def, idempotent) — reload IS this function, so per-life state (incl. the S3.5 jump lock) resets by construction (dm-0018); createInitialState(def, seed): full GameState composition. The runtime-consumption evidence for REQ-120/121 (dm-0012).",
       "gdos_alignment": "Section_13_Data_Driven_Architecture",
-      "dependencies": ["core/state_manager", "core/clock", "core/rng", "core/state", "core/vec2", "components/entity_id", "components/level"],
-      "dependents": ["systems/player_physics", "systems/spatial_partition", "systems/player_control", "systems/lifecycle", "systems/hazards_and_goal", "systems/entity_kinematics", "systems/sensors"],
-      "volatile_state_flags": { "has_side_effects": false, "state_dependencies": [] },
+      "dependencies": [
+        "core/state_manager",
+        "core/clock",
+        "core/rng",
+        "core/state",
+        "core/vec2",
+        "components/entity_id",
+        "components/level"
+      ],
+      "dependents": [
+        "systems/player_physics",
+        "systems/spatial_partition",
+        "systems/player_control",
+        "systems/lifecycle",
+        "systems/hazards_and_goal",
+        "systems/entity_kinematics",
+        "systems/sensors",
+        "eval/agent_policy",
+        "eval/archetypes",
+        "eval/agent_harness",
+        "eval/local/search"
+      ],
+      "volatile_state_flags": {
+        "has_side_effects": false,
+        "state_dependencies": []
+      },
       "last_verified_commit": "uncommitted-session-3",
-      "backlog_refs": ["REQ-120", "REQ-121"]
+      "backlog_refs": [
+        "REQ-120",
+        "REQ-121"
+      ]
     },
     {
       "node_id": "components/tuning",
@@ -274,11 +606,25 @@
       "file_path": "src/components/Tuning.ts",
       "functional_summary": "TUNING — the single normative campaign-global physics/feel record (dm-0018): gravityY (+y down), runSpeed (instant accel/decel, S3.3), jumpSpeed + anticipationTicks (THE jump, S3.5), iceAccel (frictionless-ice ramp, S3.6), maxFallSpeed, playerHalfExtents. Pure data (logic-free scan applies); values are ledgered decisions, not tweaks (changes invalidate replays/goldens). Fields are added per P3 slice as they gain a consumer. Per-level overrides would be a schema version bump, deliberately not data here.",
       "gdos_alignment": "Section_13_Data_Driven_Architecture",
-      "dependencies": ["core/vec2"],
-      "dependents": ["systems/player_physics", "systems/player_control", "systems/hazards_and_goal", "systems/sensors"],
-      "volatile_state_flags": { "has_side_effects": false, "state_dependencies": [] },
+      "dependencies": [
+        "core/vec2"
+      ],
+      "dependents": [
+        "systems/player_physics",
+        "systems/player_control",
+        "systems/hazards_and_goal",
+        "systems/sensors",
+        "eval/archetypes"
+      ],
+      "volatile_state_flags": {
+        "has_side_effects": false,
+        "state_dependencies": []
+      },
       "last_verified_commit": "uncommitted-session-3",
-      "backlog_refs": ["REQ-120", "REQ-150"]
+      "backlog_refs": [
+        "REQ-120",
+        "REQ-150"
+      ]
     },
     {
       "node_id": "components/collision_class",
@@ -286,11 +632,25 @@
       "file_path": "src/components/CollisionClass.ts",
       "functional_summary": "COLLISION_CLASS_BY_KIND — closed, total classification of every EntityKind as solid | lethal | sensor (P3 plan point 3; REQ-154 systems key on data classification, never entity identity). Runtime state refines (door open, floor collapsed, laser phase) but never overrides the static class. Totality asserted by unit test against ENTITY_KINDS.",
       "gdos_alignment": "Section_16_Modular_Decoupled_Components",
-      "dependencies": ["components/behavior"],
-      "dependents": ["systems/player_physics", "systems/hazards_and_goal"],
-      "volatile_state_flags": { "has_side_effects": false, "state_dependencies": [] },
+      "dependencies": [
+        "components/behavior"
+      ],
+      "dependents": [
+        "systems/player_physics",
+        "systems/hazards_and_goal",
+        "eval/archetypes"
+      ],
+      "volatile_state_flags": {
+        "has_side_effects": false,
+        "state_dependencies": []
+      },
       "last_verified_commit": "uncommitted-session-3",
-      "backlog_refs": ["REQ-154", "REQ-151", "REQ-152", "REQ-153"]
+      "backlog_refs": [
+        "REQ-154",
+        "REQ-151",
+        "REQ-152",
+        "REQ-153"
+      ]
     },
     {
       "node_id": "systems/player_physics",
@@ -298,11 +658,32 @@
       "file_path": "src/systems/PlayerPhysics.ts",
       "functional_summary": "playerPhysicsSystem + stepPlayerPhysics(world): deterministic fixed-step player body physics (S3.1, +S3.6 carry). Platform CARRY: last-tick ground entity's derived delta folded into the sweep (0 for tile/static). Semi-implicit (symplectic) Euler with terminal-fall clamp; swept, axis-separated resolution — X (carry+input merged) then Y in two phases (carry, then gravity so grounding stays robust under an upward platform) — clamping to the nearest solid face (tiles via range scan, solid entities via per-axis face test over the S3.2 quadtree candidate set), exact snapping, no tunneling at any speed (dm-0017). Records playerGroundEntity (the clamping entity index or -1); collapsed floors are non-solid; open doors are non-solid (runtime doorOpen, S3.7). Gravity is scaled by any gravityZone the player centre is inside (S3.8 kinetic modifier, dm-0021 — reads entity data, never jumpLock). Blocked axes zero their velocity. Reads state.world ONLY — never state.input (S3.3 owns input).",
       "gdos_alignment": "Section_16_Deterministic_Physics_Clock",
-      "dependencies": ["core/clock", "core/state", "core/vec2", "components/tilemap", "components/tuning", "components/collision_class", "components/level", "entities/world", "systems/system", "systems/spatial_partition"],
-      "dependents": [],
-      "volatile_state_flags": { "has_side_effects": false, "state_dependencies": [] },
+      "dependencies": [
+        "core/clock",
+        "core/state",
+        "core/vec2",
+        "components/tilemap",
+        "components/tuning",
+        "components/collision_class",
+        "components/level",
+        "entities/world",
+        "systems/system",
+        "systems/spatial_partition"
+      ],
+      "dependents": [
+        "eval/agent_harness"
+      ],
+      "volatile_state_flags": {
+        "has_side_effects": false,
+        "state_dependencies": []
+      },
       "last_verified_commit": "uncommitted-session-3",
-      "backlog_refs": ["REQ-003", "REQ-160", "REQ-121", "REQ-162"]
+      "backlog_refs": [
+        "REQ-003",
+        "REQ-160",
+        "REQ-121",
+        "REQ-162"
+      ]
     },
     {
       "node_id": "systems/sensors",
@@ -310,11 +691,26 @@
       "file_path": "src/systems/Sensors.ts",
       "functional_summary": "sensorsSystem (S3.7): after playerPhysics, before hazardsAndGoal. Signal sources (pressurePlate/proximityZone) are ACTIVE when the player strictly overlaps their AABB; triggers fire on the RISING EDGE (held plates don't re-fire), `once` triggers at most once/life, in AUTHORED ARRAY ORDER (deterministic cascades). Closed action union edits target runtime: open/close/toggleDoor -> doorOpen; collapseFloor -> firstContactTick; activatePlatform -> activationTick (wakes a dormant triggered mover). Trusts the validator's referential integrity (dm-0015). Pure; same snapshot when nothing fires.",
       "gdos_alignment": "Section_16_Deterministic_Physics_Clock",
-      "dependencies": ["core/state", "components/entity_id", "components/trigger", "components/tuning", "entities/world", "systems/system"],
-      "dependents": [],
-      "volatile_state_flags": { "has_side_effects": false, "state_dependencies": [] },
+      "dependencies": [
+        "core/state",
+        "components/entity_id",
+        "components/trigger",
+        "components/tuning",
+        "entities/world",
+        "systems/system"
+      ],
+      "dependents": [
+        "eval/agent_harness"
+      ],
+      "volatile_state_flags": {
+        "has_side_effects": false,
+        "state_dependencies": []
+      },
       "last_verified_commit": "uncommitted-session-3",
-      "backlog_refs": ["REQ-152", "REQ-154"]
+      "backlog_refs": [
+        "REQ-152",
+        "REQ-154"
+      ]
     },
     {
       "node_id": "systems/entity_kinematics",
@@ -322,11 +718,25 @@
       "file_path": "src/systems/EntityKinematics.ts",
       "functional_summary": "entityKinematicsSystem (S3.6): SECOND in the canonical pipeline (after lifecycle, before playerControl). Resolves every tick-DERIVED entity runtime value once per step (dm-0016 closed-form, never incremental): mover world position = transform + arc-length point along the local-space waypoint polyline (looping wraps; linear/triggered ping-pong; auto modes elapse from world.spawnTick, triggered from activationTick or dormant); mover velocity = derived per-tick delta (for carry). Collapsing floors: latch firstContactTick from last tick's grounding, derive collapsed = elapsed >= collapseDelaySeconds (one-way per life). Arc-length arithmetic only (no trig, dm-0017). Pure; same snapshot when nothing is dynamic.",
       "gdos_alignment": "Section_16_Deterministic_Physics_Clock",
-      "dependencies": ["core/clock", "core/state", "core/vec2", "components/behavior", "entities/world", "systems/system"],
-      "dependents": [],
-      "volatile_state_flags": { "has_side_effects": false, "state_dependencies": [] },
+      "dependencies": [
+        "core/clock",
+        "core/state",
+        "core/vec2",
+        "components/behavior",
+        "entities/world",
+        "systems/system"
+      ],
+      "dependents": [
+        "eval/agent_harness"
+      ],
+      "volatile_state_flags": {
+        "has_side_effects": false,
+        "state_dependencies": []
+      },
       "last_verified_commit": "uncommitted-session-3",
-      "backlog_refs": ["REQ-151"]
+      "backlog_refs": [
+        "REQ-151"
+      ]
     },
     {
       "node_id": "systems/lifecycle",
@@ -334,11 +744,23 @@
       "file_path": "src/systems/Lifecycle.ts",
       "functional_summary": "lifecycleSystem (S3.4): FIRST in the canonical pipeline. Consumes 'defeated' or resetPressed (its share of the by-field input split, dm-0019 refined) into a fresh life: reload = instantiateWorld(world.level) — pure re-instantiation, frozen level reference-shared through it; only attemptCount(+1) and spawnTick(=tick) survive the life boundary. One-tick defeat->reload latency = REQ-003 instant iteration. Per-life state (incl. S3.5 jump lock) resets by construction.",
       "gdos_alignment": "Section_16_Deterministic_Physics_Clock",
-      "dependencies": ["core/state", "entities/world", "systems/system"],
-      "dependents": [],
-      "volatile_state_flags": { "has_side_effects": false, "state_dependencies": [] },
+      "dependencies": [
+        "core/state",
+        "entities/world",
+        "systems/system"
+      ],
+      "dependents": [
+        "eval/agent_harness"
+      ],
+      "volatile_state_flags": {
+        "has_side_effects": false,
+        "state_dependencies": []
+      },
       "last_verified_commit": "uncommitted-session-3",
-      "backlog_refs": ["REQ-003", "REQ-010"]
+      "backlog_refs": [
+        "REQ-003",
+        "REQ-010"
+      ]
     },
     {
       "node_id": "systems/hazards_and_goal",
@@ -346,11 +768,28 @@
       "file_path": "src/systems/HazardsAndGoal.ts",
       "functional_summary": "hazardsAndGoalSystem (S3.4 + S3.7 lethal): LAST in the canonical pipeline — judges the post-physics position. LETHAL HAZARDS (S3.7): spike/movingHazard always lethal, laser lethal only on-phase (pure fn of tick); a SWEPT test (player centre segment playerPrevPosition->playerPosition vs Minkowski-enlarged hazard AABB grown by the hazard's per-tick motion; slab method, arithmetic only) -> 'defeated', so a fast player cannot skip a thin hazard. Goal strict-AABB overlap vs constraints.goal -> 'completed' (freezes world until reset); player fully below the tilemap bottom edge -> 'defeated'. Defeat (hazard or fall-out) checked before goal.",
       "gdos_alignment": "Section_16_Deterministic_Physics_Clock",
-      "dependencies": ["core/clock", "core/state", "core/vec2", "components/tuning", "components/collision_class", "components/behavior", "entities/world", "systems/system"],
-      "dependents": [],
-      "volatile_state_flags": { "has_side_effects": false, "state_dependencies": [] },
+      "dependencies": [
+        "core/clock",
+        "core/state",
+        "core/vec2",
+        "components/tuning",
+        "components/collision_class",
+        "components/behavior",
+        "entities/world",
+        "systems/system"
+      ],
+      "dependents": [
+        "eval/agent_harness"
+      ],
+      "volatile_state_flags": {
+        "has_side_effects": false,
+        "state_dependencies": []
+      },
       "last_verified_commit": "uncommitted-session-3",
-      "backlog_refs": ["REQ-003", "REQ-152"]
+      "backlog_refs": [
+        "REQ-003",
+        "REQ-152"
+      ]
     },
     {
       "node_id": "systems/player_control",
@@ -358,11 +797,29 @@
       "file_path": "src/systems/PlayerControl.ts",
       "functional_summary": "playerControlSystem (S3.3/5/6 + S3.8 spring/conveyor): consumer of moveAxis and jumpPressed under the by-field input split (dm-0019; Lifecycle owns resetPressed). Surface-based base velocity: instant accel/decel off ice (REQ-150); frictionless-ice momentum ramp (S3.6); grounded-on-conveyor adds surfaceVelocityX; grounded-on-spring sets velocity = launchVelocity (S3.8 kinetic modifiers, per-entity data, dm-0021 — NONE touch jumpLock). Drives THE AXIOM's single-jump lock machine (dm-0020): grounded press -> anticipating(TUNING.anticipationTicks) -> ONE impulse vy=-TUNING.jumpSpeed (overrides any spring vy — axiom precedence) -> spent forever until reload re-instantiates (dm-0018); air presses ignored-not-consumed; no coyote/no buffering. Runs BEFORE playerPhysicsSystem. Pure.",
       "gdos_alignment": "Section_16_Deterministic_Physics_Clock",
-      "dependencies": ["core/clock", "core/state", "core/vec2", "components/tuning", "entities/world", "systems/system"],
-      "dependents": [],
-      "volatile_state_flags": { "has_side_effects": false, "state_dependencies": [] },
+      "dependencies": [
+        "core/clock",
+        "core/state",
+        "core/vec2",
+        "components/tuning",
+        "entities/world",
+        "systems/system"
+      ],
+      "dependents": [
+        "eval/agent_harness"
+      ],
+      "volatile_state_flags": {
+        "has_side_effects": false,
+        "state_dependencies": []
+      },
       "last_verified_commit": "uncommitted-session-3",
-      "backlog_refs": ["REQ-150", "REQ-003", "REQ-004", "REQ-010", "REQ-011"]
+      "backlog_refs": [
+        "REQ-150",
+        "REQ-003",
+        "REQ-004",
+        "REQ-010",
+        "REQ-011"
+      ]
     },
     {
       "node_id": "systems/spatial_partition",
@@ -370,11 +827,20 @@
       "file_path": "src/systems/SpatialPartition.ts",
       "functional_summary": "Deterministic quadtree over entity AABBs (S3.2, REQ-162 P3 share). buildEntityQuadtree(world): pure — array insertion order, fixed capacity 8 / max depth 8, exact-midpoint splits, straddlers stay at the parent, root = tilemap world rect expanded to admit out-of-rect entities. queryQuadtree(tree, box): ascending entity indices under the SAME strict-overlap convention as the physics sweep (flush != overlap) — result set exactly equals brute force (fuzz-proven). Derived data, rebuilt per consumer step, never stored in state.",
       "gdos_alignment": "Section_17_Spatial_Partitioning",
-      "dependencies": ["entities/world"],
-      "dependents": ["systems/player_physics"],
-      "volatile_state_flags": { "has_side_effects": false, "state_dependencies": [] },
+      "dependencies": [
+        "entities/world"
+      ],
+      "dependents": [
+        "systems/player_physics"
+      ],
+      "volatile_state_flags": {
+        "has_side_effects": false,
+        "state_dependencies": []
+      },
       "last_verified_commit": "uncommitted-session-3",
-      "backlog_refs": ["REQ-162"]
+      "backlog_refs": [
+        "REQ-162"
+      ]
     },
     {
       "node_id": "hooks/session_start",
@@ -384,109 +850,1061 @@
       "gdos_alignment": "Protocol_Enforcement_REQ_P04_P06",
       "dependencies": [],
       "dependents": [],
-      "volatile_state_flags": { "has_side_effects": true, "state_dependencies": ["handoff_file"] },
+      "volatile_state_flags": {
+        "has_side_effects": true,
+        "state_dependencies": [
+          "handoff_file"
+        ]
+      },
       "last_verified_commit": "uncommitted-session-1",
-      "backlog_refs": ["REQ-P04", "REQ-P06"]
+      "backlog_refs": [
+        "REQ-P04",
+        "REQ-P06"
+      ]
+    },
+    {
+      "node_id": "schema/tape_io",
+      "type": "SystemNode",
+      "file_path": "src/schema/TapeIO.ts",
+      "functional_summary": "ReplayTape format + canonical serializer/strict parser (dm-0023; ownership assigned at P4 planning per P2 open question #5). A tape = {schemaVersion, levelId, seed(uint32), frames: InputFrame[]} — the full reproduction recipe for a deterministic run. dm-0010/dm-0014 discipline verbatim: fixed key order, strict unknown-key rejection, Result-typed path-qualified errors, never throws, byte-idempotent round-trip. Consumed by P4 harness/solvers; P8 input recording and P9 saves adopt this format, never redefine it.",
+      "gdos_alignment": "Section_13_Serialization_Section_15_Validation",
+      "dependencies": [
+        "core/state",
+        "schema/parse"
+      ],
+      "dependents": [
+        "eval/agent_harness",
+        "eval/local/solvability",
+        "eval/local/softlock"
+      ],
+      "volatile_state_flags": {
+        "has_side_effects": false,
+        "state_dependencies": []
+      },
+      "last_verified_commit": "uncommitted-session-4",
+      "backlog_refs": [
+        "REQ-141"
+      ]
+    },
+    {
+      "node_id": "eval/agent_policy",
+      "type": "SystemNode",
+      "file_path": "src/eval/AgentPolicy.ts",
+      "functional_summary": "The pure agent decision contract (dm-0024): decide(state, memory) -> {input, memory}. All agent statefulness threaded through AgentMemory (held intent, countdowns, per-life plan, agent RNG cursor); agents draw ONLY from their own seeded stream, never state.rng, so tape replays reproduce live runs bit for bit. createAgentMemory(agentSeed) builds the initial memory. First module of src/eval/ (dm-0022: one-way dependency — the sim never imports eval).",
+      "gdos_alignment": "Section_15_Local_Spatial_Verification",
+      "dependencies": [
+        "core/rng",
+        "core/state",
+        "entities/world"
+      ],
+      "dependents": [
+        "eval/archetypes",
+        "eval/agent_harness"
+      ],
+      "volatile_state_flags": {
+        "has_side_effects": false,
+        "state_dependencies": []
+      },
+      "last_verified_commit": "uncommitted-session-4",
+      "backlog_refs": [
+        "REQ-141"
+      ]
+    },
+    {
+      "node_id": "eval/archetypes",
+      "type": "SystemNode",
+      "file_path": "src/eval/Archetypes.ts",
+      "functional_summary": "The five REQ-141 archetypes (firstTime/cautious/experienced/expertSpeedrunner/curiousExplorer) as frozen ArchetypeParams data records over ONE shared reactive decision core (dm-0024: data-parameterized policies, not code forks): walk toward goal, sense walls/gaps/hazards in tile space, commit THE jump with archetype hesitation/lookahead, caution pauses (rising-edge), exploration prefix. Jump availability sensed from world.jumpLock.phase — the axiom is engine truth, never re-modeled (dm-0020). Whitelist math only (dm-0017 extended to src/eval/, scan-tested).",
+      "gdos_alignment": "Section_15_Player_Archetypes",
+      "dependencies": [
+        "core/rng",
+        "core/state",
+        "components/tuning",
+        "components/collision_class",
+        "components/tilemap",
+        "entities/world",
+        "eval/agent_policy"
+      ],
+      "dependents": [
+        "eval/local/solvability"
+      ],
+      "volatile_state_flags": {
+        "has_side_effects": false,
+        "state_dependencies": []
+      },
+      "last_verified_commit": "uncommitted-session-4",
+      "backlog_refs": [
+        "REQ-141"
+      ]
+    },
+    {
+      "node_id": "eval/agent_harness",
+      "type": "SystemNode",
+      "file_path": "src/eval/AgentHarness.ts",
+      "functional_summary": "Headless run + replay: runAgent(def, seed, policy, budget) drives the sim via CANONICAL_PIPELINE (normative order: lifecycle -> entityKinematics -> playerControl -> playerPhysics -> sensors -> hazardsAndGoal, dm-0021), records one InputFrame per tick into a ReplayTape, and halts on completion or data-driven EvalBudget (maxTicks/maxAttempts) with typed outcome (completed|timeout) — halting is a property. replayTape(def, seed, frames) re-drives with no agent; bit-equality with the live final state is the determinism proof. Agent stream seed derived via fixed additive offset (agentStreamSeed), separate from sim RNG (dm-0024).",
+      "gdos_alignment": "Section_15_Local_Spatial_Verification",
+      "dependencies": [
+        "core/clock",
+        "core/engine",
+        "core/state",
+        "core/state_manager",
+        "components/level",
+        "entities/world",
+        "systems/system",
+        "systems/lifecycle",
+        "systems/entity_kinematics",
+        "systems/player_control",
+        "systems/player_physics",
+        "systems/sensors",
+        "systems/hazards_and_goal",
+        "schema/tape_io",
+        "eval/agent_policy"
+      ],
+      "dependents": [
+        "eval/local/search",
+        "eval/local/solvability"
+      ],
+      "volatile_state_flags": {
+        "has_side_effects": false,
+        "state_dependencies": []
+      },
+      "last_verified_commit": "uncommitted-session-4",
+      "backlog_refs": [
+        "REQ-141"
+      ]
+    },
+    {
+      "node_id": "eval/local/search",
+      "type": "SystemNode",
+      "file_path": "src/eval/local/Search.ts",
+      "functional_summary": "Bounded deterministic reachability search (dm-0025): macro-action BFS (hold one InputFrame holdTicks steps; 6 fixed actions moveAxis×jumpPressed) over the frozen sim, quantized-signature dedup (sub-tile lattice + jumpLock phase + persistent entity flags), death/goal as terminal leaves (one-life space, dm-0018). searchReachability(def,seed,opts)->{nodes,goalIndex,exhausted,truncated}; reconstructFrames walks parent pointers to a witness. THE AXIOM is engine truth: jumpLock.phase in the signature makes 'available' vs 'spent' distinct states; never counts/caps jumps. Whitelist math; always halts (node cap + visited set).",
+      "gdos_alignment": "Section_15_Local_Spatial_Verification",
+      "dependencies": [
+        "core/clock",
+        "core/engine",
+        "core/state",
+        "core/state_manager",
+        "components/level",
+        "entities/world",
+        "eval/agent_harness"
+      ],
+      "dependents": [
+        "eval/local/solvability",
+        "eval/local/softlock"
+      ],
+      "volatile_state_flags": {
+        "has_side_effects": false,
+        "state_dependencies": []
+      },
+      "last_verified_commit": "uncommitted-session-4",
+      "backlog_refs": [
+        "REQ-141"
+      ]
+    },
+    {
+      "node_id": "eval/local/solvability",
+      "type": "SystemNode",
+      "file_path": "src/eval/local/Solvability.ts",
+      "functional_summary": "Exactly-one-jump solvability audit (REQ-141). Two tiers (P4 plan finding 7): fast path runs the five archetypes (any completion => solvable + its tape as witness); fallback runs the bounded search (goal leaf => solvable + reconstructed witness; exhausted frontier => 'unsolvable'; truncated => 'inconclusive', never a false unsolvable). auditSolvability(def,opts)->SolvabilityVerdict{classification,method,witness?,nodesExplored}; witnessCompletes replays the tape to self-prove. Axiom is ground truth read from the sim; a level needing >1 jump is unsolvable by construction (dm-0011/dm-0020).",
+      "gdos_alignment": "Section_15_Solvability_Audit",
+      "dependencies": [
+        "components/level",
+        "schema/tape_io",
+        "eval/archetypes",
+        "eval/agent_harness",
+        "eval/local/search"
+      ],
+      "dependents": [],
+      "volatile_state_flags": {
+        "has_side_effects": false,
+        "state_dependencies": []
+      },
+      "last_verified_commit": "uncommitted-session-4",
+      "backlog_refs": [
+        "REQ-141"
+      ]
+    },
+    {
+      "node_id": "eval/local/softlock",
+      "type": "SystemNode",
+      "file_path": "src/eval/local/Softlock.ts",
+      "functional_summary": "Softlock (dead-zone) detection (REQ-141, dm-0026). Runs the S4.2 search exhaustively (stopAtGoal=false), then two backward-reachability sweeps over the successor graph: goalReachable and deathReachable. A trapped node = reachable non-terminal in NEITHER set (can't win, can't die — dying reloads to a fresh life, so death is an escape, not a softlock). detectSoftlock(def,opts)->SoftlockVerdict{hasSoftlock,trappedRegions,deepestTrapped,trappedCount,witness?,exhaustive}. Sound 'clean' only when exhaustive; witness drives the player into the trap. Whitelist math.",
+      "gdos_alignment": "Section_15_Softlock_Detection",
+      "dependencies": [
+        "core/vec2",
+        "components/level",
+        "schema/tape_io",
+        "eval/local/search"
+      ],
+      "dependents": [],
+      "volatile_state_flags": {
+        "has_side_effects": false,
+        "state_dependencies": []
+      },
+      "last_verified_commit": "uncommitted-session-4",
+      "backlog_refs": [
+        "REQ-141"
+      ]
     }
   ],
   "edges": [
-    { "type": "DependencyEdge", "from": "core/state", "to": "core/clock", "kind": "type_import" },
-    { "type": "DependencyEdge", "from": "core/state", "to": "core/rng", "kind": "type_import" },
-    { "type": "DependencyEdge", "from": "systems/system", "to": "core/state", "kind": "type_import" },
-    { "type": "DependencyEdge", "from": "core/state_manager", "to": "core/state", "kind": "type_import" },
-    { "type": "DependencyEdge", "from": "core/engine", "to": "core/clock", "kind": "value_import" },
-    { "type": "DependencyEdge", "from": "core/engine", "to": "core/state", "kind": "type_import" },
-    { "type": "DependencyEdge", "from": "core/engine", "to": "core/state_manager", "kind": "type_import" },
-    { "type": "DependencyEdge", "from": "core/engine", "to": "systems/system", "kind": "type_import" },
-    { "type": "DependencyEdge", "from": "components/transform", "to": "core/vec2", "kind": "type_import" },
-    { "type": "DependencyEdge", "from": "components/collider", "to": "core/vec2", "kind": "type_import" },
-    { "type": "DependencyEdge", "from": "components/behavior", "to": "core/vec2", "kind": "type_import" },
-    { "type": "DependencyEdge", "from": "components/entity", "to": "components/entity_id", "kind": "type_import" },
-    { "type": "DependencyEdge", "from": "components/entity", "to": "components/transform", "kind": "type_import" },
-    { "type": "DependencyEdge", "from": "components/entity", "to": "components/collider", "kind": "type_import" },
-    { "type": "DependencyEdge", "from": "components/entity", "to": "components/behavior", "kind": "type_import" },
-    { "type": "DependencyEdge", "from": "components/trigger", "to": "components/entity_id", "kind": "type_import" },
-    { "type": "DependencyEdge", "from": "components/level", "to": "core/vec2", "kind": "type_import" },
-    { "type": "DependencyEdge", "from": "components/level", "to": "components/entity", "kind": "type_import" },
-    { "type": "DependencyEdge", "from": "components/level", "to": "components/gdos", "kind": "type_import" },
-    { "type": "DependencyEdge", "from": "components/level", "to": "components/tilemap", "kind": "type_import" },
-    { "type": "DependencyEdge", "from": "components/level", "to": "components/trigger", "kind": "type_import" },
-    { "type": "DependencyEdge", "from": "schema/serialize", "to": "core/vec2", "kind": "type_import" },
-    { "type": "DependencyEdge", "from": "schema/serialize", "to": "components/behavior", "kind": "type_import" },
-    { "type": "DependencyEdge", "from": "schema/serialize", "to": "components/entity", "kind": "type_import" },
-    { "type": "DependencyEdge", "from": "schema/serialize", "to": "components/gdos", "kind": "value_import" },
-    { "type": "DependencyEdge", "from": "schema/serialize", "to": "components/level", "kind": "type_import" },
-    { "type": "DependencyEdge", "from": "schema/serialize", "to": "components/tilemap", "kind": "type_import" },
-    { "type": "DependencyEdge", "from": "schema/serialize", "to": "components/trigger", "kind": "type_import" },
-    { "type": "DependencyEdge", "from": "schema/parse", "to": "core/vec2", "kind": "type_import" },
-    { "type": "DependencyEdge", "from": "schema/parse", "to": "components/entity_id", "kind": "value_import" },
-    { "type": "DependencyEdge", "from": "schema/parse", "to": "components/transform", "kind": "type_import" },
-    { "type": "DependencyEdge", "from": "schema/parse", "to": "components/collider", "kind": "type_import" },
-    { "type": "DependencyEdge", "from": "schema/parse", "to": "components/behavior", "kind": "type_import" },
-    { "type": "DependencyEdge", "from": "schema/parse", "to": "components/entity", "kind": "type_import" },
-    { "type": "DependencyEdge", "from": "schema/parse", "to": "components/trigger", "kind": "value_import" },
-    { "type": "DependencyEdge", "from": "schema/parse", "to": "components/gdos", "kind": "value_import" },
-    { "type": "DependencyEdge", "from": "schema/parse", "to": "components/tilemap", "kind": "value_import" },
-    { "type": "DependencyEdge", "from": "schema/parse", "to": "components/level", "kind": "value_import" },
-    { "type": "DependencyEdge", "from": "entities/world", "to": "core/state_manager", "kind": "value_import" },
-    { "type": "DependencyEdge", "from": "entities/world", "to": "core/clock", "kind": "value_import" },
-    { "type": "DependencyEdge", "from": "entities/world", "to": "core/rng", "kind": "value_import" },
-    { "type": "DependencyEdge", "from": "entities/world", "to": "core/state", "kind": "value_import" },
-    { "type": "DependencyEdge", "from": "entities/world", "to": "core/vec2", "kind": "value_import" },
-    { "type": "DependencyEdge", "from": "entities/world", "to": "components/entity_id", "kind": "type_import" },
-    { "type": "DependencyEdge", "from": "entities/world", "to": "components/level", "kind": "type_import" },
-    { "type": "DependencyEdge", "from": "components/tuning", "to": "core/vec2", "kind": "type_import" },
-    { "type": "DependencyEdge", "from": "components/collision_class", "to": "components/behavior", "kind": "type_import" },
-    { "type": "DependencyEdge", "from": "systems/player_physics", "to": "core/clock", "kind": "value_import" },
-    { "type": "DependencyEdge", "from": "systems/player_physics", "to": "core/state", "kind": "type_import" },
-    { "type": "DependencyEdge", "from": "systems/player_physics", "to": "core/vec2", "kind": "value_import" },
-    { "type": "DependencyEdge", "from": "systems/player_physics", "to": "components/tilemap", "kind": "value_import" },
-    { "type": "DependencyEdge", "from": "systems/player_physics", "to": "components/tuning", "kind": "value_import" },
-    { "type": "DependencyEdge", "from": "systems/player_physics", "to": "components/collision_class", "kind": "value_import" },
-    { "type": "DependencyEdge", "from": "systems/player_physics", "to": "components/level", "kind": "type_import" },
-    { "type": "DependencyEdge", "from": "systems/player_physics", "to": "entities/world", "kind": "type_import" },
-    { "type": "DependencyEdge", "from": "systems/player_physics", "to": "systems/system", "kind": "type_import" },
-    { "type": "DependencyEdge", "from": "systems/player_physics", "to": "systems/spatial_partition", "kind": "value_import" },
-    { "type": "DependencyEdge", "from": "systems/spatial_partition", "to": "entities/world", "kind": "type_import" },
-    { "type": "DependencyEdge", "from": "systems/player_control", "to": "core/clock", "kind": "value_import" },
-    { "type": "DependencyEdge", "from": "systems/player_control", "to": "core/state", "kind": "type_import" },
-    { "type": "DependencyEdge", "from": "systems/player_control", "to": "core/vec2", "kind": "value_import" },
-    { "type": "DependencyEdge", "from": "systems/player_control", "to": "components/tuning", "kind": "value_import" },
-    { "type": "DependencyEdge", "from": "systems/player_control", "to": "entities/world", "kind": "type_import" },
-    { "type": "DependencyEdge", "from": "systems/player_control", "to": "systems/system", "kind": "type_import" },
-    { "type": "DependencyEdge", "from": "systems/lifecycle", "to": "core/state", "kind": "type_import" },
-    { "type": "DependencyEdge", "from": "systems/lifecycle", "to": "entities/world", "kind": "value_import" },
-    { "type": "DependencyEdge", "from": "systems/lifecycle", "to": "systems/system", "kind": "type_import" },
-    { "type": "DependencyEdge", "from": "systems/hazards_and_goal", "to": "core/state", "kind": "type_import" },
-    { "type": "DependencyEdge", "from": "systems/hazards_and_goal", "to": "components/tuning", "kind": "value_import" },
-    { "type": "DependencyEdge", "from": "systems/hazards_and_goal", "to": "entities/world", "kind": "type_import" },
-    { "type": "DependencyEdge", "from": "systems/hazards_and_goal", "to": "systems/system", "kind": "type_import" },
-    { "type": "DependencyEdge", "from": "systems/entity_kinematics", "to": "core/clock", "kind": "value_import" },
-    { "type": "DependencyEdge", "from": "systems/entity_kinematics", "to": "core/state", "kind": "type_import" },
-    { "type": "DependencyEdge", "from": "systems/entity_kinematics", "to": "core/vec2", "kind": "value_import" },
-    { "type": "DependencyEdge", "from": "systems/entity_kinematics", "to": "components/behavior", "kind": "type_import" },
-    { "type": "DependencyEdge", "from": "systems/entity_kinematics", "to": "entities/world", "kind": "type_import" },
-    { "type": "DependencyEdge", "from": "systems/entity_kinematics", "to": "systems/system", "kind": "type_import" },
-    { "type": "DependencyEdge", "from": "systems/hazards_and_goal", "to": "core/clock", "kind": "value_import" },
-    { "type": "DependencyEdge", "from": "systems/hazards_and_goal", "to": "core/vec2", "kind": "value_import" },
-    { "type": "DependencyEdge", "from": "systems/hazards_and_goal", "to": "components/collision_class", "kind": "value_import" },
-    { "type": "DependencyEdge", "from": "systems/hazards_and_goal", "to": "components/behavior", "kind": "type_import" },
-    { "type": "DependencyEdge", "from": "systems/sensors", "to": "core/state", "kind": "type_import" },
-    { "type": "DependencyEdge", "from": "systems/sensors", "to": "components/entity_id", "kind": "type_import" },
-    { "type": "DependencyEdge", "from": "systems/sensors", "to": "components/trigger", "kind": "type_import" },
-    { "type": "DependencyEdge", "from": "systems/sensors", "to": "components/tuning", "kind": "value_import" },
-    { "type": "DependencyEdge", "from": "systems/sensors", "to": "entities/world", "kind": "type_import" },
-    { "type": "DependencyEdge", "from": "systems/sensors", "to": "systems/system", "kind": "type_import" },
-    { "type": "DependencyEdge", "from": "tools/sdlc/gate", "to": "tools/sdlc/recipe", "kind": "value_import" }
+    {
+      "type": "DependencyEdge",
+      "from": "core/state",
+      "to": "core/clock",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "core/state",
+      "to": "core/rng",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "systems/system",
+      "to": "core/state",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "core/state_manager",
+      "to": "core/state",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "core/engine",
+      "to": "core/clock",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "core/engine",
+      "to": "core/state",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "core/engine",
+      "to": "core/state_manager",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "core/engine",
+      "to": "systems/system",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "components/transform",
+      "to": "core/vec2",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "components/collider",
+      "to": "core/vec2",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "components/behavior",
+      "to": "core/vec2",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "components/entity",
+      "to": "components/entity_id",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "components/entity",
+      "to": "components/transform",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "components/entity",
+      "to": "components/collider",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "components/entity",
+      "to": "components/behavior",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "components/trigger",
+      "to": "components/entity_id",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "components/level",
+      "to": "core/vec2",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "components/level",
+      "to": "components/entity",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "components/level",
+      "to": "components/gdos",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "components/level",
+      "to": "components/tilemap",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "components/level",
+      "to": "components/trigger",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "schema/serialize",
+      "to": "core/vec2",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "schema/serialize",
+      "to": "components/behavior",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "schema/serialize",
+      "to": "components/entity",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "schema/serialize",
+      "to": "components/gdos",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "schema/serialize",
+      "to": "components/level",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "schema/serialize",
+      "to": "components/tilemap",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "schema/serialize",
+      "to": "components/trigger",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "schema/parse",
+      "to": "core/vec2",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "schema/parse",
+      "to": "components/entity_id",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "schema/parse",
+      "to": "components/transform",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "schema/parse",
+      "to": "components/collider",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "schema/parse",
+      "to": "components/behavior",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "schema/parse",
+      "to": "components/entity",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "schema/parse",
+      "to": "components/trigger",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "schema/parse",
+      "to": "components/gdos",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "schema/parse",
+      "to": "components/tilemap",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "schema/parse",
+      "to": "components/level",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "entities/world",
+      "to": "core/state_manager",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "entities/world",
+      "to": "core/clock",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "entities/world",
+      "to": "core/rng",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "entities/world",
+      "to": "core/state",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "entities/world",
+      "to": "core/vec2",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "entities/world",
+      "to": "components/entity_id",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "entities/world",
+      "to": "components/level",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "components/tuning",
+      "to": "core/vec2",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "components/collision_class",
+      "to": "components/behavior",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "systems/player_physics",
+      "to": "core/clock",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "systems/player_physics",
+      "to": "core/state",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "systems/player_physics",
+      "to": "core/vec2",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "systems/player_physics",
+      "to": "components/tilemap",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "systems/player_physics",
+      "to": "components/tuning",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "systems/player_physics",
+      "to": "components/collision_class",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "systems/player_physics",
+      "to": "components/level",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "systems/player_physics",
+      "to": "entities/world",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "systems/player_physics",
+      "to": "systems/system",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "systems/player_physics",
+      "to": "systems/spatial_partition",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "systems/spatial_partition",
+      "to": "entities/world",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "systems/player_control",
+      "to": "core/clock",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "systems/player_control",
+      "to": "core/state",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "systems/player_control",
+      "to": "core/vec2",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "systems/player_control",
+      "to": "components/tuning",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "systems/player_control",
+      "to": "entities/world",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "systems/player_control",
+      "to": "systems/system",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "systems/lifecycle",
+      "to": "core/state",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "systems/lifecycle",
+      "to": "entities/world",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "systems/lifecycle",
+      "to": "systems/system",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "systems/hazards_and_goal",
+      "to": "core/state",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "systems/hazards_and_goal",
+      "to": "components/tuning",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "systems/hazards_and_goal",
+      "to": "entities/world",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "systems/hazards_and_goal",
+      "to": "systems/system",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "systems/entity_kinematics",
+      "to": "core/clock",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "systems/entity_kinematics",
+      "to": "core/state",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "systems/entity_kinematics",
+      "to": "core/vec2",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "systems/entity_kinematics",
+      "to": "components/behavior",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "systems/entity_kinematics",
+      "to": "entities/world",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "systems/entity_kinematics",
+      "to": "systems/system",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "systems/hazards_and_goal",
+      "to": "core/clock",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "systems/hazards_and_goal",
+      "to": "core/vec2",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "systems/hazards_and_goal",
+      "to": "components/collision_class",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "systems/hazards_and_goal",
+      "to": "components/behavior",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "systems/sensors",
+      "to": "core/state",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "systems/sensors",
+      "to": "components/entity_id",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "systems/sensors",
+      "to": "components/trigger",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "systems/sensors",
+      "to": "components/tuning",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "systems/sensors",
+      "to": "entities/world",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "systems/sensors",
+      "to": "systems/system",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "tools/sdlc/gate",
+      "to": "tools/sdlc/recipe",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "schema/tape_io",
+      "to": "core/state",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "schema/tape_io",
+      "to": "schema/parse",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "eval/agent_policy",
+      "to": "core/rng",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "eval/agent_policy",
+      "to": "core/state",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "eval/agent_policy",
+      "to": "entities/world",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "eval/archetypes",
+      "to": "core/rng",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "eval/archetypes",
+      "to": "core/state",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "eval/archetypes",
+      "to": "components/tuning",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "eval/archetypes",
+      "to": "components/collision_class",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "eval/archetypes",
+      "to": "components/tilemap",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "eval/archetypes",
+      "to": "entities/world",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "eval/archetypes",
+      "to": "eval/agent_policy",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "eval/agent_harness",
+      "to": "core/clock",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "eval/agent_harness",
+      "to": "core/engine",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "eval/agent_harness",
+      "to": "core/state",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "eval/agent_harness",
+      "to": "core/state_manager",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "eval/agent_harness",
+      "to": "components/level",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "eval/agent_harness",
+      "to": "entities/world",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "eval/agent_harness",
+      "to": "systems/system",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "eval/agent_harness",
+      "to": "systems/lifecycle",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "eval/agent_harness",
+      "to": "systems/entity_kinematics",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "eval/agent_harness",
+      "to": "systems/player_control",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "eval/agent_harness",
+      "to": "systems/player_physics",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "eval/agent_harness",
+      "to": "systems/sensors",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "eval/agent_harness",
+      "to": "systems/hazards_and_goal",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "eval/agent_harness",
+      "to": "schema/tape_io",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "eval/agent_harness",
+      "to": "eval/agent_policy",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "eval/local/search",
+      "to": "core/clock",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "eval/local/search",
+      "to": "core/engine",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "eval/local/search",
+      "to": "core/state",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "eval/local/search",
+      "to": "core/state_manager",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "eval/local/search",
+      "to": "components/level",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "eval/local/search",
+      "to": "entities/world",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "eval/local/search",
+      "to": "eval/agent_harness",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "eval/local/solvability",
+      "to": "components/level",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "eval/local/solvability",
+      "to": "schema/tape_io",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "eval/local/solvability",
+      "to": "eval/archetypes",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "eval/local/solvability",
+      "to": "eval/agent_harness",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "eval/local/solvability",
+      "to": "eval/local/search",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "eval/local/softlock",
+      "to": "core/vec2",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "eval/local/softlock",
+      "to": "components/level",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "eval/local/softlock",
+      "to": "schema/tape_io",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "eval/local/softlock",
+      "to": "eval/local/search",
+      "kind": "value_import"
+    }
   ],
   "gdos_anchors": [
-    { "type": "GDOSAnchor", "section": "Section_13_Data_Driven_Architecture", "implemented_by": ["core/state", "core/vec2", "entities/world", "components/tuning"] },
-    { "type": "GDOSAnchor", "section": "Section_16_Deterministic_Physics_Clock", "implemented_by": ["core/clock", "core/engine", "systems/player_physics", "systems/player_control", "systems/lifecycle", "systems/hazards_and_goal", "systems/entity_kinematics", "systems/sensors"] },
-    { "type": "GDOSAnchor", "section": "State_Management_Invariants", "implemented_by": ["core/state_manager"] },
-    { "type": "GDOSAnchor", "section": "Section_15_Reproducible_Agent_Simulation", "implemented_by": ["core/rng"] },
-    { "type": "GDOSAnchor", "section": "Section_16_Modular_Decoupled_Components", "implemented_by": ["components/entity_id", "components/transform", "components/collider", "components/behavior", "components/entity", "components/collision_class"] },
-    { "type": "GDOSAnchor", "section": "Section_13_Level_Definition_Schema", "implemented_by": ["components/tilemap", "components/trigger", "components/gdos", "components/level", "schema/serialize", "schema/parse"] },
-    { "type": "GDOSAnchor", "section": "Section_17_Spatial_Partitioning", "implemented_by": ["systems/spatial_partition"] }
+    {
+      "type": "GDOSAnchor",
+      "section": "Section_13_Data_Driven_Architecture",
+      "implemented_by": [
+        "core/state",
+        "core/vec2",
+        "entities/world",
+        "components/tuning"
+      ]
+    },
+    {
+      "type": "GDOSAnchor",
+      "section": "Section_16_Deterministic_Physics_Clock",
+      "implemented_by": [
+        "core/clock",
+        "core/engine",
+        "systems/player_physics",
+        "systems/player_control",
+        "systems/lifecycle",
+        "systems/hazards_and_goal",
+        "systems/entity_kinematics",
+        "systems/sensors"
+      ]
+    },
+    {
+      "type": "GDOSAnchor",
+      "section": "State_Management_Invariants",
+      "implemented_by": [
+        "core/state_manager"
+      ]
+    },
+    {
+      "type": "GDOSAnchor",
+      "section": "Section_15_Reproducible_Agent_Simulation",
+      "implemented_by": [
+        "core/rng"
+      ]
+    },
+    {
+      "type": "GDOSAnchor",
+      "section": "Section_16_Modular_Decoupled_Components",
+      "implemented_by": [
+        "components/entity_id",
+        "components/transform",
+        "components/collider",
+        "components/behavior",
+        "components/entity",
+        "components/collision_class"
+      ]
+    },
+    {
+      "type": "GDOSAnchor",
+      "section": "Section_13_Level_Definition_Schema",
+      "implemented_by": [
+        "components/tilemap",
+        "components/trigger",
+        "components/gdos",
+        "components/level",
+        "schema/serialize",
+        "schema/parse"
+      ]
+    },
+    {
+      "type": "GDOSAnchor",
+      "section": "Section_17_Spatial_Partitioning",
+      "implemented_by": [
+        "systems/spatial_partition"
+      ]
+    }
   ],
   "pending_nodes": []
 }

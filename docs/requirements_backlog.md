@@ -135,7 +135,7 @@
 | ID | Requirement | PRD | Phase | State |
 |----|-------------|-----|-------|-------|
 | REQ-140 | Two isolated validation passes: Local Spatial Verification and Macro Curriculum Validation. | §15 | P4 | NOT_STARTED |
-| REQ-141 | Local: five agent archetypes (First-Time, Cautious, Experienced, Expert Speedrunner, Curious Explorer); Solvability audit (exactly one jump), Softlock detection, Exploit filtration, Optimization windows. | §15 | P4 | NOT_STARTED |
+| REQ-141 | Local: five agent archetypes (First-Time, Cautious, Experienced, Expert Speedrunner, Curious Explorer); Solvability audit (exactly one jump), Softlock detection, Exploit filtration, Optimization windows. | §15 | P4 | IN_PROGRESS |
 | REQ-142 | Macro: curriculum progress arc; four criteria — Cognitive Structural Mapping, Cross-Chapter Degradation Analysis, Curiosity Progression Curves, Graduation Assessment Verification. | §15 | P4,P6 | NOT_STARTED |
 
 ## §16 Gameplay Systems & Modular Components

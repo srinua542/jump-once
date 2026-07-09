@@ -1,0 +1,67 @@
+{
+  "slice": "S4.1",
+  "title": "Agent-archetype simulator harness",
+  "reqs": [
+    "REQ-141"
+  ],
+  "started_at": "2026-07-09T10:50:43.937Z",
+  "updated_at": "2026-07-09T15:28:42.015Z",
+  "current_stage": "handoff",
+  "stages": {
+    "reboot": {
+      "status": "done",
+      "at": "2026-07-09T10:50:43.938Z",
+      "note": "REBOOT done: pkg_hash s3-c5e9f7 confirmed, npm test 186/186 green"
+    },
+    "select": {
+      "status": "done",
+      "at": "2026-07-09T10:50:44.017Z",
+      "note": "SELECT: S4.1 (REQ-141). Deps satisfied: S3.8 COMPLETED, P3 VERIFIED, M1 closed - P4 may open. Prerequisite honored: P4 execution-plan section authored first (REQ-P02). S4.1 + REQ-141 flipped IN_PROGRESS."
+    },
+    "plan": {
+      "status": "done",
+      "at": "2026-07-09T10:50:53.038Z",
+      "note": "PLAN: P4 execution-plan section authored (adversarial review, dm-0022..dm-0024 pending ledger); replay-tape ownership assigned to S4.1; directory contract +src/eval; task_slices P4 criteria detailed; REQ-141 IN_PROGRESS. Files: src/schema/TapeIO.ts, src/eval/{AgentPolicy,Archetypes,AgentHarness}.ts; tests: unit/TapeIO, integration/AgentArchetypes."
+    },
+    "anchor": {
+      "status": "done",
+      "at": "2026-07-09T10:53:32.961Z",
+      "note": "ANCHOR: new modules (no dependency-map needed). Type boundaries frozen in plan design summary: AgentPolicy.decide(state,memory)->{input,memory}; ArchetypeParams data records; runAgent(def,seed,policy,budget)->AgentRunResult; replayTape(def,seed,frames)->final state; ReplayTape {schemaVersion,levelId,seed,frames} with P2-style strict Result parse (reuses SchemaError shape)."
+    },
+    "implement": {
+      "status": "done",
+      "at": "2026-07-09T10:55:45.605Z",
+      "note": "IMPLEMENT: src/schema/TapeIO.ts, src/eval/{AgentPolicy,Archetypes,AgentHarness}.ts + test/unit/{TapeIO,EvalIsolation}.test.ts + test/integration/AgentArchetypes.test.ts. No stubs/TODOs; whitelist math; data-driven params/budgets."
+    },
+    "verify": {
+      "status": "done",
+      "at": "2026-07-09T15:24:21.406Z",
+      "note": "VERIFY: npm test 210/210 green (was 186; +24). Determinism (tape reproducible, live===replay bit-equal), distinctness (pairwise tapes), halting (tick+attempt budgets), tape round-trip + rejection coverage, isolation scans (one-way import, math whitelist) all asserted."
+    },
+    "integrate": {
+      "status": "done",
+      "at": "2026-07-09T15:24:21.552Z",
+      "note": "INTEGRATE: PKG +4 nodes (schema/tape_io, eval/agent_policy, eval/archetypes, eval/agent_harness), +27 edges both directions, hash s3-c5e9f7 -> s4-d1f7a3. Ledger dm-0022 (src/eval one-way placement), dm-0023 (replay-tape ownership+format), dm-0024 (agent determinism model). Directory contract updated with src/eval isolation rule."
+    },
+    "report": {
+      "status": "done",
+      "at": "2026-07-09T15:27:13.417Z",
+      "note": "REPORT: S4.1 -> COMPLETED (built + 210/210 tested; VERIFIED at P4 review, S4.7). REQ-141 stays IN_PROGRESS (S4.2-S4.5 remain). No phase closed - no verification report due. Pick-list updated to S4.2."
+    },
+    "handoff": {
+      "status": "done",
+      "at": "2026-07-09T15:27:41.522Z",
+      "note": "HANDOFF: meta/handoff_latest.json written (pkg s4-d1f7a3, 210 tests, resume at S4.2)"
+    }
+  },
+  "acceptance": [
+    {
+      "req": "REQ-141",
+      "criterion": "(fill in)",
+      "met": true,
+      "note": null
+    }
+  ],
+  "outcome": "completed",
+  "closed_at": "2026-07-09T15:28:42.108Z"
+}

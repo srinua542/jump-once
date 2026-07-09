@@ -5,6 +5,7 @@ This document holds one section per phase, authored *before* that phase's implem
 - **P0 + P1 (M0 — Foundation Locked): CLOSED.** M0 is VERIFIED, see `docs/verification/P1.md`. Retained below as the historical record.
 - **P2 — Data Models & Level Definition Schema: CLOSED — VERIFIED**, see `docs/verification/P2.md`. Checkpoints C2.1–C2.6 all passed (118/118 tests). Retained below as the historical record.
 - **P3 — Mechanic Library & Deterministic Physics: CLOSED — VERIFIED**, see `docs/verification/P3.md`. Authored at S3.1 start via adversarial review (dm-0016–dm-0021; table restructured to S3.1–S3.9). All checkpoints C3.1–C3.9 passed (186/186 tests). **Milestone M1 — Simulatable Game CLOSED.**
+- **P4 — Evaluation & Validation Framework: IN FLIGHT** (opens milestone M2 — Design Intelligence Operational). Section below authored at S4.1 start per REQ-P02, via the same adversarial review P2/P3 got (dm-0022–dm-0024).
 
 Covers the phases that were in flight: **P0 (Governance & Protocol Infrastructure)** and **P1 (Deterministic Core Architecture)** — together, milestone **M0 — Foundation Locked**. Per the Directive, this plan is written *before* implementation code and defines the work, governing PRD requirements, dependencies, deliverables, validation criteria, and completion checkpoints. A new execution plan will be authored at the start of each subsequent phase.
 
@@ -291,3 +292,101 @@ P2 VERIFIED (satisfied). No external dependencies. Consumes: `WorldState`/`insta
 ## Exit condition for P3
 
 All checkpoints C3.1–C3.9 pass; the axiom's fuzz property holds across the full mechanic library; a data-defined level is playable start (spawn) → finish (goal) with defeat/reload loops, deterministically, bit-identical under replay. **M1 — Simulatable Game** closes (requires the M1-scope audit: subtractive pass, compliance audit, save-persistence ownership recorded). Only then does P4 open.
+
+---
+---
+
+# P4 — Evaluation & Validation Framework  *(IN FLIGHT — authored at S4.1 start per REQ-P02; adversarial review ledgered dm-0022–dm-0024)*
+
+## Governing requirements
+
+| Phase | REQs governing the work |
+|-------|--------------------------|
+| P4 | REQ-140, REQ-141 (owned); REQ-142 (P4 share — the four macro criteria; P6 contributes the campaign models); REQ-101, REQ-102 (P4 share — computation + rejection on fixtures; P10 consumes at generation time) |
+
+## Work
+
+Make the frozen M1 simulation *judge* levels by playing them. P4 builds the evaluation layer the entire content pipeline (P8 tools, P10 generation) will trust: five deterministic agent archetypes that drive the sim headlessly, the Local Spatial Verification pass (solvability under exactly-one-jump, softlock detection, exploit filtration, optimization windows + five-tier routing + delta), and the isolated Macro Curriculum Validation pass. P4 opens milestone **M2 — Design Intelligence Operational**. Nothing in P4 authors content — every level P4 touches is in-code unit scaffolding or an existing `test/fixtures/` file (the M2 hard gate stays closed).
+
+This plan was produced by an adversarial review of the P4 slice table and the two open questions P2/P3 carried forward, the same treatment those phases got. Decisions are ledgered as dm-0022–dm-0024.
+
+## Adversarial review — findings and upgrades over the original slice table
+
+1. **Replay-tape serialization was unowned (P2 open question #5, carried through P3) — owned here, at S4.1 (dm-0023).** The harness is the first producer of tapes, so it defines the format: a versioned record `{ schemaVersion, levelId, seed, frames[] }` where each frame is one `InputFrame` per simulation tick. The full P2 serialization discipline applies verbatim (dm-0010/dm-0014): canonical field order, strict unknown-key rejection at every path, non-finite rejection, `Result`-typed parse with path-qualified errors, value-lossless + byte-idempotent round-trip. I/O lives in `src/schema/TapeIO.ts` (definition-time I/O — the dm-0013 placement rule). P8's input recorder and P9's save layer consume this format later; they do not redefine it.
+2. **Evaluation logic had no legal home in the directory contract.** Agents/audits are not per-frame systems (`src/systems/` runs inside the engine loop; agents drive it from outside), not schema I/O, not core, not components. **Decision (dm-0022): new `src/eval/` directory** — evaluation-time logic that consumes the sim strictly through its public contracts (`createInitialState`, `Engine`, `StateManager`, `FIXED_STEP_SECONDS`, read-only `GameState`). The dependency is one-way: nothing under `src/core|systems|components|entities|schema` may import from `src/eval/` — the sim must never know it is being judged. Directory contract updated alongside this plan.
+3. **Live-run vs. tape-replay divergence risk: agent randomness must not touch the sim's RNG.** If a policy drew from `state.rng`, replaying the recorded tape (no agent present) would leave the sim RNG un-advanced and the final state would differ bit-wise — silently breaking the P4 determinism contract. **Decision (dm-0024): agents thread their own seeded `RngState` stream** (derived from the run seed, threaded through agent memory); `state.rng` belongs to the simulation alone. Live-final-state ≡ replay-final-state (bit equality) is an acceptance test *per archetype*.
+4. **Agent statefulness must be explicit or determinism is fiction.** Policies are pure: `decide(state, memory) → { input, memory }`. All agent memory (held intent, hesitation countdowns, per-life plans, the agent RNG cursor) is threaded through the harness exactly like sim state — no closures over mutable variables, no hidden fields. Same (level, seed, archetype) ⇒ identical tape, twice, by construction.
+5. **Halting is a property, not a hope.** Every harness run carries a data-driven budget (`maxTicks`, `maxAttempts` — an `EvalBudget` record, not literals). Budget exhaustion is a first-class `'timeout'` outcome, never an exception and never a hang. S4.3's softlock detector *builds on* classified timeouts; nothing in P4 can stall the future generation pipeline.
+6. **Archetypes are data-parameterized policies, not five code forks (dm-0024).** One shared sensing/decision core; five frozen `ArchetypeParams` records (reaction cadence, hesitation ticks, jump-commit lookahead, hazard caution, exploration prefix). Behavioral distinctness is *proven by test* — pairwise-distinct tapes on a discriminating fixture — not asserted by naming. Adding a sixth archetype later is a data change.
+7. **Archetype play is evidence, not proof — solvability needs search (scoped to S4.2).** A reactive archetype failing a level does not prove the level unsolvable; REQ-141's solvability audit therefore gets a bounded deterministic search over input space at S4.2, with archetype runs as its fast path and witness generator. S4.1 deliberately ships the harness + archetypes only; conflating the two was the original table's hidden scope error.
+8. **The two validation passes stay physically isolated (REQ-140).** Local Spatial Verification (S4.2–S4.5, per-level) and Macro Curriculum Validation (S4.6, per-chapter) are separate modules with separate verdict types; the macro pass consumes local verdicts *as data* and never re-runs simulations internally. Isolation is structural (imports), not stylistic.
+9. **Five-tier routing is grounded in archetype times (REQ-101/102).** Discovery ≈ First-Time completion; World Record ≈ Expert-Speedrunner best; the middle tiers interpolate from the archetype spread. Optimization delta = T_Discovery − T_WR; zero/minimal delta ⇒ reject. The authored `parTimeTiersSeconds` (S2.2) becomes a cross-check input, not the source of truth.
+10. **The math whitelist extends to `src/eval/` (dm-0017 discipline).** Agent decisions produce tapes; tapes must replay bit-identically on any JS engine. Same audit as `src/systems/`: no transcendental functions, only `+ − × ÷ %`, `Math.sqrt/min/max/abs/floor/ceil/trunc`.
+11. **The axiom is P4's ground truth, not its parameter.** The solvability audit treats "exactly one jump" as engine-enforced fact (dm-0020) — it never re-implements the lock, never counts jumps by parsing input (it reads `world.jumpLock`), and no `maxJumps`-like knob exists anywhere in eval config (dm-0011 holds).
+
+## Design summary (the compact model the code is written from)
+
+1. **`AgentPolicy` contract (`src/eval/AgentPolicy.ts`).** `decide(state: JumpOnceState, memory: AgentMemory) → { input: InputFrame, memory: AgentMemory }` — pure, deterministic, whitelist-math only. `AgentMemory` carries the agent RNG cursor, held intent, replan/hesitation countdowns, and per-life plan state; the harness threads it.
+2. **Archetypes (`src/eval/Archetypes.ts`).** `ArchetypeParams` (pure data) + five frozen records — `firstTime`, `cautious`, `experienced`, `expertSpeedrunner`, `curiousExplorer` — feeding one shared decision core: walk toward the goal, sense walls/gaps/hazards in tile space ahead, commit the single jump with archetype-specific hesitation and lookahead, pause near hazards per caution, optionally explore away from the goal first (Curious). Jump availability is *sensed* from `world.jumpLock.phase`.
+3. **Harness (`src/eval/AgentHarness.ts`).** `runAgent(def, seed, params, budget) → AgentRunResult { outcome: 'completed' | 'timeout', frames, ticksElapsed, attempts, finalState }`. Assembles the engine in the **normative canonical order** — `lifecycle → entityKinematics → playerControl → playerPhysics → sensors → hazardsAndGoal` — commits the agent's `InputFrame`, ticks exactly one fixed step, records the frame; stops on `completed`, tick budget, or attempt budget. `replayTape(def, seed, frames)` re-drives the same pipeline with no agent; bit-equality with the live run is the determinism proof.
+4. **Verdicts are pure data.** Every audit (S4.2+) emits a typed verdict record (classification + evidence: witness tape, offending region, tier times); downstream consumers (P5 gates, P8 tools, P10 pipeline) read verdicts, never re-derive them.
+5. **Local vs. macro (REQ-140).** `src/eval/local/*` (S4.2–S4.5) judges one level; `src/eval/macro/*` (S4.6) judges an ordered sequence of local verdicts against the four §15 criteria. No shared mutable anything; the seam is a data type.
+
+## Dependencies
+
+P2+P3 VERIFIED, M1 CLOSED (satisfied). Consumes: the frozen deterministic sim (`Engine`/`StateManager`/`Clock` S1.x), `createInitialState`/`WorldState` (S2.5/P3), `InputFrame` (S1.4, dm-0019 boundary), `TUNING`, `COLLISION_CLASS_BY_KIND`, `TILE_KIND_BY_ID`, the P2 schema I/O conventions (dm-0010/0013/0014). No external dependencies.
+
+## Deliverables (one per slice — see `docs/task_slices.md` Phase 4)
+
+- **S4.1** `src/schema/TapeIO.ts` (replay-tape format + canonical serializer + strict parser — ownership assigned per finding 1), `src/eval/AgentPolicy.ts`, `src/eval/Archetypes.ts` (five data-parameterized archetypes over one decision core), `src/eval/AgentHarness.ts` (headless run + replay, canonical pipeline order, budgets). Tests: tape round-trip/rejection suite; per-archetype determinism (identical tape twice), live≡replay bit-equality, pairwise behavioral distinctness, completion on trivial fixtures, budget-halt on unreachable/lethal fixtures.
+- **S4.2** Solvability audit: bounded deterministic search + archetype fast path; classifies known-solvable and known-unsolvable in-code fixtures; produces a witness tape for solvable levels; flags any level whose only completions would require >1 jump as axiom-violating by construction (impossible — evidence read from `world.jumpLock`).
+- **S4.3** Softlock detection: identifies reachable regions from which neither goal nor defeat is reachable within budget (the "can neither die nor reach goal" dead zone), built on classified timeouts + region evidence.
+- **S4.4** Exploit filtration: detects boundary path-skips that bypass authored hazards (completion tapes whose swept path never intersects the intended challenge envelope).
+- **S4.5** Optimization windows: five-tier routing from archetype time spread; delta metric (REQ-102) + minimal-delta rejection; `parTimeTiersSeconds` cross-check.
+- **S4.6** Macro Curriculum Validation: the four criteria (Cognitive Structural Mapping, Cross-Chapter Degradation Analysis, Curiosity Progression Curves, Graduation Assessment Verification) over sequences of local verdicts — isolated per finding 8.
+- **S4.7** `docs/verification/P4.md` — per-REQ verification report (dm-0008 discipline).
+
+## Validation criteria
+
+- **Determinism (REQ-141 substrate):** same (level, seed, archetype) ⇒ byte-identical serialized tape across independent runs; live final state ≡ tape-replay final state, bit for bit, for every archetype; no `Math.random`, no transcendental function under `src/eval/` (grep-audited like `src/systems/`).
+- **Tape format (dm-0023):** value-lossless + byte-idempotent round-trip; every rejection rule has a failing-fixture test (wrong version, unknown key, bad axis value, non-finite seed, malformed frames).
+- **Archetype fidelity:** five archetypes produce pairwise-distinct tapes on a discriminating fixture; the Expert-Speedrunner completes solvable scaffolding fixtures in fewer ticks than the First-Time archetype.
+- **Halting:** every run terminates in ≤ budget ticks/attempts with a typed outcome; unreachable-goal and always-lethal fixtures halt cleanly with `'timeout'`.
+- **Isolation (REQ-140):** no import path from `src/eval/macro/` into the harness/sim internals; no import from `src/{core,systems,components,entities,schema}` into `src/eval/` (one-way, scan-testable).
+- **Solvability ground truth (REQ-141):** S4.2 classifies the known-solvable and known-unsolvable fixture sets with zero misclassification; every 'solvable' verdict carries a replayable witness tape that completes the level.
+- **Routing (REQ-101/102):** tier times computed on fixtures; delta metric rejects a zero/minimal-delta layout fixture and passes a wide-delta one.
+- **Content gate:** no new files under any content path; all P4 fixtures are in-code defs or `test/fixtures/` scaffolding.
+- **Green build:** `npm test` exits 0; every new module covered.
+
+## Checkpoints
+
+- **C4.1** Harness + five archetypes + tape I/O land; determinism, replay-equality, distinctness, and budget-halt tests green.
+- **C4.2** Solvability audit classifies fixture sets correctly with witness tapes.
+- **C4.3** Softlock detector flags the dead-zone fixture, passes clean fixtures.
+- **C4.4** Exploit filter catches the path-skip fixture, passes intended routes.
+- **C4.5** Tier routing + delta computed; minimal-delta fixture rejected.
+- **C4.6** Macro pass audits a fixture chapter sequence against all four criteria.
+- **C4.7** `docs/verification/P4.md` filed; P4 REQs advanced per dm-0008; PKG consistent; subtractive pass recorded.
+
+## Risk register (P4)
+
+| Risk | Mitigation |
+|------|------------|
+| Agent RNG leaks into sim RNG and replays silently diverge. | Separate seeded stream threaded through `AgentMemory` (dm-0024); live≡replay bit-equality is a per-archetype acceptance test. |
+| Reactive archetypes under-approximate solvability (false "unsolvable"). | S4.2's bounded search is the classifier; archetypes are its fast path + realism evidence (finding 7). |
+| Harness hangs on softlocked/unreachable fixtures. | `EvalBudget` hard stop with typed `'timeout'` outcome; halt tests on sealed and always-lethal fixtures. |
+| Eval code drifts into the sim (reverse dependency). | One-way import rule (dm-0022), enforced by a scan test like the components logic-free scan. |
+| Pipeline-order drift between eval harness and future P8/P9 assemblies. | The canonical order is exported once from the harness and asserted against the normative list in a test. |
+| Tape format churn breaks stored tapes later (P8 recordings, P9 saves). | Versioned from day one (`TAPE_SCHEMA_VERSION`); dm-0010 policy — hard-reject other versions, migrate only when v2 exists. |
+| Archetype params become de-facto gameplay tuning. | Params are eval-model data (frozen records in `src/eval/`), never read by `src/systems/`; the one-way import rule makes the reverse read impossible. |
+
+## Open questions (carried into P4 implementation)
+
+1. **Tier interpolation semantics (S4.5)** — how Good/Fast/Expert times derive from the archetype spread (fixed fractions vs. per-archetype anchors). Decide + ledger at S4.5; REQ-101 fixes only the five tier names.
+2. **Chapter manifest shape (S4.6)** — no chapter schema exists yet (content is gated). S4.6 defines a minimal ordered-verdict-sequence input type; the real chapter manifest schema lands with P6/P10 and must adopt it or version it.
+3. **Search budget calibration (S4.2)** — the bounded-search envelope (branching per tick, horizon) that makes fixture classification exact without exploding; decide + ledger at S4.2.
+4. **Exploit "challenge envelope" definition (S4.4)** — what formally marks the intended challenge region (authored GDOS metadata vs. derived hazard proximity). Decide at S4.4; leans on dm-0012's structural GDOS block.
+
+## Exit condition for P4
+
+All checkpoints C4.1–C4.7 pass; the archetype harness is deterministic and replay-anchored; solvability/softlock/exploit/routing verdicts are correct on their fixture sets; the macro pass runs isolated; the verification report is filed. P4 `VERIFIED` is the first of the three M2 pillars (P4+P5+P6) — the content gate stays closed until all three close.
