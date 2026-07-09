@@ -39,6 +39,13 @@ import { ZERO, type Vec2 } from '../core/Vec2';
 import type { EntityId } from '../components/EntityId';
 import type { LevelDefinition } from '../components/Level';
 
+/**
+ * The run lifecycle state (S3.4). 'defeated' lasts at most one tick: the
+ * lifecycle system (first in the pipeline) consumes it and reloads.
+ * 'completed' freezes the world (control/physics no-op) until reset.
+ */
+export type RunState = 'playing' | 'defeated' | 'completed';
+
 /** Runtime state of one entity. Authored data stays in world.level; only what changes lives here. */
 export interface EntityState {
   readonly id: EntityId;
@@ -63,6 +70,16 @@ export interface WorldState {
    * becomes true on the first supported step (S3.1).
    */
   readonly playerGrounded: boolean;
+  /** Run lifecycle phase (S3.4). Fresh worlds start 'playing'. */
+  readonly runState: RunState;
+  /** Number of scene reloads performed for this level so far. Fresh worlds start 0. */
+  readonly attemptCount: number;
+  /**
+   * The GameState tick at which this life began (0 for the initial world;
+   * the reload tick afterwards). Elapsed life time is DERIVED as
+   * tick - spawnTick (dm-0016: derive, don't duplicate).
+   */
+  readonly spawnTick: number;
   /** Deterministic counter for runtime-spawned entity ids (`rt:<serial>`). */
   readonly nextSpawnSerial: number;
 }
@@ -87,6 +104,9 @@ export function instantiateWorld(def: LevelDefinition): WorldState {
     playerPosition: level.constraints.spawn,
     playerVelocity: ZERO,
     playerGrounded: false,
+    runState: 'playing',
+    attemptCount: 0,
+    spawnTick: 0,
     nextSpawnSerial: 0,
   };
 }

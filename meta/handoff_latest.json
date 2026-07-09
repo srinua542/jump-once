@@ -11,7 +11,7 @@
   "exact_execution_focus": {
     "file_path": "docs/task_slices.md",
     "target_line_range": "Phase 3 table (S3.4 row)",
-    "pending_logical_transformation": "S3.2 + S3.3 COMPLETED (quadtree broad-phase; PlayerControl.ts sole input consumer, instant accel/decel; 147/147, pkg s3-c9e3f1). Next: S3.4 run lifecycle — WorldState gains runState ('playing'|'defeated'|'completed'), attemptCount, spawnTick; new src/systems/Lifecycle.ts FIRST in pipeline: resetPressed or 'defeated' -> next-tick pure re-instantiation via instantiateWorld(level) (attemptCount+1, same frozen level ref, REQ-003 instant iteration); goal overlap (strict AABB vs constraints.goal) -> 'completed' (freeze world). Then S3.5 jump lock (needs reload to exist).",
+    "pending_logical_transformation": "S3.2-S3.4 COMPLETED (quadtree; PlayerControl; Lifecycle+HazardsAndGoal with runState/attemptCount/spawnTick, one-tick defeat->reload, completion freeze; 153/153, pkg s3-d0f4a2). Next: S3.5 SINGLE-JUMP LOCK (the axiom, REQ-004/010/011): WorldState gains jumpLock machine state ('available' | anticipating countdown | 'spent'); PlayerControl consumes jumpPressed — grounded+available -> anticipating(TUNING.anticipationTicks, add field w/ consumer); countdown hits 0 -> impulse vy = -TUNING.jumpSpeed once -> 'spent' forever until reload (which resets by construction via instantiateWorld). While spent/airborne, jumpPressed ignored. Fuzz property: never >1 impulse per life.",
     "pkg_hash_note": "no structural change may land without a PKG node+edges update in the same change"
   },
   "blocked_by": {

@@ -197,6 +197,7 @@ function sweepAxis(
  * swept Y move. Pure — returns a new WorldState.
  */
 export function stepPlayerPhysics(world: WorldState): WorldState {
+  if (world.runState !== 'playing') return world; // frozen outside a live run (S3.4)
   const dt = FIXED_STEP_SECONDS;
   const half = TUNING.playerHalfExtents;
 

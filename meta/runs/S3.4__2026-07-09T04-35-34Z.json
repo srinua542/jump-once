@@ -1,0 +1,67 @@
+{
+  "slice": "S3.4",
+  "title": "Run lifecycle: goal, defeat, instant scene reload",
+  "reqs": [
+    "REQ-003"
+  ],
+  "started_at": "2026-07-09T04:30:12.513Z",
+  "updated_at": "2026-07-09T04:35:34.160Z",
+  "current_stage": "handoff",
+  "stages": {
+    "reboot": {
+      "status": "done",
+      "at": "2026-07-09T04:30:12.514Z",
+      "note": "REBOOT held (147/147, pkg s3-c9e3f1)"
+    },
+    "select": {
+      "status": "done",
+      "at": "2026-07-09T04:30:12.579Z",
+      "note": "SELECT: S3.4; depends S3.1+S3.3 COMPLETED"
+    },
+    "plan": {
+      "status": "done",
+      "at": "2026-07-09T04:30:12.641Z",
+      "note": "PLAN: WorldState += runState/attemptCount/spawnTick; Lifecycle.ts FIRST in pipeline (resetPressed or defeated -> pure re-instantiation, attempt+1, spawnTick=tick, same frozen level ref); HazardsAndGoal.ts LAST (S3.4 share: goal strict-overlap -> completed, fall-below-world -> defeated; hazard lethality joins at S3.7); control/physics gain runState!=playing no-op guards (completion freezes world). Input-boundary refinement: Lifecycle consumes resetPressed; PlayerControl remains sole consumer of moveAxis/jumpPressed (dm-0019 split is by field)."
+    },
+    "anchor": {
+      "status": "done",
+      "at": "2026-07-09T04:30:12.727Z",
+      "note": "ANCHOR: WorldState extension additive; instantiateWorld signature unchanged (lifecycle composes attempt/spawnTick on reload); existing 147-test suite is the regression gate for the two guards"
+    },
+    "implement": {
+      "status": "done",
+      "at": "2026-07-09T04:30:12.813Z",
+      "note": "IMPLEMENT: WorldState += runState/attemptCount/spawnTick; Lifecycle.ts (reload = pure re-instantiation); HazardsAndGoal.ts (goal + fall-out); runState guards in control/physics"
+    },
+    "verify": {
+      "status": "done",
+      "at": "2026-07-09T04:35:33.847Z",
+      "note": "VERIFY: 153/153 (+6: goal completes/clear does not, completion freeze until reset, pit-fall defeat + next-tick fresh world equal to re-derived fresh instantiation, resetPressed reload, cross-reload replay determinism, purity/no-op identity)"
+    },
+    "integrate": {
+      "status": "done",
+      "at": "2026-07-09T04:35:33.908Z",
+      "note": "INTEGRATE: PKG +systems/lifecycle +systems/hazards_and_goal, entities/world summary + dependents updated, edges both directions, pkg_hash -> s3-d0f4a2"
+    },
+    "report": {
+      "status": "done",
+      "at": "2026-07-09T04:35:34.036Z",
+      "note": "REPORT: S3.4 -> COMPLETED (REQ-003 P3 share done; P10 share open)"
+    },
+    "handoff": {
+      "status": "done",
+      "at": "2026-07-09T04:35:34.099Z",
+      "note": "HANDOFF updated (resume at S3.5 the axiom)"
+    }
+  },
+  "acceptance": [
+    {
+      "req": "REQ-003",
+      "criterion": "(fill in)",
+      "met": true,
+      "note": null
+    }
+  ],
+  "outcome": "completed",
+  "closed_at": "2026-07-09T04:35:34.221Z"
+}

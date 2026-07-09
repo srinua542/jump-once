@@ -30,6 +30,7 @@ import type { System } from './System';
 export const playerControlSystem: System<WorldState> = {
   id: 'playerControl',
   step(state: GameState<WorldState>): GameState<WorldState> {
+    if (state.world.runState !== 'playing') return state; // frozen outside a live run (S3.4)
     const vx = state.input.moveAxis * TUNING.runSpeed;
     if (vx === state.world.playerVelocity.x) return state;
     return {
