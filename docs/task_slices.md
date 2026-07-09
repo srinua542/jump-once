@@ -158,7 +158,7 @@ Session-sized, dependency-ordered work units. Each slice is small enough to comp
 
 ## Next-session pick-list (top of queue)
 
-**P4 — Evaluation & Validation Framework is VERIFIED** (`docs/verification/P4.md`); all seven P4 slices COMPLETED, 240/240 tests green, pkg `s4-f6c7d8`. **Milestone M2 — Design Intelligence Operational is still OPEN** — P4 is one of its three pillars (P4 + P5 + P6). The next phase is **P5 — GDOS Scoring Engine** (its entry condition, P4-VERIFIED, is satisfied).
+**P4 — Evaluation & Validation Framework is VERIFIED** (`docs/verification/P4.md`); all seven P4 slices COMPLETED, 241/241 tests green, pkg `s4-g7d8e9`. **Milestone M2 — Design Intelligence Operational is still OPEN** — P4 is one of its three pillars (P4 + P5 + P6). The next phase is **P5 — GDOS Scoring Engine** (its entry condition, P4-VERIFIED, is satisfied).
 
 1. **Author the P5 execution-plan section FIRST** (REQ-P02) — consider the same adversarial review P2/P3/P4 got; P5 owns emotional-threshold gates, streamability matrix, IDS regulator, economy-of-mechanics metric, novelty/emergent-fun search, CDRE loop, Kill Switch + First-Party filter, subtractive-removal engine, design-space coverage. P5's gates consume the P4 verdicts (solvability/optimization/curriculum) as inputs.
 2. **S5.1** — Design-space coverage matrix + economy-of-mechanics metric (REQ-040/041/042).

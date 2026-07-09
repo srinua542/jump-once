@@ -79,8 +79,22 @@ test('a level with a real jump has a positive delta and is not rejected', () => 
 test('a trivial flat level has ~zero delta and is rejected (REQ-102)', () => {
   const v = computeOptimizationWindow(FLAT);
   assert.equal(v.applicable, true);
-  assert.equal(v.deltaSeconds, 0);
+  assert.ok(v.deltaSeconds! < 0.05, `flat delta ${v.deltaSeconds} should be near zero`);
   assert.equal(v.rejected, true, 'no optimization window → reject');
+});
+
+test('the World-Record tier is anchored to the fastest KNOWN route (search or archetype), never slower than either (dm-0030)', () => {
+  const v = computeOptimizationWindow(GAP);
+  assert.ok(v.searchOptimalSeconds !== undefined, 'the search must find an optimal route on a solvable level');
+  assert.ok(
+    v.tiers!.worldRecord <= v.searchOptimalSeconds!,
+    'WR must be no slower than the search route',
+  );
+  // WR is the min of the two anchors, so it is also no slower than any archetype clear.
+  for (const c of v.completions) {
+    if (c.completed) assert.ok(v.tiers!.worldRecord <= c.seconds! + 1e-9, `WR must not exceed ${c.archetype}'s time`);
+  }
+  assert.ok(v.worldRecordSource === 'search' || v.worldRecordSource === 'archetype');
 });
 
 test('the par-time cross-check flags an optimal par faster than the sim World Record', () => {

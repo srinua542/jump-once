@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
   "generated_by_session": "2026-07-09T-session-4",
-  "pkg_hash": "s4-f6c7d8",
+  "pkg_hash": "s4-g7d8e9",
   "notes": "Machine-readable mirror of the codebase. Read at every session start; update immediately on any structural code change (new module, changed dependency, changed GDOS mapping). See references/pkg_schema.md.",
   "nodes": [
     {
@@ -1000,7 +1000,8 @@
       "dependents": [
         "eval/local/solvability",
         "eval/local/softlock",
-        "eval/local/exploit"
+        "eval/local/exploit",
+        "eval/local/optimization"
       ],
       "volatile_state_flags": {
         "has_side_effects": false,
@@ -1084,13 +1085,14 @@
       "node_id": "eval/local/optimization",
       "type": "SystemNode",
       "file_path": "src/eval/local/Optimization.ts",
-      "functional_summary": "Optimization-space model (REQ-101/102, dm-0028). computeOptimizationWindow(def,opts)->OptimizationVerdict{applicable,tiers,deltaSeconds,rejected,parPlausible,completions}. Runs the five archetypes; tiers anchored to the spread — Discovery=First-Time clear, WorldRecord=Expert-Speedrunner clear, Good/Fast/Expert interpolated at 1/4,1/2,3/4; Curious-Explorer excluded from anchoring. delta=Discovery-WR seconds; reject when delta<minDeltaSeconds (default 0.25) — REQ-102 flat-layout rejection. Cross-checks authored parTimeTiersSeconds: parPlausible=false when authored optimal par < sim WR. Times via FIXED_STEP_SECONDS; whitelist math.",
+      "functional_summary": "Optimization-space model (REQ-101/102, dm-0028). computeOptimizationWindow(def,opts)->OptimizationVerdict{applicable,tiers,deltaSeconds,rejected,parPlausible,completions}. Runs the five archetypes; tiers anchored to the spread — Discovery=First-Time clear, WorldRecord=Expert-Speedrunner clear, Good/Fast/Expert interpolated at 1/4,1/2,3/4; Curious-Explorer excluded from anchoring. delta=Discovery-WR seconds; reject when delta<minDeltaSeconds (default 0.25) — REQ-102 flat-layout rejection. Cross-checks authored parTimeTiersSeconds: parPlausible=false when authored optimal par < sim WR. Times via FIXED_STEP_SECONDS; whitelist math. dm-0030: the World-Record anchor is now the FASTEST known route — min of the Expert-Speedrunner clear and the bounded search optimal route (searchReachability) — so the delta reflects genuine route optimization, not just reaction time. Reports worldRecordSource + searchOptimalSeconds.",
       "gdos_alignment": "Section_11_Optimization_Space",
       "dependencies": [
         "core/clock",
         "components/level",
         "eval/archetypes",
-        "eval/agent_harness"
+        "eval/agent_harness",
+        "eval/local/search"
       ],
       "dependents": [],
       "volatile_state_flags": {
@@ -1967,6 +1969,12 @@
       "type": "DependencyEdge",
       "from": "eval/local/optimization",
       "to": "eval/agent_harness",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "eval/local/optimization",
+      "to": "eval/local/search",
       "kind": "value_import"
     }
   ],
