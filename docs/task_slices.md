@@ -64,7 +64,7 @@ Session-sized, dependency-ordered work units. Each slice is small enough to comp
 | S3.6 | Environmental elements | REQ-151 | S3.1, S3.3 | Tick-parametric (closed-form, dm-0016) moving platforms (linear/looping/triggered) + platform carry (incl. platform-into-wall); collapsing floors; frictionless ice — data-driven; isolated tests. | COMPLETED |
 | S3.7 | Hazards + triggers | REQ-152 | S3.4, S3.6 | Spikes/lasers (pure fn of tick)/moving hazards → defeat via **swept** lethal check; plates/proximity/doors execute the closed trigger-action union in authored order; layering test ≥3 mechanics. | COMPLETED |
 | S3.8 | Kinetic modifiers | REQ-153 | S3.5 | Springs/gravity zones/conveyors alter velocity/inertia; lock state bit-identical before/after (never consumes jump — asserted). | COMPLETED |
-| S3.9 | Phase-3 verification report | REQ-P02 | S3.5–S3.8 | `docs/verification/P3.md`; one-jump invariant proven across full library; M1 exit items (subtractive pass, compliance audit, save-persistence ownership → P9/REQ-171). | NOT_STARTED |
+| S3.9 | Phase-3 verification report | REQ-P02 | S3.5–S3.8 | `docs/verification/P3.md`; one-jump invariant proven across full library; M1 exit items (subtractive pass, compliance audit, save-persistence ownership → P9/REQ-171). | COMPLETED |
 
 ## Phase 4 — Evaluation & Validation Framework
 
@@ -156,12 +156,11 @@ Session-sized, dependency-ordered work units. Each slice is small enough to comp
 
 ## Next-session pick-list (top of queue)
 
-**P2 — Data Models & Level Definition Schema is VERIFIED** (`docs/verification/P2.md`); all six P2 slices COMPLETED, 118/118 tests green. P3 — Mechanic Library & Deterministic Physics is now the active phase.
+**P3 — Mechanic Library & Deterministic Physics is VERIFIED** (`docs/verification/P3.md`); all nine P3 slices COMPLETED, 186/186 tests green. **Milestone M1 — Simulatable Game is CLOSED** (P2 ✓ + P3 ✓). The next phase is **P4 — Evaluation & Validation Framework** (opening M2 — Design Intelligence Operational).
 
-1. **S3.1** — Deterministic physics & collision core (P3 execution-plan section authored ✓).
-2. **S3.2** — Spatial partition (quadtree) for collision.
-3. **S3.3** — Player controller: instant accel/decel.
-4. **S3.4** — Run lifecycle: goal, defeat, instant scene reload.
-5. **S3.5** — **Single-jump lock** state machine (the game's axiom, REQ-004).
-6. **S3.6–S3.8** — Environmental elements, hazards + triggers, kinetic modifiers.
-7. **S3.9** — Phase-3 verification report (closes M1).
+1. **S4.1** — Agent-archetype simulator harness. First P4 slice — **author the P4 execution-plan section first** (REQ-P02), then implement.
+2. **S4.2** — Solvability audit (exactly-one-jump) — now testable against the real P3 mechanic library.
+3. **S4.3–S4.6** — Softlock detection, exploit filtration, optimization windows + five-tier routing, macro curriculum validation.
+4. **S4.7** — Phase-4 verification report.
+
+*(Content generation stays hard-gated until M2 — P4+P5+P6 — is VERIFIED.)*

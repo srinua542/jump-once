@@ -17,15 +17,15 @@
 | REQ-001 | 2D puzzle-platformer targeting premium web portals (Poki, CrazyGames); retention decided in first 30s. | §1 | P9,P11 | NOT_STARTED |
 | REQ-002 | Eliminate operational friction: no long loads, no complex progression, no text-heavy tutorials. | §1 | P9,P10 | NOT_STARTED |
 | REQ-003 | Prioritize continuous kinetic momentum and instant gameplay iteration. | §1 | P3,P10 | IN_PROGRESS |
-| REQ-004 | Single unchanging structural constraint: exactly one jump per level. | §1 | P3 | IN_PROGRESS |
+| REQ-004 | Single unchanging structural constraint: exactly one jump per level. | §1 | P3 | VERIFIED |
 | REQ-005 | Depth via level design (Level Devil–style subversion), not expanded power sets; logical fairness; deterministic rules. | §1 | P10 | NOT_STARTED |
 
 ## §2 Core Philosophy & Axiomatic Constraints
 
 | ID | Requirement | PRD | Phase | State |
 |----|-------------|-----|-------|-------|
-| REQ-010 | Exactly one jump per level, invariant across the entire campaign. | §2 | P3 | IN_PROGRESS |
-| REQ-011 | Exclude upgrades, power-ups, double/wall jumps, jump-refreshing lives, temporary exceptions. | §2 | P3 | IN_PROGRESS |
+| REQ-010 | Exactly one jump per level, invariant across the entire campaign. | §2 | P3 | VERIFIED |
+| REQ-011 | Exclude upgrades, power-ups, double/wall jumps, jump-refreshing lives, temporary exceptions. | §2 | P3 | VERIFIED |
 | REQ-012 | Every challenge isolates/amplifies/tests the one-jump constraint; omit anything that does not. | §2 | P5,P10 | NOT_STARTED |
 | REQ-013 | Understandable within seconds; difficulty from player decisions and spatial puzzles. | §2 | P10 | NOT_STARTED |
 | REQ-014 | The structural puzzle *is* the level layout itself. | §2 | P2,P10 | IN_PROGRESS |
@@ -143,10 +143,10 @@
 | ID | Requirement | PRD | Phase | State |
 |----|-------------|-----|-------|-------|
 | REQ-150 | Player Character Controller: instant horizontal accel/decel; single jump with anticipation frames, squash-and-stretch, particle burst, camera tracking; jump state locks (horizontal-only) until scene reload. | §16 | P3,P9 | IN_PROGRESS |
-| REQ-151 | Environmental elements: static geometry, moving platforms (linear/looping/triggered), collapsing floors, frictionless ice. | §16 | P3 | IN_PROGRESS |
-| REQ-152 | Hazards & triggers: static spikes, timed laser arrays, moving hazards (instant defeat on intersection); pressure plates, proximity zones, mechanical doors that modify layout dynamically. | §16 | P3 | IN_PROGRESS |
-| REQ-153 | Kinetic modifiers: directional launch springs, gravity-inverting zones, conveyors — alter velocity/inertia without consuming the single jump. | §16 | P3 | IN_PROGRESS |
-| REQ-154 | Components fully decoupled/modular; complex puzzles emerge from layering simple systems. | §16 | P3 | IN_PROGRESS |
+| REQ-151 | Environmental elements: static geometry, moving platforms (linear/looping/triggered), collapsing floors, frictionless ice. | §16 | P3 | VERIFIED |
+| REQ-152 | Hazards & triggers: static spikes, timed laser arrays, moving hazards (instant defeat on intersection); pressure plates, proximity zones, mechanical doors that modify layout dynamically. | §16 | P3 | VERIFIED |
+| REQ-153 | Kinetic modifiers: directional launch springs, gravity-inverting zones, conveyors — alter velocity/inertia without consuming the single jump. | §16 | P3 | VERIFIED |
+| REQ-154 | Components fully decoupled/modular; complex puzzles emerge from layering simple systems. | §16 | P3 | VERIFIED |
 
 ## §17 Performance Optimization & Technical Guardrails
 
@@ -183,14 +183,14 @@
 
 ---
 
-## Rollup (P3 in flight since S3.1; P2 VERIFIED — `docs/verification/P2.md`; last milestone close was M0, `docs/verification/P1.md`)
+## Rollup (P3 VERIFIED — `docs/verification/P3.md`; milestone M1 — Simulatable Game CLOSED with P2 ✓ + P3 ✓)
 
 | State | Count |
 |-------|------:|
-| NOT_STARTED | 42 |
-| IN_PROGRESS | 19 |
+| NOT_STARTED | 40 |
+| IN_PROGRESS | 14 |
 | COMPLETED | 0 |
-| VERIFIED | 6 |
+| VERIFIED | 13 |
 | **Total** | **67** |
 
 **VERIFIED at M0:** REQ-P01, REQ-P05, REQ-P10 (see `docs/verification/P1.md` §4 for the per-REQ rationale). **VERIFIED at P2 close:** REQ-120, REQ-121 (P1,P2 spans now fully covered — runtime-parsed data drives the engine, proven by the file→parse→instantiate→replay integration test), REQ-122 (P2-scoped, fully delivered; see `docs/verification/P2.md` §3). REQ-014 (P2,P10) and REQ-154 (P3) correctly remain `IN_PROGRESS` — their remaining phase scope is unbuilt. See [IRD.md](IRD.md) for phase gating and [execution_plan.md](execution_plan.md) for the active-phase plan.

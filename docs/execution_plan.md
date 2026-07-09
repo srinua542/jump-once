@@ -4,7 +4,7 @@ This document holds one section per phase, authored *before* that phase's implem
 
 - **P0 + P1 (M0 — Foundation Locked): CLOSED.** M0 is VERIFIED, see `docs/verification/P1.md`. Retained below as the historical record.
 - **P2 — Data Models & Level Definition Schema: CLOSED — VERIFIED**, see `docs/verification/P2.md`. Checkpoints C2.1–C2.6 all passed (118/118 tests). Retained below as the historical record.
-- **P3 — Mechanic Library & Deterministic Physics: IN FLIGHT.** Section authored at S3.1 start, before any P3 code (REQ-P02), via adversarial review of the original S3.1–S3.8 slice table (decisions dm-0016–dm-0019; table restructured to S3.1–S3.9).
+- **P3 — Mechanic Library & Deterministic Physics: CLOSED — VERIFIED**, see `docs/verification/P3.md`. Authored at S3.1 start via adversarial review (dm-0016–dm-0021; table restructured to S3.1–S3.9). All checkpoints C3.1–C3.9 passed (186/186 tests). **Milestone M1 — Simulatable Game CLOSED.**
 
 Covers the phases that were in flight: **P0 (Governance & Protocol Infrastructure)** and **P1 (Deterministic Core Architecture)** — together, milestone **M0 — Foundation Locked**. Per the Directive, this plan is written *before* implementation code and defines the work, governing PRD requirements, dependencies, deliverables, validation criteria, and completion checkpoints. A new execution plan will be authored at the start of each subsequent phase.
 
@@ -190,7 +190,9 @@ All six checkpoints C2.1–C2.6 pass; the hand-authored sample level parses, val
 ---
 ---
 
-# P3 — Mechanic Library & Deterministic Physics  *(IN FLIGHT; authored at S3.1 start per REQ-P02)*
+# P3 — Mechanic Library & Deterministic Physics  *(CLOSED — VERIFIED, `docs/verification/P3.md`; authored at S3.1 start per REQ-P02)*
+
+> **CLOSED at S3.9.** All nine slices COMPLETED, checkpoints C3.1–C3.9 passed, 186/186 tests green. The single-jump axiom holds under fuzzed input; the full §16 mechanic library is data-driven and layering-tested; every mechanic replays bit-identically. **Milestone M1 — Simulatable Game is CLOSED** (P2 ✓ + P3 ✓). Retained below as the historical record.
 
 ## Governing requirements
 
@@ -258,13 +260,13 @@ P2 VERIFIED (satisfied). No external dependencies. Consumes: `WorldState`/`insta
 
 ## Checkpoints
 
-- **C3.1** Physics core lands; no-tunneling + trajectory replay green. ✅*(pending)*
-- **C3.2** Quadtree equivalence green.
-- **C3.3** Controller consumes real `InputFrame`s; instant accel/decel proven.
-- **C3.4** Lifecycle: defeat→instant reload→fresh world; goal→completed; deterministic across replays.
-- **C3.5** Single-jump lock fuzz property green — the axiom holds.
-- **C3.6–C3.8** Mechanic library complete, each isolated + layered tests green.
-- **C3.9** `docs/verification/P3.md` filed; P3 REQs flipped per dm-0008; PKG consistent; subtractive pass recorded; **M1 — Simulatable Game closes.**
+- **C3.1** ✅ Physics core lands; no-tunneling (300-case fuzz @1200 u/s) + trajectory replay green.
+- **C3.2** ✅ Quadtree equivalence-vs-brute-force fuzz green.
+- **C3.3** ✅ Controller consumes real `InputFrame`s; instant accel/decel proven.
+- **C3.4** ✅ Lifecycle: defeat→instant reload→fresh world; goal→completed; deterministic across replays.
+- **C3.5** ✅ Single-jump lock fuzz property green — the axiom holds (never >1 impulse/life, forward-only).
+- **C3.6–C3.8** ✅ Mechanic library complete (platforms+carry/collapse/ice; spikes/lasers/hazards; plates/doors; springs/zones/conveyors), each isolated + layered tests green; kinetic modifiers never consume the jump.
+- **C3.9** ✅ `docs/verification/P3.md` filed; REQ-004/010/011/151/152/153/154 flipped VERIFIED per dm-0008; PKG consistent (`s3-b4d8e6`); subtractive pass (0 findings) + transcendental audit recorded; **M1 — Simulatable Game CLOSED.**
 
 ## Risk register (P3)
 

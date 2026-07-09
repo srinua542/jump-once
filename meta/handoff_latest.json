@@ -1,48 +1,43 @@
 {
-  "session_end_timestamp": "2026-07-09T17:30:00Z",
-  "current_milestone": "M1_Simulatable_Game",
+  "session_end_timestamp": "2026-07-09T19:00:00Z",
+  "current_milestone": "M2_Design_Intelligence_Operational",
   "active_working_branch": "main",
   "completed_since_last_snapshot": [
-    "P3 execution-plan section authored (docs/execution_plan.md) via adversarial review of the original S3.1-S3.8 slice table — the same treatment P2 got. Findings: no slice owned run lifecycle (goal/defeat/reload); input-system ownership undefined; five technique upgrades. Slice table restructured S3.1-S3.9 (S3.4 run lifecycle NEW; jump lock -> S3.5). Ledger dm-0016..dm-0019.",
-    "S3.1 COMPLETED: Tuning.ts + CollisionClass.ts (pure data), WorldState.playerGrounded + index-alignment invariant, PlayerPhysics.ts (semi-implicit Euler, swept axis-separated tile+entity resolution, exact face snapping, math whitelist). +16 tests incl. 300-case no-tunneling fuzz. Committed.",
-    "S3.2 COMPLETED: SpatialPartition.ts deterministic quadtree (fixed insertion order/capacity 8/depth 8, straddlers-at-parent, strict-overlap ascending query) + PlayerPhysics broad-phase wiring (swept-union query box). +7 tests incl. fuzz equivalence-vs-brute-force. Committed.",
-    "S3.3 COMPLETED: TUNING.runSpeed; PlayerControl.ts — the sole simulation input consumer (dm-0019), instant horizontal accel/decel (set-not-ramp), runs before physics. +6 tests. Committed.",
-    "S3.4 COMPLETED: WorldState += runState/attemptCount/spawnTick; Lifecycle.ts (first in pipeline: defeated/resetPressed -> pure re-instantiation, one-tick instant iteration) + HazardsAndGoal.ts (last: goal strict-overlap -> completed/freeze, fall-out -> defeated); runState guards in control/physics. +6 tests incl. cross-reload replay determinism. Committed.",
-    "S3.5 COMPLETED (THE AXIOM): TUNING += jumpSpeed/anticipationTicks; WorldState += jumpLock {phase, ticksUntilImpulse}; single-jump machine in PlayerControl (grounded press -> anticipating(N) -> ONE impulse -> spent forever until reload; air presses ignored-not-consumed; committed anticipation; no coyote/no buffering — dm-0020). +8 tests incl. THE PROPERTY (40 fuzz tapes across defeat/reset -> never >1 impulse/life). Committed.",
-    "S3.6 COMPLETED: EntityKinematics.ts (closed-form movers via arc-length over waypoint polyline — looping wrap / linear|triggered ping-pong; collapse latch+derive). WorldState.playerGroundEntity; EntityState += activationTick/firstContactTick/collapsed; PlayerPhysics platform CARRY (two-phase Y keeps grounding robust under an upward platform) + ground-entity record + collapsed-floors-non-solid; PlayerControl frictionless-ice branch (momentum-preserving, TUNING.iceAccel). +10 tests. Committed.",
-    "S3.7 COMPLETED: HazardsAndGoal lethal swept check (laser on-phase pure fn of tick; segment-vs-Minkowski-AABB slab) + Sensors.ts (rising-edge triggers, authored order, closed action union). WorldState += playerPrevPosition/triggerActivePrev/triggerFired; EntityState += doorOpen. +9 tests incl. 3-mechanic layering. Committed.",
-    "S3.8 COMPLETED: kinetic modifiers folded (dm-0021) — spring + conveyor into PlayerControl (grounded-on-surface velocity edits), gravity zones into PlayerPhysics (effective-gravity sampling); per-entity data, no new state. +6 tests incl. THE INVARIANT (jumpLock bit-identical across every modifier interaction — REQ-153 never consumes the jump). 186/186 green. Ledger dm-0021. (COMMIT PENDING.)",
-    "PKG: +6 nodes total this session (tuning, collision_class, player_physics, spatial_partition, player_control, lifecycle, hazards_and_goal — 7 actually; entities/world extended repeatedly), all edges both directions, pkg_hash s2-e6f2a4 -> s3-a7c1d9 -> s3-b8d2e0 -> s3-c9e3f1 -> s3-d0f4a2 -> s3-e1a5b3 (current). Reconciled pre-existing session-1 drift (core/clock, core/rng dependents missing core/state)."
+    "ENTIRE PHASE P3 COMPLETED AND VERIFIED this session (docs/verification/P3.md). All nine slices S3.1-S3.9 ran the full nine-stage SDLC loop; per-slice archives in meta/runs/S3.*.json. Suite grew 118 -> 186, all green. MILESTONE M1 — Simulatable Game is CLOSED (P2 + P3).",
+    "P3 execution plan authored via adversarial review (dm-0016-dm-0021): closed-form tick-parametric kinematics, swept axis-separated collision + transcendental ban + symplectic Euler, jump-lock-by-construction + Tuning data record, slice restructure (added S3.4 run lifecycle; input ownership by-field), kinetic-modifier fold.",
+    "S3.1 physics core (PlayerPhysics: symplectic Euler, swept resolution, no-tunneling fuzz) + Tuning.ts + CollisionClass.ts + SpatialPartition quadtree (S3.2, fuzz equivalence).",
+    "S3.3 PlayerControl (sole input consumer, instant accel/decel). S3.4 Lifecycle + HazardsAndGoal (goal/defeat/instant reload). S3.5 THE AXIOM — single-jump lock (fuzz property: never >1 impulse/life).",
+    "S3.6 EntityKinematics (closed-form movers + carry + collapse) + ice. S3.7 lethal hazards (swept) + Sensors (triggers, authored order). S3.8 kinetic modifiers (springs/gravity zones/conveyors; never-consumes-jump invariant).",
+    "S3.9 docs/verification/P3.md filed; REQ-004/010/011/151/152/153/154 -> VERIFIED (dm-0008); subtractive pass 0 findings; transcendental-function audit clean; save-persistence ownership assigned to P9/REQ-171. IRD + execution_plan P3 section CLOSED; rollup corrected to 40/14/0/13.",
+    "PKG: +7 system/component nodes across the session (tuning, collision_class, player_physics, spatial_partition, player_control, lifecycle, hazards_and_goal, entity_kinematics, sensors), entities/world extended per slice, all edges both directions, pkg_hash s2-e6f2a4 -> s3-c5e9f7 (current). Reconciled two pre-existing session-1 drifts (clock/rng->state reverse deps; tools/sdlc gate->recipe edge). Ledger dm-0016..dm-0021 recorded."
   ],
   "exact_execution_focus": {
-    "file_path": "docs/task_slices.md",
-    "target_line_range": "Phase 3 table (S3.9 row)",
-    "pending_logical_transformation": "S3.1-S3.8 COMPLETED (186/186, pkg s3-b4d8e6) — the entire P3 mechanic library is built and green. LAST slice S3.9 — Phase-3 verification report (docs/verification/P3.md): map each P3 REQ (003,004,010,011,150,151,152,153,154,160,162) to its passing test(s) per dm-0008; flip REQ-004/010/011/150(P3 share)/151/152/153/154 to VERIFIED (REQ-003 spans P10, REQ-160 spans P11, REQ-162 spans P9/P11 — those stay IN_PROGRESS); run the Subtractive Removal pass over the new P3 systems (grep for dead exports, unused fields, transcendental fns in src/systems/ per dm-0017 audit); PRD compliance audit for M1; record save-persistence ownership -> P9/REQ-171. Then close M1 in IRD.md + execution_plan.md P3 section, update rollup. This closes MILESTONE M1 — Simulatable Game.",
+    "file_path": "docs/execution_plan.md",
+    "target_line_range": "new-content (P4 section)",
+    "pending_logical_transformation": "P3 VERIFIED, M1 CLOSED (186/186, pkg s3-c5e9f7). Open P4 — Evaluation & Validation Framework (first phase of M2). FIRST author the P4 execution-plan section (REQ-P02) covering IRD P4: two isolated validation passes (Local Spatial Verification + Macro Curriculum Validation, REQ-140), five agent archetypes (First-Time/Cautious/Experienced/Expert-Speedrunner/Curious-Explorer) driving the deterministic sim headlessly (REQ-141), solvability audit (exactly-one-jump — now testable against the real P3 mechanic library), softlock detection, exploit filtration, optimization windows + five-tier routing + delta (REQ-101/102). Consider the same adversarial review P2/P3 got — esp. the replay-tape serialization ownership (unowned per P2/P3 open questions; P4 entry is the natural home — assign it here). THEN implement S4.1 (agent-archetype simulator harness). P4 systems consume the frozen deterministic sim (Engine + P3 systems over WorldState); agents produce InputFrames (the sim-side input contract from S1.4/dm-0019).",
     "pkg_hash_note": "no structural change may land without a PKG node+edges update in the same change"
   },
   "blocked_by": {
     "dependency_node": "none",
-    "reason": "No blockers. S3.1-S3.8 COMPLETED, suite green (186/186). Milestone M1 needs only S3.9 (verification report) to close — no more mechanic code."
+    "reason": "No blockers. M1 CLOSED; P4's entry condition (M1 verified) is satisfied. P4 opens M2."
   },
   "critical_warnings_for_next_session": [
-    "RUN THE REBOOT LIFECYCLE FIRST: confirm pkg_hash s3-b4d8e6 matches meta/project_knowledge_graph.json, npm test expect 186 passing.",
-    "IF S3.8 IS UNCOMMITTED: commit it first (git status shows PlayerControl.ts, PlayerPhysics.ts, KineticModifiers.test.ts, meta/*). It reached done in the stage tracker.",
-    "S3.9 is a VERIFICATION slice (docs + audit, no new mechanic code). It closes M1 — run the Subtractive Removal pass (REQ-022) and the transcendental-function grep audit (dm-0017) over src/systems/ as part of it.",
-    "S3.8 KINETIC MODIFIERS MUST NEVER CONSUME THE JUMP (REQ-153): springs/gravity zones/conveyors alter velocity/inertia only; the required property test asserts world.jumpLock is bit-identical before/after any modifier interaction. This is the axiom's boundary — do not let a spring reset or a gravity flip touch the lock machine.",
-    "THE AXIOM (dm-0020): the single-jump lock is engine logic in PlayerControl + WorldState.jumpLock, NEVER a schema field (dm-0011 — no maxJumps ever). Refresh happens ONLY because reload re-instantiates WorldState (dm-0018 — no reset code exists). No coyote time, no input buffering — adopting either is a P5/GDOS decision that must still consume the single jump and pass the property test.",
-    "CANONICAL PIPELINE ORDER (normative, P3 plan): lifecycle -> entityKinematics(S3.6) -> playerControl -> playerPhysics -> surfaceEffects(S3.6 ice/S3.8) -> sensors(S3.7) -> hazardsAndGoal. System composition order is a determinism parameter — the Engine must pipe systems in exactly this order; assert it when the full pipeline is assembled.",
-    "TUNING (src/components/Tuning.ts) is the single normative feel source (dm-0018): editing values invalidates replay goldens — ledgered decision only. Add fields per slice only when consumed (subtractive discipline). Current fields: gravityY, runSpeed, jumpSpeed, anticipationTicks, maxFallSpeed, playerHalfExtents.",
-    "Math whitelist in src/systems/ (dm-0017): NO transcendental functions (Math.sin/cos/tan/pow/exp/hypot banned) — only + - * / %, Math.sqrt/min/max/abs/floor/ceil/trunc. S3.6 waypoint arc-length traversal uses distance arithmetic, NOT trig. S3.9 audits by grep.",
-    "Closed-form tick-parametric kinematics (dm-0016): movers/lasers/collapse are DERIVED from tick, never incrementally integrated — exact any-tick reconstruction, reload-trivial. Only the player is integrated.",
-    "PlayerPhysics must NEVER read state.input (isolation rule; PlayerControl is the sole input consumer, by-field: moveAxis+jumpPressed in PlayerControl, resetPressed in Lifecycle). Systems pair entity def<->state by INDEX (World.ts invariant).",
-    "Golden canonical sha256 c0ec3b1f... (LevelRoundTrip) still anchored — never casually update. Schema locks dm-0009..dm-0015 all in force.",
-    "Do NOT begin level/chapter CONTENT generation — P10 hard-gated behind M2.",
+    "RUN THE REBOOT LIFECYCLE FIRST: confirm pkg_hash s3-c5e9f7 matches meta/project_knowledge_graph.json, npm test expect 186 passing.",
+    "CONTENT GENERATION STAYS HARD-GATED until M2 (P4+P5+P6) is VERIFIED — do NOT author any level/chapter content in P4. Fixtures remain unit scaffolding only.",
+    "THE AXIOM is now engine-verified (dm-0020): the single-jump lock lives in PlayerControl + WorldState.jumpLock, refreshed only by reload's pure re-instantiation. P4's solvability audit must treat 'exactly one jump' as the ground-truth constraint. Never add a maxJumps schema field (dm-0011).",
+    "CANONICAL PIPELINE ORDER (normative): lifecycle -> entityKinematics -> playerControl -> playerPhysics -> sensors -> hazardsAndGoal. (Kinetic modifiers are folded into playerControl/playerPhysics per dm-0021 — there is NO separate surfaceEffects system.) P4 harnesses that assemble the engine must use this exact order.",
+    "Math whitelist in src/systems/ (dm-0017) is clean and audited — keep it: NO transcendental functions; only + - * / %, Math.sqrt/min/max/abs/floor/ceil. Cross-engine replay integrity (Node solvers vs browser) depends on it.",
+    "Determinism contract: agents must drive the sim via InputFrames only; same (level, seed, input tape) -> bit-identical replay. The whole P4 evaluation framework relies on this — never introduce Math.random or delta-time.",
+    "Golden canonical sha256 c0ec3b1f... (LevelRoundTrip) still anchored. Schema locks dm-0009..dm-0015 in force. Save/progress persistence now owned by P9/REQ-171; replay-tape serialization still unowned -> assign at P4 planning.",
     "Do NOT change FIXED_STEP_SECONDS (dm-0003); never mutate GameState in place (dm-0004).",
     "The private npm mirror npm.shootsta.com is broken; .npmrc pins registry.npmjs.org — don't remove it."
   ],
-  "pkg_hash_at_handoff": "s3-b4d8e6",
+  "pkg_hash_at_handoff": "s3-c5e9f7",
   "next_session_pick_list": [
-    "COMMIT S3.8 if uncommitted (git status check)",
-    "S3.9 Phase-3 verification report -> docs/verification/P3.md (closes M1: per-REQ mapping, subtractive pass, compliance audit, save-persistence ownership -> P9/REQ-171)"
+    "Open P4 — author the P4 execution-plan section FIRST (REQ-P02; consider adversarial review + assign replay-tape serialization ownership)",
+    "S4.1 Agent-archetype simulator harness (five archetypes drive the deterministic sim headlessly)",
+    "S4.2 Solvability audit (exactly-one-jump) against the real P3 mechanic library",
+    "S4.3-S4.6 softlock detection, exploit filtration, optimization windows + five-tier routing, macro curriculum validation",
+    "S4.7 Phase-4 verification report"
   ]
 }

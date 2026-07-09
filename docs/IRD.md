@@ -161,12 +161,14 @@ Each milestone triggers a mandatory **Subtractive Removal pass (REQ-022)** and a
 
 ---
 
-## 5. Current status (Session 2)
+## 5. Current status (Session 3)
 
 - **M0 — Foundation Locked: VERIFIED.** See `docs/verification/P1.md`.
 - **P0, P1:** VERIFIED (see M0 report).
-- **P2 — Data Models & Level Definition Schema: VERIFIED.** See `docs/verification/P2.md`. All six slices (S2.1–S2.6, restructured at phase start) landed: pure-data components with a machine-enforced logic-free gate, the Level Definition Schema with full GDOS block, canonical serializer + strict parse-don't-validate loader (golden-hash-anchored, fuzz-tested), the all-kinds fixture round-tripping losslessly, and deterministic world instantiation driving the engine from a level file. 118/118 tests green. REQ-120/121/122 flipped VERIFIED per dm-0008.
-- **Active milestone:** M1 — Simulatable Game (P2 ✓, P3). **P3 — Mechanic Library & Deterministic Physics is the active phase**; next slice is S3.1, whose first action is authoring the P3 execution-plan section (REQ-P02).
-- **All later phases (P4–P11):** still NOT_STARTED and correctly gated.
+- **P2 — Data Models & Level Definition Schema: VERIFIED.** See `docs/verification/P2.md`. 118/118 at close; REQ-120/121/122 VERIFIED per dm-0008.
+- **P3 — Mechanic Library & Deterministic Physics: VERIFIED.** See `docs/verification/P3.md`. All nine slices (S3.1–S3.9, restructured at phase start via adversarial review — dm-0016–dm-0021) landed: deterministic physics core (symplectic Euler + swept axis-separated collision, no tunneling), deterministic quadtree, the player controller, the run lifecycle (goal/defeat/instant reload), **the single-jump lock axiom** (fuzz-proven never >1 jump per life), the full §16 mechanic library (moving platforms + carry, collapsing floors, ice, spikes/lasers/moving hazards, plates/proximity/doors, springs/gravity zones/conveyors), all data-driven and layering-tested. 186/186 tests green. REQ-004/010/011/151/152/153/154 flipped VERIFIED per dm-0008.
+- **M1 — Simulatable Game: CLOSED (VERIFIED).** P2 ✓ + P3 ✓ — a data-defined level is playable and physically deterministic with the one-jump lock.
+- **Active milestone:** M2 — Design Intelligence Operational (P4, P5, P6). **P4 — Evaluation & Validation Framework is the next phase**; its execution-plan section must be authored before S4.1 code (REQ-P02). The content-generation hard gate stays closed until M2 is VERIFIED.
+- **All later phases (P5–P11):** still NOT_STARTED and correctly gated.
 
 See [task_slices.md](task_slices.md) for the session-sized work units and [execution_plan.md](execution_plan.md) for the detailed plan of the active phases.
