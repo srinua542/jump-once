@@ -1,0 +1,81 @@
+{
+  "slice": "S5.1",
+  "title": "GDOS kernel + design-space coverage matrix + economy-of-mechanics metric",
+  "reqs": [
+    "REQ-040",
+    "REQ-041",
+    "REQ-042"
+  ],
+  "started_at": "2026-07-09T18:24:29.267Z",
+  "updated_at": "2026-07-09T18:57:35.238Z",
+  "current_stage": "handoff",
+  "stages": {
+    "reboot": {
+      "status": "done",
+      "at": "2026-07-09T18:24:29.268Z",
+      "note": "REBOOT ok: pkg s4-g7d8e9 matches, 241/241 green"
+    },
+    "select": {
+      "status": "done",
+      "at": "2026-07-09T18:30:08.461Z",
+      "note": "SELECT S5.1: deps S4.7 VERIFIED; slice + REQ-040/041/042 -> IN_PROGRESS"
+    },
+    "plan": {
+      "status": "done",
+      "at": "2026-07-09T18:30:08.560Z",
+      "note": "PLAN: gdos kernel (Evidence/Profile/Report) + DesignSpace(registry-derived axes)+Economy; all calibration in ScoringProfile; gdos imports verdict TYPES only"
+    },
+    "anchor": {
+      "status": "done",
+      "at": "2026-07-09T18:30:08.653Z",
+      "note": "ANCHOR: new dir src/eval/gdos/; type boundary = EvidenceBundle/ScoringProfile/GdosReport; one-way + no-re-audit scans to extend EvalIsolation"
+    },
+    "implement": {
+      "status": "done",
+      "at": "2026-07-09T18:30:08.842Z",
+      "note": "VERIFY: npm test 290/290 green; new gdos suites + isolation scans pass; determinism asserted in GdosEvaluate"
+    },
+    "verify": {
+      "status": "done",
+      "at": "2026-07-09T18:48:41.681Z",
+      "note": "INTEGRATE: PKG +11 nodes (gdos/* + eval/evaluate), agent_harness updated, edges + both directions, pkg_hash s4-g7d8e9 -> s5-h1e2d3; ledger dm-0036 (estimator sources)"
+    },
+    "integrate": {
+      "status": "done",
+      "at": "2026-07-09T18:55:04.925Z",
+      "note": "REPORT: S5.1-S5.4 -> COMPLETED in task_slices; C5.1-C5.4 checked in execution_plan; REQ-040/041/042/055/056/061/015/016 -> IN_PROGRESS (VERIFIED awaits S5.9)"
+    },
+    "report": {
+      "status": "done",
+      "at": "2026-07-09T18:56:43.757Z",
+      "note": "HANDOFF written (pkg s5-h1e2d3, 290 tests)"
+    },
+    "handoff": {
+      "status": "done",
+      "at": "2026-07-09T18:57:31.778Z",
+      "note": "HANDOFF complete"
+    }
+  },
+  "acceptance": [
+    {
+      "req": "REQ-040",
+      "criterion": "(fill in)",
+      "met": true,
+      "note": null
+    },
+    {
+      "req": "REQ-041",
+      "criterion": "(fill in)",
+      "met": true,
+      "note": null
+    },
+    {
+      "req": "REQ-042",
+      "criterion": "(fill in)",
+      "met": true,
+      "note": null
+    }
+  ],
+  "outcome": "completed",
+  "closed_at": "2026-07-09T18:57:35.336Z"
+}

@@ -105,3 +105,55 @@ test('math whitelist holds in src/eval/: no transcendental Math calls, no Math.r
     }
   }
 });
+
+test('math whitelist extends to src/eval/gdos/ (dm-0031: the scoring engine replays no differently)', () => {
+  const gdosDir = join(SRC, 'eval', 'gdos');
+  const files = tsFiles(gdosDir);
+  assert.ok(files.length > 0, 'no .ts files under src/eval/gdos — scan would be vacuous');
+  for (const file of files) {
+    const stripped = stripCommentsAndStrings(readFileSync(join(gdosDir, file), 'utf8'));
+    const lines = stripped.split('\n');
+    for (let n = 0; n < lines.length; n++) {
+      for (const match of lines[n].matchAll(/\bMath\.(\w+)/g)) {
+        assert.ok(
+          MATH_WHITELIST.has(match[1]),
+          `src/eval/gdos/${file}:${n + 1} calls Math.${match[1]} — outside the determinism whitelist`,
+        );
+      }
+    }
+  }
+});
+
+test('no re-auditing: src/eval/gdos/ imports the local audit pass ONLY as types (dm-0031)', () => {
+  const gdosDir = join(SRC, 'eval', 'gdos');
+  for (const file of tsFiles(gdosDir)) {
+    const raw = readFileSync(join(gdosDir, file), 'utf8');
+    // Any import that reaches into the local audit pass must be `import type` —
+    // gdos consumes verdicts as DATA and must never invoke the audit functions.
+    for (const m of raw.matchAll(/^\s*import\s+(type\s+)?[^;]*?from\s+['"][^'"]*\/local\//gm)) {
+      assert.ok(m[1] !== undefined, `src/eval/gdos/${file} value-imports from src/eval/local/ — gates must consume verdicts as types, not re-run audits`);
+    }
+    // The macro pass is off-limits entirely.
+    assert.ok(!/from\s+['"][^'"]*\/macro\//.test(raw), `src/eval/gdos/${file} imports the macro pass`);
+  }
+});
+
+test('gdos is PURE over pre-assembled evidence: it runs no sim and no search (dm-0037)', () => {
+  // The scoring engine never drives the engine, never re-runs an archetype, and
+  // never runs a reachability search. Anything that EXECUTES the sim or Search
+  // (the assembler; the S5.5 Novelty/EmergentFun probes) lives at the TOP level
+  // of src/eval/ (siblings of Evaluate.ts), NOT under gdos/. This makes the
+  // one-way "gdos reads verdicts as data" rule total, so the no-re-auditing
+  // scan above never needs a carve-out for a search-using gate.
+  //
+  // Reading the ARCHETYPES registry as DATA (DesignSpace's player-type axis,
+  // dm-0034) is allowed — that imports a frozen record, it runs nothing. Only
+  // the execution modules are banned here.
+  const gdosDir = join(SRC, 'eval', 'gdos');
+  const forbidden = /from\s+['"][^'"]*\/(AgentHarness|Evaluate|local\/Search|core\/Engine)['"]/;
+  for (const file of tsFiles(gdosDir)) {
+    const raw = readFileSync(join(gdosDir, file), 'utf8');
+    const m = raw.match(forbidden);
+    assert.ok(m === null, `src/eval/gdos/${file} imports ${m ? m[1] : ''} — gdos must run no sim/search; site search-using code at the top level of src/eval/ (dm-0037)`);
+  }
+});

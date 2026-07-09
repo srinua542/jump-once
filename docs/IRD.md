@@ -130,7 +130,7 @@ Each phase lists its owned requirements, its **entry gate** (what must be true t
 
 ### P9 — Rendering, Audio & Visual Grammar
 - **Owns:** REQ-070, REQ-071, REQ-161, REQ-162, REQ-163, REQ-170, REQ-171, REQ-016(visual), REQ-001, REQ-002.
-- **Deliverables:** WebGL renderer with batching + object pooling + spatial partitioning; WebAudio; the six-category visual grammar as a data-driven style system; responsive scaling; SDK-ready lifecycle hooks.
+- **Deliverables:** WebGL renderer with batching + object pooling + spatial partitioning; WebAudio; the six-category visual grammar as a data-driven style system; responsive scaling; Poki SDK (PokiSDK) lifecycle hooks (ad placement + loading-progress). dm-0038: portal scope narrowed to Poki only for now — no CrazyGames integration work is in scope.
 - **Exit:** a level renders at target fps with the correct visual signatures; dynamic quality scale-back verified under synthetic load.
 
 ### P10 — Content Generation

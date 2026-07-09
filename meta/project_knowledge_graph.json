@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
-  "generated_by_session": "2026-07-09T-session-4",
-  "pkg_hash": "s4-g7d8e9",
+  "generated_by_session": "2026-07-10T-session-5",
+  "pkg_hash": "s5-h1e2d3",
   "notes": "Machine-readable mirror of the codebase. Read at every session start; update immediately on any structural code change (new module, changed dependency, changed GDOS mapping). See references/pkg_schema.md.",
   "nodes": [
     {
@@ -24,7 +24,11 @@
         "systems/player_control",
         "systems/entity_kinematics",
         "systems/hazards_and_goal",
-        "eval/local/softlock"
+        "eval/local/softlock",
+        "eval/agent_harness",
+        "eval/gdos/evidence",
+        "eval/gdos/infodensity",
+        "eval/evaluate"
       ],
       "volatile_state_flags": {
         "has_side_effects": false,
@@ -75,7 +79,9 @@
         "systems/hazards_and_goal",
         "eval/agent_harness",
         "eval/local/search",
-        "eval/local/optimization"
+        "eval/local/optimization",
+        "eval/gdos/streamability",
+        "eval/evaluate"
       ],
       "volatile_state_flags": {
         "has_side_effects": false,
@@ -358,7 +364,13 @@
         "schema/serialize",
         "schema/parse",
         "systems/entity_kinematics",
-        "systems/hazards_and_goal"
+        "systems/hazards_and_goal",
+        "eval/agent_harness",
+        "eval/gdos/evidence",
+        "eval/gdos/design_space",
+        "eval/gdos/economy",
+        "eval/gdos/streamability",
+        "eval/evaluate"
       ],
       "volatile_state_flags": {
         "has_side_effects": false,
@@ -495,7 +507,9 @@
         "eval/local/solvability",
         "eval/local/softlock",
         "eval/local/exploit",
-        "eval/local/optimization"
+        "eval/local/optimization",
+        "eval/gdos/evidence",
+        "eval/evaluate"
       ],
       "volatile_state_flags": {
         "has_side_effects": false,
@@ -553,7 +567,8 @@
         "components/level"
       ],
       "dependents": [
-        "schema/tape_io"
+        "schema/tape_io",
+        "eval/gdos/profile"
       ],
       "volatile_state_flags": {
         "has_side_effects": false,
@@ -644,7 +659,9 @@
         "systems/player_physics",
         "systems/hazards_and_goal",
         "eval/archetypes",
-        "eval/local/exploit"
+        "eval/local/exploit",
+        "eval/agent_harness",
+        "eval/gdos/streamability"
       ],
       "volatile_state_flags": {
         "has_side_effects": false,
@@ -882,7 +899,8 @@
         "eval/agent_harness",
         "eval/local/solvability",
         "eval/local/softlock",
-        "eval/local/exploit"
+        "eval/local/exploit",
+        "eval/gdos/evidence"
       ],
       "volatile_state_flags": {
         "has_side_effects": false,
@@ -934,13 +952,16 @@
       ],
       "dependents": [
         "eval/local/solvability",
-        "eval/local/optimization"
+        "eval/local/optimization",
+        "eval/gdos/evidence",
+        "eval/gdos/design_space",
+        "eval/evaluate"
       ],
       "volatile_state_flags": {
         "has_side_effects": false,
         "state_dependencies": []
       },
-      "last_verified_commit": "uncommitted-session-4",
+      "last_verified_commit": "uncommitted-session-5",
       "backlog_refs": [
         "REQ-141"
       ]
@@ -949,14 +970,17 @@
       "node_id": "eval/agent_harness",
       "type": "SystemNode",
       "file_path": "src/eval/AgentHarness.ts",
-      "functional_summary": "Headless run + replay: runAgent(def, seed, policy, budget) drives the sim via CANONICAL_PIPELINE (normative order: lifecycle -> entityKinematics -> playerControl -> playerPhysics -> sensors -> hazardsAndGoal, dm-0021), records one InputFrame per tick into a ReplayTape, and halts on completion or data-driven EvalBudget (maxTicks/maxAttempts) with typed outcome (completed|timeout) — halting is a property. replayTape(def, seed, frames) re-drives with no agent; bit-equality with the live final state is the determinism proof. Agent stream seed derived via fixed additive offset (agentStreamSeed), separate from sim RNG (dm-0024).",
+      "functional_summary": "Headless run + replay: runAgent(def, seed, policy, budget) drives the sim via CANONICAL_PIPELINE (normative order: lifecycle -> entityKinematics -> playerControl -> playerPhysics -> sensors -> hazardsAndGoal, dm-0021), records one InputFrame per tick into a ReplayTape, and halts on completion or data-driven EvalBudget (maxTicks/maxAttempts) with typed outcome (completed|timeout) — halting is a property. replayTape(def, seed, frames) re-drives with no agent; bit-equality with the live final state is the determinism proof. replayObserved(def, seed, frames)->TickObservation[] (S5.1) re-drives collecting per-tick runState + player position + lethal-class entity positions, feeding the P5 evidence assembler's death extraction + REQ-016 fairness snapshot. Agent stream seed derived via fixed additive offset (agentStreamSeed), separate from sim RNG (dm-0024).",
       "gdos_alignment": "Section_15_Local_Spatial_Verification",
       "dependencies": [
         "core/clock",
         "core/engine",
         "core/state",
+        "core/vec2",
         "core/state_manager",
         "components/level",
+        "components/collision_class",
+        "components/behavior",
         "entities/world",
         "systems/system",
         "systems/lifecycle",
@@ -971,13 +995,14 @@
       "dependents": [
         "eval/local/search",
         "eval/local/solvability",
-        "eval/local/optimization"
+        "eval/local/optimization",
+        "eval/evaluate"
       ],
       "volatile_state_flags": {
         "has_side_effects": false,
         "state_dependencies": []
       },
-      "last_verified_commit": "uncommitted-session-4",
+      "last_verified_commit": "uncommitted-session-5",
       "backlog_refs": [
         "REQ-141"
       ]
@@ -1025,12 +1050,15 @@
         "eval/agent_harness",
         "eval/local/search"
       ],
-      "dependents": [],
+      "dependents": [
+        "eval/gdos/evidence",
+        "eval/evaluate"
+      ],
       "volatile_state_flags": {
         "has_side_effects": false,
         "state_dependencies": []
       },
-      "last_verified_commit": "uncommitted-session-4",
+      "last_verified_commit": "uncommitted-session-5",
       "backlog_refs": [
         "REQ-141"
       ]
@@ -1047,12 +1075,15 @@
         "schema/tape_io",
         "eval/local/search"
       ],
-      "dependents": [],
+      "dependents": [
+        "eval/gdos/evidence",
+        "eval/evaluate"
+      ],
       "volatile_state_flags": {
         "has_side_effects": false,
         "state_dependencies": []
       },
-      "last_verified_commit": "uncommitted-session-4",
+      "last_verified_commit": "uncommitted-session-5",
       "backlog_refs": [
         "REQ-141"
       ]
@@ -1071,12 +1102,15 @@
         "entities/world",
         "eval/local/search"
       ],
-      "dependents": [],
+      "dependents": [
+        "eval/gdos/evidence",
+        "eval/evaluate"
+      ],
       "volatile_state_flags": {
         "has_side_effects": false,
         "state_dependencies": []
       },
-      "last_verified_commit": "uncommitted-session-4",
+      "last_verified_commit": "uncommitted-session-5",
       "backlog_refs": [
         "REQ-141"
       ]
@@ -1094,12 +1128,15 @@
         "eval/agent_harness",
         "eval/local/search"
       ],
-      "dependents": [],
+      "dependents": [
+        "eval/gdos/evidence",
+        "eval/evaluate"
+      ],
       "volatile_state_flags": {
         "has_side_effects": false,
         "state_dependencies": []
       },
-      "last_verified_commit": "uncommitted-session-4",
+      "last_verified_commit": "uncommitted-session-5",
       "backlog_refs": [
         "REQ-101",
         "REQ-102"
@@ -1122,9 +1159,195 @@
         "REQ-140",
         "REQ-142"
       ]
+    },
+    {
+      "node_id": "eval/gdos/report",
+      "type": "SystemNode",
+      "file_path": "src/eval/gdos/Report.ts",
+      "functional_summary": "Pure data records the GDOS scoring engine emits (P5/S5.1, dm-0031/0032). DesignDecision (source/subject/verdict/summary/findings + optional five Intent-Repository fields — REQ-111), MetricScore (metric/score/threshold/pass), GateResult (a gate's scores+pass+findings+decisions), GdosReport (a level's gates aggregated, stamped with profileId). Trivial constructors metricScore/gateResult/gdosReport derive pass from >= threshold and all-metrics-pass. No sim/audit imports; no arithmetic.",
+      "gdos_alignment": "Section_6_Quality_Gates__Section_12_Design_Intent_Repository",
+      "dependencies": [],
+      "dependents": ["eval/gdos/emotional", "eval/gdos/streamability", "eval/gdos/infodensity", "eval/gdos/judge", "eval/evaluate"],
+      "volatile_state_flags": { "has_side_effects": false, "state_dependencies": [] },
+      "last_verified_commit": "uncommitted-session-5",
+      "backlog_refs": ["REQ-055", "REQ-056", "REQ-061", "REQ-111"]
+    },
+    {
+      "node_id": "eval/gdos/profile",
+      "type": "SystemNode",
+      "file_path": "src/eval/gdos/Profile.ts",
+      "functional_summary": "ScoringProfile — the versioned data record holding EVERY calibration constant (dm-0031, the load-bearing P5 decision): emotional thresholds (REQ-055), streamability thresholds (REQ-056), IDS viewport+min/max+fairness (REQ-061), and all estimator coefficients. Gate logic contains ZERO calibration literals; recalibration is a data change (the CDRE channel, S5.8). DEFAULT_PROFILE freezes the PRD's own numbers. parseProfile/parseProfileText mirror the level-parser discipline (never throw, path-qualified Result errors, strict keys, finite numbers, hard version reject, max>=min, non-zero share weights). Imports only the SchemaError type from schema/parse.",
+      "gdos_alignment": "Section_6_Emotional_Thresholds__Section_7_Information_Density",
+      "dependencies": ["schema/parse"],
+      "dependents": ["eval/gdos/emotional", "eval/gdos/streamability", "eval/gdos/infodensity", "eval/gdos/judge", "eval/evaluate"],
+      "volatile_state_flags": { "has_side_effects": false, "state_dependencies": [] },
+      "last_verified_commit": "uncommitted-session-5",
+      "backlog_refs": ["REQ-055", "REQ-056", "REQ-061"]
+    },
+    {
+      "node_id": "eval/gdos/evidence",
+      "type": "SystemNode",
+      "file_path": "src/eval/gdos/Evidence.ts",
+      "functional_summary": "EvidenceBundle — everything a level is judged from, assembled ONCE (dm-0031): def + archetype ArchetypeRun[] + observed DeathEvent[] (with lookback snapshots for the REQ-016 fairness check) + the four P4 local verdicts. assembleEvidence is a PURE combiner (freezes the parts; runs no audits). Imports the four verdict types + ReplayTape + ArchetypeName + Vec2/EntityKind/LevelDefinition as TYPES ONLY (import type), so gdos gains no runtime dependency on the local audit pass — the scan-enforced no-re-auditing discipline.",
+      "gdos_alignment": "Section_15_Local_Spatial_Verification__Section_6_Quality_Gates",
+      "dependencies": ["core/vec2", "components/behavior", "components/level", "schema/tape_io", "eval/archetypes", "eval/local/solvability", "eval/local/softlock", "eval/local/exploit", "eval/local/optimization"],
+      "dependents": ["eval/gdos/design_space", "eval/gdos/emotional", "eval/gdos/streamability", "eval/gdos/infodensity", "eval/gdos/judge", "eval/evaluate"],
+      "volatile_state_flags": { "has_side_effects": false, "state_dependencies": [] },
+      "last_verified_commit": "uncommitted-session-5",
+      "backlog_refs": ["REQ-050"]
+    },
+    {
+      "node_id": "eval/gdos/score",
+      "type": "SystemNode",
+      "file_path": "src/eval/gdos/Score.ts",
+      "functional_summary": "Shared scoring primitive: clamp100(x)=max(0,min(100,x)). The [0,100] scale is the DEFINITION of a GDOS score (not calibration, dm-0031), so its endpoints are not magic numbers. Whitelist math only.",
+      "gdos_alignment": "Section_6_Quality_Gates",
+      "dependencies": [],
+      "dependents": ["eval/gdos/emotional", "eval/gdos/streamability"],
+      "volatile_state_flags": { "has_side_effects": false, "state_dependencies": [] },
+      "last_verified_commit": "uncommitted-session-5",
+      "backlog_refs": []
+    },
+    {
+      "node_id": "eval/gdos/design_space",
+      "type": "SystemNode",
+      "file_path": "src/eval/gdos/DesignSpace.ts",
+      "functional_summary": "The Mechanic x Environment x Emotion x Optimization-Style x Player-Type design-space matrix + coverage tracker (REQ-040/041, dm-0034). Axes are DERIVED from registries so they can't drift: MECHANIC_AXIS=ENTITY_KINDS, PLAYER_TYPE_AXIS=Object.keys(ARCHETYPES), ENVIRONMENT=modifier kinds+baseline, EMOTION_ARC=the REQ-015 six phases, OPTIMIZATION_STYLE=the five tiers. extractCoverage(bundle)->exercised cell keys; coverageMatrix(bundles[])->union + per-axis marginals. Whitelist math; imports registries as data + the EvidenceBundle type.",
+      "gdos_alignment": "Section_5_Design_Space_Modeling",
+      "dependencies": ["components/behavior", "eval/archetypes", "eval/gdos/evidence"],
+      "dependents": ["eval/gdos/economy"],
+      "volatile_state_flags": { "has_side_effects": false, "state_dependencies": [] },
+      "last_verified_commit": "uncommitted-session-5",
+      "backlog_refs": ["REQ-040", "REQ-041"]
+    },
+    {
+      "node_id": "eval/gdos/economy",
+      "type": "SystemNode",
+      "file_path": "src/eval/gdos/Economy.ts",
+      "functional_summary": "Economy of Mechanics metric (REQ-042, dm-0034): economy = distinct covered cells (Depth) / mechanic count, over a CoverageMatrix; per-mechanic depth = distinct cells that mechanic participates in. preferByEconomy(deepen,addMechanic) encodes 'exhaust variations before adding a mechanic' (higher economy wins; ties favor deepening); deepestMechanic finds the one to keep exhausting. Whitelist math; imports the CoverageMatrix + EntityKind types.",
+      "gdos_alignment": "Section_5_Economy_Of_Mechanics",
+      "dependencies": ["components/behavior", "eval/gdos/design_space"],
+      "dependents": [],
+      "volatile_state_flags": { "has_side_effects": false, "state_dependencies": [] },
+      "last_verified_commit": "uncommitted-session-5",
+      "backlog_refs": ["REQ-042"]
+    },
+    {
+      "node_id": "eval/gdos/emotional",
+      "type": "SystemNode",
+      "file_path": "src/eval/gdos/Emotional.ts",
+      "functional_summary": "Emotional-threshold gate (REQ-055; REQ-015 arc semantics; dm-0031/0036). Honest DELIVERED proxies over the bundle, all coefficients from the profile: Confidence~First-Time forgiveness (100-reloads*penalty), Curiosity~Curious-Explorer route overshoot*gain, Surprise~plan invalidation (max reloads before an adapted clear)*gain, Mastery~optimization delta/reference. Authored emotional-budget curve is the intent cross-check (delivered-vs-intended as findings). scoreEmotional->GateResult; computeEmotionalScores reused by the streamability gate. Whitelist math; pure.",
+      "gdos_alignment": "Section_6_Emotional_Thresholds",
+      "dependencies": ["eval/gdos/evidence", "eval/gdos/profile", "eval/gdos/score", "eval/gdos/report"],
+      "dependents": ["eval/gdos/streamability", "eval/gdos/judge"],
+      "volatile_state_flags": { "has_side_effects": false, "state_dependencies": [] },
+      "last_verified_commit": "uncommitted-session-5",
+      "backlog_refs": ["REQ-055", "REQ-015"]
+    },
+    {
+      "node_id": "eval/gdos/streamability",
+      "type": "SystemNode",
+      "file_path": "src/eval/gdos/Streamability.ts",
+      "functional_summary": "Streamability-matrix gate (REQ-056, dm-0031). Proxies over the bundle, coefficients from the profile: Reaction Density~(deaths+hazards+kinetic)/clear-duration vs reference, Clip Potential~delivered Surprise (reused from the emotional gate) + kinetic count, Replay Value~optimization delta + distinct clear times (route multiplicity), Shareability~profile-weighted composite of the three. scoreStreamability->GateResult. Whitelist math; pure.",
+      "gdos_alignment": "Section_6_Streamability_Matrix",
+      "dependencies": ["core/clock", "components/collision_class", "components/behavior", "eval/gdos/evidence", "eval/gdos/profile", "eval/gdos/score", "eval/gdos/emotional", "eval/gdos/report"],
+      "dependents": ["eval/gdos/judge"],
+      "volatile_state_flags": { "has_side_effects": false, "state_dependencies": [] },
+      "last_verified_commit": "uncommitted-session-5",
+      "backlog_refs": ["REQ-056"]
+    },
+    {
+      "node_id": "eval/gdos/infodensity",
+      "type": "SystemNode",
+      "file_path": "src/eval/gdos/InfoDensity.ts",
+      "functional_summary": "Information Density regulator + failure-visibility fairness gate (REQ-061; REQ-016 P5 share; dm-0035). The 'screen' is the profile viewport slid over the level counting info elements (entities+goal) per window; over max=overwhelm, global peak under min=boring. The same window is the REQ-016 primitive: a death is unfair iff its killer was outside the viewport around the player lookbackTicks before impact; falls (no attributed killer) are fair. scoreInfoDensity->GateResult (metric pass flags encode band/limit tests directly). Whitelist math; pure.",
+      "gdos_alignment": "Section_7_Information_Density__Section_2_No_Trolling",
+      "dependencies": ["core/vec2", "eval/gdos/evidence", "eval/gdos/profile", "eval/gdos/report"],
+      "dependents": ["eval/gdos/judge"],
+      "volatile_state_flags": { "has_side_effects": false, "state_dependencies": [] },
+      "last_verified_commit": "uncommitted-session-5",
+      "backlog_refs": ["REQ-061", "REQ-016"]
+    },
+    {
+      "node_id": "eval/gdos/judge",
+      "type": "SystemNode",
+      "file_path": "src/eval/gdos/Judge.ts",
+      "functional_summary": "judgeLevel(evidence,profile)->GdosReport — the single seam the P10 pipeline reads (dm-0031). Pure over the bundle; runs the emotional (S5.2), streamability (S5.3), and info-density (S5.4) gates and aggregates their results. S5.5-S5.8 gates/curation append here. Whitelist math (none).",
+      "gdos_alignment": "Section_6_Quality_Gates__Section_7_Information_Density",
+      "dependencies": ["eval/gdos/evidence", "eval/gdos/profile", "eval/gdos/report", "eval/gdos/emotional", "eval/gdos/streamability", "eval/gdos/infodensity"],
+      "dependents": ["eval/evaluate"],
+      "volatile_state_flags": { "has_side_effects": false, "state_dependencies": [] },
+      "last_verified_commit": "uncommitted-session-5",
+      "backlog_refs": ["REQ-050"]
+    },
+    {
+      "node_id": "eval/evaluate",
+      "type": "SystemNode",
+      "file_path": "src/eval/Evaluate.ts",
+      "functional_summary": "The end-to-end P5 seam (S5.1). evaluateLevel/assembleLevelEvidence run the four P4 audits + five archetypes ONCE, observe deaths (replayObserved) with killer attribution + lookback for the REQ-016 fairness check, assemble the EvidenceBundle, and judgeLevel. This is the ONLY module that both runs the audits AND touches gdos, which is why it lives at the top of src/eval/ and NOT under gdos/ — keeping gdos free of audit-function imports (dm-0031, scan-enforced). Deterministic (shared run seed; squared-distance attribution); whitelist math.",
+      "gdos_alignment": "Section_6_Quality_Gates__Section_15_Local_Spatial_Verification",
+      "dependencies": ["core/clock", "core/vec2", "components/level", "components/behavior", "eval/archetypes", "eval/agent_harness", "eval/local/solvability", "eval/local/softlock", "eval/local/exploit", "eval/local/optimization", "eval/gdos/evidence", "eval/gdos/profile", "eval/gdos/judge", "eval/gdos/report"],
+      "dependents": [],
+      "volatile_state_flags": { "has_side_effects": false, "state_dependencies": [] },
+      "last_verified_commit": "uncommitted-session-5",
+      "backlog_refs": ["REQ-050", "REQ-055", "REQ-056", "REQ-061"]
     }
   ],
   "edges": [
+    { "type": "DependencyEdge", "from": "eval/agent_harness", "to": "core/vec2", "kind": "type_import" },
+    { "type": "DependencyEdge", "from": "eval/agent_harness", "to": "components/collision_class", "kind": "value_import" },
+    { "type": "DependencyEdge", "from": "eval/agent_harness", "to": "components/behavior", "kind": "type_import" },
+    { "type": "DependencyEdge", "from": "eval/gdos/profile", "to": "schema/parse", "kind": "type_import" },
+    { "type": "DependencyEdge", "from": "eval/gdos/evidence", "to": "core/vec2", "kind": "type_import" },
+    { "type": "DependencyEdge", "from": "eval/gdos/evidence", "to": "components/behavior", "kind": "type_import" },
+    { "type": "DependencyEdge", "from": "eval/gdos/evidence", "to": "components/level", "kind": "type_import" },
+    { "type": "DependencyEdge", "from": "eval/gdos/evidence", "to": "schema/tape_io", "kind": "type_import" },
+    { "type": "DependencyEdge", "from": "eval/gdos/evidence", "to": "eval/archetypes", "kind": "type_import" },
+    { "type": "DependencyEdge", "from": "eval/gdos/evidence", "to": "eval/local/solvability", "kind": "type_import" },
+    { "type": "DependencyEdge", "from": "eval/gdos/evidence", "to": "eval/local/softlock", "kind": "type_import" },
+    { "type": "DependencyEdge", "from": "eval/gdos/evidence", "to": "eval/local/exploit", "kind": "type_import" },
+    { "type": "DependencyEdge", "from": "eval/gdos/evidence", "to": "eval/local/optimization", "kind": "type_import" },
+    { "type": "DependencyEdge", "from": "eval/gdos/design_space", "to": "components/behavior", "kind": "value_import" },
+    { "type": "DependencyEdge", "from": "eval/gdos/design_space", "to": "eval/archetypes", "kind": "value_import" },
+    { "type": "DependencyEdge", "from": "eval/gdos/design_space", "to": "eval/gdos/evidence", "kind": "type_import" },
+    { "type": "DependencyEdge", "from": "eval/gdos/economy", "to": "components/behavior", "kind": "type_import" },
+    { "type": "DependencyEdge", "from": "eval/gdos/economy", "to": "eval/gdos/design_space", "kind": "type_import" },
+    { "type": "DependencyEdge", "from": "eval/gdos/emotional", "to": "eval/gdos/evidence", "kind": "type_import" },
+    { "type": "DependencyEdge", "from": "eval/gdos/emotional", "to": "eval/gdos/profile", "kind": "type_import" },
+    { "type": "DependencyEdge", "from": "eval/gdos/emotional", "to": "eval/gdos/score", "kind": "value_import" },
+    { "type": "DependencyEdge", "from": "eval/gdos/emotional", "to": "eval/gdos/report", "kind": "value_import" },
+    { "type": "DependencyEdge", "from": "eval/gdos/streamability", "to": "core/clock", "kind": "value_import" },
+    { "type": "DependencyEdge", "from": "eval/gdos/streamability", "to": "components/collision_class", "kind": "value_import" },
+    { "type": "DependencyEdge", "from": "eval/gdos/streamability", "to": "components/behavior", "kind": "type_import" },
+    { "type": "DependencyEdge", "from": "eval/gdos/streamability", "to": "eval/gdos/evidence", "kind": "type_import" },
+    { "type": "DependencyEdge", "from": "eval/gdos/streamability", "to": "eval/gdos/profile", "kind": "type_import" },
+    { "type": "DependencyEdge", "from": "eval/gdos/streamability", "to": "eval/gdos/score", "kind": "value_import" },
+    { "type": "DependencyEdge", "from": "eval/gdos/streamability", "to": "eval/gdos/emotional", "kind": "value_import" },
+    { "type": "DependencyEdge", "from": "eval/gdos/streamability", "to": "eval/gdos/report", "kind": "value_import" },
+    { "type": "DependencyEdge", "from": "eval/gdos/infodensity", "to": "core/vec2", "kind": "type_import" },
+    { "type": "DependencyEdge", "from": "eval/gdos/infodensity", "to": "eval/gdos/evidence", "kind": "type_import" },
+    { "type": "DependencyEdge", "from": "eval/gdos/infodensity", "to": "eval/gdos/profile", "kind": "type_import" },
+    { "type": "DependencyEdge", "from": "eval/gdos/infodensity", "to": "eval/gdos/report", "kind": "value_import" },
+    { "type": "DependencyEdge", "from": "eval/gdos/judge", "to": "eval/gdos/evidence", "kind": "type_import" },
+    { "type": "DependencyEdge", "from": "eval/gdos/judge", "to": "eval/gdos/profile", "kind": "value_import" },
+    { "type": "DependencyEdge", "from": "eval/gdos/judge", "to": "eval/gdos/report", "kind": "type_import" },
+    { "type": "DependencyEdge", "from": "eval/gdos/judge", "to": "eval/gdos/emotional", "kind": "value_import" },
+    { "type": "DependencyEdge", "from": "eval/gdos/judge", "to": "eval/gdos/streamability", "kind": "value_import" },
+    { "type": "DependencyEdge", "from": "eval/gdos/judge", "to": "eval/gdos/infodensity", "kind": "value_import" },
+    { "type": "DependencyEdge", "from": "eval/evaluate", "to": "core/clock", "kind": "value_import" },
+    { "type": "DependencyEdge", "from": "eval/evaluate", "to": "core/vec2", "kind": "type_import" },
+    { "type": "DependencyEdge", "from": "eval/evaluate", "to": "components/level", "kind": "type_import" },
+    { "type": "DependencyEdge", "from": "eval/evaluate", "to": "components/behavior", "kind": "type_import" },
+    { "type": "DependencyEdge", "from": "eval/evaluate", "to": "eval/archetypes", "kind": "value_import" },
+    { "type": "DependencyEdge", "from": "eval/evaluate", "to": "eval/agent_harness", "kind": "value_import" },
+    { "type": "DependencyEdge", "from": "eval/evaluate", "to": "eval/local/solvability", "kind": "value_import" },
+    { "type": "DependencyEdge", "from": "eval/evaluate", "to": "eval/local/softlock", "kind": "value_import" },
+    { "type": "DependencyEdge", "from": "eval/evaluate", "to": "eval/local/exploit", "kind": "value_import" },
+    { "type": "DependencyEdge", "from": "eval/evaluate", "to": "eval/local/optimization", "kind": "value_import" },
+    { "type": "DependencyEdge", "from": "eval/evaluate", "to": "eval/gdos/evidence", "kind": "value_import" },
+    { "type": "DependencyEdge", "from": "eval/evaluate", "to": "eval/gdos/profile", "kind": "value_import" },
+    { "type": "DependencyEdge", "from": "eval/evaluate", "to": "eval/gdos/judge", "kind": "value_import" },
+    { "type": "DependencyEdge", "from": "eval/evaluate", "to": "eval/gdos/report", "kind": "type_import" },
     {
       "type": "DependencyEdge",
       "from": "core/state",

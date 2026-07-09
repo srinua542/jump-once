@@ -6,6 +6,7 @@ This document holds one section per phase, authored *before* that phase's implem
 - **P2 — Data Models & Level Definition Schema: CLOSED — VERIFIED**, see `docs/verification/P2.md`. Checkpoints C2.1–C2.6 all passed (118/118 tests). Retained below as the historical record.
 - **P3 — Mechanic Library & Deterministic Physics: CLOSED — VERIFIED**, see `docs/verification/P3.md`. Authored at S3.1 start via adversarial review (dm-0016–dm-0021; table restructured to S3.1–S3.9). All checkpoints C3.1–C3.9 passed (186/186 tests). **Milestone M1 — Simulatable Game CLOSED.**
 - **P4 — Evaluation & Validation Framework: CLOSED — VERIFIED**, see `docs/verification/P4.md`. Section authored at S4.1 start per REQ-P02 via the same adversarial review P2/P3 got (dm-0022–dm-0029). All seven slices S4.1–S4.7 ran the nine-stage SDLC loop (archives in `meta/runs/S4.*`); checkpoints C4.1–C4.7 passed (241/241 tests). **Milestone M2 remains OPEN** — P5 + P6 still required before the content gate opens.
+- **P5 — GDOS Scoring Engine: IN FLIGHT.** Section below authored before S5.1 code per REQ-P02, via a first-principles adversarial review of the original slice table (dm-0031–dm-0035; table restructured — Design Memory moved ahead of the Kill Switch and CDRE). The content-generation hard gate stays closed until M2 (P4+P5+P6) is fully VERIFIED.
 
 Covers the phases that were in flight: **P0 (Governance & Protocol Infrastructure)** and **P1 (Deterministic Core Architecture)** — together, milestone **M0 — Foundation Locked**. Per the Directive, this plan is written *before* implementation code and defines the work, governing PRD requirements, dependencies, deliverables, validation criteria, and completion checkpoints. A new execution plan will be authored at the start of each subsequent phase.
 
@@ -392,3 +393,112 @@ P2+P3 VERIFIED, M1 CLOSED (satisfied). Consumes: the frozen deterministic sim (`
 ## Exit condition for P4
 
 All checkpoints C4.1–C4.7 pass; the archetype harness is deterministic and replay-anchored; solvability/softlock/exploit/routing verdicts are correct on their fixture sets; the macro pass runs isolated; the verification report is filed. P4 `VERIFIED` is the first of the three M2 pillars (P4+P5+P6) — the content gate stays closed until all three close.
+
+---
+
+# P5 — GDOS Scoring Engine  *(IN FLIGHT; authored before S5.1 code per REQ-P02; adversarial review ledgered dm-0031–dm-0035; slice table restructured)*
+
+## Governing requirements
+
+| Phase | REQs governing the work |
+|-------|--------------------------|
+| P5 | REQ-040, REQ-041 (P5 share; P6 consumes coverage), REQ-042, REQ-050 (P5 share; P10 applies), REQ-052, REQ-053/054 (P5 share; P7 applies), REQ-055, REQ-056, REQ-061 (P5 share; P7 applies), REQ-020, REQ-021, REQ-022 (P5 share; P11 final pass); completes REQ-051/REQ-111 (P0 opened them); REQ-012/015/016 P5 shares (curation checks + arc semantics + failure-visibility; P9/P10 hold the rest) |
+
+## Work
+
+Make the design intelligence *judge* levels the way P4 made the sim *play* them. P5 builds the GDOS Scoring Engine: the quality gates (emotional thresholds, streamability matrix, IDS regulator), the design-space model (coverage matrix + economy of mechanics), the search metrics (novelty, emergent fun), the curation machinery (Kill Switch, First-Party filter, Subtractive Removal engine), the executable Design Memory / Intent Repository, and the CDRE loop that evolves the scoring calibration itself. P5 is the second M2 pillar. Nothing in P5 authors content — every level P5 touches is in-code unit scaffolding or an existing `test/fixtures/` file; the M2 hard gate stays closed.
+
+This plan was produced by a first-principles adversarial review of the original S5.1–S5.9 slice table — the same treatment P2/P3/P4 got — explicitly asking whether a substantially better architecture exists before any production code. Decisions are ledgered as dm-0031–dm-0035.
+
+## Adversarial review — findings and upgrades over the original slice table
+
+1. **The central defect any naive P5 has: ungrounded scores (the Goodhart trap).** "Curiosity ≥ 90" and "Clip Potential ≥ 90" have no physical measurement; inventing formulas with hardcoded magic weights produces pseudo-measurements that the P7/P10 generators will optimize *against*, and every recalibration becomes a code change. **Decision (dm-0031): every GDOS score is a deterministic estimator over an explicit evidence bundle, and every weight, coefficient, and threshold lives in a versioned `ScoringProfile` data record** (strict-parsed with the full P2 discipline), never in code constants. Estimators are *honest proxies* — their epistemics (what evidence each proxy actually measures) are documented at the definition and ledgered. Recalibration is a data change plus a ledger entry; that channel is exactly what the CDRE loop (finding 4) drives. This is the P5 analogue of dm-0024 ("archetypes are data, not code forks").
+2. **Evidence must be assembled exactly once.** Eight gates each re-running archetype sims would duplicate work, risk divergent evidence between gates, and violate the P4 handoff rule ("P5 consumes verdicts; it never re-runs the audits"). **Decision (dm-0031): a single immutable `EvidenceBundle`** — `LevelDefinition` + `GdosMetadata` + the four local verdicts (Solvability/Softlock/Exploit/Optimization) + witness/archetype tapes — assembled once per level by one assembler; every scorer is a pure function of it. One seam serves P10: `judgeLevel(evidence, profile) → GdosReport` (scores + gate verdicts + curation verdicts + emitted decision records). Gate unit tests hand-author bundles — no sim required — with a few end-to-end assemblies on P4 fixtures proving the seam.
+3. **Slice-order defect: Design Memory was scheduled last (old S5.8) while everything upstream must record into it.** REQ-050/051 demand decisions originate from GDOS and history be parsed *before* proposing; the Kill Switch and CDRE both read and write memory — yet the old order ran CDRE (S5.6) and Kill Switch (S5.7) before Memory (S5.8). **Decision (dm-0032): gates emit pure `DesignDecision` records (data, defined in the S5.1 kernel) from day one; the executable Design Memory moves to S5.6, ahead of the Kill Switch (S5.7) and CDRE (S5.8).** Recording is decoupled from storage: scorers stay stateless and I/O-free; the store is pure text→records→text (`meta/design_memory_ledger.json` becomes its backing file per that file's own header note; callers own `fs`, and `append` takes the date as a parameter — no `Date.now`, determinism preserved).
+4. **CDRE scope pinned before it balloons.** "Self-improving loop" is the phase's scope trap — it cannot mean ML (no deps, no data, determinism) or self-modifying code. **Decision (dm-0033): CDRE is a deterministic profile-evolution loop**: it mines recorded gate outcomes + evidence for patterns (systematically failing metrics, dead matrix regions, threshold/evidence mismatches), emits *proposals* as decision records with full Intent Repository fields, and an accepted proposal becomes a new `ScoringProfile` version. Self-improvement is data evolution under version control — the process improves because its calibration is versioned data with a feedback channel, not because code rewrites itself.
+5. **Scores measure delivered-vs-intended, not floating absolutes.** The schema already carries authored intent — the `GdosMetadata` emotional budget curve (dm-0012 assigned P5 its semantics). Emotional estimators measure what the evidence shows was *delivered*: Surprise ≈ plan invalidation (failure-then-adapted-success patterns across archetype attempts), Confidence ≈ early-attempt success rates, Mastery ≈ the optimization tier spread/delta, Curiosity ≈ the Curious-Explorer's divergence from the direct route. The authored curve is the intent cross-check (the same role `parTimeTiersSeconds` played in P4): delivered vs. intended divergence is itself evidence, reported per keyframe window.
+6. **Matrix axes derive from existing registries, never hand-maintained lists.** Mechanic axis = the P3 entity/tile kind registries; Optimization Style = the five REQ-101 tiers; Player Type = the five archetypes; Emotion = the six-phase arc (REQ-015, giving that REQ its P5 semantics); Environment = the environmental-modifier kinds (ice/conveyor/gravity-zone/collapsing). The matrix cannot drift from the sim because it is *derived* (dm-0034). Coverage = cells exercised by a level set's evidence; Economy of Mechanics (REQ-042) = depth ÷ mechanic count with depth = distinct covered cells involving that mechanic — "exhaust variations before adding a mechanic" becomes a computable comparison.
+7. **IDS needs a "screen" with no renderer (P9 not started).** Viewport dimensions are profile data (tiles per screen); the regulator slides that window over level geometry, counting information elements (entities, hazards, active triggers, tile features) per window against min/max thresholds (dm-0035). The same visibility primitive makes REQ-016's P5 share *computable*: "failure information visually present" = every death in the evidence tapes traces to a hazard that was inside the window before the death tick — an unfair (invisible) kill fails the fairness check.
+8. **Novelty requires a corpus parameter — content is gated.** The metric is a pure function `(candidate, corpus[]) → divergence`; no global level registry exists or may exist yet. Descriptor = mechanic histogram + geometry signature + witness-trajectory shape; whitelist-math distance. Emergent-fun search (REQ-054) reuses `src/eval/local/Search.ts` to probe kinetic edge cases (spring chains, conveyor+gravity interactions) and emits flagged *kinetic anchors* as data for P7 to consume. **Because EmergentFun executes a search it is NOT a `gdos/` module** — it lives at the top level of `src/eval/` beside `Evaluate.ts` (dm-0037, decided during S5.1–S5.4), so `gdos/` stays pure over evidence and the no-re-audit scan needs no exception.
+9. **Alternatives weighed and rejected** (recorded with the review): a generic rule-DSL/JSON-interpreted gate engine (maximum data-drivenness but an interpreter is accidental complexity with worse type safety — TS scorers over data profiles achieve the same recalibration path at ~6 gates, YAGNI); one monolithic scoring module (violates system isolation and per-module testability); per-gate sim re-runs (finding 2); statistical/ML calibration (violates determinism + zero-dependency constraints; CDRE is the recalibration channel instead).
+10. **Placement and curation semantics.** All P5 code lands in `src/eval/gdos/` — evaluation-time logic under the dm-0022 one-way rule (the sim never knows it is being scored); the EvalIsolation scan and math whitelist extend to it unchanged. The Kill Switch and First-Party filter are decision procedures over `GdosReport`s plus **typed authored attestations** where a criterion is genuinely qualitative (Self-Explanation, Inevitable Polish) — represented honestly as attestation records, never faked as computations. The Subtractive Removal engine formalizes what P2–P4 verifications did procedurally: an executable six-question checklist over a milestone inventory, producing a report with per-question findings.
+
+## Design summary (the compact model the code is written from)
+
+1. **Kernel (`src/eval/gdos/Evidence.ts`, `Profile.ts`, `Report.ts`).** `EvidenceBundle` (def + GDOS metadata + four local verdicts + tapes, assembled once); `ScoringProfile` (versioned record: all estimator weights, gate thresholds REQ-055/056, IDS window + min/max, novelty distance weights — strict-parsed, `DEFAULT_PROFILE` frozen); `GdosReport` + `DesignDecision` (pure data records every gate/curation verdict emits).
+2. **Design space (`DesignSpace.ts`, `Economy.ts`).** Axes derived from registries (finding 6); `coverageMatrix(evidence[]) → CoverageMatrix`; `economyOfMechanics(matrix) → per-mechanic depth ÷ count` with the exhaust-first comparison.
+3. **Gates (`Emotional.ts`, `Streamability.ts`, `InfoDensity.ts`).** Pure estimators over the bundle (finding 5 semantics; streamability: Reaction Density ≈ event density/sec across tapes, Clip Potential ≈ peak surprise×kinetic moments, Replay Value ≈ delta + route multiplicity, Shareability ≈ profile-weighted composite); each returns `{ scores, pass, findings, decisions }` against the profile thresholds. IDS includes the REQ-016 fairness check (finding 7).
+4. **Search metrics (`src/eval/Novelty.ts`, `src/eval/EmergentFun.ts` — TOP-LEVEL eval, not gdos/; dm-0037).** Corpus-parameterized divergence; kinetic-anchor probe over `Search.ts` (finding 8). Because EmergentFun executes a search, it lives at the top level of `src/eval/` alongside `Evaluate.ts` (the module that runs the audits), keeping `gdos/` strictly pure over pre-assembled evidence — no sim, no search, no scan carve-out. Novelty (pure descriptor distance) may live in `gdos/` or beside it. Emitted as data for P7.
+5. **Design Memory (`DesignMemory.ts`).** Typed strict parse of the ledger document; query API (by status/tag/title-term — the parse-before-proposing REQ-051 check is `findPriorArt(terms)`); pure `append` producing the canonical next document string; ledger `schema_version` bump only if new fields prove necessary (decide at S5.6).
+6. **Curation (`Curation.ts`).** Kill Switch: reject decision + recorded reason when a report shows a non-elevating concept (fails gates / adds a mechanic while variations unexhausted / violates REQ-012 isolation). First-Party filter: three criteria over report + attestations. Subtractive engine: six-question checklist over a milestone inventory record.
+7. **CDRE (`Cdre.ts`).** `mine(history: DesignDecision[], reports: GdosReport[]) → CdreProposal[]`; `apply(profile, acceptedProposal) → next ScoringProfile version`. Every proposal carries the five Intent Repository fields.
+
+## Dependencies
+
+P4 VERIFIED (satisfied). Consumes: the four local verdict types + `AgentRunResult`/tapes (S4.2–S4.5), `CurriculumLevel`/`MacroVerdict` (S4.6), `GdosMetadata` (S2.x, semantics assigned by dm-0012), the P3 kind registries, `Search.ts`, the P2 parse discipline (dm-0010/0013/0014), `meta/design_memory_ledger.json` as the memory backing store. No external dependencies. P6 consumes the coverage matrix; P7 consumes novelty/emergent-fun/IDS; P10 consumes `judgeLevel`.
+
+## Deliverables (one per slice — see `docs/task_slices.md` Phase 5, restructured)
+
+- **S5.1** Kernel + design space: `Evidence.ts`, `Profile.ts`, `Report.ts`, `DesignSpace.ts`, `Economy.ts` (REQ-040/041/042). Tests: profile strict-parse rejection suite; bundle assembly from P4 fixture verdicts; axis derivation locksteps with registries; coverage + economy on hand-built evidence sets; exhaust-first comparison.
+- **S5.2** Emotional estimators + threshold gates (REQ-055; REQ-015 arc semantics). Tests: each estimator on targeted evidence fixtures; gates reject below-threshold and pass above-threshold bundles; delivered-vs-intended divergence reported.
+- **S5.3** Streamability estimators + matrix gates (REQ-056). Same shape.
+- **S5.4** IDS regulator + failure-visibility fairness (REQ-061; REQ-016 P5 share). Tests: overwhelm and boring fixtures rejected; window math exact; invisible-kill fixture fails fairness, visible-kill passes.
+- **S5.5** Novelty + emergent-fun (REQ-053/054); EmergentFun sited at top-level `src/eval/` per dm-0037. Tests: identical-level divergence 0; divergent fixture scores higher; kinetic-anchor probe flags a spring-chain fixture, not a flat corridor.
+- **S5.6** Executable Design Memory + Intent Repository (REQ-050/051/111 completion). Tests: round-trips the *real* ledger file content; strict rejection suite; prior-art query finds a known dm entry; append is canonical + idempotent-safe.
+- **S5.7** Kill Switch + First-Party filter + Subtractive engine (REQ-020/021/022; REQ-012 curation share). Tests: kill fires on gate-failing/economy-violating reports with recorded reasons; passes an elevating fixture; checklist report over a fixture inventory.
+- **S5.8** CDRE loop (REQ-052). Tests: mines a seeded history into expected proposals; applying an accepted proposal yields a new valid profile version; rejected proposals recorded, never applied.
+- **S5.9** `docs/verification/P5.md` — per-REQ verification report (dm-0008 discipline).
+
+## Validation criteria
+
+- **Determinism:** every scorer/estimator/miner is a pure function — same inputs ⇒ identical outputs; no `Math.random`, no `Date.now`, math whitelist honored under `src/eval/gdos/` (scan-audited).
+- **Data-driven calibration (dm-0031):** zero numeric literals in gate logic — every weight/threshold reaches code through a parsed `ScoringProfile`; changing a threshold requires no code edit (proven by a test that gates the same bundle differently under two profiles).
+- **No re-auditing / purity:** `src/eval/gdos/` never invokes the P4 audit entry points (`solvability/softlock/exploit/optimization`), never drives the engine, and never runs a `Search` — evidence arrives assembled (two scans in `EvalIsolation.test.ts`: local-pass imports are types-only, and no `AgentHarness`/`Evaluate`/`Search`/`Engine` import at all; dm-0037). Search-using P5 code (EmergentFun) lives at top-level `src/eval/`, so there is **no exception** to weaken the rule.
+- **Gate correctness:** every gate rejects its below-threshold fixture and passes its above-threshold fixture; every score traces to a PRD §-metric by name.
+- **Memory fidelity (REQ-051/111):** the store parses the real `design_memory_ledger.json` losslessly; every accepted/rejected decision record carries all five Intent Repository fields; prior-art query prevents re-proposing a ledgered rejection.
+- **Isolation:** one-way rule intact (sim never imports eval); `src/eval/gdos/` I/O-free (fs only at callers/tests).
+- **Content gate:** no content authored; fixtures remain in-code/`test/fixtures/` scaffolding.
+- **Green build:** `npm test` exits 0; every new module covered.
+
+## Checkpoints
+
+- **C5.1** ✅ Kernel + coverage matrix + economy metric landed; profile rejection suite green; axes lockstep with registries (`GdosProfile`/`GdosDesignSpace` tests).
+- **C5.2** ✅ Emotional gates classify their fixture bundles correctly; delivered-vs-intended divergence reported; two-profile test proves calibration external (`GdosEmotional`).
+- **C5.3** ✅ Streamability gates classify correctly; every metric named per §6 (`GdosStreamability`).
+- **C5.4** ✅ IDS regulator rejects overwhelm/boring fixtures; fairness check catches the invisible kill (`GdosInfoDensity`).
+- **C5.5** Novelty + emergent-fun metrics behave on fixture corpora; kinetic anchors emitted as data.
+- **C5.6** Design Memory round-trips the live ledger; prior-art query + canonical append proven.
+- **C5.7** Kill Switch/First-Party/Subtractive verdicts fire correctly and record decisions.
+- **C5.8** CDRE mines seeded history into proposals; accepted proposal produces a valid next profile version.
+- **C5.9** `docs/verification/P5.md` filed; owned REQs → VERIFIED; PKG consistent; subtractive pass recorded.
+
+## Risk register (P5)
+
+| Risk | Mitigation |
+|------|------------|
+| Estimator formulas become Goodhart targets for P7/P10 generators. | Evidence-rich reports (never bare booleans), the First-Party filter as an independent second gate, CDRE recalibration channel, epistemics ledgered per estimator (dm-0031). |
+| Magic-number creep in gate logic. | The zero-numeric-literals validation criterion + two-profile test; all calibration in `ScoringProfile`. |
+| CDRE scope balloons toward "AI improving AI". | dm-0033 pins it: mine → propose → versioned profile apply; proposals are data with Intent Repository fields. |
+| Gates silently re-run P4 audits (duplicated, divergent evidence). | `EvidenceBundle` seam + import-discipline scan (finding 2). |
+| Design Memory store corrupts the live ledger. | Pure text→records→text with strict parse + canonical serialize; round-trip test against the real file; callers own `fs`. |
+| Qualitative criteria (Self-Explanation, Polish) faked as computations. | Typed attestation records — honest inputs, deterministic verdict logic over them (finding 10). |
+| GdosMetadata semantics drift from the dm-0012 provisional shape. | P5 owns the semantics; any extension bumps the schema version explicitly (open question 2), never reinterprets silently. |
+
+## Open questions (carried into P5 implementation)
+
+1. **Exact estimator formulas per metric** — each slice defines its estimator precisely and ledgers it (the review fixes the *evidence source* per metric; coefficients live in the profile from day one).
+2. **GdosMetadata schema extension** — do streamability intent or attestations need authored schema fields, or do attestation records stay eval-side data? Decide at S5.3/S5.7; version-bump if extending (dm-0012).
+3. **Ledger schema version** — does the executable store need machine fields (tags, structured refs) beyond v1.0? Decide at S5.6; migrate per dm-0010 policy only if v2 exists.
+4. **Novelty descriptor composition** — exact geometry-signature and trajectory-shape fields; decide + ledger at S5.5.
+
+## Exit condition for P5
+
+All checkpoints C5.1–C5.9 pass; `judgeLevel(evidence, profile)` produces a full `GdosReport` on fixture bundles with every gate correct on its fixture pair; the Design Memory is executable over the live ledger; CDRE produces versioned profile evolution; the verification report is filed. P5 `VERIFIED` is the second M2 pillar — the content gate stays closed until P6 also closes.
+
+### Per-REQ `VERIFIED` schedule (four-state discipline)
+
+A REQ becomes `VERIFIED` only at the phase report that closes its **last** owning phase (the P4 precedent: REQ-140/141 flipped at S4.7; REQ-142/101/102 stayed `IN_PROGRESS` because they span P6/P10). So S5.1–S5.4 leave their REQs at `IN_PROGRESS` — this is correct, not a loose end:
+
+- **Flip to `VERIFIED` at S5.9** (P5 is their only owning phase): REQ-040, REQ-042, REQ-055, REQ-056.
+- **Stay `IN_PROGRESS` past S5.9** (a later phase still owns a share): REQ-041 (P6 consumes coverage), REQ-061 (P7 applies IDS), REQ-015 (P10 authors the arc), REQ-016 (P9 renders failure signals, P10 authors). These flip at their final phase's report.
+- Already `IN_PROGRESS` and completed by S5.6/S5.8 respectively: REQ-051/REQ-111 (Design Memory), REQ-052 (CDRE), REQ-020/021/022 (curation), REQ-050/053/054 — flip per the same rule.

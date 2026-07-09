@@ -82,16 +82,18 @@ Session-sized, dependency-ordered work units. Each slice is small enough to comp
 
 ## Phase 5 — GDOS Scoring Engine
 
+*(Restructured at P5 plan authoring via adversarial review, dm-0031–dm-0035: the GDOS kernel — EvidenceBundle + ScoringProfile + DesignDecision records — lands with S5.1; the executable Design Memory moved AHEAD of the Kill Switch and CDRE, which read/write it; CDRE runs last atop everything. See `docs/execution_plan.md` P5.)*
+
 | Slice | Title | REQs | Depends | State |
 |-------|-------|------|---------|-------|
-| S5.1 | Design-space coverage matrix + economy metric | REQ-040, REQ-041, REQ-042 | S4.7 | NOT_STARTED |
-| S5.2 | Emotional-threshold gates | REQ-055 | S4.7 | NOT_STARTED |
-| S5.3 | Streamability matrix | REQ-056 | S4.7 | NOT_STARTED |
-| S5.4 | Information Density regulator | REQ-061 | S4.7 | NOT_STARTED |
-| S5.5 | Novelty search + Emergent Fun search | REQ-053, REQ-054 | S5.1 | NOT_STARTED |
-| S5.6 | CDRE self-improving loop | REQ-052 | S5.1–S5.5 | NOT_STARTED |
-| S5.7 | Kill Switch + First-Party filter + Subtractive Removal engine | REQ-020, REQ-021, REQ-022 | S5.2 | NOT_STARTED |
-| S5.8 | Design Memory + Intent Repository (executable) | REQ-050, REQ-051, REQ-111 | S5.1 | NOT_STARTED |
+| S5.1 | GDOS kernel (EvidenceBundle, ScoringProfile, GdosReport/DesignDecision) + design-space coverage matrix + economy-of-mechanics metric | REQ-040, REQ-041, REQ-042 | S4.7 | COMPLETED |
+| S5.2 | Emotional estimators + threshold gates | REQ-055, REQ-015(arc semantics) | S5.1 | COMPLETED |
+| S5.3 | Streamability estimators + matrix gates | REQ-056 | S5.1 | COMPLETED |
+| S5.4 | Information Density regulator + failure-visibility fairness check | REQ-061, REQ-016(P5 share) | S5.1 | COMPLETED |
+| S5.5 | Novelty search + Emergent Fun search (corpus-parameterized) | REQ-053, REQ-054 | S5.1 | NOT_STARTED |
+| S5.6 | Executable Design Memory + Intent Repository (backing store: `meta/design_memory_ledger.json`) | REQ-050, REQ-051, REQ-111 | S5.1 | NOT_STARTED |
+| S5.7 | Kill Switch + First-Party filter + Subtractive Removal engine | REQ-020, REQ-021, REQ-022, REQ-012(curation share) | S5.2, S5.6 | NOT_STARTED |
+| S5.8 | CDRE profile-evolution loop | REQ-052 | S5.1–S5.7 | NOT_STARTED |
 | S5.9 | Phase-5 verification report | REQ-P02 | S5.1–S5.8 | NOT_STARTED |
 
 ## Phase 6 — Campaign Intelligence
@@ -126,13 +128,15 @@ Session-sized, dependency-ordered work units. Each slice is small enough to comp
 
 ## Phase 9 — Rendering, Audio & Visual Grammar
 
+> **Package version policy (dm-0038):** any new runtime/dev dependency introduced from S9.1 onward (WebGL/audio libs if used, and the Poki SDK in S9.5) is pinned to the latest version published on the npm registry as of that slice's implementation date, not a stale/cached version. This mirrors the toolchain bump already applied to the existing devDependencies (`typescript` ^5.4.0 → ^7.0.2 as of 2026-07; `@types/node` already at latest ^26.1.1) — re-verified 291/291 green under the new toolchain.
+
 | Slice | Title | REQs | Depends | State |
 |-------|-------|------|---------|-------|
 | S9.1 | WebGL renderer + batching | REQ-162, REQ-170 | S3.8 | NOT_STARTED |
 | S9.2 | Object pooling framework | REQ-161 | S9.1 | NOT_STARTED |
 | S9.3 | Visual grammar style system (6 categories) | REQ-070, REQ-071 | S9.1 | NOT_STARTED |
 | S9.4 | WebAudio signatures | REQ-071 | S9.1 | NOT_STARTED |
-| S9.5 | Responsive scaling + SDK lifecycle hooks | REQ-170, REQ-171 | S9.1 | NOT_STARTED |
+| S9.5 | Responsive scaling + Poki SDK lifecycle hooks (dm-0038: Poki only, no CrazyGames) | REQ-170, REQ-171 | S9.1 | NOT_STARTED |
 | S9.6 | Dynamic quality scale-back | REQ-163 | S9.2 | NOT_STARTED |
 | S9.7 | Phase-9 verification report | REQ-P02 | S9.1–S9.6 | NOT_STARTED |
 
@@ -160,9 +164,9 @@ Session-sized, dependency-ordered work units. Each slice is small enough to comp
 
 **P4 — Evaluation & Validation Framework is VERIFIED** (`docs/verification/P4.md`); all seven P4 slices COMPLETED, 241/241 tests green, pkg `s4-g7d8e9`. **Milestone M2 — Design Intelligence Operational is still OPEN** — P4 is one of its three pillars (P4 + P5 + P6). The next phase is **P5 — GDOS Scoring Engine** (its entry condition, P4-VERIFIED, is satisfied).
 
-1. **Author the P5 execution-plan section FIRST** (REQ-P02) — consider the same adversarial review P2/P3/P4 got; P5 owns emotional-threshold gates, streamability matrix, IDS regulator, economy-of-mechanics metric, novelty/emergent-fun search, CDRE loop, Kill Switch + First-Party filter, subtractive-removal engine, design-space coverage. P5's gates consume the P4 verdicts (solvability/optimization/curriculum) as inputs.
-2. **S5.1** — Design-space coverage matrix + economy-of-mechanics metric (REQ-040/041/042).
-3. **S5.2–S5.5** — emotional-threshold gates, streamability matrix, IDS regulator, novelty + emergent-fun search.
+1. ~~Author the P5 execution-plan section~~ **DONE** — authored via first-principles adversarial review (dm-0031–dm-0035); slice table restructured above (Design Memory ahead of Kill Switch/CDRE; kernel with S5.1).
+2. **S5.1** — GDOS kernel (EvidenceBundle/ScoringProfile/DesignDecision) + design-space coverage matrix + economy-of-mechanics metric (REQ-040/041/042).
+3. **S5.2–S5.5** — emotional gates, streamability gates, IDS regulator + fairness, novelty + emergent-fun search (all consume the S5.1 kernel).
 4. Then **P6 — Campaign Intelligence** closes M2; only then does the content gate open.
 
 *(Content generation stays hard-gated until M2 — P4+P5+P6 — is VERIFIED. P4 done, P5+P6 remain.)*

@@ -14,7 +14,7 @@
 
 | ID | Requirement | PRD | Phase | State |
 |----|-------------|-----|-------|-------|
-| REQ-001 | 2D puzzle-platformer targeting premium web portals (Poki, CrazyGames); retention decided in first 30s. | §1 | P9,P11 | NOT_STARTED |
+| REQ-001 | 2D puzzle-platformer targeting the premium web portal Poki; retention decided in first 30s. | §1 | P9,P11 | NOT_STARTED |
 | REQ-002 | Eliminate operational friction: no long loads, no complex progression, no text-heavy tutorials. | §1 | P9,P10 | NOT_STARTED |
 | REQ-003 | Prioritize continuous kinetic momentum and instant gameplay iteration. | §1 | P3,P10 | IN_PROGRESS |
 | REQ-004 | Single unchanging structural constraint: exactly one jump per level. | §1 | P3 | VERIFIED |
@@ -29,8 +29,8 @@
 | REQ-012 | Every challenge isolates/amplifies/tests the one-jump constraint; omit anything that does not. | §2 | P5,P10 | NOT_STARTED |
 | REQ-013 | Understandable within seconds; difficulty from player decisions and spatial puzzles. | §2 | P10 | NOT_STARTED |
 | REQ-014 | The structural puzzle *is* the level layout itself. | §2 | P2,P10 | IN_PROGRESS |
-| REQ-015 | Deliberate six-phase emotional arc: Curiosity, Confidence, Surprise/Betrayal, Realization, Mastery, Renewed Uncertainty. | §2 | P5,P10 | NOT_STARTED |
-| REQ-016 | No arbitrary trolling/random penalties; failure information always visually present on screen. | §2 | P5,P9,P10 | NOT_STARTED |
+| REQ-015 | Deliberate six-phase emotional arc: Curiosity, Confidence, Surprise/Betrayal, Realization, Mastery, Renewed Uncertainty. | §2 | P5,P10 | IN_PROGRESS |
+| REQ-016 | No arbitrary trolling/random penalties; failure information always visually present on screen. | §2 | P5,P9,P10 | IN_PROGRESS |
 
 ## §3 Creative Director & First-Party Quality Review
 
@@ -52,9 +52,9 @@
 
 | ID | Requirement | PRD | Phase | State |
 |----|-------------|-----|-------|-------|
-| REQ-040 | Model the entire design space mathematically & conceptually before designing any content. | §5 | P5 | NOT_STARTED |
-| REQ-041 | Formal multi-dimensional design-space matrix: Mechanic × Environment × Emotion × Optimization Style × Player Type, with enumerated axes; track coverage. | §5 | P5,P6 | NOT_STARTED |
-| REQ-042 | Economy of Mechanics metric (Depth ÷ Mechanic Count); maximize; exhaust variations before introducing a new mechanic. | §5 | P5 | NOT_STARTED |
+| REQ-040 | Model the entire design space mathematically & conceptually before designing any content. | §5 | P5 | IN_PROGRESS |
+| REQ-041 | Formal multi-dimensional design-space matrix: Mechanic × Environment × Emotion × Optimization Style × Player Type, with enumerated axes; track coverage. | §5 | P5,P6 | IN_PROGRESS |
+| REQ-042 | Economy of Mechanics metric (Depth ÷ Mechanic Count); maximize; exhaust variations before introducing a new mechanic. | §5 | P5 | IN_PROGRESS |
 
 ## §6 Game Design Operating System (GDOS)
 
@@ -65,15 +65,15 @@
 | REQ-052 | Continuous Design Research Engine (CDRE): self-improving loop that improves the design process itself and feeds validated discoveries back into GDOS. | §6 | P5 | NOT_STARTED |
 | REQ-053 | Novelty Search: algorithmic metric targeting layout divergence. | §6 | P5,P7 | NOT_STARTED |
 | REQ-054 | Emergent Fun Discovery search: probe physics edge cases; flag high-value kinetic anchors for future layouts. | §6 | P5,P7 | NOT_STARTED |
-| REQ-055 | Mathematically enforced emotional thresholds as quality gates: Curiosity ≥90, Confidence ≥90, Surprise ≥95, Mastery ≥95. | §6 | P5 | NOT_STARTED |
-| REQ-056 | Global Streamability Matrix gates: Shareability ≥85, Clip Potential ≥90, Reaction Density ≥95, Replay Value ≥90. | §6 | P5 | NOT_STARTED |
+| REQ-055 | Mathematically enforced emotional thresholds as quality gates: Curiosity ≥90, Confidence ≥90, Surprise ≥95, Mastery ≥95. | §6 | P5 | IN_PROGRESS |
+| REQ-056 | Global Streamability Matrix gates: Shareability ≥85, Clip Potential ≥90, Reaction Density ≥95, Replay Value ≥90. | §6 | P5 | IN_PROGRESS |
 
 ## §7 Procedural Design Assistant (PDA) & Information Density
 
 | ID | Requirement | PRD | Phase | State |
 |----|-------------|-----|-------|-------|
 | REQ-060 | PDA: standalone discovery tool that searches conceptual/structural/systemic opportunities (not raw geometry). | §7 | P7 | NOT_STARTED |
-| REQ-061 | Information Density Score (IDS) formula computed per screen; regulate against max (overwhelm) and min (boring) thresholds. | §7 | P5,P7 | NOT_STARTED |
+| REQ-061 | Information Density Score (IDS) formula computed per screen; regulate against max (overwhelm) and min (boring) thresholds. | §7 | P5,P7 | IN_PROGRESS |
 
 ## §8 Visual Grammar & Language Consistency
 
@@ -161,7 +161,7 @@
 
 | ID | Requirement | PRD | Phase | State |
 |----|-------------|-----|-------|-------|
-| REQ-170 | Interface with WebGL/WebAudio; integrate platform SDKs (Poki, CrazyGames) for ad placement + loading-progress lifecycle hooks. | §18 | P9,P11 | NOT_STARTED |
+| REQ-170 | Interface with WebGL/WebAudio; integrate the Poki SDK (PokiSDK) for ad placement + loading-progress lifecycle hooks. | §18 | P9,P11 | NOT_STARTED |
 | REQ-171 | Responsive UI scaling across resolutions, aspect ratios, and fullscreen transitions. | §18 | P9,P11 | NOT_STARTED |
 | REQ-172 | Fully automated build pipeline: compile optimized client builds, asset optimization passes, run the validation test suite, package deployment-ready artifacts. | §18 | P11 | NOT_STARTED |
 | REQ-173 | Completion bar: polished, definitive premium-indie quality; complete only when all systems/tools/data/docs are shipped-verified. | §18 | P11 | NOT_STARTED |

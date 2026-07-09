@@ -32,9 +32,12 @@
 import { FIXED_STEP_SECONDS } from '../core/Clock';
 import { Engine } from '../core/Engine';
 import type { InputFrame } from '../core/State';
+import type { Vec2 } from '../core/Vec2';
 import { StateManager } from '../core/StateManager';
 import type { LevelDefinition } from '../components/Level';
-import { createInitialState, type JumpOnceState, type WorldState } from '../entities/World';
+import { COLLISION_CLASS_BY_KIND } from '../components/CollisionClass';
+import type { EntityKind } from '../components/Behavior';
+import { createInitialState, type JumpOnceState, type RunState, type WorldState } from '../entities/World';
 import type { System } from '../systems/System';
 import { lifecycleSystem } from '../systems/Lifecycle';
 import { entityKinematicsSystem } from '../systems/EntityKinematics';
@@ -169,4 +172,61 @@ export function replayTape(
     state = engine.tick(FIXED_STEP_SECONDS);
   }
   return state;
+}
+
+/** A lethal entity's live position at one observed tick. */
+export interface LethalObservation {
+  readonly id: string;
+  readonly kind: EntityKind;
+  readonly position: Vec2;
+}
+
+/** One tick of a replay, projected to what death/fairness analysis needs. */
+export interface TickObservation {
+  /** GameState tick after this step. */
+  readonly tick: number;
+  readonly runState: RunState;
+  /** Player center after this step. */
+  readonly playerPosition: Vec2;
+  /** Positions of every lethal-class entity this tick (index-aligned with nothing; carry ids). */
+  readonly lethals: readonly LethalObservation[];
+}
+
+/**
+ * Re-drive a tape and project each post-tick state to a TickObservation. Same
+ * pipeline and determinism as replayTape; used by the P5 evidence assembler to
+ * extract deaths and killer positions for the REQ-016 fairness check. Lethal
+ * classification is by static collision class (dm-0021): spike/laser/
+ * movingHazard — the on-fraction timing of a laser is not modeled here, so
+ * attribution is by proximity to a lethal-class entity, which is sufficient
+ * evidence for the fairness proxy.
+ */
+export function replayObserved(
+  def: LevelDefinition,
+  seed: number,
+  frames: readonly InputFrame[],
+): TickObservation[] {
+  const lethalIndices: number[] = [];
+  for (let i = 0; i < def.entities.length; i++) {
+    if (COLLISION_CLASS_BY_KIND[def.entities[i].behavior.kind] === 'lethal') lethalIndices.push(i);
+  }
+  const { manager, engine } = assemble(def, seed);
+  let state = manager.getState();
+  const observations: TickObservation[] = [];
+  for (const frame of frames) {
+    manager.commit({ ...state, input: frame });
+    state = engine.tick(FIXED_STEP_SECONDS);
+    const lethals: LethalObservation[] = [];
+    for (const i of lethalIndices) {
+      const ent = state.world.entities[i];
+      lethals.push({ id: ent.id, kind: def.entities[i].behavior.kind, position: ent.position });
+    }
+    observations.push({
+      tick: state.tick,
+      runState: state.world.runState,
+      playerPosition: state.world.playerPosition,
+      lethals,
+    });
+  }
+  return observations;
 }
