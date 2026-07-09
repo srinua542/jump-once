@@ -17,15 +17,15 @@
 | REQ-001 | 2D puzzle-platformer targeting premium web portals (Poki, CrazyGames); retention decided in first 30s. | §1 | P9,P11 | NOT_STARTED |
 | REQ-002 | Eliminate operational friction: no long loads, no complex progression, no text-heavy tutorials. | §1 | P9,P10 | NOT_STARTED |
 | REQ-003 | Prioritize continuous kinetic momentum and instant gameplay iteration. | §1 | P3,P10 | IN_PROGRESS |
-| REQ-004 | Single unchanging structural constraint: exactly one jump per level. | §1 | P3 | NOT_STARTED |
+| REQ-004 | Single unchanging structural constraint: exactly one jump per level. | §1 | P3 | IN_PROGRESS |
 | REQ-005 | Depth via level design (Level Devil–style subversion), not expanded power sets; logical fairness; deterministic rules. | §1 | P10 | NOT_STARTED |
 
 ## §2 Core Philosophy & Axiomatic Constraints
 
 | ID | Requirement | PRD | Phase | State |
 |----|-------------|-----|-------|-------|
-| REQ-010 | Exactly one jump per level, invariant across the entire campaign. | §2 | P3 | NOT_STARTED |
-| REQ-011 | Exclude upgrades, power-ups, double/wall jumps, jump-refreshing lives, temporary exceptions. | §2 | P3 | NOT_STARTED |
+| REQ-010 | Exactly one jump per level, invariant across the entire campaign. | §2 | P3 | IN_PROGRESS |
+| REQ-011 | Exclude upgrades, power-ups, double/wall jumps, jump-refreshing lives, temporary exceptions. | §2 | P3 | IN_PROGRESS |
 | REQ-012 | Every challenge isolates/amplifies/tests the one-jump constraint; omit anything that does not. | §2 | P5,P10 | NOT_STARTED |
 | REQ-013 | Understandable within seconds; difficulty from player decisions and spatial puzzles. | §2 | P10 | NOT_STARTED |
 | REQ-014 | The structural puzzle *is* the level layout itself. | §2 | P2,P10 | IN_PROGRESS |
@@ -187,8 +187,8 @@
 
 | State | Count |
 |-------|------:|
-| NOT_STARTED | 48 |
-| IN_PROGRESS | 13 |
+| NOT_STARTED | 45 |
+| IN_PROGRESS | 16 |
 | COMPLETED | 0 |
 | VERIFIED | 6 |
 | **Total** | **67** |

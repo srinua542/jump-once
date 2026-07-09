@@ -46,6 +46,23 @@ import type { LevelDefinition } from '../components/Level';
  */
 export type RunState = 'playing' | 'defeated' | 'completed';
 
+/** Phases of the single-jump lock machine (S3.5 — the axiom, REQ-004/010/011). */
+export type JumpPhase = 'available' | 'anticipating' | 'spent';
+
+/**
+ * The single-jump lock (S3.5). Lives in WorldState so a scene reload —
+ * pure re-instantiation — refreshes it BY CONSTRUCTION (dm-0018): there is
+ * no reset code to forget. The machine only ever moves forward within a
+ * life: available → anticipating → spent.
+ */
+export interface JumpLockState {
+  readonly phase: JumpPhase;
+  /** Ticks until the impulse fires; meaningful only while 'anticipating', else 0. */
+  readonly ticksUntilImpulse: number;
+}
+
+const JUMP_AVAILABLE: JumpLockState = { phase: 'available', ticksUntilImpulse: 0 };
+
 /** Runtime state of one entity. Authored data stays in world.level; only what changes lives here. */
 export interface EntityState {
   readonly id: EntityId;
@@ -70,6 +87,8 @@ export interface WorldState {
    * becomes true on the first supported step (S3.1).
    */
   readonly playerGrounded: boolean;
+  /** The single-jump lock (S3.5). Fresh worlds start 'available'. */
+  readonly jumpLock: JumpLockState;
   /** Run lifecycle phase (S3.4). Fresh worlds start 'playing'. */
   readonly runState: RunState;
   /** Number of scene reloads performed for this level so far. Fresh worlds start 0. */
@@ -104,6 +123,7 @@ export function instantiateWorld(def: LevelDefinition): WorldState {
     playerPosition: level.constraints.spawn,
     playerVelocity: ZERO,
     playerGrounded: false,
+    jumpLock: JUMP_AVAILABLE,
     runState: 'playing',
     attemptCount: 0,
     spawnTick: 0,

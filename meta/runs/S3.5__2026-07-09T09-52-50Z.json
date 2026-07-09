@@ -1,0 +1,88 @@
+{
+  "slice": "S3.5",
+  "title": "Single-jump lock state machine (the axiom)",
+  "reqs": [
+    "REQ-004",
+    "REQ-010",
+    "REQ-011",
+    "REQ-150"
+  ],
+  "started_at": "2026-07-09T04:36:39.747Z",
+  "updated_at": "2026-07-09T09:52:50.596Z",
+  "current_stage": "handoff",
+  "stages": {
+    "reboot": {
+      "status": "done",
+      "at": "2026-07-09T04:36:39.748Z",
+      "note": "REBOOT held (153/153, pkg s3-d0f4a2)"
+    },
+    "select": {
+      "status": "done",
+      "at": "2026-07-09T04:36:39.809Z",
+      "note": "SELECT: S3.5; depends S3.3+S3.4 COMPLETED. REQ-004/010/011 -> IN_PROGRESS"
+    },
+    "plan": {
+      "status": "done",
+      "at": "2026-07-09T04:36:39.875Z",
+      "note": "PLAN: TUNING += jumpSpeed/anticipationTicks (consumers land now); WorldState += jumpLock {phase available|anticipating|spent, ticksUntilImpulse}; machine lives in PlayerControl (the input consumer): grounded+available+jumpPressed -> anticipating(N); countdown -> single impulse vy=-jumpSpeed -> spent forever until reload (refresh by construction, dm-0018). No coyote time, no buffering, committed anticipation (ledger dm-0020). Fuzz property: never >1 impulse per life across seeded tapes incl. reload boundaries."
+    },
+    "anchor": {
+      "status": "done",
+      "at": "2026-07-09T04:36:39.944Z",
+      "note": "ANCHOR: WorldState extension additive; PlayerControl boundary extended to jumpPressed (by-field split per dm-0019); 153-test suite is the regression gate"
+    },
+    "implement": {
+      "status": "done",
+      "at": "2026-07-09T04:36:40.006Z",
+      "note": "IMPLEMENT: TUNING += jumpSpeed/anticipationTicks; WorldState += jumpLock {phase, ticksUntilImpulse} + JumpPhase/JumpLockState; single-jump machine in PlayerControl (grounded press -> anticipating(N) -> one impulse -> spent forever until reload)"
+    },
+    "verify": {
+      "status": "done",
+      "at": "2026-07-09T09:51:57.154Z",
+      "note": "VERIFY: 161/161 green (+8: countdown timing + exact impulse, air-press ignored-not-consumed, no-restart/no-stack, committed anticipation survives support loss, spent-is-forever, horizontal-still-works-while-spent, reload re-arms, AND the axiom property: 40 seeded 300-tick fuzz tapes across defeat/reset -> never >1 impulse/life, never backward phase transition)"
+    },
+    "integrate": {
+      "status": "done",
+      "at": "2026-07-09T09:51:57.219Z",
+      "note": "INTEGRATE: PKG player_control + tuning + entities/world summaries updated, backlog_refs += REQ-004/010/011, pkg_hash s3-d0f4a2 -> s3-e1a5b3 (consistency validated); ledger dm-0020 recorded (jump semantics: no coyote/no buffering, committed anticipation, forward-only, refresh-by-reinstantiation)"
+    },
+    "report": {
+      "status": "done",
+      "at": "2026-07-09T09:51:57.412Z",
+      "note": "REPORT: S3.5 -> COMPLETED in task_slices.md; REQ-004/010/011 stay IN_PROGRESS until S3.9 phase report (dm-0008 per-REQ verification); the axiom property test is green"
+    },
+    "handoff": {
+      "status": "done",
+      "at": "2026-07-09T09:52:50.545Z",
+      "note": "HANDOFF updated: S3.1-S3.5 complete, resume at S3.6 (environmental elements); canonical pipeline order + closed-form kinematics warnings carried forward"
+    }
+  },
+  "acceptance": [
+    {
+      "req": "REQ-004",
+      "criterion": "(fill in)",
+      "met": true,
+      "note": null
+    },
+    {
+      "req": "REQ-010",
+      "criterion": "(fill in)",
+      "met": true,
+      "note": null
+    },
+    {
+      "req": "REQ-011",
+      "criterion": "(fill in)",
+      "met": true,
+      "note": null
+    },
+    {
+      "req": "REQ-150",
+      "criterion": "(fill in)",
+      "met": false,
+      "note": null
+    }
+  ],
+  "outcome": "completed",
+  "closed_at": "2026-07-09T09:52:50.645Z"
+}

@@ -1,41 +1,46 @@
 {
-  "session_end_timestamp": "2026-07-09T15:00:00Z",
+  "session_end_timestamp": "2026-07-09T17:30:00Z",
   "current_milestone": "M1_Simulatable_Game",
   "active_working_branch": "main",
   "completed_since_last_snapshot": [
-    "P3 execution-plan section authored (docs/execution_plan.md) via adversarial review of the original S3.1-S3.8 slice table — the same treatment P2 got. Findings: no slice owned run lifecycle (goal/defeat/reload — REQ-010/011 untestable without it); input-system ownership undefined; five technique upgrades (closed-form tick-parametric kinematics dm-0016; swept axis-separated collision + transcendental-function ban + symplectic Euler dm-0017; jump-lock-in-WorldState + Tuning.ts data record dm-0018; slice restructure + REQ-150 re-scope to P3,P9 dm-0019). Slice table restructured S3.1-S3.9 (S3.4 run lifecycle NEW; jump lock -> S3.5; env/hazards/kinetic -> S3.6-S3.8; report -> S3.9).",
-    "S3.1 COMPLETED: src/components/Tuning.ts (TUNING: gravityY 60, maxFallSpeed 30, playerHalfExtents 0.35/0.45 — dm-0018 single normative feel source), src/components/CollisionClass.ts (COLLISION_CLASS_BY_KIND total over EntityKind: solid|lethal|sensor), WorldState.playerGrounded + index-alignment invariant documented in World.ts, src/systems/PlayerPhysics.ts (semi-implicit Euler, swept axis-separated tile+entity resolution, exact face snapping, math whitelist). Tests 118 -> 134: unit (300-case seeded no-tunneling fuzz at 1200 u/s, exact snaps, entity solidity incl. door open/closed + spike pass-through + stand-on-entity, purity, 240-step trajectory determinism) + integration PhysicsReplay (fixture file bit-identical replay, exact floor rest).",
-    "PKG: +3 nodes, entities/world updated, all edges both directions, pkg_hash s2-e6f2a4 -> s3-a7c1d9. Also reconciled pre-existing session-1 drift: core/clock and core/rng dependents were missing core/state.",
-    "Ledger: dm-0016..dm-0019 recorded at PLAN stage."
+    "P3 execution-plan section authored (docs/execution_plan.md) via adversarial review of the original S3.1-S3.8 slice table — the same treatment P2 got. Findings: no slice owned run lifecycle (goal/defeat/reload); input-system ownership undefined; five technique upgrades. Slice table restructured S3.1-S3.9 (S3.4 run lifecycle NEW; jump lock -> S3.5). Ledger dm-0016..dm-0019.",
+    "S3.1 COMPLETED: Tuning.ts + CollisionClass.ts (pure data), WorldState.playerGrounded + index-alignment invariant, PlayerPhysics.ts (semi-implicit Euler, swept axis-separated tile+entity resolution, exact face snapping, math whitelist). +16 tests incl. 300-case no-tunneling fuzz. Committed.",
+    "S3.2 COMPLETED: SpatialPartition.ts deterministic quadtree (fixed insertion order/capacity 8/depth 8, straddlers-at-parent, strict-overlap ascending query) + PlayerPhysics broad-phase wiring (swept-union query box). +7 tests incl. fuzz equivalence-vs-brute-force. Committed.",
+    "S3.3 COMPLETED: TUNING.runSpeed; PlayerControl.ts — the sole simulation input consumer (dm-0019), instant horizontal accel/decel (set-not-ramp), runs before physics. +6 tests. Committed.",
+    "S3.4 COMPLETED: WorldState += runState/attemptCount/spawnTick; Lifecycle.ts (first in pipeline: defeated/resetPressed -> pure re-instantiation, one-tick instant iteration) + HazardsAndGoal.ts (last: goal strict-overlap -> completed/freeze, fall-out -> defeated); runState guards in control/physics. +6 tests incl. cross-reload replay determinism. Committed.",
+    "S3.5 COMPLETED (THE AXIOM): TUNING += jumpSpeed/anticipationTicks; WorldState += jumpLock {phase available|anticipating|spent, ticksUntilImpulse} + JumpPhase/JumpLockState; single-jump machine in PlayerControl (grounded press -> anticipating(N) -> ONE impulse vy=-jumpSpeed -> spent forever until reload; air presses ignored-not-consumed; committed anticipation; no coyote/no buffering — dm-0020). +8 tests incl. THE PROPERTY: 40 seeded 300-tick fuzz tapes across defeat/reset boundaries -> never >1 impulse per life, never a backward phase transition. 161/161 green. Ledger dm-0020. (COMMIT PENDING — see warnings.)",
+    "PKG: +6 nodes total this session (tuning, collision_class, player_physics, spatial_partition, player_control, lifecycle, hazards_and_goal — 7 actually; entities/world extended repeatedly), all edges both directions, pkg_hash s2-e6f2a4 -> s3-a7c1d9 -> s3-b8d2e0 -> s3-c9e3f1 -> s3-d0f4a2 -> s3-e1a5b3 (current). Reconciled pre-existing session-1 drift (core/clock, core/rng dependents missing core/state)."
   ],
   "exact_execution_focus": {
     "file_path": "docs/task_slices.md",
-    "target_line_range": "Phase 3 table (S3.4 row)",
-    "pending_logical_transformation": "S3.2-S3.4 COMPLETED (quadtree; PlayerControl; Lifecycle+HazardsAndGoal with runState/attemptCount/spawnTick, one-tick defeat->reload, completion freeze; 153/153, pkg s3-d0f4a2). Next: S3.5 SINGLE-JUMP LOCK (the axiom, REQ-004/010/011): WorldState gains jumpLock machine state ('available' | anticipating countdown | 'spent'); PlayerControl consumes jumpPressed — grounded+available -> anticipating(TUNING.anticipationTicks, add field w/ consumer); countdown hits 0 -> impulse vy = -TUNING.jumpSpeed once -> 'spent' forever until reload (which resets by construction via instantiateWorld). While spent/airborne, jumpPressed ignored. Fuzz property: never >1 impulse per life.",
+    "target_line_range": "Phase 3 table (S3.6 row)",
+    "pending_logical_transformation": "S3.1-S3.5 COMPLETED (161/161, pkg s3-e1a5b3). S3.5 commit is the FIRST action next session if not already done. Next slice S3.6 — Environmental elements (REQ-151): tick-parametric (closed-form, dm-0016) moving platforms (linear=ping-pong / looping=wrap / triggered=dormant-until-activated) with entityKinematics system deriving position from (tick - spawnTick) via arc-length over the local-space waypoint polyline; PLATFORM CARRY (apply the platform's closed-form delta to a riding player BEFORE the player sweep — see P3 plan risk register); collapsing floors (firstContactTick stored, collapse after collapseDelaySeconds -> non-solid); frictionless ice (the one surface that RAMPS horizontal velocity instead of instant-set — see PlayerControl S3.3 note). WorldState.entities will need per-entity runtime extras (activationTick, firstContactTick) — additive extension, PKG-record it.",
     "pkg_hash_note": "no structural change may land without a PKG node+edges update in the same change"
   },
   "blocked_by": {
     "dependency_node": "none",
-    "reason": "No blockers. S3.1 COMPLETED, suite green (134/134)."
+    "reason": "No blockers. S3.1-S3.5 COMPLETED, suite green (161/161). Milestone M1 needs S3.6-S3.9 to close."
   },
   "critical_warnings_for_next_session": [
-    "RUN THE REBOOT LIFECYCLE FIRST: confirm pkg_hash s3-a7c1d9 matches meta/project_knowledge_graph.json, npm test expect 134 passing.",
-    "P3 slice ids were RENUMBERED at S3.1 (dm-0019): S3.4 is now run lifecycle, S3.5 is the single-jump lock, S3.6-S3.8 env/hazards/kinetic, S3.9 verification. Do not use the old pick-list meanings.",
-    "TUNING (src/components/Tuning.ts) is the single normative feel source (dm-0018): editing values invalidates replay goldens — ledgered decision only. Add fields per slice only when consumed (subtractive discipline).",
-    "Math whitelist in src/systems/ (dm-0017): NO transcendental functions (Math.sin/cos/tan/pow/exp/hypot banned) — only + - * / %, Math.sqrt/min/max/abs/floor/ceil/trunc. Cross-engine replay integrity depends on it; S3.9 audits by grep.",
-    "PlayerPhysics must NEVER read state.input (isolation rule; S3.3's controller is the sole input consumer). Systems pair entity def<->state by INDEX (World.ts invariant).",
-    "Golden canonical sha256 c0ec3b1f... (LevelRoundTrip) still anchored — never casually update. Schema locks dm-0009..dm-0015 all still in force (no maxJumps field ever, dm-0011).",
+    "RUN THE REBOOT LIFECYCLE FIRST: confirm pkg_hash s3-e1a5b3 matches meta/project_knowledge_graph.json, npm test expect 161 passing.",
+    "IF S3.5 IS UNCOMMITTED: commit it first (git status will show src/systems/PlayerControl.ts, src/components/Tuning.ts, src/entities/World.ts, test/unit/JumpLock.test.ts, meta/*). It reached done in the stage tracker.",
+    "THE AXIOM (dm-0020): the single-jump lock is engine logic in PlayerControl + WorldState.jumpLock, NEVER a schema field (dm-0011 — no maxJumps ever). Refresh happens ONLY because reload re-instantiates WorldState (dm-0018 — no reset code exists). No coyote time, no input buffering — adopting either is a P5/GDOS decision that must still consume the single jump and pass the property test.",
+    "CANONICAL PIPELINE ORDER (normative, P3 plan): lifecycle -> entityKinematics(S3.6) -> playerControl -> playerPhysics -> surfaceEffects(S3.6 ice/S3.8) -> sensors(S3.7) -> hazardsAndGoal. System composition order is a determinism parameter — the Engine must pipe systems in exactly this order; assert it when the full pipeline is assembled.",
+    "TUNING (src/components/Tuning.ts) is the single normative feel source (dm-0018): editing values invalidates replay goldens — ledgered decision only. Add fields per slice only when consumed (subtractive discipline). Current fields: gravityY, runSpeed, jumpSpeed, anticipationTicks, maxFallSpeed, playerHalfExtents.",
+    "Math whitelist in src/systems/ (dm-0017): NO transcendental functions (Math.sin/cos/tan/pow/exp/hypot banned) — only + - * / %, Math.sqrt/min/max/abs/floor/ceil/trunc. S3.6 waypoint arc-length traversal uses distance arithmetic, NOT trig. S3.9 audits by grep.",
+    "Closed-form tick-parametric kinematics (dm-0016): movers/lasers/collapse are DERIVED from tick, never incrementally integrated — exact any-tick reconstruction, reload-trivial. Only the player is integrated.",
+    "PlayerPhysics must NEVER read state.input (isolation rule; PlayerControl is the sole input consumer, by-field: moveAxis+jumpPressed in PlayerControl, resetPressed in Lifecycle). Systems pair entity def<->state by INDEX (World.ts invariant).",
+    "Golden canonical sha256 c0ec3b1f... (LevelRoundTrip) still anchored — never casually update. Schema locks dm-0009..dm-0015 all in force.",
     "Do NOT begin level/chapter CONTENT generation — P10 hard-gated behind M2.",
     "Do NOT change FIXED_STEP_SECONDS (dm-0003); never mutate GameState in place (dm-0004).",
     "The private npm mirror npm.shootsta.com is broken; .npmrc pins registry.npmjs.org — don't remove it."
   ],
-  "pkg_hash_at_handoff": "s3-a7c1d9",
+  "pkg_hash_at_handoff": "s3-e1a5b3",
   "next_session_pick_list": [
-    "S3.2 Spatial partition (deterministic quadtree, equivalence-vs-brute-force fuzz)",
-    "S3.3 Player controller (consumes state.input; instant accel/decel; TUNING.runSpeed added here)",
-    "S3.4 Run lifecycle (goal/defeat/instant reload)",
-    "S3.5 Single-jump lock state machine (the axiom, REQ-004/010/011)",
-    "S3.6-S3.8 environmental/hazards+triggers/kinetic modifiers",
-    "S3.9 Phase-3 verification report (closes M1: subtractive pass + compliance audit + persistence ownership note)"
+    "COMMIT S3.5 if uncommitted (git status check)",
+    "S3.6 Environmental elements (moving platforms + carry, collapsing floors, ice) — entityKinematics system, closed-form tick-parametric",
+    "S3.7 Hazards + triggers (spikes/lasers/moving hazards -> defeat via swept lethal check; plates/proximity/doors executing the closed trigger-action union; layering test >=3 mechanics)",
+    "S3.8 Kinetic modifiers (springs/gravity zones/conveyors; never-consumes-jump property test)",
+    "S3.9 Phase-3 verification report (closes M1: subtractive pass + compliance audit + save-persistence ownership -> P9/REQ-171)"
   ]
 }

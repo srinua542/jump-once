@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
   "generated_by_session": "2026-07-09T-session-3",
-  "pkg_hash": "s3-d0f4a2",
+  "pkg_hash": "s3-e1a5b3",
   "notes": "Machine-readable mirror of the codebase. Read at every session start; update immediately on any structural code change (new module, changed dependency, changed GDOS mapping). See references/pkg_schema.md.",
   "nodes": [
     {
@@ -260,7 +260,7 @@
       "node_id": "entities/world",
       "type": "SystemNode",
       "file_path": "src/entities/World.ts",
-      "functional_summary": "Jump Once's concrete TWorld: WorldState {level (deep-frozen, reference-shared LevelDefinition — dm-0009), entities runtime records INDEX-ALIGNED with level.entities (S3.1 invariant systems pair def↔state by), player position/velocity/grounded, runState/attemptCount/spawnTick (S3.4 lifecycle: RunState = playing|defeated|completed; elapsed life time DERIVED as tick - spawnTick), nextSpawnSerial} + EntityState + RunState + JumpOnceState alias. instantiateWorld(def): pure deterministic instantiation (freezes def, idempotent) — reload IS this function, so per-life state (incl. the S3.5 jump lock) resets by construction (dm-0018); createInitialState(def, seed): full GameState composition. The runtime-consumption evidence for REQ-120/121 (dm-0012).",
+      "functional_summary": "Jump Once's concrete TWorld: WorldState {level (deep-frozen, reference-shared LevelDefinition — dm-0009), entities runtime records INDEX-ALIGNED with level.entities (S3.1 invariant systems pair def↔state by), player position/velocity/grounded, jumpLock (S3.5 — THE AXIOM's machine state: phase available|anticipating|spent + ticksUntilImpulse; forward-only within a life), runState/attemptCount/spawnTick (S3.4 lifecycle: RunState = playing|defeated|completed; elapsed life time DERIVED as tick - spawnTick), nextSpawnSerial} + EntityState + RunState + JumpPhase + JumpLockState + JumpOnceState alias. instantiateWorld(def): pure deterministic instantiation (freezes def, idempotent) — reload IS this function, so per-life state (incl. the S3.5 jump lock) resets by construction (dm-0018); createInitialState(def, seed): full GameState composition. The runtime-consumption evidence for REQ-120/121 (dm-0012).",
       "gdos_alignment": "Section_13_Data_Driven_Architecture",
       "dependencies": ["core/state_manager", "core/clock", "core/rng", "core/state", "core/vec2", "components/entity_id", "components/level"],
       "dependents": ["systems/player_physics", "systems/spatial_partition", "systems/player_control", "systems/lifecycle", "systems/hazards_and_goal"],
@@ -272,7 +272,7 @@
       "node_id": "components/tuning",
       "type": "SystemNode",
       "file_path": "src/components/Tuning.ts",
-      "functional_summary": "TUNING — the single normative campaign-global physics/feel record (dm-0018): gravityY (+y down), runSpeed (instant accel/decel, S3.3), maxFallSpeed, playerHalfExtents. Pure data (logic-free scan applies); values are ledgered decisions, not tweaks (changes invalidate replays/goldens). Fields are added per P3 slice as they gain a consumer. Per-level overrides would be a schema version bump, deliberately not data here.",
+      "functional_summary": "TUNING — the single normative campaign-global physics/feel record (dm-0018): gravityY (+y down), runSpeed (instant accel/decel, S3.3), jumpSpeed + anticipationTicks (THE jump, S3.5), maxFallSpeed, playerHalfExtents. Pure data (logic-free scan applies); values are ledgered decisions, not tweaks (changes invalidate replays/goldens). Fields are added per P3 slice as they gain a consumer. Per-level overrides would be a schema version bump, deliberately not data here.",
       "gdos_alignment": "Section_13_Data_Driven_Architecture",
       "dependencies": ["core/vec2"],
       "dependents": ["systems/player_physics", "systems/player_control", "systems/hazards_and_goal"],
@@ -332,13 +332,13 @@
       "node_id": "systems/player_control",
       "type": "SystemNode",
       "file_path": "src/systems/PlayerControl.ts",
-      "functional_summary": "playerControlSystem (S3.3): THE sole simulation consumer of state.input (dm-0019 boundary — live capture is P9, replay tapes P4). Instant horizontal accel/decel (REQ-150): playerVelocity.x SET to moveAxis × TUNING.runSpeed every step, never ramped (frictionless ice, S3.6, will be the only ramping surface). Vertical velocity untouched (gravity = PlayerPhysics; jump impulse = S3.5 lock machine). Runs BEFORE playerPhysicsSystem in the canonical pipeline. Pure; returns the same snapshot when intent already matches.",
+      "functional_summary": "playerControlSystem (S3.3 + S3.5): consumer of moveAxis and jumpPressed under the by-field input split (dm-0019; Lifecycle owns resetPressed). Instant horizontal accel/decel (REQ-150): playerVelocity.x SET to moveAxis × TUNING.runSpeed every step, never ramped (frictionless ice, S3.6, will be the only ramping surface); horizontal control never locks. Drives THE AXIOM's single-jump lock machine (dm-0020): grounded press -> anticipating(TUNING.anticipationTicks) -> ONE impulse vy=-TUNING.jumpSpeed -> spent forever until reload re-instantiates (dm-0018); air presses ignored-not-consumed; committed anticipation; no coyote/no buffering. Runs BEFORE playerPhysicsSystem. Pure; returns the same snapshot when nothing changes.",
       "gdos_alignment": "Section_16_Deterministic_Physics_Clock",
       "dependencies": ["core/state", "core/vec2", "components/tuning", "entities/world", "systems/system"],
       "dependents": [],
       "volatile_state_flags": { "has_side_effects": false, "state_dependencies": [] },
       "last_verified_commit": "uncommitted-session-3",
-      "backlog_refs": ["REQ-150", "REQ-003"]
+      "backlog_refs": ["REQ-150", "REQ-003", "REQ-004", "REQ-010", "REQ-011"]
     },
     {
       "node_id": "systems/spatial_partition",

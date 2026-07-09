@@ -34,6 +34,18 @@ export interface TuningDef {
    * ramped); frictionless-ice ramping (S3.6) is the only exception.
    */
   readonly runSpeed: number;
+  /**
+   * Upward speed imparted by THE jump, world units per second (applied as
+   * -y). The impulse fires exactly once per life (REQ-004/010 — the axiom;
+   * the lock machine is engine logic, never data, dm-0011).
+   */
+  readonly jumpSpeed: number;
+  /**
+   * Ticks between the grounded jump press and the impulse (REQ-150
+   * anticipation frames). 0 = instant. The press commits: the impulse fires
+   * after the countdown even if support is lost meanwhile (dm-0020).
+   */
+  readonly anticipationTicks: number;
   /** Terminal fall speed: +y velocity is clamped to this, world units per second. Strictly positive. */
   readonly maxFallSpeed: number;
   /**
@@ -47,6 +59,8 @@ export interface TuningDef {
 export const TUNING: TuningDef = {
   gravityY: 60,
   runSpeed: 8,
+  jumpSpeed: 18,
+  anticipationTicks: 4,
   maxFallSpeed: 30,
   playerHalfExtents: { x: 0.35, y: 0.45 },
 };
