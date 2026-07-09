@@ -3,8 +3,9 @@
  * resolution for the player body (S3.1).
  *
  * GDOS alignment: Section 16 (deterministic physics engine), Section 17
- * (collision evaluates only the relevant neighborhood — tile scans are
- * range-bounded; entity broad-phase arrives with S3.2's quadtree).
+ * (collision evaluates only the player's neighborhood — tile scans are
+ * range-bounded; entity narrow-phase runs only on the quadtree broad-phase
+ * candidate set from SpatialPartition, S3.2 / REQ-162).
  *
  * Technique (P3 execution plan; dm-0017):
  *  - Semi-implicit (symplectic) Euler: velocity first, then position.
@@ -42,6 +43,7 @@ import { TUNING } from '../components/Tuning';
 import { COLLISION_CLASS_BY_KIND } from '../components/CollisionClass';
 import type { LevelDefinition } from '../components/Level';
 import type { WorldState } from '../entities/World';
+import { buildEntityQuadtree, queryQuadtree } from './SpatialPartition';
 import type { System } from './System';
 
 /** Index of the last tile a half-open interval ending at `edge` occupies. */
@@ -97,8 +99,18 @@ interface AxisResult {
  * `axis` selects the travel axis; the perpendicular extent is fixed at the
  * player's current span. Travel is half-open: a face exactly at the leading
  * edge's destination does not block (flush contact), a face short of it does.
+ *
+ * `candidates` is the quadtree broad-phase result (entity indices) — only
+ * those entities are narrow-phase tested (REQ-162: neighborhood only).
  */
-function sweepAxis(world: WorldState, center: Vec2, half: Vec2, axis: 'x' | 'y', delta: number): AxisResult {
+function sweepAxis(
+  world: WorldState,
+  center: Vec2,
+  half: Vec2,
+  axis: 'x' | 'y',
+  delta: number,
+  candidates: readonly number[],
+): AxisResult {
   if (delta === 0) return { center: axis === 'x' ? center.x : center.y, blocked: false };
 
   const level = world.level;
@@ -152,8 +164,8 @@ function sweepAxis(world: WorldState, center: Vec2, half: Vec2, axis: 'x' | 'y',
     }
   }
 
-  // ── Solid entities ──
-  for (let i = 0; i < level.entities.length; i++) {
+  // ── Solid entities (quadtree-selected neighborhood only) ──
+  for (const i of candidates) {
     if (!isSolidEntity(world, i)) continue;
     const def = level.entities[i];
     const pos = world.entities[i].position;
@@ -192,10 +204,25 @@ export function stepPlayerPhysics(world: WorldState): WorldState {
   const vy = Math.min(world.playerVelocity.y + TUNING.gravityY * dt, TUNING.maxFallSpeed);
   const vx = world.playerVelocity.x;
 
+  // Broad phase (REQ-162): quadtree query over the union of the player's
+  // start AABB and its full-step destination AABB — a conservative superset
+  // of everything either axis sweep can touch. Narrow phase stays exact.
+  const p = world.playerPosition;
+  const dx = vx * dt;
+  const dy = vy * dt;
+  const tree = buildEntityQuadtree(world);
+  const candidates = queryQuadtree(
+    tree,
+    Math.min(p.x, p.x + dx) - half.x,
+    Math.min(p.y, p.y + dy) - half.y,
+    Math.max(p.x, p.x + dx) + half.x,
+    Math.max(p.y, p.y + dy) + half.y,
+  );
+
   // Axis-separated swept movement: X, then Y against the post-X position.
-  const xRes = sweepAxis(world, world.playerPosition, half, 'x', vx * dt);
-  const afterX = vec2(xRes.center, world.playerPosition.y);
-  const yRes = sweepAxis(world, afterX, half, 'y', vy * dt);
+  const xRes = sweepAxis(world, p, half, 'x', dx, candidates);
+  const afterX = vec2(xRes.center, p.y);
+  const yRes = sweepAxis(world, afterX, half, 'y', vy * dt, candidates);
 
   const grounded = yRes.blocked && vy > 0;
   return {

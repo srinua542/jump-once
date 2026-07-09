@@ -154,7 +154,7 @@
 |----|-------------|-----|-------|-------|
 | REQ-160 | Zero-allocation runtime loop; preallocate all structural arrays/state objects upfront. | §17 | P3,P11 | IN_PROGRESS |
 | REQ-161 | Global object-pooling framework for particles, visual impacts, projectiles. | §17 | P9,P11 | NOT_STARTED |
-| REQ-162 | Render batching for static geometry/background; spatial partitioning (quadtree) so collision evaluates only the player's neighborhood. | §17 | P3,P9,P11 | NOT_STARTED |
+| REQ-162 | Render batching for static geometry/background; spatial partitioning (quadtree) so collision evaluates only the player's neighborhood. | §17 | P3,P9,P11 | IN_PROGRESS |
 | REQ-163 | Async asset delivery; continuous performance monitoring with automatic scale-back of non-critical visuals below target fps. | §17 | P9,P11 | NOT_STARTED |
 
 ## §18 Shipping, Automation & Release
@@ -187,8 +187,8 @@
 
 | State | Count |
 |-------|------:|
-| NOT_STARTED | 50 |
-| IN_PROGRESS | 11 |
+| NOT_STARTED | 49 |
+| IN_PROGRESS | 12 |
 | COMPLETED | 0 |
 | VERIFIED | 6 |
 | **Total** | **67** |

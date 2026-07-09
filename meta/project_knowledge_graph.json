@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
   "generated_by_session": "2026-07-09T-session-3",
-  "pkg_hash": "s3-a7c1d9",
+  "pkg_hash": "s3-b8d2e0",
   "notes": "Machine-readable mirror of the codebase. Read at every session start; update immediately on any structural code change (new module, changed dependency, changed GDOS mapping). See references/pkg_schema.md.",
   "nodes": [
     {
@@ -263,7 +263,7 @@
       "functional_summary": "Jump Once's concrete TWorld: WorldState {level (deep-frozen, reference-shared LevelDefinition — dm-0009), entities runtime records INDEX-ALIGNED with level.entities (S3.1 invariant systems pair def↔state by), player position/velocity/grounded (playerGrounded added S3.1; more P3 physics fields land per slice), nextSpawnSerial} + EntityState + JumpOnceState alias. instantiateWorld(def): pure deterministic instantiation (freezes def, idempotent); createInitialState(def, seed): full GameState composition. The runtime-consumption evidence for REQ-120/121 (dm-0012).",
       "gdos_alignment": "Section_13_Data_Driven_Architecture",
       "dependencies": ["core/state_manager", "core/clock", "core/rng", "core/state", "core/vec2", "components/entity_id", "components/level"],
-      "dependents": ["systems/player_physics"],
+      "dependents": ["systems/player_physics", "systems/spatial_partition"],
       "volatile_state_flags": { "has_side_effects": false, "state_dependencies": [] },
       "last_verified_commit": "uncommitted-session-3",
       "backlog_refs": ["REQ-120", "REQ-121"]
@@ -296,13 +296,25 @@
       "node_id": "systems/player_physics",
       "type": "SystemNode",
       "file_path": "src/systems/PlayerPhysics.ts",
-      "functional_summary": "playerPhysicsSystem + stepPlayerPhysics(world): deterministic fixed-step player body physics (S3.1). Semi-implicit (symplectic) Euler with terminal-fall clamp; swept, axis-separated resolution (X then Y) clamping to the nearest solid face — tiles via travel-ordered range scan, solid entities via per-axis face test — exact face snapping, no tunneling at any speed (dm-0017 math whitelist: no transcendental functions). Blocked axes zero their velocity component; downward support sets playerGrounded. Reads state.world ONLY — never state.input (S3.3 owns input) and never another system's internals.",
+      "functional_summary": "playerPhysicsSystem + stepPlayerPhysics(world): deterministic fixed-step player body physics (S3.1). Semi-implicit (symplectic) Euler with terminal-fall clamp; swept, axis-separated resolution (X then Y) clamping to the nearest solid face — tiles via travel-ordered range scan, solid entities via per-axis face test over the quadtree broad-phase candidate set (S3.2: swept-union query box, narrow phase stays exact) — exact face snapping, no tunneling at any speed (dm-0017 math whitelist: no transcendental functions). Blocked axes zero their velocity component; downward support sets playerGrounded. Reads state.world ONLY — never state.input (S3.3 owns input) and never another system's internals.",
       "gdos_alignment": "Section_16_Deterministic_Physics_Clock",
-      "dependencies": ["core/clock", "core/state", "core/vec2", "components/tilemap", "components/tuning", "components/collision_class", "components/level", "entities/world", "systems/system"],
+      "dependencies": ["core/clock", "core/state", "core/vec2", "components/tilemap", "components/tuning", "components/collision_class", "components/level", "entities/world", "systems/system", "systems/spatial_partition"],
       "dependents": [],
       "volatile_state_flags": { "has_side_effects": false, "state_dependencies": [] },
       "last_verified_commit": "uncommitted-session-3",
-      "backlog_refs": ["REQ-003", "REQ-160", "REQ-121"]
+      "backlog_refs": ["REQ-003", "REQ-160", "REQ-121", "REQ-162"]
+    },
+    {
+      "node_id": "systems/spatial_partition",
+      "type": "SystemNode",
+      "file_path": "src/systems/SpatialPartition.ts",
+      "functional_summary": "Deterministic quadtree over entity AABBs (S3.2, REQ-162 P3 share). buildEntityQuadtree(world): pure — array insertion order, fixed capacity 8 / max depth 8, exact-midpoint splits, straddlers stay at the parent, root = tilemap world rect expanded to admit out-of-rect entities. queryQuadtree(tree, box): ascending entity indices under the SAME strict-overlap convention as the physics sweep (flush != overlap) — result set exactly equals brute force (fuzz-proven). Derived data, rebuilt per consumer step, never stored in state.",
+      "gdos_alignment": "Section_17_Spatial_Partitioning",
+      "dependencies": ["entities/world"],
+      "dependents": ["systems/player_physics"],
+      "volatile_state_flags": { "has_side_effects": false, "state_dependencies": [] },
+      "last_verified_commit": "uncommitted-session-3",
+      "backlog_refs": ["REQ-162"]
     },
     {
       "node_id": "hooks/session_start",
@@ -373,7 +385,9 @@
     { "type": "DependencyEdge", "from": "systems/player_physics", "to": "components/collision_class", "kind": "value_import" },
     { "type": "DependencyEdge", "from": "systems/player_physics", "to": "components/level", "kind": "type_import" },
     { "type": "DependencyEdge", "from": "systems/player_physics", "to": "entities/world", "kind": "type_import" },
-    { "type": "DependencyEdge", "from": "systems/player_physics", "to": "systems/system", "kind": "type_import" }
+    { "type": "DependencyEdge", "from": "systems/player_physics", "to": "systems/system", "kind": "type_import" },
+    { "type": "DependencyEdge", "from": "systems/player_physics", "to": "systems/spatial_partition", "kind": "value_import" },
+    { "type": "DependencyEdge", "from": "systems/spatial_partition", "to": "entities/world", "kind": "type_import" }
   ],
   "gdos_anchors": [
     { "type": "GDOSAnchor", "section": "Section_13_Data_Driven_Architecture", "implemented_by": ["core/state", "core/vec2", "entities/world", "components/tuning"] },
@@ -381,7 +395,8 @@
     { "type": "GDOSAnchor", "section": "State_Management_Invariants", "implemented_by": ["core/state_manager"] },
     { "type": "GDOSAnchor", "section": "Section_15_Reproducible_Agent_Simulation", "implemented_by": ["core/rng"] },
     { "type": "GDOSAnchor", "section": "Section_16_Modular_Decoupled_Components", "implemented_by": ["components/entity_id", "components/transform", "components/collider", "components/behavior", "components/entity", "components/collision_class"] },
-    { "type": "GDOSAnchor", "section": "Section_13_Level_Definition_Schema", "implemented_by": ["components/tilemap", "components/trigger", "components/gdos", "components/level", "schema/serialize", "schema/parse"] }
+    { "type": "GDOSAnchor", "section": "Section_13_Level_Definition_Schema", "implemented_by": ["components/tilemap", "components/trigger", "components/gdos", "components/level", "schema/serialize", "schema/parse"] },
+    { "type": "GDOSAnchor", "section": "Section_17_Spatial_Partitioning", "implemented_by": ["systems/spatial_partition"] }
   ],
   "pending_nodes": []
 }

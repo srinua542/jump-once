@@ -10,8 +10,8 @@
   ],
   "exact_execution_focus": {
     "file_path": "docs/task_slices.md",
-    "target_line_range": "Phase 3 table (S3.2 row)",
-    "pending_logical_transformation": "Start S3.2 — deterministic quadtree spatial partition over entity AABBs (REQ-162 P3 share): pure build function, fixed insertion order (array order), fixed node capacity + max depth, neighborhood query; acceptance = equivalence-vs-brute-force under seeded fuzz. Then S3.3 player controller (consumes state.input, instant accel/decel from Tuning — add runSpeed field when consumed), S3.4 run lifecycle, S3.5 jump lock.",
+    "target_line_range": "Phase 3 table (S3.3 row)",
+    "pending_logical_transformation": "S3.2 COMPLETED (SpatialPartition.ts quadtree + PlayerPhysics broad-phase wiring, 141/141, pkg s3-b8d2e0). Next: S3.3 player controller — new src/systems/PlayerControl.ts consuming state.input (the ONLY input consumer): instant horizontal accel/decel (playerVelocity.x = moveAxis * TUNING.runSpeed — add runSpeed to Tuning.ts now that it gains a consumer); runs BEFORE playerPhysics in the pipeline. Then S3.4 run lifecycle, S3.5 jump lock.",
     "pkg_hash_note": "no structural change may land without a PKG node+edges update in the same change"
   },
   "blocked_by": {
