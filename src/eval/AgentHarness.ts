@@ -6,6 +6,13 @@
  * GDOS alignment: Section 15 (levels are judged by simulated play before
  * any human sees them), Section 13 (deterministic state processor).
  *
+ * Level design prerequisite: every LevelDefinition run through this harness
+ * must satisfy the `.claude/skills/level-design-principle` criteria BEFORE
+ * being submitted — archetype selection, GDOS metric mapping, emotional-arc
+ * phase assignment, and the six review-output checks. A passing score here
+ * does not substitute for that design-time review; it validates that the
+ * implemented layout matches the design intent.
+ *
  * Contract (P4 execution plan, design summary point 3):
  *  - The engine is assembled in the NORMATIVE canonical pipeline order —
  *    lifecycle → entityKinematics → playerControl → playerPhysics →

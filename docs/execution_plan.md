@@ -6,7 +6,7 @@ This document holds one section per phase, authored *before* that phase's implem
 - **P2 — Data Models & Level Definition Schema: CLOSED — VERIFIED**, see `docs/verification/P2.md`. Checkpoints C2.1–C2.6 all passed (118/118 tests). Retained below as the historical record.
 - **P3 — Mechanic Library & Deterministic Physics: CLOSED — VERIFIED**, see `docs/verification/P3.md`. Authored at S3.1 start via adversarial review (dm-0016–dm-0021; table restructured to S3.1–S3.9). All checkpoints C3.1–C3.9 passed (186/186 tests). **Milestone M1 — Simulatable Game CLOSED.**
 - **P4 — Evaluation & Validation Framework: CLOSED — VERIFIED**, see `docs/verification/P4.md`. Section authored at S4.1 start per REQ-P02 via the same adversarial review P2/P3 got (dm-0022–dm-0029). All seven slices S4.1–S4.7 ran the nine-stage SDLC loop (archives in `meta/runs/S4.*`); checkpoints C4.1–C4.7 passed (241/241 tests). **Milestone M2 remains OPEN** — P5 + P6 still required before the content gate opens.
-- **P5 — GDOS Scoring Engine: IN FLIGHT.** Section below authored before S5.1 code per REQ-P02, via a first-principles adversarial review of the original slice table (dm-0031–dm-0035; table restructured — Design Memory moved ahead of the Kill Switch and CDRE). The content-generation hard gate stays closed until M2 (P4+P5+P6) is fully VERIFIED.
+- **P5 — GDOS Scoring Engine: CLOSED — VERIFIED**, see `docs/verification/P5.md`. Section below authored before S5.1 code per REQ-P02, via a first-principles adversarial review of the original slice table (dm-0031–dm-0035; table restructured — Design Memory moved ahead of the Kill Switch and CDRE). All nine slices S5.1–S5.9 ran the SDLC loop (archives in `meta/runs/S5.*`); checkpoints C5.1–C5.9 passed (336/336 tests). Implementation decisions dm-0036–dm-0042. **Milestone M2 remains OPEN** — P6 still required before the content gate opens.
 
 Covers the phases that were in flight: **P0 (Governance & Protocol Infrastructure)** and **P1 (Deterministic Core Architecture)** — together, milestone **M0 — Foundation Locked**. Per the Directive, this plan is written *before* implementation code and defines the work, governing PRD requirements, dependencies, deliverables, validation criteria, and completion checkpoints. A new execution plan will be authored at the start of each subsequent phase.
 
@@ -396,7 +396,9 @@ All checkpoints C4.1–C4.7 pass; the archetype harness is deterministic and rep
 
 ---
 
-# P5 — GDOS Scoring Engine  *(IN FLIGHT; authored before S5.1 code per REQ-P02; adversarial review ledgered dm-0031–dm-0035; slice table restructured)*
+# P5 — GDOS Scoring Engine  *(CLOSED — VERIFIED, `docs/verification/P5.md`; authored before S5.1 code per REQ-P02; adversarial review ledgered dm-0031–dm-0035; slice table restructured)*
+
+> **CLOSED at S5.9.** All nine slices COMPLETED, checkpoints C5.1–C5.9 passed, 336/336 tests green. Every GDOS score is a deterministic estimator over one `EvidenceBundle` with all calibration in a versioned `ScoringProfile` (proven by two-profile tests in every gate); the Design Memory is executable and byte-idempotent over the live ledger (dm-0040/0041/0042 were appended *through it*); CDRE evolves the profile under an ACCEPTED-only apply and mines symmetrically so the gates cannot ratchet toward vacuity; the subtraction pass ran with its own engine and removed three dead exports. REQ-020/021/040/042/051/052/055/056/111 → VERIFIED. **Milestone M2 stays OPEN** (P6 remains); the content gate is still closed. Retained below as the historical record.
 
 ## Governing requirements
 
@@ -469,8 +471,8 @@ P4 VERIFIED (satisfied). Consumes: the four local verdict types + `AgentRunResul
 - **C5.5** ✅ Novelty + emergent-fun metrics behave on fixture corpora; kinetic anchors emitted as data, attributed, and replay-proven (`GdosNovelty`/`EmergentFun` tests; dm-0039).
 - **C5.6** ✅ Design Memory round-trips the live ledger byte-identically; prior-art query + canonical append proven; dm-0040 appended via the store itself (`GdosDesignMemory` tests).
 - **C5.7** ✅ Kill Switch/First-Party/Subtractive verdicts fire correctly and record decisions — incl. the REQ-012 jump-free-completion kill and Intent-Repository fields on every kill (`GdosCuration` tests; dm-0041).
-- **C5.8** CDRE mines seeded history into proposals; accepted proposal produces a valid next profile version.
-- **C5.9** `docs/verification/P5.md` filed; owned REQs → VERIFIED; PKG consistent; subtractive pass recorded.
+- **C5.8** ✅ CDRE mines seeded reports/coverage/history into proposals; an ACCEPTED threshold proposal produces a valid next profile version; PROPOSED/REJECTED are inert; mining is symmetric (lower *and* raise) so the gates cannot ratchet toward vacuity (`GdosCdre` tests; dm-0042).
+- **C5.9** ✅ `docs/verification/P5.md` filed; 9 owned REQs → VERIFIED; PKG consistent (`s5-q7c4b1`); subtractive pass run *with the S5.7 engine* — found and removed 3 dead exports, then re-ran clean.
 
 ## Risk register (P5)
 

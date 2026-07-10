@@ -36,8 +36,8 @@
 
 | ID | Requirement | PRD | Phase | State |
 |----|-------------|-----|-------|-------|
-| REQ-020 | Operate as Creative Director; ruthless curation; a "Kill Switch" for any non-elevating concept. | §3 | P5 | IN_PROGRESS |
-| REQ-021 | First-Party Quality Review gate (Self-Explanation, Hours of Interest, Inevitable Polish) before approving any mechanic/system/chapter. | §3 | P5 | IN_PROGRESS |
+| REQ-020 | Operate as Creative Director; ruthless curation; a "Kill Switch" for any non-elevating concept. | §3 | P5 | VERIFIED |
+| REQ-021 | First-Party Quality Review gate (Self-Explanation, Hours of Interest, Inevitable Polish) before approving any mechanic/system/chapter. | §3 | P5 | VERIFIED |
 | REQ-022 | Subtractive Removal Engine: mandatory subtraction pass at every milestone across six pruning questions. | §3 | P5,P11 | IN_PROGRESS |
 
 ## §4 Campaign Intelligence & Player Behavior Modeling
@@ -52,21 +52,21 @@
 
 | ID | Requirement | PRD | Phase | State |
 |----|-------------|-----|-------|-------|
-| REQ-040 | Model the entire design space mathematically & conceptually before designing any content. | §5 | P5 | IN_PROGRESS |
+| REQ-040 | Model the entire design space mathematically & conceptually before designing any content. | §5 | P5 | VERIFIED |
 | REQ-041 | Formal multi-dimensional design-space matrix: Mechanic × Environment × Emotion × Optimization Style × Player Type, with enumerated axes; track coverage. | §5 | P5,P6 | IN_PROGRESS |
-| REQ-042 | Economy of Mechanics metric (Depth ÷ Mechanic Count); maximize; exhaust variations before introducing a new mechanic. | §5 | P5 | IN_PROGRESS |
+| REQ-042 | Economy of Mechanics metric (Depth ÷ Mechanic Count); maximize; exhaust variations before introducing a new mechanic. | §5 | P5 | VERIFIED |
 
 ## §6 Game Design Operating System (GDOS)
 
 | ID | Requirement | PRD | Phase | State |
 |----|-------------|-----|-------|-------|
 | REQ-050 | All creative decisions originate from GDOS; no gameplay content created independently of it. | §6 | P5,P10 | IN_PROGRESS |
-| REQ-051 | Persistent Design Memory: version control for creative intent; record every accepted/rejected idea; parse history before proposing to prevent regression/repetition. | §6 | P0,P5 | IN_PROGRESS |
-| REQ-052 | Continuous Design Research Engine (CDRE): self-improving loop that improves the design process itself and feeds validated discoveries back into GDOS. | §6 | P5 | NOT_STARTED |
+| REQ-051 | Persistent Design Memory: version control for creative intent; record every accepted/rejected idea; parse history before proposing to prevent regression/repetition. | §6 | P0,P5 | VERIFIED |
+| REQ-052 | Continuous Design Research Engine (CDRE): self-improving loop that improves the design process itself and feeds validated discoveries back into GDOS. | §6 | P5 | VERIFIED |
 | REQ-053 | Novelty Search: algorithmic metric targeting layout divergence. | §6 | P5,P7 | IN_PROGRESS |
 | REQ-054 | Emergent Fun Discovery search: probe physics edge cases; flag high-value kinetic anchors for future layouts. | §6 | P5,P7 | IN_PROGRESS |
-| REQ-055 | Mathematically enforced emotional thresholds as quality gates: Curiosity ≥90, Confidence ≥90, Surprise ≥95, Mastery ≥95. | §6 | P5 | IN_PROGRESS |
-| REQ-056 | Global Streamability Matrix gates: Shareability ≥85, Clip Potential ≥90, Reaction Density ≥95, Replay Value ≥90. | §6 | P5 | IN_PROGRESS |
+| REQ-055 | Mathematically enforced emotional thresholds as quality gates: Curiosity ≥90, Confidence ≥90, Surprise ≥95, Mastery ≥95. | §6 | P5 | VERIFIED |
+| REQ-056 | Global Streamability Matrix gates: Shareability ≥85, Clip Potential ≥90, Reaction Density ≥95, Replay Value ≥90. | §6 | P5 | VERIFIED |
 
 ## §7 Procedural Design Assistant (PDA) & Information Density
 
@@ -111,7 +111,7 @@
 | ID | Requirement | PRD | Phase | State |
 |----|-------------|-----|-------|-------|
 | REQ-110 | The 20 Core Design Principles serve as the operational compass whenever multiple implementations exist. | §12 | P0–P11 | NOT_STARTED |
-| REQ-111 | Design Intent Repository: every accepted decision permanently records why it exists, problem solved, emotion targeted, misconception created, why alternatives were rejected. | §12 | P0,P5 | IN_PROGRESS |
+| REQ-111 | Design Intent Repository: every accepted decision permanently records why it exists, problem solved, emotion targeted, misconception created, why alternatives were rejected. | §12 | P0,P5 | VERIFIED |
 
 ## §13 Data-Driven System Architecture
 

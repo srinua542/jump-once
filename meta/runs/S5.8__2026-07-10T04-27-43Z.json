@@ -1,0 +1,67 @@
+{
+  "slice": "S5.8",
+  "title": "CDRE profile-evolution loop",
+  "reqs": [
+    "REQ-052"
+  ],
+  "started_at": "2026-07-10T04:22:32.425Z",
+  "updated_at": "2026-07-10T04:27:42.988Z",
+  "current_stage": "handoff",
+  "stages": {
+    "reboot": {
+      "status": "done",
+      "at": "2026-07-10T04:22:32.427Z",
+      "note": "REBOOT ok: 323/323, pkg s5-m8f1a4 matches, tree clean at 3ea8e3a"
+    },
+    "select": {
+      "status": "done",
+      "at": "2026-07-10T04:22:32.548Z",
+      "note": "SELECT S5.8: deps S5.1-S5.7 COMPLETED"
+    },
+    "plan": {
+      "status": "done",
+      "at": "2026-07-10T04:22:32.670Z",
+      "note": "PLAN: gdos/Cdre.ts — mine(reports, history, coverage) -> CdreProposal[]; apply(profile, ACCEPTED threshold proposal) -> new profileId, re-validated via parseProfile; non-threshold kinds informational; no Date.now/Math.random"
+    },
+    "anchor": {
+      "status": "done",
+      "at": "2026-07-10T04:22:32.795Z",
+      "note": "ANCHOR: new pure gdos module; boundary = CdreProposal/CdreOptions/ApplyResult"
+    },
+    "implement": {
+      "status": "done",
+      "at": "2026-07-10T04:22:32.919Z",
+      "note": "IMPLEMENT: Cdre.ts complete (mine 4 kinds + apply with ACCEPTED-only guard)"
+    },
+    "verify": {
+      "status": "done",
+      "at": "2026-07-10T04:27:42.359Z",
+      "note": "VERIFY: 336/336; symmetric mining, dead-estimator vs bar, cross-profile skip, apply purity + parse round-trip"
+    },
+    "integrate": {
+      "status": "done",
+      "at": "2026-07-10T04:27:42.488Z",
+      "note": "INTEGRATE: PKG +cdre node/edges, hash -> s5-p3d9e2; ledger dm-0042 via the store"
+    },
+    "report": {
+      "status": "done",
+      "at": "2026-07-10T04:27:42.613Z",
+      "note": "REPORT: S5.8 COMPLETED; C5.8 checked; REQ-052 IN_PROGRESS (flips at S5.9)"
+    },
+    "handoff": {
+      "status": "done",
+      "at": "2026-07-10T04:27:42.737Z",
+      "note": "HANDOFF: S5.9 follows immediately in-session"
+    }
+  },
+  "acceptance": [
+    {
+      "req": "REQ-052",
+      "criterion": "(fill in)",
+      "met": true,
+      "note": null
+    }
+  ],
+  "outcome": "completed",
+  "closed_at": "2026-07-10T04:27:43.116Z"
+}

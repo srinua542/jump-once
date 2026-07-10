@@ -112,9 +112,3 @@ export function assembleEvidence(parts: EvidenceParts): EvidenceBundle {
     optimization: parts.optimization,
   });
 }
-
-/** The run for a given archetype, or undefined if it was not run. */
-export function runFor(bundle: EvidenceBundle, archetype: ArchetypeName): ArchetypeRun | undefined {
-  for (const r of bundle.runs) if (r.archetype === archetype) return r;
-  return undefined;
-}

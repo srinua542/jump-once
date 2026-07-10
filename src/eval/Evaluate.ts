@@ -14,7 +14,6 @@
  * Math.random, whitelist math only (a squared-distance killer attribution).
  */
 
-import { FIXED_STEP_SECONDS } from '../core/Clock';
 import type { Vec2 } from '../core/Vec2';
 import type { LevelDefinition } from '../components/Level';
 import type { EntityKind } from '../components/Behavior';
@@ -155,6 +154,3 @@ export function evaluateLevel(def: LevelDefinition, options: EvaluateOptions = D
   const report = judgeLevel(evidence, options.profile);
   return { evidence, report };
 }
-
-/** Seconds a tick count represents (re-exported for callers building fixtures). */
-export const TICK_SECONDS = FIXED_STEP_SECONDS;

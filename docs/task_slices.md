@@ -93,8 +93,8 @@ Session-sized, dependency-ordered work units. Each slice is small enough to comp
 | S5.5 | Novelty search + Emergent Fun search (corpus-parameterized) | REQ-053, REQ-054 | S5.1 | COMPLETED |
 | S5.6 | Executable Design Memory + Intent Repository (backing store: `meta/design_memory_ledger.json`) | REQ-050, REQ-051, REQ-111 | S5.1 | COMPLETED |
 | S5.7 | Kill Switch + First-Party filter + Subtractive Removal engine | REQ-020, REQ-021, REQ-022, REQ-012(curation share) | S5.2, S5.6 | COMPLETED |
-| S5.8 | CDRE profile-evolution loop | REQ-052 | S5.1–S5.7 | NOT_STARTED |
-| S5.9 | Phase-5 verification report | REQ-P02 | S5.1–S5.8 | NOT_STARTED |
+| S5.8 | CDRE profile-evolution loop | REQ-052 | S5.1–S5.7 | COMPLETED |
+| S5.9 | Phase-5 verification report | REQ-P02 | S5.1–S5.8 | COMPLETED |
 
 ## Phase 6 — Campaign Intelligence
 
@@ -162,11 +162,11 @@ Session-sized, dependency-ordered work units. Each slice is small enough to comp
 
 ## Next-session pick-list (top of queue)
 
-**P4 — Evaluation & Validation Framework is VERIFIED** (`docs/verification/P4.md`); all seven P4 slices COMPLETED, 241/241 tests green, pkg `s4-g7d8e9`. **Milestone M2 — Design Intelligence Operational is still OPEN** — P4 is one of its three pillars (P4 + P5 + P6). The next phase is **P5 — GDOS Scoring Engine** (its entry condition, P4-VERIFIED, is satisfied).
+**P5 — GDOS Scoring Engine is VERIFIED** (`docs/verification/P5.md`); all nine P5 slices COMPLETED, 336/336 tests green, pkg `s5-q7c4b1`. Nine REQs flipped VERIFIED (020/021/040/042/051/052/055/056/111). **Milestone M2 — Design Intelligence Operational is still OPEN** — P4 ✓ and P5 ✓ are two of its three pillars. The next and final M2 phase is **P6 — Campaign Intelligence**.
 
-1. ~~Author the P5 execution-plan section~~ **DONE** — authored via first-principles adversarial review (dm-0031–dm-0035); slice table restructured above (Design Memory ahead of Kill Switch/CDRE; kernel with S5.1).
-2. **S5.1** — GDOS kernel (EvidenceBundle/ScoringProfile/DesignDecision) + design-space coverage matrix + economy-of-mechanics metric (REQ-040/041/042).
-3. **S5.2–S5.5** — emotional gates, streamability gates, IDS regulator + fairness, novelty + emergent-fun search (all consume the S5.1 kernel).
-4. Then **P6 — Campaign Intelligence** closes M2; only then does the content gate open.
+1. **Author the P6 execution-plan section FIRST** (REQ-P02) — consider the same adversarial review P2/P3/P4/P5 got. P6 owns the ten macro state variables (REQ-030/031), the player knowledge/behavior models (REQ-032), and retention/curiosity/chapter-health analytics; it contributes the remaining share of REQ-142 and consumes P5's coverage matrix (REQ-041's P6 share).
+2. **S6.1** — the ten macro state variables as a data model (REQ-030/031).
+3. **S6.2+** — player behavior model, analytics fed by validation (P4) and telemetry (P8, later).
+4. Closing **P6** closes **M2** — and only then does the content-generation hard gate open.
 
-*(Content generation stays hard-gated until M2 — P4+P5+P6 — is VERIFIED. P4 done, P5+P6 remain.)*
+*(Content generation stays hard-gated until M2 — P4+P5+P6 — is VERIFIED. P4 ✓, P5 ✓, P6 remains.)*

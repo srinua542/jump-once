@@ -69,14 +69,6 @@ Run this three-step safety protocol before touching the internals of an existing
 
 Update `/meta/project_knowledge_graph.json` immediately after any structural code change — new module, changed dependency, changed GDOS mapping. Do not batch these updates for later; a PKG that lags the code is worse than no PKG, because it will be trusted. Full schema and an example node: `references/pkg_schema.md`.
 
-## Level and content design
-
-When working on level definitions, chapter sequences, mechanic brainstorming, puzzle balance, or any content that will become a `LevelDefinition` payload:
-
-1. **Invoke `/level-design-principle`** before making any design decision, archetype selection, or implementation choice. This skill governs all content decisions including the one-jump constraint, archetype selection, GDOS metric mapping, and the emotional-arc phase assignment.
-2. After implementation, validate through `AgentHarness.runAgent()` using `CANONICAL_PIPELINE`. A design that cannot be evaluated through the harness is not ready to merge.
-3. **Content generation is HARD-GATED behind M2.** Do not author `LevelDefinition` content in any phase before P6 is VERIFIED and M2 closes.
-
 ## Ending a session
 
 Before stepping away from the project — end of sprint, end of session, or any point you might not return to for a while — write `/meta/handoff_latest.json`. Include the active branch, what's been completed since the last snapshot, the exact file/line range and pending transformation you're mid-way through, anything blocking you, and any warnings the next session must not ignore (e.g., "don't touch delta-time scaling here, it breaks X"). Full schema: `references/handoff_schema.md`.
