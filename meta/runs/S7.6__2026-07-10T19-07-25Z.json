@@ -1,0 +1,67 @@
+{
+  "slice": "S7.6",
+  "title": "Single-sentence intent verification gate",
+  "reqs": [
+    "REQ-091"
+  ],
+  "started_at": "2026-07-10T19:02:47.254Z",
+  "updated_at": "2026-07-10T19:07:25.738Z",
+  "current_stage": "handoff",
+  "stages": {
+    "reboot": {
+      "status": "done",
+      "at": "2026-07-10T19:02:47.255Z",
+      "note": "REBOOT: 486/486 green, pkg s7-f4c1d8"
+    },
+    "select": {
+      "status": "done",
+      "at": "2026-07-10T19:02:47.352Z",
+      "note": "SELECT: S7.6; REQ-091 flips IN_PROGRESS"
+    },
+    "plan": {
+      "status": "done",
+      "at": "2026-07-10T19:02:47.453Z",
+      "note": "PLAN: execution_plan §P7 S7.6 — verifyIntent structural rigor over the concept sentence: exactly one sentence, non-empty, names the decision, length bounds from GenProfile; typed denial taxonomy"
+    },
+    "anchor": {
+      "status": "done",
+      "at": "2026-07-10T19:02:47.554Z",
+      "note": "ANCHOR: LevelConcept.intentSentence/oneJumpDecision fields (gen/Concept), GenProfile pattern; new module gen/IntentGate.ts"
+    },
+    "implement": {
+      "status": "done",
+      "at": "2026-07-10T19:02:47.652Z",
+      "note": "IMPLEMENT: gen/IntentGate.ts (verifyIntent structural rigor + typed denial taxonomy), GenProfile.intent band; dm-0063 ledgered"
+    },
+    "verify": {
+      "status": "done",
+      "at": "2026-07-10T19:07:25.072Z",
+      "note": "VERIFY: 491/491 green (+5), tsc clean; rigorous-pass/5-denial-taxonomy/empty-short-circuit/connective-grammar/two-profile all green"
+    },
+    "integrate": {
+      "status": "done",
+      "at": "2026-07-10T19:07:25.239Z",
+      "note": "INTEGRATE: PKG 73 nodes / 286 edges, hash s7-a9e4b2; ledger 63 (dm-0063)"
+    },
+    "report": {
+      "status": "done",
+      "at": "2026-07-10T19:07:25.401Z",
+      "note": "REPORT: S7.6 -> COMPLETED; REQ-091 stays IN_PROGRESS (P10 authors real content through the gate)"
+    },
+    "handoff": {
+      "status": "done",
+      "at": "2026-07-10T19:07:25.571Z",
+      "note": "HANDOFF: continuing into S7.7 (the pipeline — IRD exit condition)"
+    }
+  },
+  "acceptance": [
+    {
+      "req": "REQ-091",
+      "criterion": "(fill in)",
+      "met": true,
+      "note": null
+    }
+  ],
+  "outcome": "completed",
+  "closed_at": "2026-07-10T19:07:25.896Z"
+}

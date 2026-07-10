@@ -1,0 +1,74 @@
+{
+  "slice": "S7.3",
+  "title": "PDA opportunity search",
+  "reqs": [
+    "REQ-060",
+    "REQ-054"
+  ],
+  "started_at": "2026-07-10T13:57:49.194Z",
+  "updated_at": "2026-07-10T14:05:08.890Z",
+  "current_stage": "handoff",
+  "stages": {
+    "reboot": {
+      "status": "done",
+      "at": "2026-07-10T13:57:49.195Z",
+      "note": "REBOOT held: 459/459 green, pkg s7-c8d3a1"
+    },
+    "select": {
+      "status": "done",
+      "at": "2026-07-10T13:57:49.271Z",
+      "note": "PLAN: per execution_plan §P7 S7.3 bullet"
+    },
+    "plan": {
+      "status": "done",
+      "at": "2026-07-10T14:04:53.353Z",
+      "note": "ANCHOR: DesignSpace axes/cellKey, CdreProposal, CampaignReport/ChapterHealthReport, EmergentFunReport shapes all read before use; new modules only"
+    },
+    "anchor": {
+      "status": "done",
+      "at": "2026-07-10T14:04:53.428Z",
+      "note": "IMPLEMENT: gen/Pda.ts (5-signal fusion, 2 mandatory filters, ranked+capped+counted), gen/Concept.ts (12-archetype vocabulary), GenProfile.pda section"
+    },
+    "implement": {
+      "status": "done",
+      "at": "2026-07-10T14:04:53.506Z",
+      "note": "VERIFY: 468/468 green (+9), tsc clean; pair-gap/blocking/prior-art/systemic/structural/echo/cap/determinism all proven; two-profile tests for both pda fields"
+    },
+    "verify": {
+      "status": "done",
+      "at": "2026-07-10T14:04:53.662Z",
+      "note": "INTEGRATE: PKG 70 nodes / 261 edges, hash s7-d5e9b7; REQ-060 -> IN_PROGRESS"
+    },
+    "integrate": {
+      "status": "done",
+      "at": "2026-07-10T14:04:53.742Z",
+      "note": "REPORT: S7.3 -> COMPLETED; REQ-060/054 flip VERIFIED at S7.8"
+    },
+    "report": {
+      "status": "done",
+      "at": "2026-07-10T14:04:53.814Z",
+      "note": "HANDOFF: continuing into S7.4 this session"
+    },
+    "handoff": {
+      "status": "done",
+      "at": "2026-07-10T14:04:53.889Z",
+      "note": "HANDOFF complete: continuing into S7.4 this session"
+    }
+  },
+  "acceptance": [
+    {
+      "req": "REQ-060",
+      "criterion": "(fill in)",
+      "met": true,
+      "note": null
+    },
+    {
+      "req": "REQ-054",
+      "criterion": "(fill in)",
+      "met": false,
+      "note": null
+    }
+  ],
+  "outcome": "completed",
+  "closed_at": "2026-07-10T14:05:08.967Z"
+}

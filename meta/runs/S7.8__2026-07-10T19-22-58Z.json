@@ -1,0 +1,67 @@
+{
+  "slice": "S7.8",
+  "title": "Phase-7 verification report",
+  "reqs": [
+    "REQ-P02"
+  ],
+  "started_at": "2026-07-10T19:22:57.158Z",
+  "updated_at": "2026-07-10T19:22:58.082Z",
+  "current_stage": "handoff",
+  "stages": {
+    "reboot": {
+      "status": "done",
+      "at": "2026-07-10T19:22:57.159Z",
+      "note": "REBOOT: 498 green"
+    },
+    "select": {
+      "status": "done",
+      "at": "2026-07-10T19:22:57.248Z",
+      "note": "SELECT: S7.8 closes P7"
+    },
+    "plan": {
+      "status": "done",
+      "at": "2026-07-10T19:22:57.346Z",
+      "note": "PLAN: verification report + REQ flips + subtractive pass + banners"
+    },
+    "anchor": {
+      "status": "done",
+      "at": "2026-07-10T19:22:57.442Z",
+      "note": "ANCHOR: mirror P6.md structure"
+    },
+    "implement": {
+      "status": "done",
+      "at": "2026-07-10T19:22:57.530Z",
+      "note": "IMPLEMENT: docs/verification/P7.md filed; 6 REQs flipped VERIFIED; execution_plan/task_slices/IRD CLOSED banners"
+    },
+    "verify": {
+      "status": "done",
+      "at": "2026-07-10T19:22:57.622Z",
+      "note": "VERIFY: 498/498 green; gate 0 blocking 0 warnings; subtractive pass 10 kept/0 candidates/clean; backlog diff = exactly 6 VERIFIED rows"
+    },
+    "integrate": {
+      "status": "done",
+      "at": "2026-07-10T19:22:57.798Z",
+      "note": "INTEGRATE: PKG hash s7-b6f2e3 (S7.8 added no production modules); ledger 64 decisions"
+    },
+    "report": {
+      "status": "done",
+      "at": "2026-07-10T19:22:57.892Z",
+      "note": "REPORT: P7 VERIFIED; M3 remains open (P8 pending)"
+    },
+    "handoff": {
+      "status": "done",
+      "at": "2026-07-10T19:22:57.988Z",
+      "note": "HANDOFF: meta/handoff_latest.json points at P8"
+    }
+  },
+  "acceptance": [
+    {
+      "req": "REQ-P02",
+      "criterion": "(fill in)",
+      "met": true,
+      "note": null
+    }
+  ],
+  "outcome": "completed",
+  "closed_at": "2026-07-10T19:22:58.169Z"
+}

@@ -13,12 +13,15 @@ import { join } from 'node:path';
 
 import {
   INTENT_REPOSITORY_FIELDS,
+  LIFECYCLE_STAGES,
   appendDecision,
   findPriorArt,
   nextDecisionId,
   parseDesignMemory,
   serializeDesignMemory,
+  setMechanicEntry,
   type LedgerDocument,
+  type MechanicLifecycleEntry,
 } from '../../src/eval/gdos/DesignMemory';
 
 const LIVE_PATH = join(process.cwd(), 'meta', 'design_memory_ledger.json');
@@ -118,7 +121,7 @@ test('strict parse rejection suite (each defect is caught with its path)', () =>
     { mutate: (r) => { ((r.decisions as Record<string, unknown>[])[0]).why_it_exists = ''; }, path: '/decisions/0/why_it_exists' },
     { mutate: (r) => { ((r.decisions as Record<string, unknown>[])[0]).bonus = 'x'; }, path: '/decisions/0/bonus' },
     { mutate: (r) => { (r.rejected_ideas as unknown[]).push({}); }, path: '/rejected_ideas' },
-    { mutate: (r) => { ((r.mechanic_lifecycle_registry as Record<string, unknown>).mechanics as unknown[]).push({}); }, path: '/mechanic_lifecycle_registry/mechanics' },
+    { mutate: (r) => { ((r.mechanic_lifecycle_registry as Record<string, unknown>).mechanics as unknown[]).push({}); }, path: '/mechanic_lifecycle_registry/mechanics/0/mechanic' },
   ];
   for (const c of cases) {
     const raw = JSON.parse(JSON.stringify(base)) as Record<string, unknown>;
@@ -140,4 +143,111 @@ test('the canonical field list is the §12 five, in order (REQ-111)', () => {
   assert.deepEqual([...INTENT_REPOSITORY_FIELDS], [
     'why_it_exists', 'problem_it_solves', 'emotion_targeted', 'misconception_created', 'why_alternatives_rejected',
   ]);
+});
+
+/* ── v1.1 mechanic lifecycle registry (P7/S7.1, REQ-082, dm-0055) ────────── */
+
+test('the nine REQ-082 stages, Introduction first, Retirement ninth', () => {
+  assert.equal(LIFECYCLE_STAGES.length, 9);
+  assert.equal(LIFECYCLE_STAGES[0], 'Introduction');
+  assert.equal(LIFECYCLE_STAGES[8], 'Retirement');
+});
+
+const SPRING_AT_DEVELOPMENT: MechanicLifecycleEntry = {
+  mechanic: 'spring',
+  stage: 'Development',
+  history: [
+    { from: 'Introduction', to: 'Isolation', date: '2026-07-10', evidence: 'taught alone in a fixture level' },
+    { from: 'Isolation', to: 'Development', date: '2026-07-10', evidence: 'three variation fixtures exercised' },
+  ],
+};
+
+test('setMechanicEntry upserts purely and the populated registry round-trips byte-losslessly', () => {
+  const doc = liveDoc();
+  const added = setMechanicEntry(doc, SPRING_AT_DEVELOPMENT);
+  assert.ok(added.ok, `setMechanicEntry failed: ${JSON.stringify(!added.ok ? added.errors : [])}`);
+  if (!added.ok) return;
+  assert.equal(doc.mechanics.length + 1, added.value.mechanics.length); // purity
+  const reparsed = parseDesignMemory(serializeDesignMemory(added.value));
+  assert.ok(reparsed.ok);
+  if (reparsed.ok) {
+    assert.deepEqual(reparsed.value, added.value);
+    assert.equal(serializeDesignMemory(reparsed.value), serializeDesignMemory(added.value)); // byte idempotency with entries
+  }
+  // Upsert replaces in place, never duplicates.
+  const retired = setMechanicEntry(added.value, {
+    mechanic: 'spring',
+    stage: 'Retirement',
+    disposition: 'convert',
+    history: [
+      ...SPRING_AT_DEVELOPMENT.history,
+      { from: 'Development', to: 'Retirement', date: '2026-07-10', evidence: 'converted into the conveyor family' },
+    ],
+  });
+  assert.ok(retired.ok);
+  if (retired.ok) {
+    assert.equal(retired.value.mechanics.length, added.value.mechanics.length);
+    assert.equal(retired.value.mechanics.find((m) => m.mechanic === 'spring')?.stage, 'Retirement');
+  }
+});
+
+test('lifecycle entry validation rejects each defect with its path', () => {
+  const doc = liveDoc();
+  const cases: { entry: MechanicLifecycleEntry; want: string }[] = [
+    // Not a closed EntityKind.
+    { entry: { ...SPRING_AT_DEVELOPMENT, mechanic: 'jetpack' as MechanicLifecycleEntry['mechanic'] }, want: '/entry/mechanic' },
+    // Backward transition.
+    {
+      entry: {
+        mechanic: 'spike', stage: 'Isolation',
+        history: [{ from: 'Development', to: 'Isolation', date: '2026-07-10', evidence: 'x' }],
+      }, want: '/entry/history/0',
+    },
+    // Non-contiguous chain.
+    {
+      entry: {
+        mechanic: 'spike', stage: 'Combination',
+        history: [
+          { from: 'Introduction', to: 'Isolation', date: '2026-07-10', evidence: 'x' },
+          { from: 'Development', to: 'Combination', date: '2026-07-10', evidence: 'x' },
+        ],
+      }, want: '/entry/history/1/from',
+    },
+    // History must end at the current stage.
+    {
+      entry: {
+        mechanic: 'spike', stage: 'Mastery',
+        history: [{ from: 'Introduction', to: 'Isolation', date: '2026-07-10', evidence: 'x' }],
+      }, want: '/entry',
+    },
+    // Empty history away from Introduction.
+    { entry: { mechanic: 'spike', stage: 'Development', history: [] }, want: '/entry' },
+    // Retirement without a disposition.
+    {
+      entry: {
+        mechanic: 'spike', stage: 'Retirement',
+        history: [{ from: 'Introduction', to: 'Retirement', date: '2026-07-10', evidence: 'x' }],
+      }, want: '/entry/disposition',
+    },
+    // Disposition away from Retirement.
+    { entry: { ...SPRING_AT_DEVELOPMENT, disposition: 'prune' }, want: '/entry/disposition' },
+  ];
+  for (const c of cases) {
+    const result = setMechanicEntry(doc, c.entry);
+    assert.equal(result.ok, false, `expected rejection for ${c.want}`);
+    if (!result.ok) assert.ok(result.errors.some((e) => e.path === c.want), `expected an error at ${c.want}, got ${JSON.stringify(result.errors.map((e) => e.path))}`);
+  }
+});
+
+test('a duplicate mechanic in the raw registry is rejected at parse', () => {
+  const doc = liveDoc();
+  const withOne = setMechanicEntry(doc, SPRING_AT_DEVELOPMENT);
+  assert.ok(withOne.ok);
+  if (!withOne.ok) return;
+  const raw = JSON.parse(serializeDesignMemory(withOne.value)) as Record<string, unknown>;
+  const registry = raw.mechanic_lifecycle_registry as { mechanics: unknown[] };
+  registry.mechanics.push(JSON.parse(JSON.stringify(registry.mechanics[0])));
+  const result = parseDesignMemory(JSON.stringify(raw));
+  assert.equal(result.ok, false);
+  if (!result.ok) assert.ok(result.errors.some((e) => e.path === '/mechanic_lifecycle_registry/mechanics/1/mechanic'));
 });

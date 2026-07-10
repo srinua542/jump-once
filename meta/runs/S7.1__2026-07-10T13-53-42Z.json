@@ -1,0 +1,67 @@
+{
+  "slice": "S7.1",
+  "title": "Mechanic lifecycle registry (ledger v1.1) + tracker + GenProfile",
+  "reqs": [
+    "REQ-082"
+  ],
+  "started_at": "2026-07-10T13:40:13.187Z",
+  "updated_at": "2026-07-10T13:53:41.924Z",
+  "current_stage": "handoff",
+  "stages": {
+    "reboot": {
+      "status": "done",
+      "at": "2026-07-10T13:40:13.188Z",
+      "note": "REBOOT done: pkg_hash s6-e7b3a9 confirmed, suite green (420, fail 0)"
+    },
+    "select": {
+      "status": "done",
+      "at": "2026-07-10T13:40:13.295Z",
+      "note": "SELECT: S7.1 committed; REQ-082 + slice flipped IN_PROGRESS"
+    },
+    "plan": {
+      "status": "done",
+      "at": "2026-07-10T13:40:28.224Z",
+      "note": "PLAN: execution_plan.md §P7 S7.1 bullet is the micro-plan — DesignMemory v1.1 (typed lifecycle entries, live-ledger migration), gen/GenProfile.ts, gen/Lifecycle.ts, gen isolation scans; tests: GdosDesignMemory v1.1 extension, GenProfile rejection suite, GenLifecycle, GenIsolation"
+    },
+    "anchor": {
+      "status": "done",
+      "at": "2026-07-10T13:40:28.337Z",
+      "note": "ANCHOR: DesignMemory.ts fully read; PKG dependents []; additive change (v1.1 adds mechanics parsing, all existing exports unchanged); GdosDesignMemory suite is the isolation harness"
+    },
+    "implement": {
+      "status": "done",
+      "at": "2026-07-10T13:42:17.679Z",
+      "note": "IMPLEMENT: DesignMemory v1.1 (lifecycle schema + setMechanicEntry, ledger migrated byte-idempotently), gen/GenProfile.ts, gen/Lifecycle.ts, GenIsolation scans, directory_structure.md gen/ invariant"
+    },
+    "verify": {
+      "status": "done",
+      "at": "2026-07-10T13:53:31.628Z",
+      "note": "VERIFY: 452/452 green (was 420), tsc clean; forward-only/blocking/two-profile/migration-idempotency all proven"
+    },
+    "integrate": {
+      "status": "done",
+      "at": "2026-07-10T13:53:31.787Z",
+      "note": "INTEGRATE: PKG 67 nodes / 247 edges, hash s7-b2e6f4; +gen/gen_profile +gen/lifecycle; design_memory v1.1 edges; Section_9 anchor; dm-0054..0060 were ledgered at plan time"
+    },
+    "report": {
+      "status": "done",
+      "at": "2026-07-10T13:53:31.871Z",
+      "note": "REPORT: S7.1 -> COMPLETED in task_slices; REQ-082 stays IN_PROGRESS until S7.8 per the P7 VERIFIED schedule"
+    },
+    "handoff": {
+      "status": "done",
+      "at": "2026-07-10T13:53:31.952Z",
+      "note": "HANDOFF: session continues into S7.2 immediately; meta/handoff_latest.json will be written at the S7.4 pause point"
+    }
+  },
+  "acceptance": [
+    {
+      "req": "REQ-082",
+      "criterion": "(fill in)",
+      "met": true,
+      "note": null
+    }
+  ],
+  "outcome": "completed",
+  "closed_at": "2026-07-10T13:53:42.001Z"
+}

@@ -109,14 +109,18 @@ Session-sized, dependency-ordered work units. Each slice is small enough to comp
 
 ## Phase 7 — PDA & Procedural Generation + Lifecycle
 
+*(Restructured from the original six-slice table at P7 plan authoring — adversarial review dm-0054: the intent gate must precede the pipeline it belongs to; the dm-0041 counterfactual solver and the candidate generator had no owning slice. See `docs/execution_plan.md` §P7.)*
+
 | Slice | Title | REQs | Depends | State |
 |-------|-------|------|---------|-------|
-| S7.1 | Mechanic 9-stage lifecycle tracker | REQ-082 | S6.4 | NOT_STARTED |
-| S7.2 | PDA opportunity search | REQ-060 | S7.1 | NOT_STARTED |
-| S7.3 | Creativity/iteration evolutionary loop | REQ-081 | S7.2 | NOT_STARTED |
-| S7.4 | 8-phase level manufacturing pipeline | REQ-090 | S7.2 | NOT_STARTED |
-| S7.5 | Single-sentence intent verification gate | REQ-091 | S7.4 | NOT_STARTED |
-| S7.6 | Phase-7 verification report | REQ-P02 | S7.4–S7.5 | NOT_STARTED |
+| S7.1 | Mechanic lifecycle registry (ledger v1.1) + tracker + GenProfile | REQ-082 | M2 ✓ | COMPLETED |
+| S7.2 | Counterfactual jump-relevance audit (dm-0041) | REQ-012 (P7 share) | M2 ✓ | COMPLETED |
+| S7.3 | PDA opportunity search | REQ-060, REQ-054 (applied) | S7.1 | COMPLETED |
+| S7.4 | Concept model + candidate generator | REQ-090 (phases 1–2), REQ-081 | S7.1 | COMPLETED |
+| S7.5 | Creativity & iteration evolutionary loop | REQ-081, REQ-053 (applied) | S7.4 | COMPLETED |
+| S7.6 | Single-sentence intent verification gate | REQ-091 | S7.1 | COMPLETED |
+| S7.7 | 8-phase level manufacturing pipeline | REQ-090, REQ-061 (applied) | S7.2, S7.4–S7.6 | COMPLETED |
+| S7.8 | Phase-7 verification report | REQ-P02 | S7.1–S7.7 | COMPLETED |
 
 ## Phase 8 — Internal Production Tools
 
@@ -164,10 +168,10 @@ Session-sized, dependency-ordered work units. Each slice is small enough to comp
 
 ## Next-session pick-list (top of queue)
 
-**P6 — Campaign Intelligence is VERIFIED** (`docs/verification/P6.md`); all six P6 slices COMPLETED, 420/420 tests green, pkg `s6-e7b3a9`. Five REQs flipped VERIFIED (030/031/032/041/142). **Milestone M2 — Design Intelligence Operational is VERIFIED** — P4 ✓, P5 ✓, P6 ✓, all three pillars complete. **The content-generation hard gate is now OPEN.**
+**P7 — PDA & Procedural Generation + Mechanic Lifecycle is VERIFIED** (`docs/verification/P7.md`); all eight P7 slices COMPLETED, 498/498 tests green, pkg `s7-b6f2e3`. Six REQs flipped VERIFIED (060/081/082/053/054/061); REQ-090/091/012 retain a P10 share. The generation pipeline (`src/gen/`) is built and verified; the IRD exit condition is proven by `GenPipeline.test.ts`.
 
-1. **Author the P7 execution-plan section FIRST** (REQ-P02) — the same adversarial-review discipline P2–P6 each got, authored BEFORE any S7.1 code. P7 owns REQ-060 (PDA opportunity search), REQ-081 (creativity/iteration evolutionary loop), REQ-082 (9-stage mechanic lifecycle tracker), REQ-090/091 (8-phase level manufacturing pipeline incl. the single-sentence intent gate), and applies REQ-053/054 (P5's novelty/emergent-fun search, unbuilt-in-P7-until-now) plus the deferred REQ-012 counterfactual no-jump reachability solver (ledgered dm-0041, carried from P5).
-2. **S7.1** — the mechanic 9-stage lifecycle tracker (REQ-082), per `task_slices.md`'s Phase 7 table below.
-3. Content generation may now begin under the pipeline P7 builds — but content authoring itself is P10's phase, still gated behind P7+P8 (milestone M3).
+1. **P8 — Internal Production Tools** is the next phase and the SECOND (final) M3 pillar. **M3 — Production Capable does NOT close until P8 verifies.** Author the P8 execution-plan section FIRST (REQ-P02), via the same adversarial-review discipline every phase since P2 has gotten. P8 owns REQ-130/131/132/133 (visual level editor, debug overlays, profiling, telemetry → GDOS) and contributes REQ-032's live-telemetry share.
+2. Note a boundary P8 must respect: `tools/` is interactive/editor territory; the pure `src/gen/` pipeline and `src/eval/` audits stay `node --test`-covered and are consumed by P8 as libraries, not modified.
+3. Content authoring (P10) remains hard-gated behind M3 (P7 ✓ + P8). Do NOT author `LevelDefinition` content in P8 — its job is the editor + telemetry tooling.
 
-*(Content generation was hard-gated until M2 — P4+P5+P6 — verified. All three are now VERIFIED; the gate is open for the phases that build the generation pipeline (P7) and tooling (P8). Actual chapter/level authoring is P10, milestone M3.)*
+*(Content generation was hard-gated until M2 — P4+P5+P6 — verified. The gate is open for the phases that build the generation pipeline (P7 ✓) and tooling (P8). Actual chapter/level authoring is P10, milestone M3 = P7 + P8.)*

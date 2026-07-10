@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
   "generated_by_session": "2026-07-10T-session-7",
-  "pkg_hash": "s6-e7b3a9",
+  "pkg_hash": "s7-b6f2e3",
   "notes": "Machine-readable mirror of the codebase. Read at every session start; update immediately on any structural code change (new module, changed dependency, changed GDOS mapping). See references/pkg_schema.md.",
   "nodes": [
     {
@@ -52,7 +52,10 @@
         "core/state",
         "entities/world",
         "eval/agent_policy",
-        "eval/archetypes"
+        "eval/archetypes",
+        "gen/generator",
+        "gen/creativity",
+        "gen/pipeline"
       ],
       "volatile_state_flags": {
         "has_side_effects": false,
@@ -82,7 +85,8 @@
         "eval/local/search",
         "eval/local/optimization",
         "eval/gdos/streamability",
-        "eval/evaluate"
+        "eval/evaluate",
+        "gen/generator"
       ],
       "volatile_state_flags": {
         "has_side_effects": false,
@@ -375,7 +379,13 @@
         "eval/gdos/streamability",
         "eval/evaluate",
         "eval/campaign/campaign_state",
-        "eval/campaign/mechanic_tracker"
+        "eval/campaign/mechanic_tracker",
+        "eval/gdos/design_memory",
+        "gen/lifecycle",
+        "gen/pda",
+        "gen/generator",
+        "gen/concept",
+        "gen/pipeline"
       ],
       "volatile_state_flags": {
         "has_side_effects": false,
@@ -479,7 +489,9 @@
       "dependents": [
         "components/level",
         "schema/serialize",
-        "schema/parse"
+        "schema/parse",
+        "gen/generator",
+        "gen/concept"
       ],
       "volatile_state_flags": {
         "has_side_effects": false,
@@ -515,7 +527,10 @@
         "eval/local/exploit",
         "eval/local/optimization",
         "eval/gdos/evidence",
-        "eval/evaluate"
+        "eval/evaluate",
+        "eval/local/counterfactual",
+        "gen/generator",
+        "gen/pipeline"
       ],
       "volatile_state_flags": {
         "has_side_effects": false,
@@ -577,7 +592,12 @@
         "eval/gdos/profile",
         "eval/gdos/design_memory",
         "eval/gdos/cdre",
-        "eval/campaign/campaign_profile"
+        "eval/campaign/campaign_profile",
+        "gen/gen_profile",
+        "gen/lifecycle",
+        "gen/generator",
+        "gen/concept",
+        "gen/intent_gate"
       ],
       "volatile_state_flags": {
         "has_side_effects": false,
@@ -616,7 +636,8 @@
         "eval/archetypes",
         "eval/agent_harness",
         "eval/local/search",
-        "eval/local/exploit"
+        "eval/local/exploit",
+        "eval/local/counterfactual"
       ],
       "volatile_state_flags": {
         "has_side_effects": false,
@@ -910,7 +931,8 @@
         "eval/local/solvability",
         "eval/local/softlock",
         "eval/local/exploit",
-        "eval/gdos/evidence"
+        "eval/gdos/evidence",
+        "eval/local/counterfactual"
       ],
       "volatile_state_flags": {
         "has_side_effects": false,
@@ -1006,7 +1028,8 @@
         "eval/local/search",
         "eval/local/solvability",
         "eval/local/optimization",
-        "eval/evaluate"
+        "eval/evaluate",
+        "eval/local/counterfactual"
       ],
       "volatile_state_flags": {
         "has_side_effects": false,
@@ -1037,7 +1060,8 @@
         "eval/local/softlock",
         "eval/local/exploit",
         "eval/local/optimization",
-        "eval/emergent_fun"
+        "eval/emergent_fun",
+        "eval/local/counterfactual"
       ],
       "volatile_state_flags": {
         "has_side_effects": false,
@@ -1063,7 +1087,8 @@
       ],
       "dependents": [
         "eval/gdos/evidence",
-        "eval/evaluate"
+        "eval/evaluate",
+        "gen/pipeline"
       ],
       "volatile_state_flags": {
         "has_side_effects": false,
@@ -1088,7 +1113,8 @@
       ],
       "dependents": [
         "eval/gdos/evidence",
-        "eval/evaluate"
+        "eval/evaluate",
+        "gen/pipeline"
       ],
       "volatile_state_flags": {
         "has_side_effects": false,
@@ -1115,7 +1141,8 @@
       ],
       "dependents": [
         "eval/gdos/evidence",
-        "eval/evaluate"
+        "eval/evaluate",
+        "gen/pipeline"
       ],
       "volatile_state_flags": {
         "has_side_effects": false,
@@ -1141,7 +1168,8 @@
       ],
       "dependents": [
         "eval/gdos/evidence",
-        "eval/evaluate"
+        "eval/evaluate",
+        "gen/pipeline"
       ],
       "volatile_state_flags": {
         "has_side_effects": false,
@@ -1190,7 +1218,9 @@
         "eval/gdos/curation",
         "eval/gdos/cdre",
         "eval/evaluate",
-        "eval/campaign/campaign_state"
+        "eval/campaign/campaign_state",
+        "gen/creativity",
+        "gen/pipeline"
       ],
       "volatile_state_flags": {
         "has_side_effects": false,
@@ -1260,7 +1290,8 @@
         "eval/gdos/curation",
         "eval/evaluate",
         "eval/campaign/campaign_state",
-        "eval/campaign/tape_analyzer"
+        "eval/campaign/tape_analyzer",
+        "gen/pipeline"
       ],
       "volatile_state_flags": {
         "has_side_effects": false,
@@ -1306,7 +1337,10 @@
         "eval/gdos/cdre",
         "eval/emergent_fun",
         "eval/campaign/mechanic_tracker",
-        "eval/campaign/campaign_director"
+        "eval/campaign/campaign_director",
+        "gen/pda",
+        "gen/generator",
+        "gen/concept"
       ],
       "volatile_state_flags": {
         "has_side_effects": false,
@@ -1458,7 +1492,10 @@
         "eval/gdos/evidence",
         "eval/gdos/profile"
       ],
-      "dependents": [],
+      "dependents": [
+        "gen/creativity",
+        "gen/pipeline"
+      ],
       "volatile_state_flags": {
         "has_side_effects": false,
         "state_dependencies": []
@@ -1483,7 +1520,9 @@
         "eval/gdos/design_space",
         "eval/local/search"
       ],
-      "dependents": [],
+      "dependents": [
+        "gen/pda"
+      ],
       "volatile_state_flags": {
         "has_side_effects": false,
         "state_dependencies": []
@@ -1497,17 +1536,23 @@
       "node_id": "eval/gdos/design_memory",
       "type": "SystemNode",
       "file_path": "src/eval/gdos/DesignMemory.ts",
-      "functional_summary": "The executable GDOS Design Memory / Intent Repository (REQ-050/051/111, dm-0032/dm-0040) — the pure text->records->text layer over meta/design_memory_ledger.json (that file's own header designates it the backing store). parseDesignMemory: strict parse, path-qualified Result errors, closed ACCEPTED|REJECTED set, dm-#### ids unique, YYYY-MM-DD dates, five non-empty Intent Repository fields per entry; v1.0 keeps rejected_ideas[] and lifecycle mechanics[] EMPTY (rejected ideas = decisions with status REJECTED; lifecycle entries are P7's behind a version bump). findPriorArt = the REQ-051 parse-before-proposing term search. appendDecision is PURE (new document; date is a parameter — no Date.now) with an exact-title repetition guard; nextDecisionId mints max+1. serializeDesignMemory = canonical bytes (fixed key order, 2-space, trailing newline), byte-idempotent against the live file. fs stays at callers. Dogfooded: dm-0040 was appended to the live ledger via this store.",
+      "functional_summary": "The executable GDOS Design Memory / Intent Repository (REQ-050/051/111, dm-0032/dm-0040) — the pure text->records->text layer over meta/design_memory_ledger.json (that file's own header designates it the backing store). parseDesignMemory: strict parse, path-qualified Result errors, closed ACCEPTED|REJECTED set, dm-#### ids unique, YYYY-MM-DD dates, five non-empty Intent Repository fields per entry; rejected_ideas[] stays empty (rejected ideas = decisions with status REJECTED). v1.1 (P7/S7.1, dm-0055) unlocked the mechanic_lifecycle_registry: typed MechanicLifecycleEntry records (mechanic = closed EntityKind, unique; one of the nine REQ-082 LIFECYCLE_STAGES; prune|convert disposition exactly when Retired; forward-only contiguous history chained from Introduction to the current stage, dated + evidence-backed) parsed/serialized canonically; setMechanicEntry = the validated PURE upsert. The stage TRACKER lives in gen/lifecycle. findPriorArt = the REQ-051 parse-before-proposing term search. appendDecision is PURE (new document; date is a parameter — no Date.now) with an exact-title repetition guard; nextDecisionId mints max+1. serializeDesignMemory = canonical bytes (fixed key order, 2-space, trailing newline), byte-idempotent against the live file. fs stays at callers. Dogfooded: dm-0040 was appended to the live ledger via this store.",
       "gdos_alignment": "Section_6_Design_Memory__Section_12_Design_Intent_Repository",
       "dependencies": [
-        "schema/parse"
+        "schema/parse",
+        "components/behavior"
       ],
-      "dependents": [],
+      "dependents": [
+        "gen/lifecycle",
+        "gen/pda",
+        "gen/concept",
+        "gen/pipeline"
+      ],
       "volatile_state_flags": {
         "has_side_effects": false,
         "state_dependencies": []
       },
-      "last_verified_commit": "uncommitted-session-5",
+      "last_verified_commit": "uncommitted-session-7",
       "backlog_refs": [
         "REQ-050",
         "REQ-051",
@@ -1550,7 +1595,9 @@
         "eval/gdos/design_space",
         "eval/gdos/report"
       ],
-      "dependents": [],
+      "dependents": [
+        "gen/pda"
+      ],
       "volatile_state_flags": {
         "has_side_effects": false,
         "state_dependencies": []
@@ -1582,7 +1629,10 @@
         "eval/gdos/judge",
         "eval/gdos/report"
       ],
-      "dependents": [],
+      "dependents": [
+        "gen/creativity",
+        "gen/pipeline"
+      ],
       "volatile_state_flags": {
         "has_side_effects": false,
         "state_dependencies": []
@@ -1638,7 +1688,8 @@
         "eval/campaign/tape_analyzer",
         "eval/campaign/knowledge_model",
         "eval/campaign/chapter_health",
-        "eval/campaign/campaign_director"
+        "eval/campaign/campaign_director",
+        "gen/pda"
       ],
       "volatile_state_flags": {
         "has_side_effects": false,
@@ -1771,6 +1822,261 @@
         "REQ-030",
         "REQ-031",
         "REQ-142"
+      ]
+    },
+    {
+      "node_id": "gen/gen_profile",
+      "type": "SystemNode",
+      "file_path": "src/gen/GenProfile.ts",
+      "functional_summary": "S7.1 — GenProfile: the THIRD versioned calibration schema (dm-0057, extending the dm-0045 separation logic past ScoringProfile and CampaignProfile): every P7 generation threshold/weight/budget lives here, strict-parsed with the full P2 discipline (unknown keys rejected at every object, finite-number bounds, hard version pin GEN_PROFILE_SCHEMA_VERSION=1, path-qualified Result errors, never throws), DEFAULT_GEN_PROFILE frozen. v1 carries the lifecycle calibration (developmentMinLevels, saturationNoveltyThreshold, exhaustionConsecutiveLowNovelty); later P7 slices grow it per-concern exactly as CampaignProfile grew in P6. Zero calibration literals in gen logic; two-profile tests prove externalization. S7.3 grew the pda section (maxOpportunities cap, weakChapterHealthScore bar). S7.4 grew the generator section (corridor envelope, air rows, gap ceiling, par tiers, and the per-kind entityTuning dynamics — every gameplay value the template writes). S7.5 grew the creativity section (loop budget, combineProbability, diminishing-returns epsilon, and selection weights). S7.6 grew the intent section (minWords/maxWords band for the single-sentence gate). S7.7 grew the pipeline section (revisionBudget).",
+      "gdos_alignment": "Section_7_PDA__Section_9_Creativity_Lifecycle__Section_10_Pipeline",
+      "dependencies": [
+        "schema/parse"
+      ],
+      "dependents": [
+        "gen/lifecycle",
+        "gen/pda",
+        "gen/generator",
+        "gen/creativity",
+        "gen/intent_gate",
+        "gen/pipeline"
+      ],
+      "volatile_state_flags": {
+        "has_side_effects": false,
+        "state_dependencies": []
+      },
+      "last_verified_commit": "uncommitted-session-7",
+      "backlog_refs": [
+        "REQ-082"
+      ]
+    },
+    {
+      "node_id": "gen/lifecycle",
+      "type": "SystemNode",
+      "file_path": "src/gen/Lifecycle.ts",
+      "functional_summary": "S7.1 — the REQ-082 mechanic lifecycle TRACKER (dm-0055). The registry SCHEMA lives in the Design Memory store (ledger v1.1); this module is the pure stage logic over those records, split CDRE-style (dm-0033) into observation and act: assessStage(entry, evidence, profile) climbs the nine-stage ladder (Introduction→Isolation→Development→Combination→Subversion→Mastery→Saturation→Exhaustion→Retirement) contiguously from caller-supplied observable evidence (usage counts, isolation/combination/subversion level existence, campaign mastery, novelty divergences) — advisory, never recommends Retirement; advanceStage is the explicit validated act (forward-only, dated, evidence-backed, prune|convert disposition exactly when Retiring); isBlocked = the REQ-082 reuse block (Exhaustion/Retirement; absent = fresh). All thresholds from GenProfile (dm-0057); pure, no clock, whitelist math.",
+      "gdos_alignment": "Section_9_Mechanic_Lifecycle",
+      "dependencies": [
+        "eval/gdos/design_memory",
+        "components/behavior",
+        "schema/parse",
+        "gen/gen_profile"
+      ],
+      "dependents": [
+        "gen/pda",
+        "gen/concept"
+      ],
+      "volatile_state_flags": {
+        "has_side_effects": false,
+        "state_dependencies": []
+      },
+      "last_verified_commit": "uncommitted-session-7",
+      "backlog_refs": [
+        "REQ-082"
+      ]
+    },
+    {
+      "node_id": "eval/local/counterfactual",
+      "type": "SystemNode",
+      "file_path": "src/eval/local/Counterfactual.ts",
+      "functional_summary": "S7.2 — the REQ-012 jump-relevance audit (dm-0041 deferred from P5; design dm-0056): auditJumpRelevance runs the S4.3 bounded reachability search with the S4.4 forbidden hook tainting any state whose jumpLock left its spawn phase (available — the forward-only available→anticipating→spent machine), so the BFS explores exactly the no-jump reachable set with ZERO Search.ts changes. Goal reached ⇒ jump-irrelevant (REQ-012 kill) with a no-jump witness tape, self-provable via witnessCompletesWithoutJump (replay completes with the lock still available); frontier exhausted ⇒ jump-necessary (the pass); node cap ⇒ inconclusive, honestly. Orthogonal to solvability — consumers compose solvable AND jump-necessary (the S7.7 pipeline Kinetic Simulation phase does). The axiom stays ground truth: reads world.jumpLock as fact, never re-implements it (dm-0020).",
+      "gdos_alignment": "Section_2_One_Jump_Constraint",
+      "dependencies": [
+        "eval/local/search",
+        "eval/agent_harness",
+        "schema/tape_io",
+        "components/level",
+        "entities/world"
+      ],
+      "dependents": [
+        "gen/pipeline"
+      ],
+      "volatile_state_flags": {
+        "has_side_effects": false,
+        "state_dependencies": []
+      },
+      "last_verified_commit": "uncommitted-session-7",
+      "backlog_refs": [
+        "REQ-012"
+      ]
+    },
+    {
+      "node_id": "gen/concept",
+      "type": "SystemNode",
+      "file_path": "src/gen/Concept.ts",
+      "functional_summary": "S7.3+S7.4 — the level-design vocabulary (dm-0059): LEVEL_ARCHETYPES, the closed twelve-value list from /level-design-principle (LEVEL archetypes = one-jump decision shapes, distinct from eval/Archetypes.ts player archetypes), plus LevelConcept — the pipeline phase-1 record typing the skill workflow answers (archetype, intentSentence [the REQ-091 subject — lives HERE, not in LevelDefinition], oneJumpDecision, mechanics, difficultyTarget, emotionalPhase, targetKgNode) — and validateConcept: structural gate (closed vocabularies, [0,1] difficulty bounds, mechanic uniqueness) including the REQ-082 lifecycle block via gen/lifecycle isBlocked. Intent RIGOR is the S7.6 gate, not phase 1.",
+      "gdos_alignment": "Section_9_Creativity__Section_10_Pipeline",
+      "dependencies": [
+        "components/behavior",
+        "components/gdos",
+        "eval/gdos/design_space",
+        "eval/gdos/design_memory",
+        "schema/parse",
+        "gen/lifecycle"
+      ],
+      "dependents": [
+        "gen/pda",
+        "gen/generator",
+        "gen/creativity",
+        "gen/intent_gate",
+        "gen/pipeline"
+      ],
+      "volatile_state_flags": {
+        "has_side_effects": false,
+        "state_dependencies": []
+      },
+      "last_verified_commit": "uncommitted-session-7",
+      "backlog_refs": [
+        "REQ-081",
+        "REQ-090"
+      ]
+    },
+    {
+      "node_id": "gen/pda",
+      "type": "SystemNode",
+      "file_path": "src/gen/Pda.ts",
+      "functional_summary": "S7.3 — the Procedural Design Assistant (REQ-060, dm-0058): discoverOpportunities(inputs, profile) is a deterministic data-fusion pass over five consumed-by-reference, optional-degrading signals — CoverageMatrix (CONCEPTUAL pair gaps: individually covered mechanic x emotion / mechanic x optimization-style values that never met — one level finer than CDRE axis mining), CampaignReport (SYSTEMIC: alerts first, then chapters under the profiled weak-health bar), labeled EmergentFunReports (STRUCTURAL: kinetic anchors, REQ-054 applied), CdreProposals (coverage-gap/recurring-rejection echoes, ranked last, REJECTED skipped) — with two mandatory FILTERS: gen/lifecycle isBlocked (REQ-082) and rejected-prior-art via findPriorArt (REQ-051). Emits ranked typed DesignOpportunity records (kind, suggested archetypes from a frozen /level-design-principle mapping, mechanics, rationale, sourceSignals provenance); the cap and weak-chapter bar live in GenProfile.pda; every drop is counted (blockedMechanic/rejectedPriorArt/overCap) — no silent caps. Never raw geometry.",
+      "gdos_alignment": "Section_7_PDA",
+      "dependencies": [
+        "eval/gdos/design_space",
+        "eval/gdos/design_memory",
+        "eval/gdos/cdre",
+        "eval/campaign/campaign_state",
+        "eval/emergent_fun",
+        "components/behavior",
+        "gen/concept",
+        "gen/gen_profile",
+        "gen/lifecycle"
+      ],
+      "dependents": [],
+      "volatile_state_flags": {
+        "has_side_effects": false,
+        "state_dependencies": []
+      },
+      "last_verified_commit": "uncommitted-session-7",
+      "backlog_refs": [
+        "REQ-060",
+        "REQ-054",
+        "REQ-051",
+        "REQ-082"
+      ]
+    },
+    {
+      "node_id": "gen/generator",
+      "type": "SystemNode",
+      "file_path": "src/gen/Generator.ts",
+      "functional_summary": "S7.4 — the candidate generator (REQ-090 phases 1-2 substrate, REQ-081 operators; dm-0059/dm-0061): generateCandidate(concept, seed, profile) draws GenParams (corridorLength, gapWidth from executionPrecision, gapStart) inside a profiled envelope auto-widened to fit the concept mechanic count, builds the gap-corridor skeleton (approach / spiked pit / landing / goal — the proven-jumpable P4 fixture shape), places all twelve EntityKinds via a frozen per-kind slot table (spike = the pit; laser/movingHazard at the gap; spring/door landing; surfaces/plates/zones/movers approach; plate+door trigger-wired per dm-0015), writes GdosMetadata from the concept (difficulty vectors, per-phase emotional-curve presets, creator moment from the one-jump decision), and PROVES every emission via the P2 strict parser. mutateCandidate jitters one clamped parameter; combineCandidates coin-flips parameters from two parents (concept from parent a); both re-build and re-prove. Pure function of (concept, seed, profile) — threaded core/Rng, no clock; unbuildable concepts refused with typed SchemaError reasons.",
+      "gdos_alignment": "Section_10_Structural_Prototyping__Section_2_Pure_Function_Of_Seed",
+      "dependencies": [
+        "core/clock",
+        "core/rng",
+        "components/behavior",
+        "components/gdos",
+        "components/level",
+        "schema/parse",
+        "eval/gdos/design_space",
+        "gen/gen_profile",
+        "gen/concept"
+      ],
+      "dependents": [
+        "gen/creativity",
+        "gen/pipeline"
+      ],
+      "volatile_state_flags": {
+        "has_side_effects": false,
+        "state_dependencies": []
+      },
+      "last_verified_commit": "uncommitted-session-7",
+      "backlog_refs": [
+        "REQ-090",
+        "REQ-081"
+      ]
+    },
+    {
+      "node_id": "gen/creativity",
+      "type": "SystemNode",
+      "file_path": "src/gen/Creativity.ts",
+      "functional_summary": "S7.5 — the REQ-081 creativity & iteration evolutionary loop (dm-0062; REQ-053 applied): evolveLevel(concept, corpus, seed, genProfile, evalOptions) folds over generations — generate the seed candidate (gen/Generator), then each generation breeds variationsPerGeneration variations of the top-two survivors (mutateCandidate the best, or combineCandidates the top two into a hybrid at combineProbability), evaluates each through the public P5 seam (evaluateLevel), compares to memory via noveltyDivergence against the prior corpus, and selects by a profile-weighted composite of gate pass + mean gate score + clamped novelty. Survivors carry forward so the best score is monotone non-decreasing; halts when improvement < diminishingReturnsEpsilon (converged) or at hardCapGenerations. Pure function of its inputs (threaded core/Rng, deterministic eval seed); an unbuildable seed concept fails honestly with the generator typed reason. Calibration split (dm-0057): loop budget/operator-mix/selection-weights in GenProfile.creativity, gate scoring in the ScoringProfile inside evalOptions.",
+      "gdos_alignment": "Section_9_Creativity_Iteration__Section_6_Novelty_Search",
+      "dependencies": [
+        "core/rng",
+        "eval/evaluate",
+        "eval/gdos/novelty",
+        "eval/gdos/report",
+        "gen/concept",
+        "gen/gen_profile",
+        "gen/generator"
+      ],
+      "dependents": [],
+      "volatile_state_flags": {
+        "has_side_effects": false,
+        "state_dependencies": []
+      },
+      "last_verified_commit": "uncommitted-session-7",
+      "backlog_refs": [
+        "REQ-081",
+        "REQ-053"
+      ]
+    },
+    {
+      "node_id": "gen/intent_gate",
+      "type": "SystemNode",
+      "file_path": "src/gen/IntentGate.ts",
+      "functional_summary": "S7.6 — the REQ-091 Single-Sentence Intent Verification gate (dm-0063): verifyIntent(concept, profile) judges the concept intentSentence STRUCTURALLY (not NLP) — exactly one sentence (one terminal .!? ending the string), inside GenProfile.intent minWords..maxWords, and containing at least one causal connective from the closed LESSON_CONNECTIVES grammar (the label→lesson marker). Returns a typed IntentVerdict listing every failed reason (empty|not-one-sentence|too-short|too-long|no-lesson; empty short-circuits) with path-qualified findings. This is the pipeline Sign-off/Intent phase (S7.7 phase 7); a denial means the pipeline persists only the rejection, never a product. Pure over (concept, profile), whitelist math, no clock.",
+      "gdos_alignment": "Section_10_Intent_Verification",
+      "dependencies": [
+        "schema/parse",
+        "gen/concept",
+        "gen/gen_profile"
+      ],
+      "dependents": [
+        "gen/pipeline"
+      ],
+      "volatile_state_flags": {
+        "has_side_effects": false,
+        "state_dependencies": []
+      },
+      "last_verified_commit": "uncommitted-session-7",
+      "backlog_refs": [
+        "REQ-091"
+      ]
+    },
+    {
+      "node_id": "gen/pipeline",
+      "type": "SystemNode",
+      "file_path": "src/gen/Pipeline.ts",
+      "functional_summary": "S7.7 — the REQ-090 eight-phase manufacturing pipeline (dm-0060/dm-0064; REQ-061 applied): manufactureLevel(concept, options, profile) drives a concept through Concept (validateConcept lifecycle blocking) → Structural Prototyping (generateCandidate, parse-proven) → Kinetic Simulation (solvable + jump-necessary [S7.2 counterfactual] + softlock-free; the entity-exploit audit is RECORDED as evidence, NOT a hard gate — it provably misfires on every one-jump pit incl. ONE_GAP, dm-0064) → AI Council (evaluateLevel → GdosReport.pass; the REQ-061 info-density regulation point) → Targeted Revision (bounded mutateCandidate retries, profile.pipeline.revisionBudget) → Optimization Layering (computeOptimizationWindow flat-layout reject) → Sign-off/Intent (verifyIntent, REQ-091) → Campaign Integration (assemble the LevelRecord-ready PipelineProduct + provenance). Emits an accepted product or a typed PipelineRejection (phase+reason+findings); deletion = no product persisted. Pure fold, deterministic under fixed seeds; the IRD P7 exit condition (accept end-to-end AND reject poisoned concepts at the correct phase). Public seams only (dm-0057).",
+      "gdos_alignment": "Section_10_Manufacturing_Pipeline",
+      "dependencies": [
+        "core/rng",
+        "components/behavior",
+        "components/level",
+        "eval/gdos/evidence",
+        "eval/gdos/report",
+        "eval/gdos/novelty",
+        "eval/gdos/design_memory",
+        "eval/evaluate",
+        "eval/local/solvability",
+        "eval/local/counterfactual",
+        "eval/local/exploit",
+        "eval/local/softlock",
+        "eval/local/optimization",
+        "gen/concept",
+        "gen/intent_gate",
+        "gen/generator",
+        "gen/gen_profile"
+      ],
+      "dependents": [],
+      "volatile_state_flags": {
+        "has_side_effects": false,
+        "state_dependencies": []
+      },
+      "last_verified_commit": "uncommitted-session-7",
+      "backlog_refs": [
+        "REQ-090",
+        "REQ-061",
+        "REQ-091",
+        "REQ-012"
       ]
     }
   ],
@@ -3220,6 +3526,378 @@
       "from": "eval/campaign/campaign_director",
       "to": "eval/campaign/chapter_health",
       "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "eval/gdos/design_memory",
+      "to": "components/behavior",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "gen/lifecycle",
+      "to": "eval/gdos/design_memory",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "gen/lifecycle",
+      "to": "components/behavior",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "gen/lifecycle",
+      "to": "schema/parse",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "gen/lifecycle",
+      "to": "gen/gen_profile",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "gen/gen_profile",
+      "to": "schema/parse",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "eval/local/counterfactual",
+      "to": "eval/local/search",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "eval/local/counterfactual",
+      "to": "eval/agent_harness",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "eval/local/counterfactual",
+      "to": "schema/tape_io",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "eval/local/counterfactual",
+      "to": "components/level",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "eval/local/counterfactual",
+      "to": "entities/world",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "gen/pda",
+      "to": "eval/gdos/design_space",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "gen/pda",
+      "to": "eval/gdos/design_memory",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "gen/pda",
+      "to": "eval/gdos/cdre",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "gen/pda",
+      "to": "eval/campaign/campaign_state",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "gen/pda",
+      "to": "eval/emergent_fun",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "gen/pda",
+      "to": "components/behavior",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "gen/pda",
+      "to": "gen/concept",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "gen/pda",
+      "to": "gen/gen_profile",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "gen/pda",
+      "to": "gen/lifecycle",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "gen/generator",
+      "to": "core/clock",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "gen/generator",
+      "to": "core/rng",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "gen/generator",
+      "to": "components/behavior",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "gen/generator",
+      "to": "components/gdos",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "gen/generator",
+      "to": "components/level",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "gen/generator",
+      "to": "schema/parse",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "gen/generator",
+      "to": "eval/gdos/design_space",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "gen/generator",
+      "to": "gen/gen_profile",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "gen/generator",
+      "to": "gen/concept",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "gen/concept",
+      "to": "components/behavior",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "gen/concept",
+      "to": "components/gdos",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "gen/concept",
+      "to": "eval/gdos/design_space",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "gen/concept",
+      "to": "eval/gdos/design_memory",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "gen/concept",
+      "to": "schema/parse",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "gen/concept",
+      "to": "gen/lifecycle",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "gen/creativity",
+      "to": "core/rng",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "gen/creativity",
+      "to": "eval/evaluate",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "gen/creativity",
+      "to": "eval/gdos/novelty",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "gen/creativity",
+      "to": "eval/gdos/report",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "gen/creativity",
+      "to": "gen/concept",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "gen/creativity",
+      "to": "gen/gen_profile",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "gen/creativity",
+      "to": "gen/generator",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "gen/intent_gate",
+      "to": "schema/parse",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "gen/intent_gate",
+      "to": "gen/concept",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "gen/intent_gate",
+      "to": "gen/gen_profile",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "gen/pipeline",
+      "to": "core/rng",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "gen/pipeline",
+      "to": "components/behavior",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "gen/pipeline",
+      "to": "components/level",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "gen/pipeline",
+      "to": "eval/gdos/evidence",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "gen/pipeline",
+      "to": "eval/gdos/report",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "gen/pipeline",
+      "to": "eval/gdos/novelty",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "gen/pipeline",
+      "to": "eval/gdos/design_memory",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "gen/pipeline",
+      "to": "eval/evaluate",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "gen/pipeline",
+      "to": "eval/local/solvability",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "gen/pipeline",
+      "to": "eval/local/counterfactual",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "gen/pipeline",
+      "to": "eval/local/exploit",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "gen/pipeline",
+      "to": "eval/local/softlock",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "gen/pipeline",
+      "to": "eval/local/optimization",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "gen/pipeline",
+      "to": "gen/concept",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "gen/pipeline",
+      "to": "gen/intent_gate",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "gen/pipeline",
+      "to": "gen/generator",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "gen/pipeline",
+      "to": "gen/gen_profile",
+      "kind": "type_import"
     }
   ],
   "gdos_anchors": [
@@ -3298,6 +3976,36 @@
       "implemented_by": [
         "eval/campaign/campaign_state",
         "eval/campaign/campaign_profile"
+      ]
+    },
+    {
+      "type": "GDOSAnchor",
+      "section": "Section_9_Mechanic_Lifecycle",
+      "implemented_by": [
+        "eval/gdos/design_memory",
+        "gen/lifecycle",
+        "gen/gen_profile",
+        "gen/pda",
+        "gen/concept",
+        "gen/creativity"
+      ]
+    },
+    {
+      "type": "GDOSAnchor",
+      "section": "Section_7_PDA_Information_Density",
+      "implemented_by": [
+        "gen/pda",
+        "eval/gdos/infodensity"
+      ]
+    },
+    {
+      "type": "GDOSAnchor",
+      "section": "Section_10_Manufacturing_Pipeline",
+      "implemented_by": [
+        "gen/generator",
+        "gen/concept",
+        "gen/intent_gate",
+        "gen/pipeline"
       ]
     }
   ],

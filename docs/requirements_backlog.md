@@ -26,7 +26,7 @@
 |----|-------------|-----|-------|-------|
 | REQ-010 | Exactly one jump per level, invariant across the entire campaign. | §2 | P3 | VERIFIED |
 | REQ-011 | Exclude upgrades, power-ups, double/wall jumps, jump-refreshing lives, temporary exceptions. | §2 | P3 | VERIFIED |
-| REQ-012 | Every challenge isolates/amplifies/tests the one-jump constraint; omit anything that does not. | §2 | P5,P10 | IN_PROGRESS |
+| REQ-012 | Every challenge isolates/amplifies/tests the one-jump constraint; omit anything that does not. | §2 | P5,P7,P10 | IN_PROGRESS |
 | REQ-013 | Understandable within seconds; difficulty from player decisions and spatial puzzles. | §2 | P10 | NOT_STARTED |
 | REQ-014 | The structural puzzle *is* the level layout itself. | §2 | P2,P10 | IN_PROGRESS |
 | REQ-015 | Deliberate six-phase emotional arc: Curiosity, Confidence, Surprise/Betrayal, Realization, Mastery, Renewed Uncertainty. | §2 | P5,P10 | IN_PROGRESS |
@@ -63,8 +63,8 @@
 | REQ-050 | All creative decisions originate from GDOS; no gameplay content created independently of it. | §6 | P5,P10 | IN_PROGRESS |
 | REQ-051 | Persistent Design Memory: version control for creative intent; record every accepted/rejected idea; parse history before proposing to prevent regression/repetition. | §6 | P0,P5 | VERIFIED |
 | REQ-052 | Continuous Design Research Engine (CDRE): self-improving loop that improves the design process itself and feeds validated discoveries back into GDOS. | §6 | P5 | VERIFIED |
-| REQ-053 | Novelty Search: algorithmic metric targeting layout divergence. | §6 | P5,P7 | IN_PROGRESS |
-| REQ-054 | Emergent Fun Discovery search: probe physics edge cases; flag high-value kinetic anchors for future layouts. | §6 | P5,P7 | IN_PROGRESS |
+| REQ-053 | Novelty Search: algorithmic metric targeting layout divergence. | §6 | P5,P7 | VERIFIED |
+| REQ-054 | Emergent Fun Discovery search: probe physics edge cases; flag high-value kinetic anchors for future layouts. | §6 | P5,P7 | VERIFIED |
 | REQ-055 | Mathematically enforced emotional thresholds as quality gates: Curiosity ≥90, Confidence ≥90, Surprise ≥95, Mastery ≥95. | §6 | P5 | VERIFIED |
 | REQ-056 | Global Streamability Matrix gates: Shareability ≥85, Clip Potential ≥90, Reaction Density ≥95, Replay Value ≥90. | §6 | P5 | VERIFIED |
 
@@ -72,8 +72,8 @@
 
 | ID | Requirement | PRD | Phase | State |
 |----|-------------|-----|-------|-------|
-| REQ-060 | PDA: standalone discovery tool that searches conceptual/structural/systemic opportunities (not raw geometry). | §7 | P7 | NOT_STARTED |
-| REQ-061 | Information Density Score (IDS) formula computed per screen; regulate against max (overwhelm) and min (boring) thresholds. | §7 | P5,P7 | IN_PROGRESS |
+| REQ-060 | PDA: standalone discovery tool that searches conceptual/structural/systemic opportunities (not raw geometry). | §7 | P7 | VERIFIED |
+| REQ-061 | Information Density Score (IDS) formula computed per screen; regulate against max (overwhelm) and min (boring) thresholds. | §7 | P5,P7 | VERIFIED |
 
 ## §8 Visual Grammar & Language Consistency
 
@@ -87,16 +87,16 @@
 | ID | Requirement | PRD | Phase | State |
 |----|-------------|-----|-------|-------|
 | REQ-080 | Execute the sequential production pipeline in strict order; lock foundational systems/schema/tools before campaign content. | §9 | P0–P11 | IN_PROGRESS |
-| REQ-081 | Creativity & Iteration loop: generate → variations → GDOS eval → mutate/combine → compare to memory → select hybrid → improve → repeat to diminishing returns. | §9 | P5,P7 | NOT_STARTED |
-| REQ-082 | 9-stage mechanic lifecycle tracking (Introduction→…→Retirement); block reuse of exhausted mechanics; prune/convert on Retirement. | §9 | P5,P7 | NOT_STARTED |
+| REQ-081 | Creativity & Iteration loop: generate → variations → GDOS eval → mutate/combine → compare to memory → select hybrid → improve → repeat to diminishing returns. | §9 | P5,P7 | VERIFIED |
+| REQ-082 | 9-stage mechanic lifecycle tracking (Introduction→…→Retirement); block reuse of exhausted mechanics; prune/convert on Retirement. | §9 | P5,P7 | VERIFIED |
 | REQ-083 | Strict chapter generation architecture: define 7 framework items (Theme, Learning Goal, Mental Model, Misconceptions, Subversion, Optimization, Final Exam) before any level generation. | §9 | P10 | NOT_STARTED |
 
 ## §10 Level Production Pipeline & Intent Verification
 
 | ID | Requirement | PRD | Phase | State |
 |----|-------------|-----|-------|-------|
-| REQ-090 | 8-phase level manufacturing pipeline (Concept → Structural Prototyping → Kinetic Simulation → AI Council Eval → Targeted Revision → Optimization Layering → Sign-off/Intent → Campaign Integration). | §10 | P7,P10 | NOT_STARTED |
-| REQ-091 | Single-Sentence Intent Verification gate; layouts that cannot state their lesson in one rigorous sentence are denied compile and deleted. | §10 | P7,P10 | NOT_STARTED |
+| REQ-090 | 8-phase level manufacturing pipeline (Concept → Structural Prototyping → Kinetic Simulation → AI Council Eval → Targeted Revision → Optimization Layering → Sign-off/Intent → Campaign Integration). | §10 | P7,P10 | IN_PROGRESS |
+| REQ-091 | Single-Sentence Intent Verification gate; layouts that cannot state their lesson in one rigorous sentence are denied compile and deleted. | §10 | P7,P10 | IN_PROGRESS |
 
 ## §11 Dual-Path Architecture & Optimization Space
 

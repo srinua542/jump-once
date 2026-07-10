@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.0",
+  "schema_version": "1.1",
   "notes": "Persistent version control for creative + architectural intent (PRD §6 Design Memory, §12 Design Intent Repository). Every accepted or rejected decision is recorded with the five Intent Repository fields. Parse this before proposing new designs to prevent regression and repetition. In Phase 5 this file becomes the store backing the executable GDOS Design Memory; for now it is the authoritative human/agent-readable ledger.",
   "intent_repository_fields": [
     "why_it_exists",
@@ -591,6 +591,127 @@
       "emotion_targeted": "Converts five ledger entries' worth of stated intent into a provable, CI-enforced guarantee before P6 closes and P7/P8 start depending on campaign/ — the same trust the gdos/ purity scans (dm-0031/dm-0037) already gave the P5 architecture.",
       "misconception_created": "These scans do not prove campaign/ is CORRECT, only that it is ISOLATED the way dm-0047 requires -- a campaign/ module could still compute a wrong formula while passing every one of these import-discipline checks. Isolation and correctness are separate guarantees; the CampaignDirector/ChapterHealth/etc. behavior tests (S6.1-S6.5) are what prove correctness.",
       "why_alternatives_rejected": "Leaving dm-0047 as convention-only (as it had been through S6.1-S6.5) was rejected at phase close: the project's own precedent (gdos/ and macro/ both got scans at their introduction, not deferred) argues against treating campaign/ differently, and P6 closing is the natural checkpoint before other phases start depending on the module's stability. Writing the scan as one big combined test covering all four checks was rejected in favor of four focused tests (mirroring gdos/'s own split into \"math whitelist\" / \"no re-auditing\" / \"PURE, no sim\" as separate tests) — a failing assertion in a smaller, precisely-named test is faster to diagnose than one covering four unrelated invariants."
+    },
+    {
+      "id": "dm-0054",
+      "date": "2026-07-10",
+      "status": "ACCEPTED",
+      "title": "P7 slice table restructured to eight slices (intent gate before pipeline; counterfactual solver and candidate generator get owning slices)",
+      "why_it_exists": "The pre-P6 four/six-slice P7 table sequenced the REQ-091 intent gate AFTER the REQ-090 pipeline that must contain it, and gave no slice to the dm-0041 counterfactual solver or to candidate generation, which the creativity loop and pipeline both presuppose.",
+      "problem_it_solves": "A pipeline assembled before its Sign-off/Intent phase exists ships a stub phase (no-placeholder violation); unowned deliverables are silently dropped work. S7.1 lifecycle, S7.2 counterfactual audit, S7.3 PDA, S7.4 concept+generator, S7.5 creativity loop, S7.6 intent gate, S7.7 pipeline composition, S7.8 report.",
+      "emotion_targeted": "Trust that every pipeline phase the designer relies on is a finished, separately-tested engine, never a bolt-on.",
+      "misconception_created": "None intended; guards the team misconception that composition slices may precede their parts.",
+      "why_alternatives_rejected": "Keeping the original order would force either a stub sign-off phase inside S7.4 (forbidden) or a pipeline rewrite at S7.5; folding the solver into the pipeline slice hides a distinct P4-family audit inside a gen/ slice."
+    },
+    {
+      "id": "dm-0055",
+      "date": "2026-07-10",
+      "status": "ACCEPTED",
+      "title": "Mechanic lifecycle registry lives in the design memory ledger behind a v1.0-to-v1.1 schema bump; nine stages defined; propose/apply split; Exhaustion and Retirement block selection",
+      "why_it_exists": "REQ-082 needs a persistent 9-stage lifecycle registry. DesignMemory v1.0 already reserved mechanic_lifecycle_registry.mechanics as pinned-empty with the parse error naming P7 and a version bump as the unlock (dm-0040; P5 report Q3). The nine stages, absent from the repo, are defined as Introduction, Isolation, Development, Combination, Subversion, Mastery, Saturation, Exhaustion, Retirement — derived from the level-design chapter arc (introduce, apply, deepen, test mastery) plus exhaustion economics.",
+      "problem_it_solves": "A second lifecycle store would fork the single source of truth for design memory; undefined stage names would be guessed at implementation time. Transitions are forward-only and evidence-gated via assessStage (advisory) / advanceStage (explicit validated act) — the CDRE propose/apply house pattern. isBlocked returns true for Exhaustion/Retirement; Retirement carries a prune-or-convert disposition.",
+      "emotion_targeted": "Confidence that a mechanic is never overused past freshness: the campaign never asks players to re-chew an exhausted idea.",
+      "misconception_created": "Stage names may read as psychological claims about players; they are design-usage classifications over observable evidence (usage counts, novelty trend, campaign mastery signal) only.",
+      "why_alternatives_rejected": "Standalone lifecycle JSON store: two sources of truth, drift. Auto-advancing stages from evidence without an explicit apply step: silent state changes, unauditable — same reason CDRE proposals are inert until ACCEPTED. Fewer/other stage names: the PRD fixes nine, Introduction first, Retirement ninth."
+    },
+    {
+      "id": "dm-0056",
+      "date": "2026-07-10",
+      "status": "ACCEPTED",
+      "title": "Counterfactual jump-relevance audit built on searchReachability with a jump-consumed forbidden predicate; zero modifications to Search.ts",
+      "why_it_exists": "dm-0041 deferred the REQ-012 counterfactual solver to P7: a completion tape that never presses the jump is a necessary-but-not-sufficient kill proxy — a level where jumping is possible but irrelevant still passes it. P7 builds auditJumpRelevance(def, options) returning jump-necessary, jump-irrelevant (with a replayable no-jump witness), or inconclusive.",
+      "problem_it_solves": "Proving the NEGATIVE (the level cannot be completed without the jump) requires exhaustive bounded search, not sampled play. SearchOptions.forbidden (built for S4.4 exploit filtration) taints any state whose jump lock has left its spawn phase, restricting the budgeted BFS to no-jump routes: goal reached means the jump is irrelevant (REQ-012 kill); frontier exhausted means the jump is necessary (pass); node cap hit is reported inconclusive.",
+      "emotion_targeted": "Trust that the one jump MATTERS in every level the pipeline accepts — the axiom is enforced, not assumed.",
+      "misconception_created": "None; the three-way verdict explicitly avoids the misconception that budget-bounded searches prove universals.",
+      "why_alternatives_rejected": "Stripping jump actions from the ACTIONS table inside Search.ts modifies verified P4 code for something the existing forbidden hook already expresses; sampling archetype runs without the jump cannot prove unreachability; making the kill proxy stricter on tapes alone cannot detect jump-irrelevant levels at all."
+    },
+    {
+      "id": "dm-0057",
+      "date": "2026-07-10",
+      "status": "ACCEPTED",
+      "title": "New src/gen/ subtree for design-time generation logic with one-way dependency, public-seam consumption, and isolation scans from the first module",
+      "why_it_exists": "P7 code is design-time generation — not evaluation (eval/), not definition-time I/O (schema/), not interactive tooling (tools/, P8). Precedent: schema/ added at P2 (dm-0013), eval/ added at P4 (dm-0022). directory_structure.md is updated in the same change. GenProfile (genProfileSchemaVersion 1, strict-parsed, DEFAULT_GEN_PROFILE frozen) is a third calibration schema separate from ScoringProfile and CampaignProfile, extending the dm-0045 separation logic.",
+      "problem_it_solves": "Placement drift and hidden coupling: nothing outside gen/ may import gen/ (one-way, like eval/); gen/ consumes evaluation only through public seams (evaluateLevel/judgeLevel per dm-0031, auditSolvability, probeEmergentFun, noveltyDivergence, auditJumpRelevance) — never gdos/ gate internals, campaign/ internals, systems/, or the engine directly; whitelist math; RNG only via threaded core/Rng state. Scans land at S7.1 with the first gen/ module — the P6 lesson (dm-0053 closed a scan gap that had been prose-only for four slices).",
+      "emotion_targeted": "Confidence that the generator can be rewritten wholesale without touching the verified sim, evaluation, or campaign layers.",
+      "misconception_created": "None intended.",
+      "why_alternatives_rejected": "Placing the pipeline in tools/ loses purity and node --test coverage; placing it inside eval/ muddies the evaluation isolation scans and the one-way eval rule; extending ScoringProfile or CampaignProfile with gen calibration couples three concerns and forces version bumps on verified schemas."
+    },
+    {
+      "id": "dm-0058",
+      "date": "2026-07-10",
+      "status": "ACCEPTED",
+      "title": "PDA is a deterministic data-fusion opportunity search over five consumed-by-reference signals, never raw geometry",
+      "why_it_exists": "REQ-060 specifies a standalone discovery tool searching conceptual/structural/systemic opportunities. discoverOpportunities(inputs, profile) fuses: dead CoverageMatrix cells (conceptual), CDRE coverage-gap and recurring-rejection proposals, CampaignReport alerts and weak chapter health (systemic), emergent-fun kinetic anchors (structural, REQ-054 applied), and the lifecycle registry — emitting ranked typed DesignOpportunity records with rationale and source signals.",
+      "problem_it_solves": "Where should the next level concept come from, answered from evidence the M2 stack already produces rather than intuition. All inputs are consumed by reference (dm-0045/dm-0046 pattern) and optional-degrading like CdreInputs; mandatory filters: findPriorArt blocks re-proposing REJECTED ideas (REQ-051), isBlocked excludes Exhausted/Retired mechanics.",
+      "emotion_targeted": "Curiosity aimed where the design space is actually unexploited, giving players configurations the campaign has never shown them.",
+      "misconception_created": "Opportunity rank may read as a guarantee of level quality; it is only a prioritized gap signal — the pipeline gates decide quality.",
+      "why_alternatives_rejected": "Generating raw geometry in the PDA conflates discovery with manufacturing (REQ-060 explicitly says NOT raw geometry); re-deriving coverage or campaign analytics inside the PDA duplicates verified P5/P6 computation; an unranked bag of gaps pushes prioritization back onto intuition."
+    },
+    {
+      "id": "dm-0059",
+      "date": "2026-07-10",
+      "status": "ACCEPTED",
+      "title": "LevelConcept carries the level-design-principle workflow answers including the intent sentence; parametric archetype templates generate schema-valid candidates deterministically",
+      "why_it_exists": "The pipeline phase-1 record LevelConcept types the /level-design-principle design-workflow answers: archetype (closed twelve-value list), the one-jump decision, the intent sentence (REQ-091 subject), mechanics (lifecycle-checked), difficulty-vector target, emotional-arc phase, targetKgNode. generateCandidate(concept, seed, profile) maps a concept to a LevelDefinition via a parametric template per archetype family; mutateCandidate/combineCandidates are the creativity-loop operators.",
+      "problem_it_solves": "Candidate generation with proofs: every emitted definition round-trips the P2 strict parser; same (concept, seed) yields a byte-identical candidate (threaded core/Rng, doubly-bounded loops, whitelist math); the intent sentence lives in the concept and the product provenance record, NOT in LevelDefinition — no LEVEL_SCHEMA_VERSION bump in P7; persistence into the shipped schema is P10 decision.",
+      "emotion_targeted": "The full arc the archetypes encode — curiosity, tension, betrayal-with-fairness, mastery — selected per concept rather than defaulting to hidden-trap memory tests.",
+      "misconception_created": "Generated fixtures may look like shipped content; they exist only inside tests — P7 authors no campaign content (M3/P10 gate).",
+      "why_alternatives_rejected": "Grammar/wave-function-collapse/ML generation is nondeterministic or unverifiable under the project invariants; bumping LevelDefinition for the intent sentence forces P2 parser churn P7 does not need; free-form concept prose instead of typed fields would make the intent gate an NLP problem instead of a structural check."
+    },
+    {
+      "id": "dm-0060",
+      "date": "2026-07-10",
+      "status": "ACCEPTED",
+      "title": "The 8-phase manufacturing pipeline is a staged pure fold emitting an accepted product or a typed logged rejection; creativity loop doubly bounded; deletion means no product persisted, never no record",
+      "why_it_exists": "REQ-090 names eight phases: Concept (lifecycle blocking), Structural Prototyping (generateCandidate + parse proof), Kinetic Simulation (P4 stack incl. auditJumpRelevance), AI Council Eval (evaluateLevel — the REQ-061 IDS regulation point), Targeted Revision (bounded re-generation against the failing gate), Optimization Layering (expert-route check), Sign-off/Intent (verifyIntent, REQ-091), Campaign Integration (LevelRecord-ready product with provenance). manufactureLevel(concept, corpus, seed, profile, options) is pure: same inputs, identical outcome.",
+      "problem_it_solves": "The IRD P7 exit condition made testable: a fixture concept manufactures into a level passing P4 solvability and P5 gates, or is rejected at the correct phase with phase+reason+evidence and no silent drops. The REQ-081 creativity loop terminates by diminishing-returns epsilon or hard cap (both GenProfile); selection compares novelty divergence against the corpus (REQ-053 applied) plus profile-weighted gate scores.",
+      "emotion_targeted": "Trust that every accepted level earned its place through the full gauntlet, and every rejection is explainable after the fact.",
+      "misconception_created": "A deterministic pipeline may suggest one concept yields one possible level; the seed and profile are explicit inputs — variety is parameterized, not random.",
+      "why_alternatives_rejected": "An event/callback pipeline reintroduces ordering nondeterminism; unbounded revision loops violate the halting discipline every search in this codebase honors; boolean rejections without provenance make REQ-091 deletion unauditable; assembling chapter-scoped LevelRecord.macroCriteria inside the pipeline exceeds a single level scope (chapter assembly stays with the caller/P10)."
+    },
+    {
+      "id": "dm-0061",
+      "date": "2026-07-10",
+      "status": "ACCEPTED",
+      "title": "S7.4 template resolution: one gap-corridor skeleton, per-kind placement slots, all twelve mechanics templatable, parameter-level operators",
+      "why_it_exists": "Resolves P7 plan open question 2 (template family size). The generator ships ONE parametric structural skeleton — the bordered gap corridor, the same shape the P4 audit fixtures prove jumpable — rather than twelve bespoke templates: approach floor, spiked pit sized by the concept executionPrecision, landing floor, goal. A frozen per-kind slot table places every EntityKind (spike = the pit itself; laser/movingHazard at the gap; spring/door on the landing; surfaces, plates, zones, movers on the approach; a plate+door pair is trigger-wired per dm-0015). GenParams (corridorLength, gapWidth, gapStart) is the operators working space: mutateCandidate jitters one clamped parameter, combineCandidates coin-flips each parameter from a parent, and every operator output is re-built and re-proven through the P2 strict parser.",
+      "problem_it_solves": "Candidate generation with proofs and without fabricated variety: a generated level is a pure function of (concept, seed, profile); unbuildable concepts (mechanics exceeding the profiled corridor) are refused with typed reasons; the corridor envelope is auto-widened to fit a concept mechanic count before drawing. Every gameplay value (corridor range, air rows, gap ceiling, par tiers, entity dynamics) lives in GenProfile.generator + entityTuning.",
+      "emotion_targeted": "Confidence that pipeline verification rests on proven-jumpable geometry; variety is parameterized, never random.",
+      "misconception_created": "One skeleton may read as the final content vocabulary; it is the P7 verification substrate — P10 extends the template library (new skeletons) without restructuring this one.",
+      "why_alternatives_rejected": "Twelve bespoke templates: eleven more geometry proofs for zero additional pipeline-verification power. Def-level mutation (editing tiles): loses validity-by-construction and forces geometry repair. Placing movingPlatform over the gap: makes the pit crossable without the jump — the S7.2 counterfactual audit would kill every such candidate by design."
+    },
+    {
+      "id": "dm-0062",
+      "date": "2026-07-10",
+      "status": "ACCEPTED",
+      "title": "S7.5 creativity loop: monotone-best survivor fold, improvement = non-negative delta of best selection score, epsilon-or-hard-cap double bound",
+      "why_it_exists": "Resolves P7 plan open question 3 (the diminishing-returns metric). evolveLevel realizes REQ-081 generate/vary/eval/compare-to-memory/select/improve as a deterministic fold: each generation breeds variationsPerGeneration variations of the current top-two survivors (mutate the best, or combine the top two into a hybrid with the profiled combineProbability), evaluates each through the real P5 seam (evaluateLevel), compares to memory via noveltyDivergence against a prior corpus (REQ-053 applied), scores by a profile-weighted composite of gate pass + mean gate score + clamped novelty, and keeps the top two. Because survivors carry forward, the best selection score is monotone non-decreasing, so IMPROVEMENT is the non-negative delta of that best between generations; the loop halts when improvement < diminishingReturnsEpsilon (converged) or at hardCapGenerations.",
+      "problem_it_solves": "A convergence criterion that is both well-defined and testable. Monotonicity makes \"improvement\" unambiguous and gives epsilon a clean meaning: epsilon 0 is \"never satisfied by convergence, run the full hard cap\"; a large epsilon converges on the first non-breakthrough generation. Every stochastic step threads core/Rng; every candidate is the generator parse-proven output; evaluation is deterministic under a fixed seed, so the whole EvolutionResult is a pure function of (concept, corpus, seed, genProfile, evalOptions). An unbuildable seed concept fails honestly with the generator typed reason rather than silently returning nothing.",
+      "emotion_targeted": "Confidence that iteration terminates and that each accepted level genuinely beat its predecessors on a stated composite — not luck, not an endless loop.",
+      "misconception_created": "Monotone-best may read as \"every generation improves\"; it means the RETAINED best never regresses — a generation that breeds nothing better simply carries the incumbent and triggers convergence.",
+      "why_alternatives_rejected": "Improvement as best-of-generation delta (non-monotone) makes epsilon ambiguous and can oscillate, never converging. Population-mean improvement rewards flooding the pool with mediocre clones. Discarding the incumbent each generation loses the best level to RNG. A single hard-cap with no epsilon wastes evaluation budget on converged searches; a single epsilon with no cap risks non-termination on a pathological scorer."
+    },
+    {
+      "id": "dm-0063",
+      "date": "2026-07-10",
+      "status": "ACCEPTED",
+      "title": "S7.6 intent gate: rigor is a structural check (one sentence + word band + causal-connective grammar), not NLP",
+      "why_it_exists": "REQ-091 denies compile to any layout that cannot state its lesson in one rigorous sentence. verifyIntent(concept, profile) judges the concept intentSentence structurally: exactly one sentence (exactly one terminal .!? ending the string), inside GenProfile.intent minWords..maxWords, and containing at least one causal connective from a closed grammar (because/so/when/only/unless/after/before/until/since/if/once/whenever/then). The connective is the marker that turns a LABEL into a LESSON with a reason. A denial is a typed IntentVerdict listing every failed reason (empty short-circuits) plus path-qualified findings.",
+      "problem_it_solves": "A verifiable, deterministic gate under the zero-dependency + determinism invariants — NLP would be neither reproducible nor verifiable. The connective grammar is a structural constant (like the lifecycle stages); only the word band is calibration, so a two-profile test proves the length bar is external. deny-all-reasons (not short-circuit, except on empty) lets a caller see every problem at once. Deletion means the pipeline persists only the rejection record, never a product.",
+      "emotion_targeted": "Trust that every shipped level has a single, legible reason to exist — the /level-design-principle brainstorming bar (\"has one sentence explaining the solution\").",
+      "misconception_created": "The connective check may read as grammar policing; it is a rigor proxy — a lesson without a cause/condition word is almost always a description, not a decision. False positives (a rigorous sentence phrased without a listed connective) are acceptable: the author rephrases, and the connective set is easily extended.",
+      "why_alternatives_rejected": "NLP/LLM sentence scoring: nondeterministic, unverifiable, external dependency. Length-only checking: a 20-word description passes while stating no decision (the plan warned against a vacuous length check). Requiring the literal word \"jump\": too brittle — a lesson may say \"the leap\" or \"commit\". Persisting the sentence into LevelDefinition to gate later: forces a schema bump P7 does not need (dm-0059) — the sentence stays in the concept and product provenance."
+    },
+    {
+      "id": "dm-0064",
+      "date": "2026-07-10",
+      "status": "ACCEPTED",
+      "title": "S7.7 pipeline Kinetic-Simulation gate: solvable + jump-necessary + softlock-free is the hard gate; the entity-exploit audit is recorded evidence, not a gate",
+      "why_it_exists": "The REQ-090 pipeline phase 3 (Kinetic Simulation) must decide when a generated geometry is sound. Empirically (probed during S7.7), the entity-exploit audit (S4.4 auditExploit) reports hasExploit=true for EVERY well-formed one-jump pit — including the canonical hand-authored ONE_GAP fixture the S4.2 solvability suite treats as the reference solvable level — because a pit’s spikes are the fail-state (fall in = die), not a hazard the winning route is meant to touch, and the winning jump arc never enters the spike envelope. Treating exploit as a hard gate would therefore reject every one-jump pit the generator (or a human) can produce.",
+      "problem_it_solves": "A correct, non-self-defeating soundness gate. Phase 3 hard-gates on solvable (S4.2) AND jump-necessary (S7.2 counterfactual, the REQ-012 check) AND softlock-free (S4.3). Jump-necessity is precisely the SUFFICIENT load-bearing-challenge check that dm-0041 said the kill/exploit proxies could not provide: it proves the one jump is required, which is the real question the exploit heuristic was approximating for one-jump levels. The exploit verdict (bypassedHazardIds) is still RUN and recorded in the product/rejection provenance as evidence, so a genuine entity-hazard skip on a future multi-hazard template remains visible — it is simply not the phase-3 kill switch for geometry-challenge levels.",
+      "emotion_targeted": "Trust that the pipeline accepts exactly the levels whose one jump genuinely matters, and rejects the rest, without a heuristic that misfires on the game’s defining shape.",
+      "misconception_created": "Recording-but-not-gating exploit may read as ignoring it; on a template whose challenge is entity hazards (not a geometry gap) a bypass would still surface in provenance for a caller/P10 to act on — and the pipeline could add a template-aware exploit gate when such templates exist.",
+      "why_alternatives_rejected": "Hard-gating on exploit: rejects every one-jump pit, including ONE_GAP (proven). Tuning auditExploit margins to hide the pit signal: hides a real signal and is fragile. Dropping the counterfactual audit and trusting exploit: exactly the necessary-but-insufficient proxy dm-0041 rejected. Removing the spikes to dodge the flag: an empty pit traps the player (softlock) or requires out-of-bounds death the engine does not model."
     }
   ],
   "rejected_ideas": [],

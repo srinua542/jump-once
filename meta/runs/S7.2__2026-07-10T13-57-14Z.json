@@ -1,0 +1,67 @@
+{
+  "slice": "S7.2",
+  "title": "Counterfactual jump-relevance audit (dm-0041/dm-0056)",
+  "reqs": [
+    "REQ-012"
+  ],
+  "started_at": "2026-07-10T13:53:58.916Z",
+  "updated_at": "2026-07-10T13:57:14.513Z",
+  "current_stage": "handoff",
+  "stages": {
+    "reboot": {
+      "status": "done",
+      "at": "2026-07-10T13:53:58.917Z",
+      "note": "REBOOT held from S7.1 close: 452/452 green, pkg s7-b2e6f4"
+    },
+    "select": {
+      "status": "done",
+      "at": "2026-07-10T13:53:58.993Z",
+      "note": "SELECT: S7.2; REQ-012 already IN_PROGRESS; phase column updated to P5,P7,P10 per plan open question 5"
+    },
+    "plan": {
+      "status": "done",
+      "at": "2026-07-10T13:53:59.067Z",
+      "note": "PLAN: per execution_plan §P7 S7.2 bullet"
+    },
+    "anchor": {
+      "status": "done",
+      "at": "2026-07-10T13:57:13.965Z",
+      "note": "ANCHOR: jumpLock machine read (World.ts JUMP_AVAILABLE, PlayerControl available->anticipating->spent); Solvability.ts house style mirrored; new module, no refactor"
+    },
+    "implement": {
+      "status": "done",
+      "at": "2026-07-10T13:57:14.042Z",
+      "note": "IMPLEMENT: eval/local/Counterfactual.ts — auditJumpRelevance via forbidden(jumpConsumed), witnessCompletesWithoutJump; backlog REQ-012 phases -> P5,P7,P10"
+    },
+    "verify": {
+      "status": "done",
+      "at": "2026-07-10T13:57:14.124Z",
+      "note": "VERIFY: 459/459 green (+7), tsc clean; kill/pass/inconclusive/orthogonality/self-proof/determinism all first-run green"
+    },
+    "integrate": {
+      "status": "done",
+      "at": "2026-07-10T13:57:14.287Z",
+      "note": "INTEGRATE: PKG 68 nodes, hash s7-c8d3a1"
+    },
+    "report": {
+      "status": "done",
+      "at": "2026-07-10T13:57:14.361Z",
+      "note": "REPORT: S7.2 -> COMPLETED; REQ-012 stays IN_PROGRESS (P10 share remains)"
+    },
+    "handoff": {
+      "status": "done",
+      "at": "2026-07-10T13:57:14.438Z",
+      "note": "HANDOFF: continuing into S7.3 this session"
+    }
+  },
+  "acceptance": [
+    {
+      "req": "REQ-012",
+      "criterion": "(fill in)",
+      "met": true,
+      "note": null
+    }
+  ],
+  "outcome": "completed",
+  "closed_at": "2026-07-10T13:57:14.590Z"
+}
