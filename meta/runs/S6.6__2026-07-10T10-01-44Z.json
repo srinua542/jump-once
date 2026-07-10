@@ -1,0 +1,95 @@
+{
+  "slice": "S6.6",
+  "title": "P6 verification report, close M2",
+  "reqs": [
+    "REQ-030",
+    "REQ-031",
+    "REQ-032",
+    "REQ-041",
+    "REQ-142"
+  ],
+  "started_at": "2026-07-10T09:51:33.332Z",
+  "updated_at": "2026-07-10T10:01:44.305Z",
+  "current_stage": "handoff",
+  "stages": {
+    "reboot": {
+      "status": "done",
+      "at": "2026-07-10T09:51:33.334Z",
+      "note": "Reboot verified: 417/417 green at start (before adding EvalIsolation scans), pkg_hash s6-e7b3a9 matched."
+    },
+    "select": {
+      "status": "done",
+      "at": "2026-07-10T10:00:21.417Z",
+      "note": "S6.6 selected. REQ-030/031/032/041/142. Depends: S6.1-S6.5 all COMPLETED."
+    },
+    "plan": {
+      "status": "done",
+      "at": "2026-07-10T10:00:21.577Z",
+      "note": "Plan: decide the EvalIsolation-scan-for-campaign/ open question FIRST (flagged since S6.2), then file docs/verification/P6.md mirroring P4.md/P5.md's exact structure, flip 5 REQs to VERIFIED, close execution_plan.md/task_slices.md/IRD.md's P6 sections."
+    },
+    "anchor": {
+      "status": "done",
+      "at": "2026-07-10T10:00:21.732Z",
+      "note": "Anchor: read EvalIsolation.test.ts's existing gdos/macro scan patterns before writing campaign/'s. Decided (dm-0053) to add structural enforcement rather than leave dm-0047 as prose-only."
+    },
+    "implement": {
+      "status": "done",
+      "at": "2026-07-10T10:00:21.890Z",
+      "note": "Implemented: 4 new EvalIsolation.test.ts scans for campaign/ (math whitelist, no sim/search/local-audit, no gdos gate-internal imports, macro types-only). Ran subtractivePass() over all 7 P6 modules (clean: 7 kept, 0 candidates). Filed docs/verification/P6.md. Flipped REQ-030/031/032/041/142 to VERIFIED in requirements_backlog.md (diff-verified exactly 5 rows). Closed out execution_plan.md/task_slices.md/IRD.md's P6 sections with CLOSED banners mirroring P4/P5's exact pattern."
+    },
+    "verify": {
+      "status": "done",
+      "at": "2026-07-10T10:00:22.055Z",
+      "note": "npm test: 420/420 green. npx tsc --noEmit clean. npm run build clean. node tools/sdlc/gate.js: 0 blocking, 0 warnings (pkg-covers-src, pkg-not-stale, no-placeholders, handoff-fresh, backlog-integrity, stage-consistency all pass)."
+    },
+    "integrate": {
+      "status": "done",
+      "at": "2026-07-10T10:00:30.127Z",
+      "note": "No PKG node/edge changes needed -- S6.6 added test coverage + documentation only, no new production modules. pkg_hash stays s6-e7b3a9 (verified current via gate.js's pkg-not-stale check). This is itself a form of consistency: the graph accurately reflects that no structural code changed this slice."
+    },
+    "report": {
+      "status": "done",
+      "at": "2026-07-10T10:00:42.958Z",
+      "note": "task_slices.md S6.6 -> COMPLETED, pick-list section rewritten to point at P7. docs/requirements_backlog.md REQ-030/031/032/041/142 -> VERIFIED (diff-verified exactly 5 rows). docs/execution_plan.md P6 section + P4/P5 summary bullets updated with CLOSED banners. docs/IRD.md status section updated: M2 VERIFIED, active phase -> P7."
+    },
+    "handoff": {
+      "status": "done",
+      "at": "2026-07-10T10:00:43.131Z",
+      "note": "Final handoff written declaring M2 VERIFIED and the content-generation hard gate OPEN. Next focus: P7 execution-plan authoring, or user confirmation on commit timing."
+    }
+  },
+  "acceptance": [
+    {
+      "req": "REQ-030",
+      "criterion": "P6 verification report confirms REQ-030 fully satisfied: CampaignDirector.processCampaign delivers the IRD exit condition end-to-end (deterministic fold + synthetic spike detection). VERIFIED in requirements_backlog.md.",
+      "met": true,
+      "note": null
+    },
+    {
+      "req": "REQ-031",
+      "criterion": "All ten macro state variables computed and tested. VERIFIED in requirements_backlog.md.",
+      "met": true,
+      "note": null
+    },
+    {
+      "req": "REQ-032",
+      "criterion": "P6 share (TapeAnalyzer, zero P8 dependency) complete. VERIFIED in requirements_backlog.md -- phase column stays P6,P8 per the REQ-041/REQ-142 multi-phase precedent.",
+      "met": true,
+      "note": null
+    },
+    {
+      "req": "REQ-041",
+      "criterion": "P6 share (coverage matrix consumed by reference) complete; P5 share already VERIFIED. VERIFIED in requirements_backlog.md.",
+      "met": true,
+      "note": null
+    },
+    {
+      "req": "REQ-142",
+      "criterion": "P6 share (macro criteria elevated to trajectory) complete; P4 share already contributed. VERIFIED in requirements_backlog.md.",
+      "met": true,
+      "note": null
+    }
+  ],
+  "outcome": "completed",
+  "closed_at": "2026-07-10T10:01:44.406Z"
+}

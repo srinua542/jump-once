@@ -44,16 +44,16 @@
 
 | ID | Requirement | PRD | Phase | State |
 |----|-------------|-----|-------|-------|
-| REQ-030 | Campaign Intelligence: macro-level Game Director modeling the global campaign state. | §4 | P6 | NOT_STARTED |
-| REQ-031 | Ten macro state variables tracked continuously (knowledge, behavior, emotional, skill curve, mechanics introduced, mechanics mastered, optimization depth, curiosity trend, chapter health, retention prediction). | §4 | P6 | NOT_STARTED |
-| REQ-032 | Player Behavior Model: hesitation, platform-checking, commitment speed, panic cycles, drop-off, retry cadence; design adapts to these signatures. | §4 | P6,P8 | NOT_STARTED |
+| REQ-030 | Campaign Intelligence: macro-level Game Director modeling the global campaign state. | §4 | P6 | VERIFIED |
+| REQ-031 | Ten macro state variables tracked continuously (knowledge, behavior, emotional, skill curve, mechanics introduced, mechanics mastered, optimization depth, curiosity trend, chapter health, retention prediction). | §4 | P6 | VERIFIED |
+| REQ-032 | Player Behavior Model: hesitation, platform-checking, commitment speed, panic cycles, drop-off, retry cadence; design adapts to these signatures. | §4 | P6,P8 | VERIFIED |
 
 ## §5 Game Design Intelligence & Economy of Mechanics
 
 | ID | Requirement | PRD | Phase | State |
 |----|-------------|-----|-------|-------|
 | REQ-040 | Model the entire design space mathematically & conceptually before designing any content. | §5 | P5 | VERIFIED |
-| REQ-041 | Formal multi-dimensional design-space matrix: Mechanic × Environment × Emotion × Optimization Style × Player Type, with enumerated axes; track coverage. | §5 | P5,P6 | IN_PROGRESS |
+| REQ-041 | Formal multi-dimensional design-space matrix: Mechanic × Environment × Emotion × Optimization Style × Player Type, with enumerated axes; track coverage. | §5 | P5,P6 | VERIFIED |
 | REQ-042 | Economy of Mechanics metric (Depth ÷ Mechanic Count); maximize; exhaust variations before introducing a new mechanic. | §5 | P5 | VERIFIED |
 
 ## §6 Game Design Operating System (GDOS)
@@ -136,7 +136,7 @@
 |----|-------------|-----|-------|-------|
 | REQ-140 | Two isolated validation passes: Local Spatial Verification and Macro Curriculum Validation. | §15 | P4 | VERIFIED |
 | REQ-141 | Local: five agent archetypes (First-Time, Cautious, Experienced, Expert Speedrunner, Curious Explorer); Solvability audit (exactly one jump), Softlock detection, Exploit filtration, Optimization windows. | §15 | P4 | VERIFIED |
-| REQ-142 | Macro: curriculum progress arc; four criteria — Cognitive Structural Mapping, Cross-Chapter Degradation Analysis, Curiosity Progression Curves, Graduation Assessment Verification. | §15 | P4,P6 | IN_PROGRESS |
+| REQ-142 | Macro: curriculum progress arc; four criteria — Cognitive Structural Mapping, Cross-Chapter Degradation Analysis, Curiosity Progression Curves, Graduation Assessment Verification. | §15 | P4,P6 | VERIFIED |
 
 ## §16 Gameplay Systems & Modular Components
 

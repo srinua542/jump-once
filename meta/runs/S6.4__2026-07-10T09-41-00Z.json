@@ -1,0 +1,67 @@
+{
+  "slice": "S6.4",
+  "title": "ChapterHealth aggregator",
+  "reqs": [
+    "REQ-142"
+  ],
+  "started_at": "2026-07-10T09:36:32.129Z",
+  "updated_at": "2026-07-10T09:41:00.416Z",
+  "current_stage": "handoff",
+  "stages": {
+    "reboot": {
+      "status": "done",
+      "at": "2026-07-10T09:36:32.130Z",
+      "note": "Reboot verified: 392/392 green, pkg_hash s6-c4a9e7 matched."
+    },
+    "select": {
+      "status": "done",
+      "at": "2026-07-10T09:39:42.794Z",
+      "note": "S6.4 selected. REQ-142 P6 share."
+    },
+    "plan": {
+      "status": "done",
+      "at": "2026-07-10T09:39:42.898Z",
+      "note": "Plan: aggregateChapterHealth(macroVerdict, priorChapterHealth, profile) -> ChapterHealthReport in ChapterHealth.ts. Re-verified MacroVerdict/CriterionResult shape before coding (zero-assumption)."
+    },
+    "anchor": {
+      "status": "done",
+      "at": "2026-07-10T09:39:43.001Z",
+      "note": "Anchor + ledger: dm-0051 covers the structural pass-count score (no calibration needed -- it's a fact of MacroVerdict's own shape), the new trendFlatTolerance profile field, and ChapterHealth deliberately never computing alerts (needs cross-chapter EMA baseline only CampaignDirector has). Ledgered BEFORE implementation."
+    },
+    "implement": {
+      "status": "done",
+      "at": "2026-07-10T09:39:43.108Z",
+      "note": "Implemented ChapterHealth.ts (aggregateChapterHealth + chapterScore + computeTrend). Added CampaignProfile.chapterHealthCalibration.trendFlatTolerance (parse+default+rejection). No TODOs/stubs."
+    },
+    "verify": {
+      "status": "done",
+      "at": "2026-07-10T09:39:43.222Z",
+      "note": "npm test: 404/404 green (392 baseline + 12 new: 11 ChapterHealth tests incl. score-formula boundary cases, trend flat/rising/falling, alerts-always-empty, two-profile tolerance externalization proof; 1 CampaignProfile rejection test). npx tsc --noEmit clean. npm run build clean."
+    },
+    "integrate": {
+      "status": "done",
+      "at": "2026-07-10T09:39:49.480Z",
+      "note": "PKG: +1 node (eval/campaign/chapter_health), edges both directions into eval/macro/curriculum, eval/campaign/campaign_profile, eval/campaign/campaign_state. pkg_hash s6-c4a9e7 -> s6-d1f68b."
+    },
+    "report": {
+      "status": "done",
+      "at": "2026-07-10T09:40:01.331Z",
+      "note": "task_slices.md S6.4 -> COMPLETED. No requirements_backlog.md state change needed -- REQ-142 already IN_PROGRESS from P4; flips VERIFIED at S6.6."
+    },
+    "handoff": {
+      "status": "done",
+      "at": "2026-07-10T09:40:01.432Z",
+      "note": "Handoff written: pkg_hash s6-d1f68b, next focus S6.5 CampaignDirector, four open design questions flagged for zero-assumption resolution before code."
+    }
+  },
+  "acceptance": [
+    {
+      "req": "REQ-142",
+      "criterion": "S6.4 delivers the remaining REQ-142 P6 share: the four macro criteria are elevated from a per-chapter MacroVerdict (P4, one-shot) to a running CampaignState.chapterHealth trajectory with score+trend, consuming MacroVerdict as data (dm-0046) and never re-deriving it. REQ-142 stays IN_PROGRESS -- flips at S6.6 once S6.5's CampaignDirector actually threads ChapterHealth into the fold.",
+      "met": true,
+      "note": null
+    }
+  ],
+  "outcome": "completed",
+  "closed_at": "2026-07-10T09:41:00.515Z"
+}

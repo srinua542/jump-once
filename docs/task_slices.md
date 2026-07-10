@@ -100,10 +100,12 @@ Session-sized, dependency-ordered work units. Each slice is small enough to comp
 
 | Slice | Title | REQs | Depends | State |
 |-------|-------|------|---------|-------|
-| S6.1 | Ten macro state variables (data model) | REQ-030, REQ-031 | S5.9 | NOT_STARTED |
-| S6.2 | Player knowledge + behavior models | REQ-032 | S6.1 | NOT_STARTED |
-| S6.3 | Retention/curiosity/chapter-health analytics | REQ-031, REQ-142 | S6.1 | NOT_STARTED |
-| S6.4 | Phase-6 verification report | REQ-P02 | S6.1–S6.3 | NOT_STARTED |
+| S6.1 | CampaignState + CampaignProfile data model | REQ-030, REQ-031 | S5.9 | COMPLETED |
+| S6.2 | TapeAnalyzer + BehaviorSignals (player behavior model) | REQ-032 | S6.1 | COMPLETED |
+| S6.3 | MechanicTracker + KnowledgeModel (coverage matrix P6 share) | REQ-031, REQ-041 | S6.1 | COMPLETED |
+| S6.4 | ChapterHealth aggregator (REQ-142 P6 share) | REQ-031, REQ-142 | S6.1 | COMPLETED |
+| S6.5 | CampaignDirector: fold + spike detection + retention prediction | REQ-030 | S6.1–S6.4 | COMPLETED |
+| S6.6 | Phase-6 verification report | REQ-P02 | S6.1–S6.5 | COMPLETED |
 
 ## Phase 7 — PDA & Procedural Generation + Lifecycle
 
@@ -162,11 +164,10 @@ Session-sized, dependency-ordered work units. Each slice is small enough to comp
 
 ## Next-session pick-list (top of queue)
 
-**P5 — GDOS Scoring Engine is VERIFIED** (`docs/verification/P5.md`); all nine P5 slices COMPLETED, 336/336 tests green, pkg `s5-q7c4b1`. Nine REQs flipped VERIFIED (020/021/040/042/051/052/055/056/111). **Milestone M2 — Design Intelligence Operational is still OPEN** — P4 ✓ and P5 ✓ are two of its three pillars. The next and final M2 phase is **P6 — Campaign Intelligence**.
+**P6 — Campaign Intelligence is VERIFIED** (`docs/verification/P6.md`); all six P6 slices COMPLETED, 420/420 tests green, pkg `s6-e7b3a9`. Five REQs flipped VERIFIED (030/031/032/041/142). **Milestone M2 — Design Intelligence Operational is VERIFIED** — P4 ✓, P5 ✓, P6 ✓, all three pillars complete. **The content-generation hard gate is now OPEN.**
 
-1. **Author the P6 execution-plan section FIRST** (REQ-P02) — consider the same adversarial review P2/P3/P4/P5 got. P6 owns the ten macro state variables (REQ-030/031), the player knowledge/behavior models (REQ-032), and retention/curiosity/chapter-health analytics; it contributes the remaining share of REQ-142 and consumes P5's coverage matrix (REQ-041's P6 share).
-2. **S6.1** — the ten macro state variables as a data model (REQ-030/031).
-3. **S6.2+** — player behavior model, analytics fed by validation (P4) and telemetry (P8, later).
-4. Closing **P6** closes **M2** — and only then does the content-generation hard gate open.
+1. **Author the P7 execution-plan section FIRST** (REQ-P02) — the same adversarial-review discipline P2–P6 each got, authored BEFORE any S7.1 code. P7 owns REQ-060 (PDA opportunity search), REQ-081 (creativity/iteration evolutionary loop), REQ-082 (9-stage mechanic lifecycle tracker), REQ-090/091 (8-phase level manufacturing pipeline incl. the single-sentence intent gate), and applies REQ-053/054 (P5's novelty/emergent-fun search, unbuilt-in-P7-until-now) plus the deferred REQ-012 counterfactual no-jump reachability solver (ledgered dm-0041, carried from P5).
+2. **S7.1** — the mechanic 9-stage lifecycle tracker (REQ-082), per `task_slices.md`'s Phase 7 table below.
+3. Content generation may now begin under the pipeline P7 builds — but content authoring itself is P10's phase, still gated behind P7+P8 (milestone M3).
 
-*(Content generation stays hard-gated until M2 — P4+P5+P6 — is VERIFIED. P4 ✓, P5 ✓, P6 remains.)*
+*(Content generation was hard-gated until M2 — P4+P5+P6 — verified. All three are now VERIFIED; the gate is open for the phases that build the generation pipeline (P7) and tooling (P8). Actual chapter/level authoring is P10, milestone M3.)*

@@ -1,0 +1,74 @@
+{
+  "slice": "S6.3",
+  "title": "MechanicTracker + KnowledgeModel",
+  "reqs": [
+    "REQ-031",
+    "REQ-041"
+  ],
+  "started_at": "2026-07-10T09:25:53.705Z",
+  "updated_at": "2026-07-10T09:36:27.975Z",
+  "current_stage": "handoff",
+  "stages": {
+    "reboot": {
+      "status": "done",
+      "at": "2026-07-10T09:25:53.707Z",
+      "note": "Reboot/select/plan retroactively confirmed: 378/378 green at start, pkg_hash s6-b8d21f matched. Plan: trackMechanics(coverageMatrix, knowledgeState, profile) in MechanicTracker.ts + updateKnowledge(knowledgeState, record, profile) in KnowledgeModel.ts."
+    },
+    "select": {
+      "status": "done",
+      "at": "2026-07-10T09:35:15.938Z",
+      "note": "Anchor: zero-assumption read of DesignSpace.ts's CoverageMatrix/cellKey before use. Found LevelRecord needed mechanicsExercised (no field named a level's mechanics) and masteryRoutingConfidenceThreshold needed a concrete, buildable definition (archetype-identity approach was unbuildable -- LevelRecord carries only one ArchetypeRun). Ledgered as dm-0050 BEFORE implementation."
+    },
+    "plan": {
+      "status": "done",
+      "at": "2026-07-10T09:35:16.040Z",
+      "note": "Implemented MechanicTracker.ts (trackMechanics + topTierRatio) and KnowledgeModel.ts (updateKnowledge, pure EMA). Widened CampaignState.mechanicsIntroduced/mechanicsMastered to ReadonlySet<EntityKind>; added CampaignProfile.mastery.knowledgeLearningRate. No TODOs/stubs."
+    },
+    "anchor": {
+      "status": "done",
+      "at": "2026-07-10T09:35:16.144Z",
+      "note": "npm test: 392/392 green (378 baseline + 14 new: 2 CampaignProfile rejection tests for knowledgeLearningRate, 12 MechanicTracker/KnowledgeModel tests incl. two-profile externalization proofs). npx tsc --noEmit clean. npm run build clean."
+    },
+    "implement": {
+      "status": "done",
+      "at": "2026-07-10T09:35:16.247Z",
+      "note": "npm test: 392/392 green (378 baseline + 14 new: 2 CampaignProfile rejection tests for knowledgeLearningRate, 12 MechanicTracker/KnowledgeModel tests incl. two-profile externalization proofs). npx tsc --noEmit clean. npm run build clean."
+    },
+    "verify": {
+      "status": "done",
+      "at": "2026-07-10T09:35:29.957Z",
+      "note": "PKG: +2 nodes (eval/campaign/mechanic_tracker, eval/campaign/knowledge_model), dependency addition on eval/campaign/campaign_state and eval/campaign/campaign_profile (components/behavior for EntityKind), edges both directions. pkg_hash s6-b8d21f -> s6-c4a9e7."
+    },
+    "integrate": {
+      "status": "done",
+      "at": "2026-07-10T09:35:41.685Z",
+      "note": "task_slices.md S6.3 -> COMPLETED. No requirements_backlog.md state change needed this slice -- REQ-031/041 were already IN_PROGRESS from S6.1/P5 respectively; they flip VERIFIED at S6.6."
+    },
+    "report": {
+      "status": "done",
+      "at": "2026-07-10T09:35:41.793Z",
+      "note": "Handoff written: pkg_hash s6-c4a9e7, next focus S6.4 ChapterHealth, open question about a trend-threshold profile field flagged."
+    },
+    "handoff": {
+      "status": "done",
+      "at": "2026-07-10T09:36:24.735Z",
+      "note": "Handoff confirmed complete."
+    }
+  },
+  "acceptance": [
+    {
+      "req": "REQ-031",
+      "criterion": "S6.3 delivers the mechanicsIntroduced/mechanicsMastered share of REQ-031's ten macro variables plus the knowledgeState update path (KnowledgeModel). trackMechanics + updateKnowledge are pure and tested against real CoverageMatrix fixtures. REQ-031 stays IN_PROGRESS -- the remaining macro variables (behaviorState done at S6.2; skillCurve, optimizationDepth, curiosityTrend, chapterHealth, retentionPrediction) land at S6.4/S6.5.",
+      "met": true,
+      "note": null
+    },
+    {
+      "req": "REQ-041",
+      "criterion": "S6.3 delivers the P6 share of REQ-041: Campaign Intelligence consumes the coverage matrix BY REFERENCE (dm-0045) to determine mechanic introduction/mastery, never recomputing it. REQ-041 stays IN_PROGRESS in the backlog until S6.6 (P5's share already VERIFIED at P5 close; P6's share now COMPLETED).",
+      "met": true,
+      "note": null
+    }
+  ],
+  "outcome": "completed",
+  "closed_at": "2026-07-10T09:36:28.080Z"
+}

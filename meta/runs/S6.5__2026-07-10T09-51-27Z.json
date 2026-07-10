@@ -1,0 +1,67 @@
+{
+  "slice": "S6.5",
+  "title": "CampaignDirector fold + spike detection + retention",
+  "reqs": [
+    "REQ-030"
+  ],
+  "started_at": "2026-07-10T09:41:05.750Z",
+  "updated_at": "2026-07-10T09:51:27.752Z",
+  "current_stage": "handoff",
+  "stages": {
+    "reboot": {
+      "status": "done",
+      "at": "2026-07-10T09:41:05.752Z",
+      "note": "Reboot verified: 404/404 green at start, pkg_hash s6-d1f68b matched."
+    },
+    "select": {
+      "status": "done",
+      "at": "2026-07-10T09:50:20.079Z",
+      "note": "S6.5 selected. REQ-030 core. Depends S6.1-S6.4 (all COMPLETED)."
+    },
+    "plan": {
+      "status": "done",
+      "at": "2026-07-10T09:50:20.179Z",
+      "note": "Plan: worked out chapter-grouping input shape (ChapterRecord[]), optimizationDepth from cumulative CoverageMatrix, emotionalState from GDOS's own gate scores, trendWindowLevels->EMA-rate conversion, retentionPrediction's five-component formula, spike detection ordering (compare against baseline BEFORE this chapter folds in, avoiding self-masking). Verified real data shapes (Emotional.ts's gate name 'emotional-threshold', OPTIMIZATION_STYLE_AXIS as an importable value) before coding."
+    },
+    "anchor": {
+      "status": "done",
+      "at": "2026-07-10T09:50:20.282Z",
+      "note": "Anchor + ledger: dm-0052 covers all five S6.5 design decisions in one entry (chapter grouping, optimizationDepth source, emotionalState source, trendWindowLevels' new consumer, retentionPrediction normalization). Ledgered BEFORE implementation, closing the third near-miss dead-field risk (trendWindowLevels) by giving it a real formula-backed use."
+    },
+    "implement": {
+      "status": "done",
+      "at": "2026-07-10T09:50:20.410Z",
+      "note": "Implemented CampaignDirector.ts (updateState + processCampaign + 7 pure helpers). Added CampaignProfile.trendMagnitudeTolerance (parse+default+rejection). Refined TrendReading's doc comment to lock its magnitude/direction semantics. No TODOs/stubs."
+    },
+    "verify": {
+      "status": "done",
+      "at": "2026-07-10T09:50:20.512Z",
+      "note": "npm test: 417/417 green (404 baseline + 13 new: 1 CampaignProfile rejection test + 12 CampaignDirector tests incl. fold determinism, the IRD P6 exit condition's synthetic 3-chapter spike-at-chapter-2 test, retention improving-vs-declining, three two-profile externalization proofs). Hand-traced the EMA math for every assertion before running -- all passed on first execution, confirming the formulas were implemented as designed. npx tsc --noEmit clean. npm run build clean."
+    },
+    "integrate": {
+      "status": "done",
+      "at": "2026-07-10T09:50:35.943Z",
+      "note": "PKG: +1 node (eval/campaign/campaign_director), 8 dependency edges (design_space as value_import for OPTIMIZATION_STYLE_AXIS, the rest type_import), both directions. pkg_hash s6-d1f68b -> s6-e7b3a9."
+    },
+    "report": {
+      "status": "done",
+      "at": "2026-07-10T09:50:41.827Z",
+      "note": "task_slices.md S6.5 -> COMPLETED. No requirements_backlog.md state change needed -- REQ-030 already IN_PROGRESS from S6.1; flips VERIFIED at S6.6."
+    },
+    "handoff": {
+      "status": "done",
+      "at": "2026-07-10T09:50:41.930Z",
+      "note": "Handoff written: pkg_hash s6-e7b3a9. All P6 code complete. S6.6 is the closing slice: verification report, backlog flips, EvalIsolation-scan decision, M2 close."
+    }
+  },
+  "acceptance": [
+    {
+      "req": "REQ-030",
+      "criterion": "S6.5 delivers the REQ-030 core: CampaignDirector.processCampaign is a deterministic fold over a chapter-grouped campaign, producing the full CampaignState (all ten REQ-031 variables now genuinely computed, not just typed) plus difficulty-spike alerts and retention prediction. The IRD P6 exit condition (macro state updates deterministically from a fixture campaign; flags a synthetic difficulty spike) is proven by test. REQ-030 stays IN_PROGRESS -- flips VERIFIED at S6.6.",
+      "met": true,
+      "note": null
+    }
+  ],
+  "outcome": "completed",
+  "closed_at": "2026-07-10T09:51:27.855Z"
+}

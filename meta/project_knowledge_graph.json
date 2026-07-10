@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
-  "generated_by_session": "2026-07-10T-session-6",
-  "pkg_hash": "s5-q7c4b1",
+  "generated_by_session": "2026-07-10T-session-7",
+  "pkg_hash": "s6-e7b3a9",
   "notes": "Machine-readable mirror of the codebase. Read at every session start; update immediately on any structural code change (new module, changed dependency, changed GDOS mapping). See references/pkg_schema.md.",
   "nodes": [
     {
@@ -120,7 +120,8 @@
         "eval/archetypes",
         "eval/agent_harness",
         "eval/local/search",
-        "eval/emergent_fun"
+        "eval/emergent_fun",
+        "eval/campaign/tape_analyzer"
       ],
       "volatile_state_flags": {
         "has_side_effects": false,
@@ -372,7 +373,9 @@
         "eval/gdos/design_space",
         "eval/gdos/economy",
         "eval/gdos/streamability",
-        "eval/evaluate"
+        "eval/evaluate",
+        "eval/campaign/campaign_state",
+        "eval/campaign/mechanic_tracker"
       ],
       "volatile_state_flags": {
         "has_side_effects": false,
@@ -573,7 +576,8 @@
         "schema/tape_io",
         "eval/gdos/profile",
         "eval/gdos/design_memory",
-        "eval/gdos/cdre"
+        "eval/gdos/cdre",
+        "eval/campaign/campaign_profile"
       ],
       "volatile_state_flags": {
         "has_side_effects": false,
@@ -1156,7 +1160,11 @@
       "functional_summary": "Macro Curriculum Validation — the SECOND (macro) validation pass (REQ-140/142, dm-0029). PURE data logic over an ordered CurriculumLevel[] (the minimal chapter contract: per-level local verdicts + difficulty + required/introduced mechanics + curiosity); runs NO simulation and imports nothing from the sim or the local pass (isolation is import-enforced). validateCurriculum(chapter,opts)->MacroVerdict with the four §15 criteria: Cognitive Structural Mapping (no orphan mechanic requirement; bounded new concepts/level), Cross-Chapter Degradation (no difficulty spike or end-degradation), Curiosity Progression (stays above floor; not monotonically dead), Graduation Assessment (finale is a capstone combining prior mechanics), plus a chapter-health precondition (all solvable, no softlock/exploit). Whitelist math.",
       "gdos_alignment": "Section_15_Macro_Curriculum_Validation",
       "dependencies": [],
-      "dependents": [],
+      "dependents": [
+        "eval/campaign/campaign_state",
+        "eval/campaign/chapter_health",
+        "eval/campaign/campaign_director"
+      ],
       "volatile_state_flags": {
         "has_side_effects": false,
         "state_dependencies": []
@@ -1181,7 +1189,8 @@
         "eval/gdos/judge",
         "eval/gdos/curation",
         "eval/gdos/cdre",
-        "eval/evaluate"
+        "eval/evaluate",
+        "eval/campaign/campaign_state"
       ],
       "volatile_state_flags": {
         "has_side_effects": false,
@@ -1249,7 +1258,9 @@
         "eval/gdos/judge",
         "eval/gdos/novelty",
         "eval/gdos/curation",
-        "eval/evaluate"
+        "eval/evaluate",
+        "eval/campaign/campaign_state",
+        "eval/campaign/tape_analyzer"
       ],
       "volatile_state_flags": {
         "has_side_effects": false,
@@ -1293,7 +1304,9 @@
         "eval/gdos/economy",
         "eval/gdos/streamability",
         "eval/gdos/cdre",
-        "eval/emergent_fun"
+        "eval/emergent_fun",
+        "eval/campaign/mechanic_tracker",
+        "eval/campaign/campaign_director"
       ],
       "volatile_state_flags": {
         "has_side_effects": false,
@@ -1580,6 +1593,184 @@
         "REQ-055",
         "REQ-056",
         "REQ-061"
+      ]
+    },
+    {
+      "node_id": "eval/campaign/campaign_profile",
+      "type": "SystemNode",
+      "file_path": "src/eval/campaign/CampaignProfile.ts",
+      "functional_summary": "S6.1 — the versioned CampaignProfile calibration record for P6 Campaign Intelligence (REQ-030/031/032, dm-0045). Deliberately a SEPARATE schema from gdos/Profile.ts ScoringProfile, never an in-place extension of it (dm-0039 grace spent; the two concerns -- per-level GDOS scoring vs. campaign-level trajectory -- must not compete for one versioned document). Groups: BehaviorProfile (S6.2 TapeAnalyzer frame-count sensitivity), MasteryProfile (S6.3 MechanicTracker confidence/routing thresholds), ChapterHealthProfile (S6.4/S6.5 EMA baseline decay + spike drop threshold), RetentionWeights (S6.5 retention composite, not all zero), trendWindowLevels. parseCampaignProfile mirrors the ScoringProfile strict-parse discipline exactly (dm-0010/0014): never throws, path-qualified errors, strict unknown-key rejection, finite numbers, hard schemaVersion reject. DEFAULT_CAMPAIGN_PROFILE is the S6.1 calibration baseline pending future ledgered recalibration. S6.3 (dm-0050): MasteryProfile gained knowledgeLearningRate (EMA rate for KnowledgeModel); masteryRoutingConfidenceThreshold precisely redefined as a coverage-cell top-tier ratio threshold. S6.4 (dm-0051): ChapterHealthProfile gained trendFlatTolerance (score-point band for rising/falling/flat classification). S6.5 (dm-0052): gained top-level trendMagnitudeTolerance ([0,1]-scale skillCurve/curiosityTrend classification, distinct from chapterHealthCalibration.trendFlatTolerance's 0-100 chapter-score scale); trendWindowLevels (shipped unused at S6.1) is now genuinely consumed via the 2/(N+1) EMA-rate conversion.",
+      "gdos_alignment": "Section_4_Campaign_Intelligence",
+      "dependencies": [
+        "schema/parse"
+      ],
+      "dependents": [
+        "eval/campaign/tape_analyzer",
+        "eval/campaign/mechanic_tracker",
+        "eval/campaign/knowledge_model",
+        "eval/campaign/chapter_health",
+        "eval/campaign/campaign_director"
+      ],
+      "volatile_state_flags": {
+        "has_side_effects": false,
+        "state_dependencies": []
+      },
+      "last_verified_commit": "uncommitted-session-7",
+      "backlog_refs": [
+        "REQ-030",
+        "REQ-031",
+        "REQ-032"
+      ]
+    },
+    {
+      "node_id": "eval/campaign/campaign_state",
+      "type": "SystemNode",
+      "file_path": "src/eval/campaign/CampaignState.ts",
+      "functional_summary": "S6.1 — the CampaignState kernel: types all ten REQ-031 macro variables (knowledgeState, behaviorState, emotionalState, skillCurve, mechanicsIntroduced, mechanicsMastered, optimizationDepth, curiosityTrend, chapterHealth, retentionPrediction) plus ZERO_CAMPAIGN_STATE, the additive identity (dm-0043 -- CampaignDirector, S6.5, updates state via a PURE fold, never mutates in place). Also defines BehaviorSignals (REQ-032 Player Behavior Model -- every field frame-derived, dm-0043; P8-independent per dm-0044), EmotionalState, TrendReading, CampaignAlert (evidentiary, never a bare boolean, dm-0048), ChapterHealthReport (REQ-142 P6 share -- mirrors MacroVerdict field-for-field, dm-0046), LevelRecord (the P6 input unit: GdosReport + ReplayTape + MacroVerdict, all P4/P5 output consumed as data), and CampaignReport (S6.5 CampaignDirector output). Imports GdosReport/ArchetypeRun/MacroVerdict with `import type` ONLY -- zero runtime coupling to gdos/, the sim, or AgentHarness (dm-0047: campaign/ never re-audits, mirroring gdos/'s own no-re-auditing rule one abstraction level up). S6.3 (dm-0050): mechanicsIntroduced/mechanicsMastered widened to ReadonlySet<EntityKind>; LevelRecord gained mechanicsExercised: ReadonlySet<EntityKind> (caller-supplied per-level mechanic set). S6.5: TrendReading.magnitude precisely defined as the current EMA-rolled value of the underlying signal (not a raw step delta) -- direction reports movement vs the previous magnitude.",
+      "gdos_alignment": "Section_4_Campaign_Intelligence",
+      "dependencies": [
+        "eval/gdos/report",
+        "eval/macro/curriculum",
+        "eval/gdos/evidence",
+        "components/behavior"
+      ],
+      "dependents": [
+        "eval/campaign/tape_analyzer",
+        "eval/campaign/knowledge_model",
+        "eval/campaign/chapter_health",
+        "eval/campaign/campaign_director"
+      ],
+      "volatile_state_flags": {
+        "has_side_effects": false,
+        "state_dependencies": []
+      },
+      "last_verified_commit": "uncommitted-session-7",
+      "backlog_refs": [
+        "REQ-030",
+        "REQ-031",
+        "REQ-041",
+        "REQ-142"
+      ]
+    },
+    {
+      "node_id": "eval/campaign/tape_analyzer",
+      "type": "SystemNode",
+      "file_path": "src/eval/campaign/TapeAnalyzer.ts",
+      "functional_summary": "S6.2 -- analyzeTape(run: ArchetypeRun, profile: CampaignProfile) -> BehaviorSignals (REQ-032, dm-0043/dm-0044/dm-0049). Every signal is frame-derived from run.tape.frames except retryCount (run.attempts) and dropOffRate (run.outcome === \"timeout\" ? 1 : 0), read directly from the P4 harness output rather than re-derived. hesitationFrames: longest no-input gap before a jump-press edge that clears profile.behavior.hesitationFrameThreshold (brief reaction-time pauses do not count). commitmentSpeed: frame index of the first jump-press edge, undefined if none. panicBurstCount: greedy non-overlapping count of windows (profile.behavior.panicBurstWindowFrames) containing >= profile.behavior.panicBurstInputCount active-input edges (jump/reset/movement-direction-change edges, not held state). platformCheckCount: a moveAxis direction reversal with no jump-press within profile.behavior.platformCheckWindowFrames frames afterward -- an input-pattern proxy for ledge-checking that needs no level geometry (dm-0049, replacing the withdrawn geometry-based S6.1 design). Depends only on ArchetypeRun + CampaignProfile -- zero coupling to LevelDefinition, AgentHarness, or P8 telemetry (dm-0044).",
+      "gdos_alignment": "Section_4_Campaign_Intelligence",
+      "dependencies": [
+        "eval/gdos/evidence",
+        "core/state",
+        "eval/campaign/campaign_state",
+        "eval/campaign/campaign_profile"
+      ],
+      "dependents": [
+        "eval/campaign/campaign_director"
+      ],
+      "volatile_state_flags": {
+        "has_side_effects": false,
+        "state_dependencies": []
+      },
+      "last_verified_commit": "uncommitted-session-7",
+      "backlog_refs": [
+        "REQ-032"
+      ]
+    },
+    {
+      "node_id": "eval/campaign/mechanic_tracker",
+      "type": "SystemNode",
+      "file_path": "src/eval/campaign/MechanicTracker.ts",
+      "functional_summary": "S6.3 -- trackMechanics(coverageMatrix: CoverageMatrix, knowledgeState, profile: CampaignProfile) -> { mechanicsIntroduced, mechanicsMastered } (REQ-031, REQ-041 P6 share, dm-0045/dm-0050). CoverageMatrix is supplied by the CALLER (the cumulative matrix over every level processed so far) -- this module never imports or calls DesignSpace.coverageMatrix() itself (dm-0045, one source of truth). mechanicsIntroduced = coverageMatrix.mechanicsCovered verbatim. mechanicsMastered requires BOTH knowledgeState[mechanic] >= profile.mastery.masteryConfidenceThreshold AND a top-tier coverage ratio (of the mechanic's distinct exercised CoverageMatrix cells, the fraction at the 'worldRecord' optimization tier) >= profile.mastery.masteryRoutingConfidenceThreshold -- replacing an unbuildable archetype-identity-based routing-confidence design (dm-0050: LevelRecord carries only one ArchetypeRun, no reliable archetype identity to anchor an exploration-archetype check).",
+      "gdos_alignment": "Section_4_Campaign_Intelligence",
+      "dependencies": [
+        "eval/gdos/design_space",
+        "components/behavior",
+        "eval/campaign/campaign_profile"
+      ],
+      "dependents": [
+        "eval/campaign/campaign_director"
+      ],
+      "volatile_state_flags": {
+        "has_side_effects": false,
+        "state_dependencies": []
+      },
+      "last_verified_commit": "uncommitted-session-7",
+      "backlog_refs": [
+        "REQ-031",
+        "REQ-041"
+      ]
+    },
+    {
+      "node_id": "eval/campaign/knowledge_model",
+      "type": "SystemNode",
+      "file_path": "src/eval/campaign/KnowledgeModel.ts",
+      "functional_summary": "S6.3 -- updateKnowledge(knowledgeState, record: LevelRecord, profile: CampaignProfile) -> knowledgeState' (REQ-031 knowledgeState macro variable, dm-0050). Pure EMA: every mechanic in record.mechanicsExercised moves toward 1 if the level both passed its GDOS gates AND completed (not timeout), else toward 0, at profile.mastery.knowledgeLearningRate -- the same EMA technique as ChapterHealthProfile's rolling baseline (dm-0048) applied one layer down. Unrelated knowledgeState keys carry over unchanged. Never mutates its input (dm-0043).",
+      "gdos_alignment": "Section_4_Campaign_Intelligence",
+      "dependencies": [
+        "eval/campaign/campaign_state",
+        "eval/campaign/campaign_profile"
+      ],
+      "dependents": [
+        "eval/campaign/campaign_director"
+      ],
+      "volatile_state_flags": {
+        "has_side_effects": false,
+        "state_dependencies": []
+      },
+      "last_verified_commit": "uncommitted-session-7",
+      "backlog_refs": [
+        "REQ-031"
+      ]
+    },
+    {
+      "node_id": "eval/campaign/chapter_health",
+      "type": "SystemNode",
+      "file_path": "src/eval/campaign/ChapterHealth.ts",
+      "functional_summary": "S6.4 -- aggregateChapterHealth(macroVerdict: MacroVerdict, priorChapterHealth: ChapterHealthReport | undefined, profile: CampaignProfile) -> ChapterHealthReport (REQ-142 P6 share, dm-0046/dm-0051). The four macro criteria (cognitiveStructuralMapping, crossChapterDegradation, curiosityProgression, graduationAssessment) pass through from MacroVerdict verbatim -- P4 already computed them for this chapter, this module never re-derives them (dm-0046). score is a STRUCTURAL pass-count over MacroVerdict's five booleans (chapterHealthy + 4 criteria) out of 100, needing no calibration weight since the aggregation is a fact of MacroVerdict's own shape, not a tunable choice. trend compares this chapter's score against the prior chapter's under profile.chapterHealthCalibration.trendFlatTolerance. alerts is always [] -- spike detection needs the rolling EMA baseline across the WHOLE campaign, which only CampaignDirector (S6.5) accumulates during its fold; ChapterHealth reports one chapter's own score+trend only.",
+      "gdos_alignment": "Section_15_Macro_Curriculum_Validation",
+      "dependencies": [
+        "eval/macro/curriculum",
+        "eval/campaign/campaign_profile",
+        "eval/campaign/campaign_state"
+      ],
+      "dependents": [
+        "eval/campaign/campaign_director"
+      ],
+      "volatile_state_flags": {
+        "has_side_effects": false,
+        "state_dependencies": []
+      },
+      "last_verified_commit": "uncommitted-session-7",
+      "backlog_refs": [
+        "REQ-142"
+      ]
+    },
+    {
+      "node_id": "eval/campaign/campaign_director",
+      "type": "SystemNode",
+      "file_path": "src/eval/campaign/CampaignDirector.ts",
+      "functional_summary": "S6.5 -- the Game Director's fold (REQ-030 core, dm-0043/dm-0052). updateState(state, record, coverageMatrix, profile) -> CampaignState is the pure per-LEVEL fold step: behaviorState/dropOffRate roll via EMA, knowledgeState via KnowledgeModel, mechanicsIntroduced/Mastered via MechanicTracker, optimizationDepth from the cumulative CoverageMatrix's highest touched OPTIMIZATION_STYLE_AXIS tier (normalized), emotionalState EMA-rolled from GDOS's OWN per-level 'emotional-threshold' gate scores (never re-derived from behavior), skillCurve/curiosityTrend step-over-step EMA trends (TrendReading.magnitude = current rolled value, direction = movement vs previous magnitude, tolerance from profile.trendMagnitudeTolerance) with the EMA rate derived from trendWindowLevels via the standard 2/(N+1) conversion. processCampaign(chapters: ChapterRecord[], profile) -> CampaignReport folds a chapter-grouped campaign: each chapter's levels fold via updateState, then ChapterHealth.aggregateChapterHealth elevates its MacroVerdict, a difficulty spike is flagged via an EMA baseline over ChapterHealthReport.score COMPARED AGAINST THE BASELINE BEFORE this chapter's own score joins it (avoiding self-masking), and retentionPrediction recomputes as profile.retentionWeights' weighted average of five [0,1] components (inverse drop-off, optimizationDepth, inverse panic bursts, curiosity-trend direction, mean chapter health). Deterministic: proven by a same-input-twice test and a synthetic 3-chapter fixture campaign with a planted spike at chapter 2 (the IRD P6 exit condition).",
+      "gdos_alignment": "Section_4_Campaign_Intelligence",
+      "dependencies": [
+        "eval/gdos/design_space",
+        "eval/macro/curriculum",
+        "eval/campaign/campaign_profile",
+        "eval/campaign/campaign_state",
+        "eval/campaign/tape_analyzer",
+        "eval/campaign/knowledge_model",
+        "eval/campaign/mechanic_tracker",
+        "eval/campaign/chapter_health"
+      ],
+      "dependents": [],
+      "volatile_state_flags": {
+        "has_side_effects": false,
+        "state_dependencies": []
+      },
+      "last_verified_commit": "uncommitted-session-7",
+      "backlog_refs": [
+        "REQ-030",
+        "REQ-031",
+        "REQ-142"
       ]
     }
   ],
@@ -2879,6 +3070,156 @@
       "from": "eval/local/optimization",
       "to": "eval/local/search",
       "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "eval/campaign/campaign_profile",
+      "to": "schema/parse",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "eval/campaign/campaign_state",
+      "to": "eval/gdos/report",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "eval/campaign/campaign_state",
+      "to": "eval/macro/curriculum",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "eval/campaign/campaign_state",
+      "to": "eval/gdos/evidence",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "eval/campaign/tape_analyzer",
+      "to": "eval/gdos/evidence",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "eval/campaign/tape_analyzer",
+      "to": "core/state",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "eval/campaign/tape_analyzer",
+      "to": "eval/campaign/campaign_state",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "eval/campaign/tape_analyzer",
+      "to": "eval/campaign/campaign_profile",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "eval/campaign/campaign_state",
+      "to": "components/behavior",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "eval/campaign/mechanic_tracker",
+      "to": "eval/gdos/design_space",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "eval/campaign/mechanic_tracker",
+      "to": "components/behavior",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "eval/campaign/mechanic_tracker",
+      "to": "eval/campaign/campaign_profile",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "eval/campaign/knowledge_model",
+      "to": "eval/campaign/campaign_state",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "eval/campaign/knowledge_model",
+      "to": "eval/campaign/campaign_profile",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "eval/campaign/chapter_health",
+      "to": "eval/macro/curriculum",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "eval/campaign/chapter_health",
+      "to": "eval/campaign/campaign_profile",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "eval/campaign/chapter_health",
+      "to": "eval/campaign/campaign_state",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "eval/campaign/campaign_director",
+      "to": "eval/gdos/design_space",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "eval/campaign/campaign_director",
+      "to": "eval/macro/curriculum",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "eval/campaign/campaign_director",
+      "to": "eval/campaign/campaign_profile",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "eval/campaign/campaign_director",
+      "to": "eval/campaign/campaign_state",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "eval/campaign/campaign_director",
+      "to": "eval/campaign/tape_analyzer",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "eval/campaign/campaign_director",
+      "to": "eval/campaign/knowledge_model",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "eval/campaign/campaign_director",
+      "to": "eval/campaign/mechanic_tracker",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "eval/campaign/campaign_director",
+      "to": "eval/campaign/chapter_health",
+      "kind": "type_import"
     }
   ],
   "gdos_anchors": [
@@ -2949,6 +3290,14 @@
       "section": "Section_17_Spatial_Partitioning",
       "implemented_by": [
         "systems/spatial_partition"
+      ]
+    },
+    {
+      "type": "GDOSAnchor",
+      "section": "Section_4_Campaign_Intelligence",
+      "implemented_by": [
+        "eval/campaign/campaign_state",
+        "eval/campaign/campaign_profile"
       ]
     }
   ],

@@ -157,3 +157,52 @@ test('gdos is PURE over pre-assembled evidence: it runs no sim and no search (dm
     assert.ok(m === null, `src/eval/gdos/${file} imports ${m ? m[1] : ''} — gdos must run no sim/search; site search-using code at the top level of src/eval/ (dm-0037)`);
   }
 });
+
+test('math whitelist extends to src/eval/campaign/ (dm-0047: the campaign director replays no differently)', () => {
+  const campaignDir = join(SRC, 'eval', 'campaign');
+  const files = tsFiles(campaignDir);
+  assert.ok(files.length > 0, 'no .ts files under src/eval/campaign — scan would be vacuous');
+  for (const file of files) {
+    const stripped = stripCommentsAndStrings(readFileSync(join(campaignDir, file), 'utf8'));
+    const lines = stripped.split('\n');
+    for (let n = 0; n < lines.length; n++) {
+      for (const match of lines[n].matchAll(/\bMath\.(\w+)/g)) {
+        assert.ok(
+          MATH_WHITELIST.has(match[1]),
+          `src/eval/campaign/${file}:${n + 1} calls Math.${match[1]} — outside the determinism whitelist`,
+        );
+      }
+    }
+  }
+});
+
+test('campaign/ runs no sim, no search, no local audits (dm-0047: campaign/ never re-audits, mirroring gdos/\'s dm-0037 rule one abstraction level up)', () => {
+  const campaignDir = join(SRC, 'eval', 'campaign');
+  // Reading OPTIMIZATION_STYLE_AXIS as DATA from DesignSpace.ts (dm-0052) is
+  // allowed — the same "read the registry as data" precedent dm-0034 grants
+  // gdos/ itself for ARCHETYPES/ENTITY_KINDS. Only execution modules are banned.
+  const forbidden = /from\s+['"][^'"]*\/(AgentHarness|AgentPolicy|Archetypes|Evaluate|eval\/local\/|core\/Engine)/;
+  for (const file of tsFiles(campaignDir)) {
+    const raw = readFileSync(join(campaignDir, file), 'utf8');
+    const m = raw.match(forbidden);
+    assert.ok(m === null, `src/eval/campaign/${file} imports ${m ? m[0] : ''} — campaign/ must run no sim/search/local-audit (dm-0047)`);
+  }
+});
+
+test('campaign/ consumes gdos/ ONLY as pre-assembled output data, never a gate-internal module (dm-0047)', () => {
+  const campaignDir = join(SRC, 'eval', 'campaign');
+  // Allowed gdos/ imports: Report.ts (GdosReport), Evidence.ts (ArchetypeRun),
+  // DesignSpace.ts (CoverageMatrix + the OPTIMIZATION_STYLE_AXIS registry
+  // value, dm-0052). Everything else under gdos/ is a GATE or curation/memory
+  // internal that campaign/ must never reach into.
+  const forbiddenGdos = /from\s+['"][^'"]*\/gdos\/(Emotional|Streamability|InfoDensity|Curation|Cdre|DesignMemory|Judge|Profile)['"]/;
+  for (const file of tsFiles(campaignDir)) {
+    const raw = readFileSync(join(campaignDir, file), 'utf8');
+    const m = raw.match(forbiddenGdos);
+    assert.ok(m === null, `src/eval/campaign/${file} imports gdos-internal ${m ? m[0] : ''} — campaign/ consumes GdosReport/CoverageMatrix/ArchetypeRun as data only, never a gate/curation/memory module (dm-0047)`);
+    // The macro pass (MacroVerdict) is consumed as a TYPE only, exactly like gdos/'s own rule for local/ verdicts.
+    for (const macroImport of raw.matchAll(/^\s*import\s+(type\s+)?[^;]*?from\s+['"][^'"]*\/macro\//gm)) {
+      assert.ok(macroImport[1] !== undefined, `src/eval/campaign/${file} value-imports the macro pass — MacroVerdict must be consumed as a type only`);
+    }
+  }
+});

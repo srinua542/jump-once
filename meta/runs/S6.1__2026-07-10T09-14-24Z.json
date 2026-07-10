@@ -1,0 +1,74 @@
+{
+  "slice": "S6.1",
+  "title": "CampaignState + CampaignProfile data model",
+  "reqs": [
+    "REQ-030",
+    "REQ-031"
+  ],
+  "started_at": "2026-07-10T08:58:17.740Z",
+  "updated_at": "2026-07-10T09:14:20.725Z",
+  "current_stage": "handoff",
+  "stages": {
+    "reboot": {
+      "status": "done",
+      "at": "2026-07-10T08:58:17.741Z",
+      "note": "Reboot verified: 336/336 green, pkg_hash s5-q7c4b1 matches. P6 execution-plan section authored (dm-0043–dm-0048). task_slices.md expanded to 6 finer slices per execution plan."
+    },
+    "select": {
+      "status": "done",
+      "at": "2026-07-10T08:58:53.346Z",
+      "note": "S6.1 selected. REQ-030/031. Depends: S5.9 COMPLETED. Phase entry: P4+P5 VERIFIED. No blockers."
+    },
+    "plan": {
+      "status": "done",
+      "at": "2026-07-10T08:58:57.907Z",
+      "note": "Plan finalized. Files: src/eval/campaign/CampaignProfile.ts, src/eval/campaign/CampaignState.ts, test/unit/CampaignProfile.test.ts, test/unit/CampaignState.test.ts, test/helpers/CampaignFixtures.ts."
+    },
+    "anchor": {
+      "status": "done",
+      "at": "2026-07-10T09:09:38.017Z",
+      "note": "New modules (no existing system to anchor against). Type boundary frozen: CampaignState's ten REQ-031 fields, BehaviorSignals, ChapterHealthReport, CampaignAlert, LevelRecord, CampaignReport all fully typed against real P4/P5 output types (GdosReport, ReplayTape, MacroVerdict) verified via Read before use, not guessed."
+    },
+    "implement": {
+      "status": "done",
+      "at": "2026-07-10T09:09:39.973Z",
+      "note": "Implemented CampaignProfile.ts (CAMPAIGN_PROFILE_SCHEMA_VERSION=1, strict parse mirroring ScoringProfile discipline, DEFAULT_CAMPAIGN_PROFILE) and CampaignState.ts (ten REQ-031 macro fields, ZERO_CAMPAIGN_STATE additive identity, BehaviorSignals/EmotionalState/TrendReading/CampaignAlert/ChapterHealthReport/LevelRecord/CampaignReport). No TODOs/stubs/placeholders. Zero calibration literals outside CampaignProfile."
+    },
+    "verify": {
+      "status": "done",
+      "at": "2026-07-10T09:09:44.125Z",
+      "note": "npm test: 363/363 green (336 baseline + 27 new: 17 CampaignProfile parse/rejection tests, 10 CampaignState identity/immutability/type-boundary tests). npx tsc --noEmit clean. npm run build clean."
+    },
+    "integrate": {
+      "status": "done",
+      "at": "2026-07-10T09:10:28.401Z",
+      "note": "PKG updated in-change: +2 nodes (eval/campaign/campaign_profile, eval/campaign/campaign_state), +4 edges, both dependency directions (schema/parse, eval/gdos/report, schema/tape_io, eval/macro/curriculum all got the new dependents). New gdos_anchor[7] -> Section_4_Campaign_Intelligence. pkg_hash s5-q7c4b1 -> s6-a3f7e1. dm-0043-dm-0048 already appended via the DesignMemory store (ledger now 48 decisions) during PLAN, before code, matching the P5 precedent of ledgering the adversarial review before slices begin."
+    },
+    "report": {
+      "status": "done",
+      "at": "2026-07-10T09:12:29.038Z",
+      "note": "task_slices.md S6.1 -> COMPLETED. requirements_backlog.md REQ-030/031 NOT_STARTED -> IN_PROGRESS (exact-string edits; git diff confirms exactly 2 rows changed). No phase closed, so REQ-030/031 do NOT flip to VERIFIED yet -- they flip at S6.6 per the documented per-REQ schedule. No docs/verification/P6.md yet (phase not closed). npm test re-confirmed 363/363 green."
+    },
+    "handoff": {
+      "status": "done",
+      "at": "2026-07-10T09:13:18.582Z",
+      "note": "Handoff written to meta/handoff_latest.json: pkg_hash s6-a3f7e1, next focus S6.2 TapeAnalyzer, open geometry question for platformCheckCount flagged as a critical warning."
+    }
+  },
+  "acceptance": [
+    {
+      "req": "REQ-030",
+      "criterion": "S6.1 delivers the campaign-state HALF of REQ-030 (modeling the global campaign state): CampaignState.ts types all ten macro variables + ZERO_CAMPAIGN_STATE identity. The DIRECTOR half (the fold that actually updates state from level records) is S6.5's CampaignDirector.ts — REQ-030 stays IN_PROGRESS in the backlog until S6.6 per the per-REQ VERIFIED schedule.",
+      "met": true,
+      "note": null
+    },
+    {
+      "req": "REQ-031",
+      "criterion": "S6.1 types all ten macro state variables (knowledgeState, behaviorState, emotionalState, skillCurve, mechanicsIntroduced, mechanicsMastered, optimizationDepth, curiosityTrend, chapterHealth, retentionPrediction) on CampaignState, each grounded in a concrete shape (not a stub/any). Continuous TRACKING (the fold across a campaign) lands S6.2-S6.5; REQ-031 stays IN_PROGRESS in the backlog until S6.6.",
+      "met": true,
+      "note": null
+    }
+  ],
+  "outcome": "completed",
+  "closed_at": "2026-07-10T09:14:24.435Z"
+}
