@@ -466,9 +466,9 @@ P4 VERIFIED (satisfied). Consumes: the four local verdict types + `AgentRunResul
 - **C5.2** ✅ Emotional gates classify their fixture bundles correctly; delivered-vs-intended divergence reported; two-profile test proves calibration external (`GdosEmotional`).
 - **C5.3** ✅ Streamability gates classify correctly; every metric named per §6 (`GdosStreamability`).
 - **C5.4** ✅ IDS regulator rejects overwhelm/boring fixtures; fairness check catches the invisible kill (`GdosInfoDensity`).
-- **C5.5** Novelty + emergent-fun metrics behave on fixture corpora; kinetic anchors emitted as data.
-- **C5.6** Design Memory round-trips the live ledger; prior-art query + canonical append proven.
-- **C5.7** Kill Switch/First-Party/Subtractive verdicts fire correctly and record decisions.
+- **C5.5** ✅ Novelty + emergent-fun metrics behave on fixture corpora; kinetic anchors emitted as data, attributed, and replay-proven (`GdosNovelty`/`EmergentFun` tests; dm-0039).
+- **C5.6** ✅ Design Memory round-trips the live ledger byte-identically; prior-art query + canonical append proven; dm-0040 appended via the store itself (`GdosDesignMemory` tests).
+- **C5.7** ✅ Kill Switch/First-Party/Subtractive verdicts fire correctly and record decisions — incl. the REQ-012 jump-free-completion kill and Intent-Repository fields on every kill (`GdosCuration` tests; dm-0041).
 - **C5.8** CDRE mines seeded history into proposals; accepted proposal produces a valid next profile version.
 - **C5.9** `docs/verification/P5.md` filed; owned REQs → VERIFIED; PKG consistent; subtractive pass recorded.
 

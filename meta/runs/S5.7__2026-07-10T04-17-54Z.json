@@ -1,0 +1,88 @@
+{
+  "slice": "S5.7",
+  "title": "Kill Switch + First-Party filter + Subtractive Removal engine",
+  "reqs": [
+    "REQ-020",
+    "REQ-021",
+    "REQ-022",
+    "REQ-012"
+  ],
+  "started_at": "2026-07-10T04:13:38.129Z",
+  "updated_at": "2026-07-10T04:17:54.512Z",
+  "current_stage": "handoff",
+  "stages": {
+    "reboot": {
+      "status": "done",
+      "at": "2026-07-10T04:13:38.131Z",
+      "note": "REBOOT ok (in-session, 311/311)"
+    },
+    "select": {
+      "status": "done",
+      "at": "2026-07-10T04:13:38.335Z",
+      "note": "SELECT S5.7: deps S5.2+S5.6 COMPLETED"
+    },
+    "plan": {
+      "status": "done",
+      "at": "2026-07-10T04:13:38.535Z",
+      "note": "PLAN: gdos/Curation.ts — killSwitch over report+evidence+economy (REQ-012 = jump-free completion is a kill), firstPartyReview over typed attestations, subtractivePass = six-question checklist engine"
+    },
+    "anchor": {
+      "status": "done",
+      "at": "2026-07-10T04:13:38.738Z",
+      "note": "ANCHOR: new module; boundary = KillSwitchVerdict/FirstPartyVerdict/SubtractiveReport + DesignDecision emission"
+    },
+    "implement": {
+      "status": "done",
+      "at": "2026-07-10T04:13:38.953Z",
+      "note": "IMPLEMENT: Curation.ts complete (killSwitch/firstPartyReview/subtractivePass)"
+    },
+    "verify": {
+      "status": "done",
+      "at": "2026-07-10T04:17:53.510Z",
+      "note": "VERIFY: 323/323; kill fires on gate-fail + jump-free completion + unexhausted economy; attestation rationales mandatory; six questions data; determinism"
+    },
+    "integrate": {
+      "status": "done",
+      "at": "2026-07-10T04:17:53.629Z",
+      "note": "INTEGRATE: PKG +curation node/edges, hash -> s5-m8f1a4; ledger dm-0041 via the store"
+    },
+    "report": {
+      "status": "done",
+      "at": "2026-07-10T04:17:53.748Z",
+      "note": "REPORT: S5.7 COMPLETED; C5.7 checked; REQ-020/021/022/012 -> IN_PROGRESS"
+    },
+    "handoff": {
+      "status": "done",
+      "at": "2026-07-10T04:17:53.879Z",
+      "note": "HANDOFF: end-of-session write next"
+    }
+  },
+  "acceptance": [
+    {
+      "req": "REQ-020",
+      "criterion": "(fill in)",
+      "met": true,
+      "note": null
+    },
+    {
+      "req": "REQ-021",
+      "criterion": "(fill in)",
+      "met": true,
+      "note": null
+    },
+    {
+      "req": "REQ-022",
+      "criterion": "(fill in)",
+      "met": true,
+      "note": null
+    },
+    {
+      "req": "REQ-012",
+      "criterion": "(fill in)",
+      "met": true,
+      "note": null
+    }
+  ],
+  "outcome": "completed",
+  "closed_at": "2026-07-10T04:17:54.636Z"
+}

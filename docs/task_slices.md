@@ -90,9 +90,9 @@ Session-sized, dependency-ordered work units. Each slice is small enough to comp
 | S5.2 | Emotional estimators + threshold gates | REQ-055, REQ-015(arc semantics) | S5.1 | COMPLETED |
 | S5.3 | Streamability estimators + matrix gates | REQ-056 | S5.1 | COMPLETED |
 | S5.4 | Information Density regulator + failure-visibility fairness check | REQ-061, REQ-016(P5 share) | S5.1 | COMPLETED |
-| S5.5 | Novelty search + Emergent Fun search (corpus-parameterized) | REQ-053, REQ-054 | S5.1 | NOT_STARTED |
-| S5.6 | Executable Design Memory + Intent Repository (backing store: `meta/design_memory_ledger.json`) | REQ-050, REQ-051, REQ-111 | S5.1 | NOT_STARTED |
-| S5.7 | Kill Switch + First-Party filter + Subtractive Removal engine | REQ-020, REQ-021, REQ-022, REQ-012(curation share) | S5.2, S5.6 | NOT_STARTED |
+| S5.5 | Novelty search + Emergent Fun search (corpus-parameterized) | REQ-053, REQ-054 | S5.1 | COMPLETED |
+| S5.6 | Executable Design Memory + Intent Repository (backing store: `meta/design_memory_ledger.json`) | REQ-050, REQ-051, REQ-111 | S5.1 | COMPLETED |
+| S5.7 | Kill Switch + First-Party filter + Subtractive Removal engine | REQ-020, REQ-021, REQ-022, REQ-012(curation share) | S5.2, S5.6 | COMPLETED |
 | S5.8 | CDRE profile-evolution loop | REQ-052 | S5.1–S5.7 | NOT_STARTED |
 | S5.9 | Phase-5 verification report | REQ-P02 | S5.1–S5.8 | NOT_STARTED |
 

@@ -97,6 +97,16 @@ export interface InfoDensityProfile {
   readonly fairnessRadiusTiles: number;
 }
 
+/** REQ-053 novelty-distance calibration: component weights, not all zero. */
+export interface NoveltyProfile {
+  /** Weight of the mechanic-histogram component. ≥0. */
+  readonly histogramWeight: number;
+  /** Weight of the geometry-signature component. ≥0. */
+  readonly geometryWeight: number;
+  /** Weight of the trajectory-shape component. ≥0. */
+  readonly trajectoryWeight: number;
+}
+
 /** The complete calibration record. Versioned; cross-version scores are not comparable. */
 export interface ScoringProfile {
   readonly schemaVersion: number;
@@ -105,6 +115,7 @@ export interface ScoringProfile {
   readonly emotional: EmotionalProfile;
   readonly streamability: StreamabilityProfile;
   readonly infoDensity: InfoDensityProfile;
+  readonly novelty: NoveltyProfile;
 }
 
 export type ProfileParseResult =
@@ -144,6 +155,11 @@ export const DEFAULT_PROFILE: ScoringProfile = Object.freeze({
     fairnessLookbackTicks: 30,
     fairnessRadiusTiles: 2,
   }) as InfoDensityProfile,
+  novelty: Object.freeze({
+    histogramWeight: 1,
+    geometryWeight: 1,
+    trajectoryWeight: 1,
+  }) as NoveltyProfile,
 }) as ScoringProfile;
 
 /* ── strict parser (dm-0010/0014 discipline, self-contained) ─────────────── */
@@ -277,13 +293,27 @@ function parseInfoDensity(v: unknown, path: string, errors: Errors): InfoDensity
   return { viewportTilesX, viewportTilesY, minElementsPerScreen, maxElementsPerScreen, fairnessLookbackTicks, fairnessRadiusTiles };
 }
 
+function parseNovelty(v: unknown, path: string, errors: Errors): NoveltyProfile | undefined {
+  const o = obj(v, path, ['histogramWeight', 'geometryWeight', 'trajectoryWeight'], errors);
+  if (o === undefined) return undefined;
+  const histogramWeight = num(o.histogramWeight, `${path}/histogramWeight`, errors, { min: 0 });
+  const geometryWeight = num(o.geometryWeight, `${path}/geometryWeight`, errors, { min: 0 });
+  const trajectoryWeight = num(o.trajectoryWeight, `${path}/trajectoryWeight`, errors, { min: 0 });
+  if (histogramWeight === undefined || geometryWeight === undefined || trajectoryWeight === undefined) return undefined;
+  if (histogramWeight + geometryWeight + trajectoryWeight <= 0) {
+    fail(errors, path, 'novelty weights must not all be zero');
+    return undefined;
+  }
+  return { histogramWeight, geometryWeight, trajectoryWeight };
+}
+
 /** Parse an already-JSON-decoded value into a ScoringProfile. Never throws. */
 export function parseProfile(raw: unknown): ProfileParseResult {
   const errors: Errors = [];
   if (!isRecord(raw)) {
     return { ok: false, errors: [{ path: '', message: `expected a profile object, got ${describe(raw)}` }] };
   }
-  checkKeys(raw, '', ['schemaVersion', 'profileId', 'emotional', 'streamability', 'infoDensity'], errors);
+  checkKeys(raw, '', ['schemaVersion', 'profileId', 'emotional', 'streamability', 'infoDensity', 'novelty'], errors);
   if (raw.schemaVersion !== PROFILE_SCHEMA_VERSION) {
     fail(errors, '/schemaVersion', `unsupported profile version ${JSON.stringify(raw.schemaVersion)}; this build reads exactly v${PROFILE_SCHEMA_VERSION}`);
     return { ok: false, errors };
@@ -292,10 +322,11 @@ export function parseProfile(raw: unknown): ProfileParseResult {
   const emotional = parseEmotional(raw.emotional, '/emotional', errors);
   const streamability = parseStreamability(raw.streamability, '/streamability', errors);
   const infoDensity = parseInfoDensity(raw.infoDensity, '/infoDensity', errors);
-  if (errors.length > 0 || profileId === undefined || emotional === undefined || streamability === undefined || infoDensity === undefined) {
+  const novelty = parseNovelty(raw.novelty, '/novelty', errors);
+  if (errors.length > 0 || profileId === undefined || emotional === undefined || streamability === undefined || infoDensity === undefined || novelty === undefined) {
     return { ok: false, errors };
   }
-  return { ok: true, value: { schemaVersion: PROFILE_SCHEMA_VERSION, profileId, emotional, streamability, infoDensity } };
+  return { ok: true, value: { schemaVersion: PROFILE_SCHEMA_VERSION, profileId, emotional, streamability, infoDensity, novelty } };
 }
 
 /** Parse profile JSON text. JSON syntax errors surface as a root-path error; never throws. */

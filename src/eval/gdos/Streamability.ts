@@ -27,14 +27,13 @@ import type { EvidenceBundle } from './Evidence';
 import type { ScoringProfile } from './Profile';
 import { clamp100 } from './Score';
 import { computeEmotionalScores } from './Emotional';
+import { KINETIC_KINDS as KINETIC_KIND_LIST } from './DesignSpace';
 import { gateResult, metricScore, type DesignDecision, type GateResult, type MetricScore } from './Report';
 
 const GATE = 'streamability';
 
-/** Kinds whose motion/impulse makes a moment clip-worthy. */
-const KINETIC_KINDS: ReadonlySet<EntityKind> = new Set<EntityKind>([
-  'spring', 'gravityZone', 'conveyor', 'movingPlatform', 'movingHazard',
-]);
+/** Kinds whose motion/impulse makes a moment clip-worthy (shared grouping, DesignSpace). */
+const KINETIC_KINDS: ReadonlySet<EntityKind> = new Set<EntityKind>(KINETIC_KIND_LIST);
 
 function countBy(bundle: EvidenceBundle, pred: (k: EntityKind) => boolean): number {
   let n = 0;

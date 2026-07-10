@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
   "generated_by_session": "2026-07-10T-session-5",
-  "pkg_hash": "s5-h1e2d3",
+  "pkg_hash": "s5-m8f1a4",
   "notes": "Machine-readable mirror of the codebase. Read at every session start; update immediately on any structural code change (new module, changed dependency, changed GDOS mapping). See references/pkg_schema.md.",
   "nodes": [
     {
@@ -28,7 +28,8 @@
         "eval/agent_harness",
         "eval/gdos/evidence",
         "eval/gdos/infodensity",
-        "eval/evaluate"
+        "eval/evaluate",
+        "eval/emergent_fun"
       ],
       "volatile_state_flags": {
         "has_side_effects": false,
@@ -118,7 +119,8 @@
         "eval/agent_policy",
         "eval/archetypes",
         "eval/agent_harness",
-        "eval/local/search"
+        "eval/local/search",
+        "eval/emergent_fun"
       ],
       "volatile_state_flags": {
         "has_side_effects": false,
@@ -425,7 +427,8 @@
         "schema/serialize",
         "schema/parse",
         "systems/player_physics",
-        "eval/archetypes"
+        "eval/archetypes",
+        "eval/gdos/novelty"
       ],
       "volatile_state_flags": {
         "has_side_effects": false,
@@ -568,7 +571,8 @@
       ],
       "dependents": [
         "schema/tape_io",
-        "eval/gdos/profile"
+        "eval/gdos/profile",
+        "eval/gdos/design_memory"
       ],
       "volatile_state_flags": {
         "has_side_effects": false,
@@ -634,7 +638,8 @@
         "systems/hazards_and_goal",
         "systems/sensors",
         "eval/archetypes",
-        "eval/local/exploit"
+        "eval/local/exploit",
+        "eval/emergent_fun"
       ],
       "volatile_state_flags": {
         "has_side_effects": false,
@@ -1026,13 +1031,14 @@
         "eval/local/solvability",
         "eval/local/softlock",
         "eval/local/exploit",
-        "eval/local/optimization"
+        "eval/local/optimization",
+        "eval/emergent_fun"
       ],
       "volatile_state_flags": {
         "has_side_effects": false,
         "state_dependencies": []
       },
-      "last_verified_commit": "uncommitted-session-4",
+      "last_verified_commit": "uncommitted-session-5",
       "backlog_refs": [
         "REQ-141"
       ]
@@ -1167,7 +1173,7 @@
       "functional_summary": "Pure data records the GDOS scoring engine emits (P5/S5.1, dm-0031/0032). DesignDecision (source/subject/verdict/summary/findings + optional five Intent-Repository fields — REQ-111), MetricScore (metric/score/threshold/pass), GateResult (a gate's scores+pass+findings+decisions), GdosReport (a level's gates aggregated, stamped with profileId). Trivial constructors metricScore/gateResult/gdosReport derive pass from >= threshold and all-metrics-pass. No sim/audit imports; no arithmetic.",
       "gdos_alignment": "Section_6_Quality_Gates__Section_12_Design_Intent_Repository",
       "dependencies": [],
-      "dependents": ["eval/gdos/emotional", "eval/gdos/streamability", "eval/gdos/infodensity", "eval/gdos/judge", "eval/evaluate"],
+      "dependents": ["eval/gdos/emotional", "eval/gdos/streamability", "eval/gdos/infodensity", "eval/gdos/judge", "eval/gdos/curation", "eval/evaluate"],
       "volatile_state_flags": { "has_side_effects": false, "state_dependencies": [] },
       "last_verified_commit": "uncommitted-session-5",
       "backlog_refs": ["REQ-055", "REQ-056", "REQ-061", "REQ-111"]
@@ -1176,10 +1182,10 @@
       "node_id": "eval/gdos/profile",
       "type": "SystemNode",
       "file_path": "src/eval/gdos/Profile.ts",
-      "functional_summary": "ScoringProfile — the versioned data record holding EVERY calibration constant (dm-0031, the load-bearing P5 decision): emotional thresholds (REQ-055), streamability thresholds (REQ-056), IDS viewport+min/max+fairness (REQ-061), and all estimator coefficients. Gate logic contains ZERO calibration literals; recalibration is a data change (the CDRE channel, S5.8). DEFAULT_PROFILE freezes the PRD's own numbers. parseProfile/parseProfileText mirror the level-parser discipline (never throw, path-qualified Result errors, strict keys, finite numbers, hard version reject, max>=min, non-zero share weights). Imports only the SchemaError type from schema/parse.",
+      "functional_summary": "ScoringProfile — the versioned data record holding EVERY calibration constant (dm-0031, the load-bearing P5 decision): emotional thresholds (REQ-055), streamability thresholds (REQ-056), IDS viewport+min/max+fairness (REQ-061), novelty distance weights (REQ-053, added S5.5 within v1 — no persisted profiles existed), and all estimator coefficients. Gate logic contains ZERO calibration literals; recalibration is a data change (the CDRE channel, S5.8). DEFAULT_PROFILE freezes the PRD's own numbers. parseProfile/parseProfileText mirror the level-parser discipline (never throw, path-qualified Result errors, strict keys, finite numbers, hard version reject, max>=min, non-zero weights). Imports only the SchemaError type from schema/parse.",
       "gdos_alignment": "Section_6_Emotional_Thresholds__Section_7_Information_Density",
       "dependencies": ["schema/parse"],
-      "dependents": ["eval/gdos/emotional", "eval/gdos/streamability", "eval/gdos/infodensity", "eval/gdos/judge", "eval/evaluate"],
+      "dependents": ["eval/gdos/emotional", "eval/gdos/streamability", "eval/gdos/infodensity", "eval/gdos/judge", "eval/gdos/novelty", "eval/evaluate"],
       "volatile_state_flags": { "has_side_effects": false, "state_dependencies": [] },
       "last_verified_commit": "uncommitted-session-5",
       "backlog_refs": ["REQ-055", "REQ-056", "REQ-061"]
@@ -1191,7 +1197,7 @@
       "functional_summary": "EvidenceBundle — everything a level is judged from, assembled ONCE (dm-0031): def + archetype ArchetypeRun[] + observed DeathEvent[] (with lookback snapshots for the REQ-016 fairness check) + the four P4 local verdicts. assembleEvidence is a PURE combiner (freezes the parts; runs no audits). Imports the four verdict types + ReplayTape + ArchetypeName + Vec2/EntityKind/LevelDefinition as TYPES ONLY (import type), so gdos gains no runtime dependency on the local audit pass — the scan-enforced no-re-auditing discipline.",
       "gdos_alignment": "Section_15_Local_Spatial_Verification__Section_6_Quality_Gates",
       "dependencies": ["core/vec2", "components/behavior", "components/level", "schema/tape_io", "eval/archetypes", "eval/local/solvability", "eval/local/softlock", "eval/local/exploit", "eval/local/optimization"],
-      "dependents": ["eval/gdos/design_space", "eval/gdos/emotional", "eval/gdos/streamability", "eval/gdos/infodensity", "eval/gdos/judge", "eval/evaluate"],
+      "dependents": ["eval/gdos/design_space", "eval/gdos/emotional", "eval/gdos/streamability", "eval/gdos/infodensity", "eval/gdos/judge", "eval/gdos/novelty", "eval/gdos/curation", "eval/evaluate"],
       "volatile_state_flags": { "has_side_effects": false, "state_dependencies": [] },
       "last_verified_commit": "uncommitted-session-5",
       "backlog_refs": ["REQ-050"]
@@ -1212,10 +1218,10 @@
       "node_id": "eval/gdos/design_space",
       "type": "SystemNode",
       "file_path": "src/eval/gdos/DesignSpace.ts",
-      "functional_summary": "The Mechanic x Environment x Emotion x Optimization-Style x Player-Type design-space matrix + coverage tracker (REQ-040/041, dm-0034). Axes are DERIVED from registries so they can't drift: MECHANIC_AXIS=ENTITY_KINDS, PLAYER_TYPE_AXIS=Object.keys(ARCHETYPES), ENVIRONMENT=modifier kinds+baseline, EMOTION_ARC=the REQ-015 six phases, OPTIMIZATION_STYLE=the five tiers. extractCoverage(bundle)->exercised cell keys; coverageMatrix(bundles[])->union + per-axis marginals. Whitelist math; imports registries as data + the EvidenceBundle type.",
+      "functional_summary": "The Mechanic x Environment x Emotion x Optimization-Style x Player-Type design-space matrix + coverage tracker (REQ-040/041, dm-0034). Axes are DERIVED from registries so they can't drift: MECHANIC_AXIS=ENTITY_KINDS, PLAYER_TYPE_AXIS=Object.keys(ARCHETYPES), ENVIRONMENT=modifier kinds+baseline, EMOTION_ARC=the REQ-015 six phases, OPTIMIZATION_STYLE=the five tiers. Also exports KINETIC_KINDS (spring/gravityZone/conveyor/movers — the shared kinetic grouping consumed by the streamability gate and the emergent-fun probe). extractCoverage(bundle)->exercised cell keys; coverageMatrix(bundles[])->union + per-axis marginals. Whitelist math; imports registries as data + the EvidenceBundle type.",
       "gdos_alignment": "Section_5_Design_Space_Modeling",
       "dependencies": ["components/behavior", "eval/archetypes", "eval/gdos/evidence"],
-      "dependents": ["eval/gdos/economy"],
+      "dependents": ["eval/gdos/economy", "eval/gdos/streamability", "eval/emergent_fun"],
       "volatile_state_flags": { "has_side_effects": false, "state_dependencies": [] },
       "last_verified_commit": "uncommitted-session-5",
       "backlog_refs": ["REQ-040", "REQ-041"]
@@ -1227,7 +1233,7 @@
       "functional_summary": "Economy of Mechanics metric (REQ-042, dm-0034): economy = distinct covered cells (Depth) / mechanic count, over a CoverageMatrix; per-mechanic depth = distinct cells that mechanic participates in. preferByEconomy(deepen,addMechanic) encodes 'exhaust variations before adding a mechanic' (higher economy wins; ties favor deepening); deepestMechanic finds the one to keep exhausting. Whitelist math; imports the CoverageMatrix + EntityKind types.",
       "gdos_alignment": "Section_5_Economy_Of_Mechanics",
       "dependencies": ["components/behavior", "eval/gdos/design_space"],
-      "dependents": [],
+      "dependents": ["eval/gdos/curation"],
       "volatile_state_flags": { "has_side_effects": false, "state_dependencies": [] },
       "last_verified_commit": "uncommitted-session-5",
       "backlog_refs": ["REQ-042"]
@@ -1250,7 +1256,7 @@
       "file_path": "src/eval/gdos/Streamability.ts",
       "functional_summary": "Streamability-matrix gate (REQ-056, dm-0031). Proxies over the bundle, coefficients from the profile: Reaction Density~(deaths+hazards+kinetic)/clear-duration vs reference, Clip Potential~delivered Surprise (reused from the emotional gate) + kinetic count, Replay Value~optimization delta + distinct clear times (route multiplicity), Shareability~profile-weighted composite of the three. scoreStreamability->GateResult. Whitelist math; pure.",
       "gdos_alignment": "Section_6_Streamability_Matrix",
-      "dependencies": ["core/clock", "components/collision_class", "components/behavior", "eval/gdos/evidence", "eval/gdos/profile", "eval/gdos/score", "eval/gdos/emotional", "eval/gdos/report"],
+      "dependencies": ["core/clock", "components/collision_class", "components/behavior", "eval/gdos/evidence", "eval/gdos/profile", "eval/gdos/score", "eval/gdos/emotional", "eval/gdos/design_space", "eval/gdos/report"],
       "dependents": ["eval/gdos/judge"],
       "volatile_state_flags": { "has_side_effects": false, "state_dependencies": [] },
       "last_verified_commit": "uncommitted-session-5",
@@ -1281,6 +1287,54 @@
       "backlog_refs": ["REQ-050"]
     },
     {
+      "node_id": "eval/gdos/novelty",
+      "type": "SystemNode",
+      "file_path": "src/eval/gdos/Novelty.ts",
+      "functional_summary": "Novelty search metric (REQ-053, dm-0038 — resolves P5 open question 4). buildDescriptor(bundle) -> fixed-length NoveltyDescriptor: mechanic histogram (ENTITY_KINDS-order fractions) + geometry signature (4x4 solid-fraction bands) + trajectory shape (8 bucketed moveAxis means + first-jump position + hasJump/hasTrajectory). descriptorDistance(a,b,profile) = profile-weighted mean of per-component normalized Euclidean distances (weights = profile.novelty, dm-0031). noveltyDivergence(candidate, corpus[], profile) = distance to the NEAREST corpus member; null on empty corpus (content gate: no global registry exists). PURE gdos module (dm-0037): no sim, no search. Whitelist math (sqrt/min/max/floor).",
+      "gdos_alignment": "Section_6_Novelty_Search",
+      "dependencies": ["components/behavior", "components/tilemap", "eval/gdos/evidence", "eval/gdos/profile"],
+      "dependents": [],
+      "volatile_state_flags": { "has_side_effects": false, "state_dependencies": [] },
+      "last_verified_commit": "uncommitted-session-5",
+      "backlog_refs": ["REQ-053"]
+    },
+    {
+      "node_id": "eval/emergent_fun",
+      "type": "SystemNode",
+      "file_path": "src/eval/EmergentFun.ts",
+      "functional_summary": "Emergent-fun discovery probe (REQ-054). probeEmergentFun(def, opts) walks the bounded S4.2 reachability graph (stopAtGoal false) and flags KINETIC ANCHORS: reachable states whose velocity escapes the plain-movement envelope (|vx| > runSpeed*factor, or upward > jumpSpeed*factor; downward never flagged — falling is gravity, not emergence). Each anchor is deduped by quantized position+axis, attributed to the nearest KINETIC_KINDS entity's live position within a radius, and carries reconstructFrames(...) input frames so P7 can reproduce and design around the moment. Thresholds are factors over TUNING (data, options record). Lives at TOP-LEVEL src/eval/ per dm-0037 (it EXECUTES a search — never a gdos/ module). Deterministic; whitelist math.",
+      "gdos_alignment": "Section_6_Emergent_Fun_Discovery",
+      "dependencies": ["core/state", "core/vec2", "components/tuning", "components/level", "components/behavior", "eval/gdos/design_space", "eval/local/search"],
+      "dependents": [],
+      "volatile_state_flags": { "has_side_effects": false, "state_dependencies": [] },
+      "last_verified_commit": "uncommitted-session-5",
+      "backlog_refs": ["REQ-054"]
+    },
+    {
+      "node_id": "eval/gdos/design_memory",
+      "type": "SystemNode",
+      "file_path": "src/eval/gdos/DesignMemory.ts",
+      "functional_summary": "The executable GDOS Design Memory / Intent Repository (REQ-050/051/111, dm-0032/dm-0040) — the pure text->records->text layer over meta/design_memory_ledger.json (that file's own header designates it the backing store). parseDesignMemory: strict parse, path-qualified Result errors, closed ACCEPTED|REJECTED set, dm-#### ids unique, YYYY-MM-DD dates, five non-empty Intent Repository fields per entry; v1.0 keeps rejected_ideas[] and lifecycle mechanics[] EMPTY (rejected ideas = decisions with status REJECTED; lifecycle entries are P7's behind a version bump). findPriorArt = the REQ-051 parse-before-proposing term search. appendDecision is PURE (new document; date is a parameter — no Date.now) with an exact-title repetition guard; nextDecisionId mints max+1. serializeDesignMemory = canonical bytes (fixed key order, 2-space, trailing newline), byte-idempotent against the live file. fs stays at callers. Dogfooded: dm-0040 was appended to the live ledger via this store.",
+      "gdos_alignment": "Section_6_Design_Memory__Section_12_Design_Intent_Repository",
+      "dependencies": ["schema/parse"],
+      "dependents": [],
+      "volatile_state_flags": { "has_side_effects": false, "state_dependencies": [] },
+      "last_verified_commit": "uncommitted-session-5",
+      "backlog_refs": ["REQ-050", "REQ-051", "REQ-111"]
+    },
+    {
+      "node_id": "eval/gdos/curation",
+      "type": "SystemNode",
+      "file_path": "src/eval/gdos/Curation.ts",
+      "functional_summary": "The Creative-Director machinery (REQ-020/021/022; REQ-012 curation share; dm-0041). killSwitch(bundle, report, context): kills on (1) failed GDOS gates, (2) a completion whose tape never presses THE jump — the REQ-012 'does not test the constraint' evidence proxy, (3) addsNewMechanic while the REQ-042 economy comparison favors deepening; every kill carries the full five Intent Repository fields (a design-intent commitment for the S5.6 store). firstPartyReview(subject, attestations, report?): the three Section-3 criteria (Self-Explanation, Hours of Interest, Inevitable Polish) as HONEST typed attestations with mandatory rationales — an empty rationale is itself a failure; deterministic verdict logic, never faked measurements (finding 10). subtractivePass(items, answers): the six pruning questions as data (SUBTRACTIVE_QUESTIONS); any NO = removal candidate, any missing answer = incomplete (silence is not a keep). PURE (dm-0037): decision procedures over computed data only.",
+      "gdos_alignment": "Section_3_Creative_Director__Section_2_Constraint_Isolation",
+      "dependencies": ["eval/gdos/evidence", "eval/gdos/economy", "eval/gdos/report"],
+      "dependents": [],
+      "volatile_state_flags": { "has_side_effects": false, "state_dependencies": [] },
+      "last_verified_commit": "uncommitted-session-5",
+      "backlog_refs": ["REQ-020", "REQ-021", "REQ-022", "REQ-012"]
+    },
+    {
       "node_id": "eval/evaluate",
       "type": "SystemNode",
       "file_path": "src/eval/Evaluate.ts",
@@ -1294,6 +1348,22 @@
     }
   ],
   "edges": [
+    { "type": "DependencyEdge", "from": "eval/gdos/design_memory", "to": "schema/parse", "kind": "type_import" },
+    { "type": "DependencyEdge", "from": "eval/gdos/curation", "to": "eval/gdos/evidence", "kind": "type_import" },
+    { "type": "DependencyEdge", "from": "eval/gdos/curation", "to": "eval/gdos/economy", "kind": "type_import" },
+    { "type": "DependencyEdge", "from": "eval/gdos/curation", "to": "eval/gdos/report", "kind": "type_import" },
+    { "type": "DependencyEdge", "from": "eval/gdos/novelty", "to": "components/behavior", "kind": "value_import" },
+    { "type": "DependencyEdge", "from": "eval/gdos/novelty", "to": "components/tilemap", "kind": "value_import" },
+    { "type": "DependencyEdge", "from": "eval/gdos/novelty", "to": "eval/gdos/evidence", "kind": "type_import" },
+    { "type": "DependencyEdge", "from": "eval/gdos/novelty", "to": "eval/gdos/profile", "kind": "type_import" },
+    { "type": "DependencyEdge", "from": "eval/emergent_fun", "to": "core/state", "kind": "type_import" },
+    { "type": "DependencyEdge", "from": "eval/emergent_fun", "to": "core/vec2", "kind": "type_import" },
+    { "type": "DependencyEdge", "from": "eval/emergent_fun", "to": "components/tuning", "kind": "value_import" },
+    { "type": "DependencyEdge", "from": "eval/emergent_fun", "to": "components/level", "kind": "type_import" },
+    { "type": "DependencyEdge", "from": "eval/emergent_fun", "to": "components/behavior", "kind": "type_import" },
+    { "type": "DependencyEdge", "from": "eval/emergent_fun", "to": "eval/gdos/design_space", "kind": "value_import" },
+    { "type": "DependencyEdge", "from": "eval/emergent_fun", "to": "eval/local/search", "kind": "value_import" },
+    { "type": "DependencyEdge", "from": "eval/gdos/streamability", "to": "eval/gdos/design_space", "kind": "value_import" },
     { "type": "DependencyEdge", "from": "eval/agent_harness", "to": "core/vec2", "kind": "type_import" },
     { "type": "DependencyEdge", "from": "eval/agent_harness", "to": "components/collision_class", "kind": "value_import" },
     { "type": "DependencyEdge", "from": "eval/agent_harness", "to": "components/behavior", "kind": "type_import" },

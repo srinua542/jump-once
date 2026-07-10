@@ -67,6 +67,19 @@ export const ENVIRONMENT_AXIS: readonly EnvironmentValue[] = Object.freeze([
   ...ENVIRONMENT_MODIFIER_KINDS,
 ]);
 
+/**
+ * Kinds whose motion or impulse creates kinetic moments (§16 kinetic modifiers
+ * + movers). Shared by the streamability gate (clip-worthiness) and the
+ * emergent-fun probe (anchor proximity). Lockstep-tested against EntityKind.
+ */
+export const KINETIC_KINDS: readonly EntityKind[] = Object.freeze([
+  'spring',
+  'gravityZone',
+  'conveyor',
+  'movingPlatform',
+  'movingHazard',
+]);
+
 /** The five REQ-101 optimization tiers — the Optimization-Style axis. */
 export type OptimizationStyle = 'discovery' | 'good' | 'fast' | 'expert' | 'worldRecord';
 

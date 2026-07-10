@@ -26,7 +26,7 @@
 |----|-------------|-----|-------|-------|
 | REQ-010 | Exactly one jump per level, invariant across the entire campaign. | §2 | P3 | VERIFIED |
 | REQ-011 | Exclude upgrades, power-ups, double/wall jumps, jump-refreshing lives, temporary exceptions. | §2 | P3 | VERIFIED |
-| REQ-012 | Every challenge isolates/amplifies/tests the one-jump constraint; omit anything that does not. | §2 | P5,P10 | NOT_STARTED |
+| REQ-012 | Every challenge isolates/amplifies/tests the one-jump constraint; omit anything that does not. | §2 | P5,P10 | IN_PROGRESS |
 | REQ-013 | Understandable within seconds; difficulty from player decisions and spatial puzzles. | §2 | P10 | NOT_STARTED |
 | REQ-014 | The structural puzzle *is* the level layout itself. | §2 | P2,P10 | IN_PROGRESS |
 | REQ-015 | Deliberate six-phase emotional arc: Curiosity, Confidence, Surprise/Betrayal, Realization, Mastery, Renewed Uncertainty. | §2 | P5,P10 | IN_PROGRESS |
@@ -36,9 +36,9 @@
 
 | ID | Requirement | PRD | Phase | State |
 |----|-------------|-----|-------|-------|
-| REQ-020 | Operate as Creative Director; ruthless curation; a "Kill Switch" for any non-elevating concept. | §3 | P5 | NOT_STARTED |
-| REQ-021 | First-Party Quality Review gate (Self-Explanation, Hours of Interest, Inevitable Polish) before approving any mechanic/system/chapter. | §3 | P5 | NOT_STARTED |
-| REQ-022 | Subtractive Removal Engine: mandatory subtraction pass at every milestone across six pruning questions. | §3 | P5,P11 | NOT_STARTED |
+| REQ-020 | Operate as Creative Director; ruthless curation; a "Kill Switch" for any non-elevating concept. | §3 | P5 | IN_PROGRESS |
+| REQ-021 | First-Party Quality Review gate (Self-Explanation, Hours of Interest, Inevitable Polish) before approving any mechanic/system/chapter. | §3 | P5 | IN_PROGRESS |
+| REQ-022 | Subtractive Removal Engine: mandatory subtraction pass at every milestone across six pruning questions. | §3 | P5,P11 | IN_PROGRESS |
 
 ## §4 Campaign Intelligence & Player Behavior Modeling
 
@@ -60,11 +60,11 @@
 
 | ID | Requirement | PRD | Phase | State |
 |----|-------------|-----|-------|-------|
-| REQ-050 | All creative decisions originate from GDOS; no gameplay content created independently of it. | §6 | P5,P10 | NOT_STARTED |
+| REQ-050 | All creative decisions originate from GDOS; no gameplay content created independently of it. | §6 | P5,P10 | IN_PROGRESS |
 | REQ-051 | Persistent Design Memory: version control for creative intent; record every accepted/rejected idea; parse history before proposing to prevent regression/repetition. | §6 | P0,P5 | IN_PROGRESS |
 | REQ-052 | Continuous Design Research Engine (CDRE): self-improving loop that improves the design process itself and feeds validated discoveries back into GDOS. | §6 | P5 | NOT_STARTED |
-| REQ-053 | Novelty Search: algorithmic metric targeting layout divergence. | §6 | P5,P7 | NOT_STARTED |
-| REQ-054 | Emergent Fun Discovery search: probe physics edge cases; flag high-value kinetic anchors for future layouts. | §6 | P5,P7 | NOT_STARTED |
+| REQ-053 | Novelty Search: algorithmic metric targeting layout divergence. | §6 | P5,P7 | IN_PROGRESS |
+| REQ-054 | Emergent Fun Discovery search: probe physics edge cases; flag high-value kinetic anchors for future layouts. | §6 | P5,P7 | IN_PROGRESS |
 | REQ-055 | Mathematically enforced emotional thresholds as quality gates: Curiosity ≥90, Confidence ≥90, Surprise ≥95, Mastery ≥95. | §6 | P5 | IN_PROGRESS |
 | REQ-056 | Global Streamability Matrix gates: Shareability ≥85, Clip Potential ≥90, Reaction Density ≥95, Replay Value ≥90. | §6 | P5 | IN_PROGRESS |
 

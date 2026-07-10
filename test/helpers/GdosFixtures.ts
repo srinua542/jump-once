@@ -184,6 +184,7 @@ export function profileWith(overrides: {
       thresholds: { ...DEFAULT_PROFILE.streamability.thresholds, ...(overrides.streamability ?? {}) },
     },
     infoDensity: { ...DEFAULT_PROFILE.infoDensity, ...(overrides.infoDensity ?? {}) },
+    novelty: { ...DEFAULT_PROFILE.novelty },
   };
 }
 
