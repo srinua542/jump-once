@@ -125,8 +125,8 @@
 
 | ID | Requirement | PRD | Phase | State |
 |----|-------------|-----|-------|-------|
-| REQ-130 | Visual Level Editor: tile painting, grid-snapped object placement, hierarchical grouping, multi-step undo/redo, live in-editor playtest. | §14 | P8 | NOT_STARTED |
-| REQ-131 | Visual debug overlays (hitboxes, triggers, movement paths, simulated jump arcs, surface normals, physics states) + runtime inspection (pause, frame-step, variable manipulation, instant reload). | §14 | P8 | NOT_STARTED |
+| REQ-130 | Visual Level Editor: tile painting, grid-snapped object placement, hierarchical grouping, multi-step undo/redo, live in-editor playtest. | §14 | P8,P9 | NOT_STARTED |
+| REQ-131 | Visual debug overlays (hitboxes, triggers, movement paths, simulated jump arcs, surface normals, physics states) + runtime inspection (pause, frame-step, variable manipulation, instant reload). | §14 | P8,P9 | NOT_STARTED |
 | REQ-132 | Automated profiling: frame rate, memory allocations, scene load times, asset delivery speeds. | §14 | P8,P11 | NOT_STARTED |
 | REQ-133 | Telemetry: death-coordinate heatmaps, input recording for failure analysis, statistical difficulty spikes, fed back into GDOS for design-debt evaluation. | §14 | P8 | NOT_STARTED |
 

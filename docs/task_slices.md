@@ -124,13 +124,17 @@ Session-sized, dependency-ordered work units. Each slice is small enough to comp
 
 ## Phase 8 — Internal Production Tools
 
+*(Restructured from the original four-slice table at P8 plan authoring — adversarial review dm-0065: REQ-130/131 as literally worded presuppose a rendering surface P9 hasn't built yet, so each splits into a P8 pure-logic/data share (here) and a P9 presentation share; debug overlays and runtime inspection are separable engines (dm-0070's immutability-safe variable-edit design warranted its own slice); telemetry splits into capture (dm-0044-compatible record shape) and analysis/round-trip (dm-0068/dm-0069: replay-derived heatmaps, reuse of P6's `processCampaign` rather than new spike-detection logic). See `docs/execution_plan.md` §P8.)*
+
 | Slice | Title | REQs | Depends | State |
 |-------|-------|------|---------|-------|
-| S8.1 | Visual level editor (paint/snap/group/undo-redo/playtest) | REQ-130 | S3.8, S2.6 | NOT_STARTED |
-| S8.2 | Debug overlays + runtime inspection | REQ-131 | S3.8 | NOT_STARTED |
-| S8.3 | Profiling instrumentation | REQ-132 | S3.8 | NOT_STARTED |
-| S8.4 | Telemetry → GDOS pipeline | REQ-133 | S6.4 | NOT_STARTED |
-| S8.5 | Phase-8 verification report | REQ-P02 | S8.1–S8.4 | NOT_STARTED |
+| S8.1 | Editor draft/authoring state + live-playtest driver + export | REQ-130 (P8 share) | M3-P7 ✓ (P2 ✓, P3 ✓) | NOT_STARTED |
+| S8.2 | Debug overlay descriptors (hitbox/trigger/path/jump-arc/normal/state) | REQ-131 (P8 share, part 1) | P3 ✓ | NOT_STARTED |
+| S8.3 | Runtime inspection controller (pause/step/variable-edit/reload) | REQ-131 (P8 share, part 2) | S8.1 | NOT_STARTED |
+| S8.4 | Profiling instrumentation | REQ-132 (P8 share) | P1 ✓ | NOT_STARTED |
+| S8.5 | Telemetry capture | REQ-133 (part 1) | S8.1 | NOT_STARTED |
+| S8.6 | Telemetry analysis + GDOS round-trip | REQ-133 (part 2), REQ-032 (P8 share) | S8.5, P6 ✓ | NOT_STARTED |
+| S8.7 | Phase-8 verification report; M3 closure | REQ-P02 | S8.1–S8.6 | NOT_STARTED |
 
 ## Phase 9 — Rendering, Audio & Visual Grammar
 
@@ -170,8 +174,11 @@ Session-sized, dependency-ordered work units. Each slice is small enough to comp
 
 **P7 — PDA & Procedural Generation + Mechanic Lifecycle is VERIFIED** (`docs/verification/P7.md`); all eight P7 slices COMPLETED, 498/498 tests green, pkg `s7-b6f2e3`. Six REQs flipped VERIFIED (060/081/082/053/054/061); REQ-090/091/012 retain a P10 share. The generation pipeline (`src/gen/`) is built and verified; the IRD exit condition is proven by `GenPipeline.test.ts`.
 
-1. **P8 — Internal Production Tools** is the next phase and the SECOND (final) M3 pillar. **M3 — Production Capable does NOT close until P8 verifies.** Author the P8 execution-plan section FIRST (REQ-P02), via the same adversarial-review discipline every phase since P2 has gotten. P8 owns REQ-130/131/132/133 (visual level editor, debug overlays, profiling, telemetry → GDOS) and contributes REQ-032's live-telemetry share.
-2. Note a boundary P8 must respect: `tools/` is interactive/editor territory; the pure `src/gen/` pipeline and `src/eval/` audits stay `node --test`-covered and are consumed by P8 as libraries, not modified.
-3. Content authoring (P10) remains hard-gated behind M3 (P7 ✓ + P8). Do NOT author `LevelDefinition` content in P8 — its job is the editor + telemetry tooling.
+**P8 — Internal Production Tools execution-plan section is authored** (`docs/execution_plan.md` §P8, adversarial review dm-0065–dm-0070; table above restructured to S8.1–S8.7). Active phase.
 
-*(Content generation was hard-gated until M2 — P4+P5+P6 — verified. The gate is open for the phases that build the generation pipeline (P7 ✓) and tooling (P8). Actual chapter/level authoring is P10, milestone M3 = P7 + P8.)*
+1. **Start at S8.1** — editor draft/authoring state + live-playtest driver + export (REQ-130 P8 share); also lands the `tools/` isolation scan (dm-0066) as the first `tools/**/*.ts` module.
+2. Key P8 design decisions to hold: REQ-130/131's *visual*/rendering sub-clauses are P9's share, not P8's (dm-0065; backlog Phase columns already amended to `P8,P9`) — P8 builds pure logic/data only, zero canvas/DOM/WebGL; wall-clock reads are permitted only inside `tools/profiler/` (dm-0067); death-heatmap coordinates are replay-derived, never live-position-logged (dm-0068); difficulty-spike detection reuses P6's `processCampaign` verbatim, no new algorithm (dm-0069); debug variable edits go through `StateManager.commit()`, never in-place (dm-0070).
+3. Note the boundary P8 must respect: `tools/` consumes the pure `src/gen/` pipeline and `src/eval/` audits as libraries through public entry points only — never modifies them (mirrors dm-0057's `gen/` isolation).
+4. Content authoring (P10) remains hard-gated behind M3 (P7 ✓ + P8, not yet closed). Do NOT author `LevelDefinition` content in P8 — its job is the editor + telemetry tooling.
+
+*(Content generation was hard-gated until M2 — P4+P5+P6 — verified. The gate is open for the phases that build the generation pipeline (P7 ✓) and tooling (P8, in progress). Actual chapter/level authoring is P10, milestone M3 = P7 + P8.)*

@@ -712,6 +712,72 @@
       "emotion_targeted": "Trust that the pipeline accepts exactly the levels whose one jump genuinely matters, and rejects the rest, without a heuristic that misfires on the game’s defining shape.",
       "misconception_created": "Recording-but-not-gating exploit may read as ignoring it; on a template whose challenge is entity hazards (not a geometry gap) a bypass would still surface in provenance for a caller/P10 to act on — and the pipeline could add a template-aware exploit gate when such templates exist.",
       "why_alternatives_rejected": "Hard-gating on exploit: rejects every one-jump pit, including ONE_GAP (proven). Tuning auditExploit margins to hide the pit signal: hides a real signal and is fragile. Dropping the counterfactual audit and trusting exploit: exactly the necessary-but-insufficient proxy dm-0041 rejected. Removing the spikes to dodge the flag: an empty pit traps the player (softlock) or requires out-of-bounds death the engine does not model."
+    },
+    {
+      "id": "dm-0065",
+      "date": "2026-07-11",
+      "status": "ACCEPTED",
+      "title": "P8 REQ-130/131 rendering-boundary split: pure logic/data is P8, presentation/UI is P9",
+      "why_it_exists": "REQ-130 (\"Visual Level Editor\") and REQ-131 (\"Visual debug overlays\") are worded assuming a rendering surface. No canvas/WebGL/DOM dependency has ever existed in this repo, and P9 (Rendering, Audio & Visual Grammar) is scheduled AFTER P8 in the IRD DAG, not before. Building the editor/overlays \"visually\" now would either reach into unverified P9 scope or ship a stub UI — both forbidden.",
+      "problem_it_solves": "Lets P8 proceed at all, honestly, without violating phase gating or the no-placeholder rule. P8 delivers every part of REQ-130/131 that is pure logic/data and independently node --test-covered: the editor draft-authoring state machine (paint/place/group/undo-redo over a LevelDefinition draft), the live-playtest driver (an interactive wrapper over the already-proven Engine/StateManager), export (already-built serializeLevel), the debug-overlay descriptors (geometry/state records, not pixels), and the runtime inspection controller. P9 later supplies the presentation share: painting these descriptors and turning input into editor commands. Backlog Phase columns for REQ-130 and REQ-131 are amended from P8 to P8,P9 — the identical treatment REQ-150 received at P3 (dm-0008 precedent).",
+      "emotion_targeted": "Confidence that \"the editor is done\" never gets claimed before it can actually be used, while also not blocking real P8 engineering behind an unbuilt renderer.",
+      "misconception_created": "A reader skimming REQ-130/131 might assume P8 ships a usable on-screen editor; it ships the complete, tested logic layer a P9 UI will sit on top of, not a visible tool yet.",
+      "why_alternatives_rejected": "Building a minimal renderer inside P8 to satisfy \"visual\" literally: violates phase gating (P9 unverified) and risks a second, conflicting renderer once P9 lands. Deferring all of REQ-130/131 to P9: leaves P8 with nothing real to build for its two largest REQs, contradicting the IRD phase-owner list. Leaving the backlog Phase column unchanged (P8 only): would let REQ-130/131 falsely verify at P8 close per dm-0008 even though real scope remains — corrected by the P8,P9 amendment now, before any flip is attempted."
+    },
+    {
+      "id": "dm-0066",
+      "date": "2026-07-11",
+      "status": "ACCEPTED",
+      "title": "P8 tools/ isolation invariant: one-way consumption of src/gen and src/eval through public seams only",
+      "why_it_exists": "src/eval/ (dm-0022) and src/gen/ (dm-0057) both earned one-way isolation scans at the start of the phase that introduced their first consumer or module, specifically because P6 (dm-0053) found a real scan gap that had gone prose-only for four slices. tools/ is about to become the first consumer of src/gen/ output and a heavier consumer of src/eval/ than anything before it, and needs the same discipline from its very first TypeScript module, not \"eventually.\"",
+      "problem_it_solves": "Prevents tools/ from reaching into gate/search internals of gdos/ or campaign/ the way gen/ itself is forbidden from doing. The rule: tools/ consumes src/gen/ and src/eval/ only through the exact public entry points their existing consumers already use (evaluateLevel/judgeLevel, the P4 audits, analyzeTape, processCampaign, manufactureLevel, discoverOpportunities); nothing under src/ may ever import tools/; tools/ never modifies src/gen/ or src/eval/. Enforced by test/unit/ToolsIsolation.test.ts landing at S8.1, the first tools/**/*.ts module (existing tools/sdlc/*.js are plain Node scripts outside the TS surface and are exempt).",
+      "emotion_targeted": "Trust that the verified P4/P6/P7 subtrees stay verified — a new consumer cannot quietly widen their surface area or couple to their internals.",
+      "misconception_created": "Someone extending the editor might assume any exported symbol from src/gen or src/eval is fair game; only the named public seams are — the scan test is the enforcement, not a suggestion.",
+      "why_alternatives_rejected": "Deferring the scan until \"tools/ gets bigger\": this is exactly the four-slice prose-only gap dm-0053 closed at P6 — the lesson is to never repeat it. Letting tools/ import gdos/ gate internals directly for convenience: recreates the exact coupling risk gen/ was built to avoid."
+    },
+    {
+      "id": "dm-0067",
+      "date": "2026-07-11",
+      "status": "ACCEPTED",
+      "title": "P8 profiler wall-clock exception: diagnostic-only, confined to tools/profiler/, never feeds WorldState or replay determinism",
+      "why_it_exists": "REQ-132 requires measuring frame rate, memory allocations, and scene-load time — all of which require reading real elapsed time. CLAUDE.md's determinism invariant (\"never introduce delta-time scaling\") and dm-0003/dm-0004 could be misread as forbidding any wall-clock read anywhere in the project, which would make REQ-132 unbuildable before a renderer even exists.",
+      "problem_it_solves": "Scopes the determinism axiom correctly: it governs simulation/gameplay state (src/core, src/systems, src/components, src/entities, src/schema, src/eval, src/gen) — never letting real time influence a tick or a replay hash. Profiling is diagnostic instrumentation living in tools/profiler/, explicitly permitted to call performance.now()/Date.now() for reporting; its output (ProfileReport) is read-only metadata that never appears inside WorldState and is never consumed by any src/ module. This mirrors the precedent dm-0017 already set for the transcendental-function ban (scoped to src/systems/, not the whole repo).",
+      "emotion_targeted": "Confidence that the determinism axiom is being honored precisely, not applied so broadly that it blocks legitimate, harmless diagnostic tooling.",
+      "misconception_created": "A future reader grepping for Date.now and finding hits in tools/profiler/ might think the axiom was violated; the validation criterion (a scan confirming src/core|systems|components|entities|schema|eval|gen stay clean of wall-clock reads) is the actual guarantee, not a blanket repo-wide ban.",
+      "why_alternatives_rejected": "Banning wall-clock reads everywhere: makes REQ-132 unbuildable before P9/P11, contradicting its P8,P11 phase column which expects a real P8 share now. Threading a fake/simulated clock through profiling instead: adds indirection with no benefit since profiler output never touches gameplay state or replay hashes in the first place."
+    },
+    {
+      "id": "dm-0068",
+      "date": "2026-07-11",
+      "status": "ACCEPTED",
+      "title": "P8 death-heatmap coordinates are replay-derived, never live-position-logged",
+      "why_it_exists": "REQ-133 wants death-coordinate heatmaps. A naive reading logs the player's live world position continuously during play. But every level in this project is already fully reconstructible from (level, seed, InputFrame tape) via the P1-proven deterministic replay guarantee — a second, parallel live-position-logging path would duplicate that guarantee with an unverified new mechanism, and would be actual new capture-surface the project does not otherwise need.",
+      "problem_it_solves": "Telemetry capture (S8.5) records only the minimal replayable unit: {levelId, seed, tape: ReplayTape, outcome} — exactly the shape TapeAnalyzer's analyzeTape already expects as an ArchetypeRun (dm-0044's data-substitution contract, satisfied with zero new capture surface). Death coordinates (S8.6) are recovered by deterministically replaying that capture through the existing Engine and sampling the player position at the tick the defeated transition fires. This is also literally REQ-133's \"input recording for failure analysis\" clause — the same captured tape, filtered/indexed by outcome.",
+      "emotion_targeted": "Confidence that telemetry is exactly as trustworthy as every other verified subsystem here — derived from the same replay guarantee, not a second unverified data path.",
+      "misconception_created": "A reader might expect a dedicated \"position logger\" module; there isn't one — death coordinates are a query against replay, not a capture-time concern.",
+      "why_alternatives_rejected": "Continuous live position logging: doubles the capture surface, is unverified against the replay guarantee, and stores far more data than the heatmap actually needs. Sampling position only at scripted checkpoints during live play: still a second capture path; replay-derived sampling needs none."
+    },
+    {
+      "id": "dm-0069",
+      "date": "2026-07-11",
+      "status": "ACCEPTED",
+      "title": "P8 telemetry reuses P6 CampaignDirector for difficulty-spike detection instead of building a second algorithm",
+      "why_it_exists": "REQ-133 names \"statistical difficulty spikes\" as a telemetry deliverable. P6's own exit condition (docs/verification/P6.md) is literally \"flags a synthetic difficulty spike\": CampaignDirector.processCampaign + ChapterHealth already derive CampaignAlerts, including a difficulty-spike class, from BehaviorSignals-bearing ChapterRecords. Writing a second spike-detection algorithm in tools/telemetry/ would duplicate verified P6 logic and create two sources of truth for the same signal.",
+      "problem_it_solves": "P8's sole remaining obligation for the spike clause is data supply: feed live-captured records through the existing analyzeTape (dm-0044) to derive BehaviorSignals, assemble a ChapterRecord, and run the existing, unmodified processCampaign (P6) — never build new detection logic. This is precisely the \"data substitution, not a structural change\" contract dm-0044 pre-authorized, and precisely why REQ-032's P6 share could already flip VERIFIED at P6 close while its P8 share remained real, unbuilt engineering.",
+      "emotion_targeted": "Trust that one signal has exactly one algorithm computing it, regardless of which phase supplied the data feeding that algorithm.",
+      "misconception_created": "Someone reading \"P8 delivers telemetry-driven difficulty spikes\" might expect new spike math in tools/; the validation criterion at S8.6 explicitly requires reuse (a test asserting zero diff against P6 fixtures' alert shape), not reinvention.",
+      "why_alternatives_rejected": "A second spike-detection algorithm tuned for live telemetry: duplicates P6's already-verified ChapterHealth/CampaignAlert logic, risking the two implementations drifting apart over time. Modifying campaign/ to add a \"live\" mode: violates dm-0047's campaign/ isolation rule (P8 does not modify src/eval/campaign/)."
+    },
+    {
+      "id": "dm-0070",
+      "date": "2026-07-11",
+      "status": "ACCEPTED",
+      "title": "P8 debug variable manipulation commits through StateManager, never mutates a live snapshot in place",
+      "why_it_exists": "REQ-131's \"runtime inspection controls... manipulate variables\" reads like a debugger backdoor that directly edits fields on a running WorldState snapshot — exactly the \"mutate active data buffers in place\" the core immutability invariant (dm-0004/dm-0043) forbids.",
+      "problem_it_solves": "tools/debug/Inspector.ts's setVariable expresses a debug edit as an explicit state patch, applied the same way any system's output is applied — through StateManager.commit() — never a direct field write on a live snapshot. This keeps debug tooling inside the same single-mutation-point discipline every system already honors, at zero extra engineering cost since StateManager was built generically from S1.6 onward. The existing freeze-on-commit test pattern extends to catch a regression here.",
+      "emotion_targeted": "Confidence that even the most invasive-sounding tool in the project (a live variable editor) cannot quietly break the immutability guarantee every other system depends on.",
+      "misconception_created": "A reader might assume \"variable manipulation\" means unrestricted field access; it means committing a validated state patch through the one sanctioned mutation point, same as a physics or lifecycle system tick.",
+      "why_alternatives_rejected": "A direct-mutation debug editor for convenience/speed: violates dm-0004/dm-0043 outright and risks corrupting `previous`-snapshot invariants relied on elsewhere (e.g. render interpolation, once P9 exists). A separate \"debug state\" shadow copy reconciled later: adds a second source of truth exactly where StateManager already provides one canonical commit point."
     }
   ],
   "rejected_ideas": [],
