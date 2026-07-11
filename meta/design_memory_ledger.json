@@ -987,6 +987,105 @@
       "emotion_targeted": "Fair, legible failure (REQ-016): the player must be able to SEE why they died, not just feel the level snap back before they process it.",
       "misconception_created": "This decision does NOT pick option (a), (b), or (c) — a future session must not assume the render hold is already decided; S9.5 must actually resolve it, not treat this ledger entry as the resolution.",
       "why_alternatives_rejected": "Deciding the resolution immediately (mid-S9.1, before any render code exists to prototype the hold duration against) was rejected as premature — S9.5 is where game-feel timing is tuned against real DrawList/frame-time data, not planning-time guesswork."
+    },
+    {
+      "id": "dm-0090",
+      "date": "2026-07-11",
+      "status": "ACCEPTED",
+      "title": "StylePack interface amended with rasterize(request, device): void, plus a determinism probe in validatePack",
+      "why_it_exists": "S9.1 shipped visual() as pure cache-identity management (bitmap handle + anchor + pad) but never specified how a bitmap actually gets DRAWN — the atlas (S9.4) needs to turn a handle into real pixels exactly once. Without a dedicated method, either visual() would have to both assign identity AND draw (conflating two concerns) or drawing would have no seam at all.",
+      "problem_it_solves": "Adds StylePack.rasterize(request, device: Raster2D): void — a pure, side-effecting function that issues the deterministic draw-command sequence for a request into an injected device, called by the atlas exactly once per distinct bitmap id. validatePack (render/style/StylePack.ts) gained a determinism probe: for every bound role, it creates two independent trace recorders (render/style/Raster2D.ts's createTraceRecorder), calls rasterize twice with the identical request, and asserts the command traces are byte-identical — catching a pack that (incorrectly) reads wall-clock time or Math.random inside a draw function. This is an in-progress-phase interface amendment (S9.1 is COMPLETED, not yet VERIFIED — REQ-070/071 flip only at S9.11), which the four-state discipline explicitly allows.",
+      "emotion_targeted": "N/A (architecture decision).",
+      "misconception_created": "A future session must not assume visual() alone is sufficient to get pixels — rasterize() is the only method that actually draws; visual() only manages cache identity/sizing/anchor.",
+      "why_alternatives_rejected": "Folding drawing into visual() itself rejected: conflates pure identity/cache management with a side-effecting device call, and would force every visual() caller (including validatePack's cache-by-key probe) to supply a device even when only checking identity."
+    },
+    {
+      "id": "dm-0091",
+      "date": "2026-07-11",
+      "status": "ACCEPTED",
+      "title": "dm-0084 correction: the reference kit's Optimization elements (movingPlatform, conveyor) were ALREADY achromatic — no terracotta recolor was needed",
+      "why_it_exists": "dm-0084 (P9 planning, before S9.2 read the reference file in full) stated \"the kit expresses optimization through motion glyphs... currently drawn in terracotta (conveyor chevrons)\" and planned to recolor them to ink/cream. Zero-assumption reading of src/assets/paper-asset-library.html at S9.2 (KindDraw.movingPlatform's ↔ glyph: g.fillStyle=INK; the runtime conveyor chevron sweep: rgba(236,229,212,.9) ≈ CREAM) shows neither element ever used a terracotta accent — the planning-time claim was inaccurate.",
+      "problem_it_solves": "Records the correction so a future session does not go looking for a recolor commit that never needed to happen. dm-0084's RESOLUTION still holds and required zero extra work: KindDraw.ts (S9.2) carries movingPlatform's ink glyph and conveyor's ink/cream body forward UNCHANGED from the reference sheet, and PaperStylePack.paletteAccent('optimization') === null (achromatic) is enforced structurally by validatePack regardless of what any single entity's hand-authored colours happen to be. The conveyor's LIVE animated chevron sweep (time-driven, drawn outside KindDraw in the reference's render() loop) is explicitly out of S9.2's scope — it belongs to the scene compiler (S9.3) via MotionSpec('optimization').motionClass==='sweep', not a cached bitmap.",
+      "emotion_targeted": "N/A (correction of a planning-time factual claim).",
+      "misconception_created": "None — this entry exists specifically to prevent one (a phantom recolor task).",
+      "why_alternatives_rejected": "Leaving dm-0084's inaccurate rationale text uncorrected was rejected — the ledger is the project's long-term memory; an unflagged factual error there would resurface as confusion in a much later session with no code context to catch it."
+    },
+    {
+      "id": "dm-0092",
+      "date": "2026-07-11",
+      "status": "ACCEPTED",
+      "title": "PaperStylePack ignores VisualRequest.identitySeed for every S9.2 role (entities, terrain, player, goal) — cache key is role:state:T alone",
+      "why_it_exists": "The S9.1 VisualRequest doc comment says \"same identity ⇒ same seed ⇒ identical visual\", written to match the visual design bible's general §4 language (\"seeded RNG hashed off entity identity/grid position — unique per object\"). But dm-0078 (pre-P9 art-canon session) already established that an entity's BASE geometry is seeded from KIND ALONE, never per-instance identity — the fix for the laser on/off silhouette-drift bug. Reading the reference engine's actual drawEntity() at S9.2 confirms this literally: base(g,T,RNG(hashSeed(900,kind))) — no identity or grid position enters the seed at all, for any of the twelve kinds, ever.",
+      "problem_it_solves": "Clarifies WHY, without contradicting either dm-0078 or the bible: bible principle 8 (\"same function, same shape, everywhere\") means gameplay entities are VOCABULARY — a spike must look identical everywhere so the player's learned visual grammar transfers instantly, which is the OPPOSITE of per-instance uniqueness. The bible's \"unique per object\" language is correctly scoped to DECOR (out of S9.2's scope, PaperAssets.decor(name,w,h,seed) takes a real per-placement seed in the reference) and TERRAIN TILE VARIANT selection (a small position-hashed set, already encoded into PaperStylePack's terrain `state` string by the caller, not identitySeed). PaperStylePack therefore legitimately ignores identitySeed for all its current roles — this is not a bug, and is now pinned by a dedicated regression test (PaperStylePack.test.ts).",
+      "emotion_targeted": "Visual-vocabulary consistency: a player who has learned \"triangles = death\" must never see a differently-jittered spike and wonder if it means something else.",
+      "misconception_created": "A future StylePack (or a future role added to this one, e.g. decor once it enters scope) MAY legitimately use identitySeed for real per-placement variation — this decision applies only to the specific roles PaperStylePack currently serves, not to the StylePack interface's contract in general.",
+      "why_alternatives_rejected": "Threading identitySeed into entity base geometry (to literally honor the interface doc's \"same identity ⇒ same seed\" wording for every role) was rejected outright — it would reintroduce exactly the class of bug dm-0078 fixed, this time varying by WORLD POSITION instead of by STATE, defeating both cache reuse and the vocabulary-consistency principle."
+    },
+    {
+      "id": "dm-0093",
+      "date": "2026-07-11",
+      "status": "ACCEPTED",
+      "title": "SceneCompiler derives pressurePlate/spring overlay state from nothing (default/idle) — no live \"currently pressed/launching\" signal exists in WorldState yet",
+      "why_it_exists": "KindDraw.pressurePlate and KindDraw.spring both have an overlay() that branches on a live contact/launch signal (the reference engine faked this with a wall-clock sine pulse for demo purposes). Reading src/entities/World.ts's EntityState at S9.3 confirms no such per-entity \"isPressed\"/\"isLaunching\" field is exposed today — that would require the scene compiler to re-derive Sensors/trigger evaluation, which is gameplay logic the render layer has no business re-implementing (render/ reaches src/eval/ only via AgentHarness, and reaches src/systems/ only via its own public read paths — never by rebuilding a system's internals).",
+      "problem_it_solves": "SceneCompiler.entityState() returns 'default' for these two kinds, which KindDraw resolves to their idle/unpressed overlay. This is scoped and documented (SceneCompiler.ts's own header comment), not a silent gap: a future slice that wants a live-pressed pulse must either (a) add a genuinely new WorldState field written by the physics/trigger system itself (the correct place for gameplay state to originate) and read it here read-only, or (b) accept that pressurePlate/spring are visually static until then. Neither pressurePlate nor spring gained a fake render-side re-derivation of contact logic.",
+      "emotion_targeted": "N/A (scope honesty).",
+      "misconception_created": "A future session must not \"fix\" this by computing proximity/contact directly inside SceneCompiler.ts (that would duplicate Sensors.ts logic in the render layer, a system-isolation violation) — the fix, if wanted, is a new read-only WorldState field.",
+      "why_alternatives_rejected": "Re-deriving contact/press state locally inside the scene compiler (e.g., checking AABB overlap between the player and the plate) was rejected: it would silently duplicate physics/sensor logic the simulation already owns, and could drift from the real gameplay answer (e.g., a plate held down by a non-player entity would render wrong)."
+    },
+    {
+      "id": "dm-0094",
+      "date": "2026-07-11",
+      "status": "ACCEPTED",
+      "title": "Entity culling queries the quadtree against CURRENT (pre-interpolation) positions, not the alpha-blended render position",
+      "why_it_exists": "compileScene interpolates each visible entity's DRAWN position between previous and current snapshots by alpha, but culling (which entities even get considered) happens via the P3 SpatialPartition quadtree, which is built from a single WorldState (REQ-162's existing, verified API) — there is no interpolated-quadtree variant, and building one would mean either reimplementing the quadtree over blended coordinates (duplicating P3's tree logic) or querying twice and unioning results.",
+      "problem_it_solves": "Documents the deliberate simplification: culling queries against `current` world positions only. A fast-moving entity within roughly one tick's travel of the viewport boundary could theoretically pop in/out up to half a tick earlier/later than its true interpolated position would justify — imperceptible at 60 fixed steps/second for anything but an extreme edge case, and viewpoints in practice have margin beyond the strict visible rect. Noted as an open item rather than solved with extra machinery that has no driving requirement yet.",
+      "emotion_targeted": "N/A (performance/correctness tradeoff, documented).",
+      "misconception_created": "None intended — flagged explicitly in SceneCompiler.ts's own comment so a future session revisiting culling precision does not need to rediscover this from scratch.",
+      "why_alternatives_rejected": "Querying the quadtree against BOTH previous and current positions and unioning the index sets was considered and deferred: doubles culling cost for a correctness gain with no reported symptom (no test or REQ currently demands sub-tick cull precision); revisit only if a real pop-in artifact is observed with actual gameplay content (P10)."
+    },
+    {
+      "id": "dm-0095",
+      "date": "2026-07-11",
+      "status": "ACCEPTED",
+      "title": "DrawItem amended to carry the originating VisualRequest alongside its BitmapHandle",
+      "why_it_exists": "S9.4's Atlas/Batcher need to call StylePack.rasterize(request, device) the first time a given bitmap id is seen, to actually produce its pixels for GPU upload. S9.3's DrawItem only carried the resolved BitmapHandle (id/width/height) — enough for cache identity, but not enough to draw from scratch; the CachedVisual/BitmapHandle contract was deliberately opaque (S9.1) and never meant to be re-derivable from itself.",
+      "problem_it_solves": "Adds DrawItem.request: VisualRequest (plain data, JSON-serializable — no interface break to the existing JSON round-trip test, which still passes deepEqual after re-serialization). Atlas.ensureRegion's producePixels thunk closes over item.request to call pack.rasterize on first sight of a bitmap id, memoized thereafter. This is an in-progress-phase amendment to a COMPLETED-not-VERIFIED S9.3 module, the same class of allowed change dm-0090 made to StylePack.ts at S9.2.",
+      "emotion_targeted": "N/A (architecture decision).",
+      "misconception_created": "None — DrawItem.request is inert data for any consumer that does not need to rasterize (e.g., a hypothetical debug overlay reading DrawItems); only the atlas/batcher use it.",
+      "why_alternatives_rejected": "A side-channel Map<bitmapId, VisualRequest> threaded separately alongside the DrawList was rejected: it would require SceneCompiler and the batcher to agree on a second parallel data structure staying in sync with the DrawList, for no benefit over just carrying the field on the item itself."
+    },
+    {
+      "id": "dm-0096",
+      "date": "2026-07-11",
+      "status": "ACCEPTED",
+      "title": "S9.4 batches per-sprite instances via GPU instancing; a fully pre-composed \"one background bitmap per level\" merge is explicitly deferred, not built",
+      "why_it_exists": "The visual design bible §5 and the original P9 execution-plan prose describe \"one background bitmap per level\" (a single pre-composed canvas the camera crops) as the target performance shape for Canvas2D-idiom engines. S9.4 instead batches same-atlas-page sprite instances (terrain tiles, entities, player, goal) via WebGL2 instanced draw calls — dozens of identical-mask terrain tiles share one atlas region and one page, collapsing into ONE drawInstanced call, which is a real, tested, working form of \"render batching for static geometry\" (REQ-162's own wording) even though it is architecturally instancing rather than a merged mega-texture.",
+      "problem_it_solves": "Prevents S9.4's verification report from overclaiming a \"one background bitmap\" deliverable that was not actually built. REQ-162 is satisfied by the tested instanced-batching win (GlExecutor.test.ts proves batches.length < drawList.length and exactly one drawInstanced call per batch); a full background pre-composition pass remains a legitimate FUTURE optimization (further reducing page/texture-switch overhead for very large static scenes) that no current test or REQ actually requires. Noted explicitly so a later session does not assume it already exists.",
+      "emotion_targeted": "N/A (scope honesty under time constraint).",
+      "misconception_created": "A future session must not assume a single \"background texture\" concept exists anywhere in render/gl/ — there is none; static geometry batching happens via atlas-page grouping + instancing only.",
+      "why_alternatives_rejected": "Building full background pre-composition now was weighed and deferred: it requires a genuine Raster2D-to-pixels compositing pass across the WHOLE visible/level terrain into one canvas-sized bitmap, which only becomes possible once render/platform/ (S9.8) binds a real 2D context — attempting it headlessly now would mean inventing a second, throwaway pixel-compositing mechanism purely to satisfy a test, which is exactly the kind of hollow, spec-chasing work the no-placeholder discipline exists to prevent."
+    },
+    {
+      "id": "dm-0097",
+      "date": "2026-07-11",
+      "status": "ACCEPTED",
+      "title": "dm-0089 resolved: the defeat marker's screen time comes from the existing fixed-step/render decoupling, not a new hold mechanism",
+      "why_it_exists": "dm-0089 (S9.1 planning) flagged that Lifecycle.ts reloads on the very next tick after defeat, leaving exactly one renderable \"defeated\" WorldState snapshot, and asked S9.5 to decide between a render-side hold, a sim-side grace-tick (a Lifecycle.ts change), or accepting the single-tick window. S9.5 (DefeatMarker.ts) had to actually pick one to ship REQ-016's defeat marker.",
+      "problem_it_solves": "No new machinery is needed: the shell's frame loop (S9.8, not yet built, but already specified in the P9 plan) renders every real display frame by calling compileScene against the CURRENT committed tick pair at a computed interpolationAlpha — it does not require a new sim tick to render again. Between the tick where runState flips to 'defeated' and the next fixed step (which reloads), an arbitrary number of real display frames CAN render that same defeated snapshot (zero at minimum only if the display refresh is slower than the fixed step, which is not the target hardware profile) with the marker present and critical=true every time deriveDefeatMarker is called. This is option (a) from dm-0089, chosen because it needed zero new state and zero touching of the P3-VERIFIED Lifecycle.ts. If playtesting (P10+) later shows this reads as too brief on very high fixed-step-relative-to-refresh-rate configurations, option (b) — a genuine sim-side grace-tick — remains available as a documented fallback, gated behind Lifecycle.ts's own anchor-safety pass.",
+      "emotion_targeted": "Fair, legible failure (REQ-016): the player must see why they died before the world resets under them.",
+      "misconception_created": "A future session must not assume the marker is GUARANTEED to render for a fixed minimum real-world duration — it renders for as many real frames as the shell happens to draw before the next fixed step, which is a display-refresh-rate-dependent quantity, not a designed minimum. If a minimum hold time becomes a real requirement, that is option (b), not this decision.",
+      "why_alternatives_rejected": "A sim-side grace-tick (option b) was rejected for THIS slice: it requires modifying Lifecycle.ts (P3-VERIFIED), which the protocol requires a dependency-map + signature-freeze pass for — disproportionate for a decision that the render-loop's existing structure already resolves for free. Revisit only if real playtesting surfaces an actual complaint."
+    },
+    {
+      "id": "dm-0098",
+      "date": "2026-07-11",
+      "status": "ACCEPTED",
+      "title": "Bug fix: PaperStylePack.stateMatters() incorrectly excluded the player role from state-sensitive caching, collapsing idle/prejump/air into one bitmap",
+      "why_it_exists": "S9.2's stateMatters() classified player alongside goal as state-invariant (\"goal is always the one flag, no state variants\") — but the player genuinely has three distinguishable poses (idle/prejump/air) that drawPlayer() renders differently. Because visual()'s cache key normalized state to 'default' whenever stateMatters() returned false, every player pose collapsed onto the SAME cached bitmap, silently defeating REQ-150's anticipation-frame requirement (the prejump squat would never actually render — the player would always look idle). Caught by S9.5's own integration test (GameFeel.test.ts), which was written specifically to prove the anticipation-frame REQ end-to-end rather than trusting that S9.2/S9.3's unit tests implied it.",
+      "problem_it_solves": "stateMatters('player') now returns true, so the cache key includes the real pose string and visual()/rasterize() produce (and cache) three genuinely distinct bitmaps. This does not touch dm-0092 (identitySeed is still correctly ignored for player) — that decision was about a DIFFERENT axis (per-instance identity) and stands unchanged.",
+      "emotion_targeted": "N/A (correctness bug, caught before any downstream slice built on the wrong assumption).",
+      "misconception_created": "None — the fix is unconditional and the regression is now pinned by GameFeel.test.ts's anticipation-frame integration test.",
+      "why_alternatives_rejected": "N/A — this was a straightforward bug fix once the failing integration test identified it; no alternative design was considered."
     }
   ],
   "rejected_ideas": [],

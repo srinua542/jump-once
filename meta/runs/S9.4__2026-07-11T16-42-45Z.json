@@ -1,0 +1,81 @@
+{
+  "slice": "S9.4",
+  "title": "WebGL2 executor + atlas + batching + object pools",
+  "reqs": [
+    "REQ-161",
+    "REQ-162",
+    "REQ-170"
+  ],
+  "started_at": "2026-07-11T16:36:57.535Z",
+  "updated_at": "2026-07-11T16:42:45.355Z",
+  "current_stage": "handoff",
+  "stages": {
+    "reboot": {
+      "status": "done",
+      "at": "2026-07-11T16:36:57.537Z",
+      "note": "PLAN+ANCHOR: Gl2Device (enumerated subset+trace recorder), Atlas (shelf-pack+upload-once via injected producePixels), Batcher (page-grouped instancing), GlRenderer (Float32Array pack+replay), Pool/ParticlePool (generation-counted, FIFO free-queue)"
+    },
+    "select": {
+      "status": "done",
+      "at": "2026-07-11T16:42:28.965Z",
+      "note": "PLAN complete"
+    },
+    "plan": {
+      "status": "done",
+      "at": "2026-07-11T16:42:29.124Z",
+      "note": "ANCHOR complete: DrawItem amended (dm-0095) to carry VisualRequest"
+    },
+    "anchor": {
+      "status": "done",
+      "at": "2026-07-11T16:42:29.282Z",
+      "note": "IMPLEMENT: render/gl/*.ts, render/pool/*.ts, GlExecutor.test.ts (8), Pool.test.ts (6)"
+    },
+    "implement": {
+      "status": "done",
+      "at": "2026-07-11T16:42:29.434Z",
+      "note": "VERIFY: npm test green (630/630)"
+    },
+    "verify": {
+      "status": "done",
+      "at": "2026-07-11T16:42:39.014Z",
+      "note": "INTEGRATE: PKG updated in-change (render/gl_executor, render/pool real nodes; hash s9-d4f1c6 -> s9-e5a0d7); ledger at dm-0096"
+    },
+    "integrate": {
+      "status": "done",
+      "at": "2026-07-11T16:42:39.171Z",
+      "note": "REPORT: S9.4 -> COMPLETED. REQ-161/162/170 gain their S9.4 share; none flip VERIFIED yet (S9.11 schedule; REQ-161/162/170 stay IN_PROGRESS past P9 too — P11 owns their release/zero-alloc audit shares)."
+    },
+    "report": {
+      "status": "done",
+      "at": "2026-07-11T16:42:45.020Z",
+      "note": "HANDOFF checkpoint (comprehensive handoff written at session end)"
+    },
+    "handoff": {
+      "status": "done",
+      "at": "2026-07-11T16:42:45.189Z",
+      "note": "handoff stage complete"
+    }
+  },
+  "acceptance": [
+    {
+      "req": "REQ-161",
+      "criterion": "Pool/ParticlePool: generation-counted, FIFO-reuse, capacity-from-data, stale-handle/double-release safe no-ops — 6 tests",
+      "met": true,
+      "note": null
+    },
+    {
+      "req": "REQ-162",
+      "criterion": "Batcher collapses many same-bitmap terrain instances into one drawInstanced call per atlas page; tested batches.length < drawList.length",
+      "met": true,
+      "note": null
+    },
+    {
+      "req": "REQ-170",
+      "criterion": "Gl2Device: the enumerated WebGL2 seam; render/platform/ (S9.8) will bind the real context — no browser globals here (RenderIsolation scan holds)",
+      "met": true,
+      "note": null
+    }
+  ],
+  "outcome": "completed",
+  "closed_at": "2026-07-11T16:42:45.523Z"
+}

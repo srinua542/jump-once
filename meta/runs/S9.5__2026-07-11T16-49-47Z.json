@@ -1,0 +1,74 @@
+{
+  "slice": "S9.5",
+  "title": "Game feel + fairness visuals",
+  "reqs": [
+    "REQ-150",
+    "REQ-016"
+  ],
+  "started_at": "2026-07-11T16:43:52.870Z",
+  "updated_at": "2026-07-11T16:48:18.625Z",
+  "current_stage": "handoff",
+  "stages": {
+    "reboot": {
+      "status": "done",
+      "at": "2026-07-11T16:43:52.872Z",
+      "note": "PLAN+ANCHOR: FeelProfile (versioned data), SquashStretch (pure velocity curve), ImpulseEvents (edge detection + pool bursts), DefeatMarker (resolves dm-0089)"
+    },
+    "select": {
+      "status": "done",
+      "at": "2026-07-11T16:48:05.403Z",
+      "note": "PLAN complete"
+    },
+    "plan": {
+      "status": "done",
+      "at": "2026-07-11T16:48:05.501Z",
+      "note": "ANCHOR complete"
+    },
+    "anchor": {
+      "status": "done",
+      "at": "2026-07-11T16:48:05.601Z",
+      "note": "IMPLEMENT: render/feel/*.ts + GameFeel.test.ts (15 tests); found+fixed a real S9.2 bug (stateMatters excluding player, dm-0098)"
+    },
+    "implement": {
+      "status": "done",
+      "at": "2026-07-11T16:48:05.786Z",
+      "note": "VERIFY: npm test green (640/640)"
+    },
+    "verify": {
+      "status": "done",
+      "at": "2026-07-11T16:48:12.668Z",
+      "note": "INTEGRATE: PKG updated in-change (render/feel real node; render/paper_style_pack amended for the stateMatters bug fix; hash s9-e5a0d7 -> s9-f6b2e8); ledger at dm-0098"
+    },
+    "integrate": {
+      "status": "done",
+      "at": "2026-07-11T16:48:12.766Z",
+      "note": "REPORT: S9.5 -> COMPLETED. REQ-150/016 gain their S9.5 share; REQ-150 stays IN_PROGRESS until S9.11 (P3 physics share + P9 visual share both required); REQ-016 stays IN_PROGRESS (P10 applies to authored content)."
+    },
+    "report": {
+      "status": "done",
+      "at": "2026-07-11T16:48:18.402Z",
+      "note": "HANDOFF: writing the comprehensive meta/handoff_latest.json now (session stops after S9.5 per explicit user scope: 'finish P9 till 9.5')"
+    },
+    "handoff": {
+      "status": "done",
+      "at": "2026-07-11T16:48:18.523Z",
+      "note": "handoff stage complete"
+    }
+  },
+  "acceptance": [
+    {
+      "req": "REQ-150",
+      "criterion": "anticipation frames proven end-to-end (idle vs prejump distinct cached bitmaps, integration test); squash-stretch derives from velocity with identity-at-rest + monotonic clamp; jump/landing bursts fire exactly once via edge detection into the S9.4 ParticlePool",
+      "met": true,
+      "note": null
+    },
+    {
+      "req": "REQ-016",
+      "criterion": "DefeatMarker: null unless runState==='defeated', else {position, critical:true} always; resolves dm-0089's screen-time question via the existing fixed-step/render decoupling (dm-0097), no Lifecycle.ts change",
+      "met": true,
+      "note": null
+    }
+  ],
+  "outcome": "completed",
+  "closed_at": "2026-07-11T16:49:47.176Z"
+}

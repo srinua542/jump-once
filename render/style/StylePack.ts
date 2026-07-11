@@ -33,6 +33,7 @@
 
 import type { GrammarCategoryId, RenderableRole, VisualGrammar } from '../grammar/Grammar';
 import { GRAMMAR_CATEGORY_IDS } from '../grammar/Grammar';
+import { createTraceRecorder, type Raster2D } from './Raster2D';
 
 /** Opaque handle to a pack-cached raster. The atlas resolves it to a texture region. */
 export interface BitmapHandle {
@@ -111,6 +112,15 @@ export interface StylePack {
   readonly packId: string;
   /** Cached visual for a bound role (or the reserved player). Same request ⇒ same handle. */
   visual(request: VisualRequest): CachedVisual;
+  /**
+   * Issue the deterministic draw-command sequence for a request's CachedVisual
+   * into an injected device (never a real canvas outside render/platform/).
+   * The atlas (S9.4) calls this exactly once per distinct bitmap id to
+   * rasterize it; MUST be a pure function of (request, the pack's own state)
+   * — same request ⇒ same command trace on any fresh device, every time
+   * (validatePack probes this with two independent trace recorders).
+   */
+  rasterize(request: VisualRequest, device: Raster2D): void;
   /** CSS hex accent (`#rrggbb`) for a category, or null for achromatic (optimization). */
   paletteAccent(category: GrammarCategoryId): string | null;
   motionSpec(category: GrammarCategoryId): MotionSpec;
@@ -241,11 +251,26 @@ export function validatePack(pack: StylePack, grammar: VisualGrammar): readonly 
   const probeRoles: readonly VisualRole[] = [...boundRoles, 'player'];
   for (const role of probeRoles) {
     const path = `/visual/${role}`;
-    const first = pack.visual(probeRequest(role));
+    const request = probeRequest(role);
+    const first = pack.visual(request);
     checkVisual(first, path, issues);
-    const second = pack.visual(probeRequest(role));
+    const second = pack.visual(request);
     if (first.bitmap.id !== second.bitmap.id) {
       issues.push({ path, message: 'same request returned different bitmap handles — visual() must be cache-by-key (bible §5: generate never per-frame)' });
+    }
+
+    /* rasterize() determinism: same request onto two fresh recorders ⇒
+       identical command trace, every time. */
+    const recorderA = createTraceRecorder();
+    const recorderB = createTraceRecorder();
+    pack.rasterize(request, recorderA.device);
+    pack.rasterize(request, recorderB.device);
+    const traceA = recorderA.trace();
+    const traceB = recorderB.trace();
+    if (traceA.length === 0) {
+      issues.push({ path: `${path}/rasterize`, message: 'rasterize() issued zero draw commands — every bound role must draw something' });
+    } else if (traceA.join('\n') !== traceB.join('\n')) {
+      issues.push({ path: `${path}/rasterize`, message: 'rasterize() produced a different command trace across two calls with an identical request — must be deterministic (no Math.random, no wall-clock)' });
     }
   }
 

@@ -1,8 +1,8 @@
 {
   "schema_version": "1.0",
-  "generated_by_session": "2026-07-11T-session-9-p9-s9.1",
-  "pkg_hash": "s9-b2d1a4",
-  "notes": "Machine-readable mirror of the codebase. Read at every session start; update immediately on any structural code change. See references/pkg_schema.md. S9.1 (P9's first implementation slice) landed: render/grammar/Grammar.ts (the sixth versioned schema, style-agnostic REQ-070/071 core) and render/style/StylePack.ts (the dm-0076 asset-provider seam + validatePack, the pack-side mixing-prohibition enforcement), both promoted from pending_nodes to real SystemNodes. test/unit/RenderIsolation.test.ts scan-enforces the dm-0081 one-way rule (render/ imports src/+tools/ through named seams only; only render/tooling/ imports tools/; nothing under src/ or tools/ imports render/), the dm-0082 browser-global/wall-clock confinement (render/platform/ only), and Math.random exclusion. The remaining eight S9.2-S9.10 deliverables are re-registered under pending_nodes, replacing the three coarse pre-planning placeholders, each pointing at the corrected render/ (not src/render/) paths per dm-0081.",
+  "generated_by_session": "2026-07-11T-session-9-p9-s9.5",
+  "pkg_hash": "s9-f6b2e8",
+  "notes": "Machine-readable mirror of the codebase. Read at every session start; update immediately on any structural code change. See references/pkg_schema.md. S9.5 landed: render/feel/{FeelProfile,SquashStretch,ImpulseEvents,DefeatMarker}.ts, promoted from pending_nodes. Resolves dm-0089 (dm-0097) and fixes a real S9.2 caching bug found by S9.5's own integration test (dm-0098, render/paper_style_pack amended). Five pending_nodes remain for S9.6-S9.10 (audio, assets, shell, tooling, quality -- S9.6-S9.10 are NOT yet built; this session stops after S9.5 per explicit user scope).",
   "nodes": [
     {
       "node_id": "core/vec2",
@@ -31,7 +31,8 @@
         "eval/evaluate",
         "eval/emergent_fun",
         "tools/editor_state",
-        "tools/overlay"
+        "tools/overlay",
+        "render/camera"
       ],
       "volatile_state_flags": {
         "has_side_effects": false,
@@ -89,7 +90,8 @@
         "eval/gdos/streamability",
         "eval/evaluate",
         "gen/generator",
-        "tools/playtest"
+        "tools/playtest",
+        "render/scene_compiler"
       ],
       "volatile_state_flags": {
         "has_side_effects": false,
@@ -395,7 +397,8 @@
         "gen/generator",
         "gen/concept",
         "gen/pipeline",
-        "render/grammar"
+        "render/grammar",
+        "render/paper_style_pack"
       ],
       "volatile_state_flags": {
         "has_side_effects": false,
@@ -425,7 +428,8 @@
       "dependents": [
         "components/level",
         "schema/serialize",
-        "schema/parse"
+        "schema/parse",
+        "render/scene_compiler"
       ],
       "volatile_state_flags": {
         "has_side_effects": false,
@@ -451,7 +455,8 @@
         "schema/parse",
         "systems/player_physics",
         "eval/archetypes",
-        "eval/gdos/novelty"
+        "eval/gdos/novelty",
+        "render/scene_compiler"
       ],
       "volatile_state_flags": {
         "has_side_effects": false,
@@ -658,7 +663,8 @@
         "tools/playtest",
         "tools/overlay",
         "tools/inspector",
-        "tools/telemetry_capture"
+        "tools/telemetry_capture",
+        "render/scene_compiler"
       ],
       "volatile_state_flags": {
         "has_side_effects": false,
@@ -909,7 +915,8 @@
         "entities/world"
       ],
       "dependents": [
-        "systems/player_physics"
+        "systems/player_physics",
+        "render/scene_compiler"
       ],
       "volatile_state_flags": {
         "has_side_effects": false,
@@ -2315,9 +2322,151 @@
       "node_id": "render/style_pack",
       "type": "SystemNode",
       "file_path": "render/style/StylePack.ts",
-      "functional_summary": "S9.1 -- the art-style-agnostic asset-provider seam (dm-0076/dm-0083). StylePack interface: visual(request) -> CachedVisual (opaque BitmapHandle + anchor + pad, cache-by-key per bible §5), paletteAccent/motionSpec/audioPatch per GrammarCategoryId. validatePack(pack, grammar) enforces the pack-side half of REQ-070's mixing prohibition: accent uniqueness across categories, danger MUST be chromatic (REQ-016), optimization MUST be achromatic (dm-0084, palette signature is ink/cream motion glyphs), motion-class uniqueness (bible §1's six classes), audio-patch pairwise distinctness (REQ-071), and a cache-by-key probe (same request -> same bitmap handle, \"generate never per-frame\"). SynthPatch (procedural audio, zero binary assets in P9) and MotionSpec are pure data compiled by later slices (S9.6 audio executor, S9.3 scene compiler). \"Paper Collage\" (render/style/paper/, S9.2) is StylePack #1; a future pack implements the same interface with zero gameplay/data changes.",
+      "functional_summary": "S9.1 -- the art-style-agnostic asset-provider seam (dm-0076/dm-0083). StylePack interface: visual(request) -> CachedVisual (opaque BitmapHandle + anchor + pad, cache-by-key per bible §5), paletteAccent/motionSpec/audioPatch per GrammarCategoryId. validatePack(pack, grammar) enforces the pack-side half of REQ-070's mixing prohibition: accent uniqueness across categories, danger MUST be chromatic (REQ-016), optimization MUST be achromatic (dm-0084, palette signature is ink/cream motion glyphs), motion-class uniqueness (bible §1's six classes), audio-patch pairwise distinctness (REQ-071), and a cache-by-key probe (same request -> same bitmap handle, \"generate never per-frame\"). SynthPatch (procedural audio, zero binary assets in P9) and MotionSpec are pure data compiled by later slices (S9.6 audio executor, S9.3 scene compiler). \"Paper Collage\" (render/style/paper/, S9.2) is StylePack #1; a future pack implements the same interface with zero gameplay/data changes. AMENDED at S9.2 (dm-0090): added rasterize(request, device: Raster2D): void — the actual draw-command seam (visual() only manages cache identity) — plus a determinism probe in validatePack (two trace recorders, byte-identical output required). render/style/Raster2D.ts (the enumerated 2D-drawing device interface + createTraceRecorder) is a new sibling dependency.",
       "gdos_alignment": "Section_8_Visual_Grammar",
       "design_ref": "docs/visual_design_bible.md",
+      "dependencies": [
+        "render/grammar",
+        "render/raster2d"
+      ],
+      "dependents": [],
+      "volatile_state_flags": {
+        "has_side_effects": false,
+        "state_dependencies": []
+      },
+      "last_verified_commit": "uncommitted-session-9-s9.2",
+      "backlog_refs": [
+        "REQ-070",
+        "REQ-071",
+        "REQ-001",
+        "REQ-002"
+      ]
+    },
+    {
+      "node_id": "render/raster2d",
+      "type": "SystemNode",
+      "file_path": "render/style/Raster2D.ts",
+      "functional_summary": "S9.2 -- the minimal enumerated 2D-drawing device seam (dm-0086). Raster2D interface: methods only (setFillStyle/setStrokeStyle/etc, never property assignment) so a recording fake can log every call without a Proxy. createTraceRecorder() returns a pure in-memory recording implementation used by StylePack.validatePack's determinism probe and by every render/style/paper/ structural test -- never touches a real canvas. render/platform/ (S9.8, not yet built) will be the ONLY place binding this to a real CanvasRenderingContext2D/OffscreenCanvasRenderingContext2D.",
+      "gdos_alignment": "Section_17_Rendering_Performance",
+      "dependencies": [],
+      "dependents": [
+        "render/style_pack",
+        "render/paper_style_pack"
+      ],
+      "volatile_state_flags": {
+        "has_side_effects": false,
+        "state_dependencies": []
+      },
+      "last_verified_commit": "uncommitted-session-9-s9.2",
+      "backlog_refs": [
+        "REQ-170"
+      ]
+    },
+    {
+      "node_id": "render/paper_style_pack",
+      "type": "SystemNode",
+      "file_path": "render/style/paper/*.ts (PaperRng, Geometry, Palette, PaperBlocks, PaperTiles, KindDraw, PaperStylePack)",
+      "functional_summary": "S9.2 -- StylePack #1, \"Paper Collage\" (dm-0075), realizing render/style/StylePack.ts. Direct TypeScript port of src/assets/paper-asset-library.html's core generators (PaperRng: createRng/hashSeed; Geometry: roughPoly/roughRect/fillRough/wear/grain/roughLine/inkSplat; PaperBlocks: the 9-slice blockSlab library, dm-0079/dm-0080 clean-solid, no interior wear/grain; PaperTiles: the modular autotile kit, maskAt/paintTile, out-of-bounds-solid convention preserved; KindDraw: all 12 EntityKind base+overlay pairs, base seeded from KIND ALONE per dm-0078, pinned by a byte-identical-base-across-states regression test; drawPlayer/drawFlag ported, drawFlag recolored to GOAL_ACCENT=teal per dm-0085). dm-0091 corrects dm-0084's planning-time claim: the reference kit's Optimization elements were ALREADY achromatic, no recolor needed. dm-0092 clarifies identitySeed is deliberately ignored for all current roles (cache key role:state:T alone) -- entities/terrain/player/goal are vocabulary (bible principle 8), not per-instance-unique decor. PAPER_STYLE_PACK (the default instance) passes validatePack against DEFAULT_GRAMMAR cleanly. 12 structural tests (PaperStylePack.test.ts) -- no pixel inspection, command-trace equality only. BUG FIX at S9.5 (dm-0098): stateMatters() incorrectly excluded the player role from state-sensitive caching (grouped with goal, which genuinely IS state-invariant), collapsing idle/prejump/air into one cached bitmap and silently defeating REQ-150's anticipation-frame requirement. Fixed; player pose now caches correctly. Caught by GameFeel.test.ts's end-to-end integration test, not a unit test in isolation.",
+      "gdos_alignment": "Section_8_Visual_Grammar",
+      "design_ref": "docs/visual_design_bible.md",
+      "asset_source": "src/assets/paper-asset-library.html",
+      "dependencies": [
+        "render/grammar",
+        "render/style_pack",
+        "render/raster2d",
+        "components/behavior"
+      ],
+      "dependents": [],
+      "volatile_state_flags": {
+        "has_side_effects": false,
+        "state_dependencies": []
+      },
+      "last_verified_commit": "uncommitted-session-9-s9.5",
+      "backlog_refs": [
+        "REQ-070",
+        "REQ-071",
+        "REQ-150",
+        "REQ-016"
+      ]
+    },
+    {
+      "node_id": "render/camera",
+      "type": "SystemNode",
+      "file_path": "render/scene/Camera.ts",
+      "functional_summary": "S9.3 -- render-layer-only viewpoint state (REQ-150 camera share). CameraState {x,y} never lives in WorldState/GameState; updateCamera(camera,target,profile) is a pure exponential-smoothing step toward a world position, threaded frame-to-frame by the shell (S9.8) exactly like StateManager threads sim state, but through its own separate chain. Never mutates its inputs (dm-0004/dm-0082 projection purity).",
+      "gdos_alignment": "Section_16_Player_Controller",
+      "dependencies": [
+        "core/vec2"
+      ],
+      "dependents": [
+        "render/scene_compiler"
+      ],
+      "volatile_state_flags": {
+        "has_side_effects": false,
+        "state_dependencies": []
+      },
+      "last_verified_commit": "uncommitted-session-9-s9.3",
+      "backlog_refs": [
+        "REQ-150"
+      ]
+    },
+    {
+      "node_id": "render/scene_compiler",
+      "type": "SystemNode",
+      "file_path": "render/scene/{DrawList,SceneCompiler}.ts",
+      "functional_summary": "S9.3 -- the pure projection compileScene(current,previous,alpha,grammar,pack,camera,viewport,tileSizePx) -> DrawList (plain, JSON-serializable data). Interpolates entity/player positions between snapshots by alpha (interpolationAlpha stays read-only); resolves every visible role through render/grammar/Grammar.ts to exactly one category (player is the reserved null-category, always-critical case, dm-0004/dm-0082 extended). Culls entities via the P3 SpatialPartition quadtree READ-ONLY (buildEntityQuadtree/queryQuadtree, REQ-162's own wording -- reuse, not reimplementation); terrain culls by direct tile-range clamp; the goal by direct AABB check. Per-entity overlay state (laser on/off, door open/closed, collapsingFloor intact/cracking, gravityZone normal/invert) is derived ONLY from fields WorldState/LevelDefinition already expose -- never by re-deriving Sensors/trigger logic (dm-0093 notes pressurePlate/spring have no live signal yet and render idle/default). dm-0094 notes culling queries the quadtree against CURRENT (pre-interpolation) positions, a documented simplification. 7 tests (SceneCompiler.test.ts): interpolation at alpha in {0,0.5,1}, grammar resolution, critical-survives-culling, state derivation, goal AABB culling, JSON round-trip purity, WorldState-unchanged proof. AMENDED at S9.4 (dm-0095): DrawItem gained a `request: VisualRequest` field so a downstream consumer (the atlas) can rasterize a bitmap id it has never seen before.",
+      "gdos_alignment": "Section_17_Rendering_Performance",
+      "dependencies": [
+        "render/grammar",
+        "render/style_pack",
+        "render/camera",
+        "components/entity",
+        "components/tilemap",
+        "core/clock",
+        "entities/world",
+        "systems/spatial_partition"
+      ],
+      "dependents": [],
+      "volatile_state_flags": {
+        "has_side_effects": false,
+        "state_dependencies": []
+      },
+      "last_verified_commit": "uncommitted-session-9-s9.4",
+      "backlog_refs": [
+        "REQ-070",
+        "REQ-071",
+        "REQ-162",
+        "REQ-150"
+      ]
+    },
+    {
+      "node_id": "render/gl_executor",
+      "type": "SystemNode",
+      "file_path": "render/gl/{Gl2Device,Atlas,Batcher,GlRenderer}.ts",
+      "functional_summary": "S9.4 -- the WebGL2 executor pipeline (REQ-161 pooling elsewhere; REQ-162 batching; REQ-170 WebGL share). Gl2Device: minimal enumerated WebGL2RenderingContext subset (createTexture/uploadTextureRegion/createBuffer/uploadBufferData/drawInstanced) + createTraceGl2Device, a pure in-memory recording implementation for every render/gl/ test -- never a real GPU. Atlas: shelf-packs cached StylePack bitmaps into fixed-size pages (AtlasProfile.pageSizePx, data not a literal), uploading each distinct bitmap id EXACTLY ONCE via an injected producePixels thunk (real rasterization is render/platform/'s job, S9.8; headless tests use fakePixelData). Batcher: groups a DrawList into one Batch per atlas page -- dozens of identical terrain-tile bitmaps collapse into ONE instanced draw call, the actual REQ-162 batching win (dm-0096: this is instanced same-page batching, NOT a merged \"one background bitmap\", which remains explicitly deferred). GlRenderer: packs per-instance transforms (world position + atlas UV rect) into a Float32Array and replays exactly one uploadBufferData+drawInstanced pair per batch. 8 tests (GlExecutor.test.ts): upload-once semantics, page-bounds/no-overlap, batching draw-call-count reduction, instance-float correctness, defensive no-texture skip, custom page-size honored.",
+      "gdos_alignment": "Section_17_Rendering_Performance",
+      "dependencies": [
+        "render/scene_compiler",
+        "render/style_pack"
+      ],
+      "dependents": [],
+      "volatile_state_flags": {
+        "has_side_effects": false,
+        "state_dependencies": []
+      },
+      "last_verified_commit": "uncommitted-session-9-s9.4",
+      "backlog_refs": [
+        "REQ-161",
+        "REQ-162",
+        "REQ-170"
+      ]
+    },
+    {
+      "node_id": "render/pool",
+      "type": "SystemNode",
+      "file_path": "render/pool/{Pool,ParticlePool}.ts",
+      "functional_summary": "S9.4 -- generic fixed-capacity, generation-counted object pool (REQ-161: particles, visual impacts, projectiles). acquire() recycles the oldest-freed slot (FIFO free-queue) or returns null on exhaustion (never silently evicts an active instance); release() is a safe no-op on a stale or already-released handle (generation-mismatch guard, tested for double-release). ParticlePool is the REQ-161 named instantiation; capacity comes from ParticlePoolProfile data (DEFAULT_PARTICLE_POOL_PROFILE), never a literal. Consumed by S9.5's game-feel modifiers. 6 tests (Pool.test.ts).",
+      "gdos_alignment": "Section_17_Rendering_Performance",
       "dependencies": [
         "render/grammar"
       ],
@@ -2326,12 +2475,32 @@
         "has_side_effects": false,
         "state_dependencies": []
       },
-      "last_verified_commit": "uncommitted-session-9-s9.1",
+      "last_verified_commit": "uncommitted-session-9-s9.4",
       "backlog_refs": [
-        "REQ-070",
-        "REQ-071",
-        "REQ-001",
-        "REQ-002"
+        "REQ-161"
+      ]
+    },
+    {
+      "node_id": "render/feel",
+      "type": "SystemNode",
+      "file_path": "render/feel/{FeelProfile,SquashStretch,ImpulseEvents,DefeatMarker}.ts",
+      "functional_summary": "S9.5 -- game-feel modifiers (REQ-150 visual sub-clauses) + the fairness defeat marker (REQ-016). FeelProfile: versioned render-tuning data (squash/stretch curve, jump/landing burst counts/speed/lifetime) -- zero literals in the logic modules. SquashStretch: deriveSquashStretch(velocityY, profile) -> Scale, a pure velocity-driven curve, identity at rest, sign-independent, clamped at velocityForMaxEffect (pinned by monotonicity + clamp + fixed-point tests). ImpulseEvents: jumpFired/landed are pure edge detectors over two WorldState snapshots (anticipating->spent; airborne->grounded) -- never a continuous condition, so a burst fires exactly once; spawnBurst acquires up to profile.count particles from the S9.4 ParticlePool using an INJECTED seeded RngFn (never Math.random, never the sim's own Rng stream), returning fewer handles gracefully on near-exhaustion. DefeatMarker: deriveDefeatMarker(world) resolves dm-0089 (S9.1's open question) -- null unless runState==='defeated'; when present, always {worldX,worldY,critical:true} at the player position. dm-0097 records the resolution: the marker's screen time comes from the existing fixed-step/render decoupling (the shell renders every real frame against the same committed defeated snapshot before the next tick reloads), not a new hold mechanism or a Lifecycle.ts change. Also caught and fixed a real S9.2 bug (dm-0098): stateMatters() wrongly treated player as state-invariant, collapsing all three poses onto one cached bitmap. 15 tests (GameFeel.test.ts), including an end-to-end anticipation-frame proof through the real SceneCompiler+PaperStylePack pipeline.",
+      "gdos_alignment": "Section_16_Player_Controller",
+      "dependencies": [
+        "entities/world",
+        "render/pool",
+        "render/grammar",
+        "core/vec2"
+      ],
+      "dependents": [],
+      "volatile_state_flags": {
+        "has_side_effects": false,
+        "state_dependencies": []
+      },
+      "last_verified_commit": "uncommitted-session-9-s9.5",
+      "backlog_refs": [
+        "REQ-150",
+        "REQ-016"
       ]
     }
   ],
@@ -4165,6 +4334,114 @@
       "from": "render/style_pack",
       "to": "render/grammar",
       "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "render/style_pack",
+      "to": "render/raster2d",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "render/paper_style_pack",
+      "to": "render/grammar",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "render/paper_style_pack",
+      "to": "render/style_pack",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "render/paper_style_pack",
+      "to": "render/raster2d",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "render/paper_style_pack",
+      "to": "components/behavior",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "render/camera",
+      "to": "core/vec2",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "render/scene_compiler",
+      "to": "render/grammar",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "render/scene_compiler",
+      "to": "render/style_pack",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "render/scene_compiler",
+      "to": "render/camera",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "render/scene_compiler",
+      "to": "entities/world",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "render/scene_compiler",
+      "to": "systems/spatial_partition",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "render/scene_compiler",
+      "to": "components/tilemap",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "render/scene_compiler",
+      "to": "core/clock",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "render/gl_executor",
+      "to": "render/scene_compiler",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "render/gl_executor",
+      "to": "render/style_pack",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "render/pool",
+      "to": "render/grammar",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "render/feel",
+      "to": "entities/world",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "render/feel",
+      "to": "render/pool",
+      "kind": "value_import"
     }
   ],
   "gdos_anchors": [
@@ -4277,61 +4554,6 @@
     }
   ],
   "pending_nodes": [
-    {
-      "node_id": "render/paper_style_pack",
-      "type": "PlannedSystemNode",
-      "planned_slice": "P9 (S9.2)",
-      "file_path": "render/style/paper/*.ts",
-      "functional_summary": "PLANNED (S9.2). StylePack #1 -- 'Paper Collage' (dm-0075), realizing the render/style/StylePack.ts interface. Ports the reference engine (src/assets/paper-asset-library.html) as simplified in dm-0077 (single shared grain layer, 8 decor types, calm jitter) and refactored in dm-0078 (base(kind) + overlay(kind,state) so an entity is byte-identical across states) and dm-0080 (PaperTiles modular autotile kit; clean-solid interiors, external-boundary-only tearing). Draws only through an injected Raster2D device (dm-0086) -- no browser globals. Recolors the kit's terracotta conveyor chevrons to ink/cream (dm-0084) and the goal pennant to teal (dm-0085).",
-      "gdos_alignment": "Section_8_Visual_Grammar",
-      "design_ref": "docs/visual_design_bible.md",
-      "asset_source": "src/assets/paper-asset-library.html",
-      "backlog_refs": [
-        "REQ-070",
-        "REQ-071",
-        "REQ-150",
-        "REQ-016"
-      ]
-    },
-    {
-      "node_id": "render/scene_compiler",
-      "type": "PlannedSystemNode",
-      "planned_slice": "P9 (S9.3)",
-      "file_path": "render/scene/SceneCompiler.ts",
-      "functional_summary": "PLANNED (S9.3). Pure projection compileScene(state, previous, alpha, grammar, packHandles, viewport) -> DrawList. Interpolates by alpha (interpolationAlpha stays read-only, dm-0004/dm-0082); culls via the P3 SpatialPartition quadtree read-only (REQ-162); resolves every visible entity through the grammar to its pack visual; tags each item critical per its category (REQ-016 x REQ-163 interlock). Camera (render/scene/Camera.ts) is render-layer-only state, never written back.",
-      "gdos_alignment": "Section_17_Rendering_Performance",
-      "backlog_refs": [
-        "REQ-070",
-        "REQ-071",
-        "REQ-162",
-        "REQ-150"
-      ]
-    },
-    {
-      "node_id": "render/gl_executor",
-      "type": "PlannedSystemNode",
-      "planned_slice": "P9 (S9.4)",
-      "file_path": "render/gl/*.ts, render/pool/*.ts",
-      "functional_summary": "PLANNED (S9.4). Gl2Device (minimal enumerated WebGL2RenderingContext subset), Atlas (shelf-packs cached rasters, uploads once per level), Batcher (groups DrawList items by atlasPage+blend into instanced draws), GlRenderer (replays batches). Generic generation-counted Pool + ParticlePool (REQ-161). Tested via a recording FakeGl2 (dm-0086) -- call-sequence assertions, not pixels.",
-      "gdos_alignment": "Section_17_Rendering_Performance",
-      "backlog_refs": [
-        "REQ-161",
-        "REQ-162",
-        "REQ-170"
-      ]
-    },
-    {
-      "node_id": "render/feel",
-      "type": "PlannedSystemNode",
-      "planned_slice": "P9 (S9.5)",
-      "file_path": "render/feel/*.ts",
-      "functional_summary": "PLANNED (S9.5). Anticipation frames, squash-and-stretch, jump particle burst, landing impact (REQ-150 visual sub-clauses) as pure functions of observable state transitions. Defeat marker (REQ-016) renders the death cause at the defeat position, always critical. Curves come from a FeelProfile data record, no literals. Owns the dm-0089 death-feedback-timing open question (render-side hold vs. Lifecycle.ts change vs. silhouette-instant) -- decided here, not in S9.1.",
-      "gdos_alignment": "Section_16_Player_Controller",
-      "backlog_refs": [
-        "REQ-150",
-        "REQ-016"
-      ]
-    },
     {
       "node_id": "render/audio",
       "type": "PlannedSystemNode",

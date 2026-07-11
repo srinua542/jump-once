@@ -1,0 +1,88 @@
+{
+  "slice": "S9.3",
+  "title": "Scene compiler + camera + culling",
+  "reqs": [
+    "REQ-070",
+    "REQ-071",
+    "REQ-162",
+    "REQ-150"
+  ],
+  "started_at": "2026-07-11T16:28:29.414Z",
+  "updated_at": "2026-07-11T16:34:55.573Z",
+  "current_stage": "handoff",
+  "stages": {
+    "reboot": {
+      "status": "done",
+      "at": "2026-07-11T16:28:29.415Z",
+      "note": "REBOOT confirmed via S9.2 close; PLAN: compileScene(current,previous,alpha,grammar,pack,camera,viewport,tileSizePx)->DrawList, read-only quadtree culling, state derivation from real WorldState fields only"
+    },
+    "select": {
+      "status": "done",
+      "at": "2026-07-11T16:33:27.144Z",
+      "note": "PLAN complete"
+    },
+    "plan": {
+      "status": "done",
+      "at": "2026-07-11T16:33:27.244Z",
+      "note": "ANCHOR: dependency-mapped src/entities/World.ts, src/systems/SpatialPartition.ts (read-only reuse per REQ-162 wording), src/core/Clock.ts (FIXED_STEP_SECONDS), src/components/{Entity,Tilemap}.ts"
+    },
+    "anchor": {
+      "status": "done",
+      "at": "2026-07-11T16:33:27.344Z",
+      "note": "IMPLEMENT: render/scene/{Camera,DrawList,SceneCompiler}.ts + Camera.test.ts (4) + SceneCompiler.test.ts (7)"
+    },
+    "implement": {
+      "status": "done",
+      "at": "2026-07-11T16:33:27.442Z",
+      "note": "VERIFY: npm test green"
+    },
+    "verify": {
+      "status": "done",
+      "at": "2026-07-11T16:34:40.895Z",
+      "note": "INTEGRATE: PKG updated in-change (render/camera, render/scene_compiler real nodes; hash s9-c3e2b5 -> s9-d4f1c6); ledger at dm-0094"
+    },
+    "integrate": {
+      "status": "done",
+      "at": "2026-07-11T16:34:50.345Z",
+      "note": "REPORT: S9.3 -> COMPLETED. REQ-070/071/162/150 all gain their S9.3 share; none flip VERIFIED yet (S9.11 schedule)."
+    },
+    "report": {
+      "status": "done",
+      "at": "2026-07-11T16:34:55.369Z",
+      "note": "HANDOFF checkpoint (comprehensive handoff written at session end)"
+    },
+    "handoff": {
+      "status": "done",
+      "at": "2026-07-11T16:34:55.477Z",
+      "note": "handoff stage complete"
+    }
+  },
+  "acceptance": [
+    {
+      "req": "REQ-070",
+      "criterion": "every DrawItem resolves through exactly one grammar category (or null for the reserved player, always critical); no mixing possible since resolveCategory is total per Grammar.ts",
+      "met": true,
+      "note": null
+    },
+    {
+      "req": "REQ-071",
+      "criterion": "scene compiler applies the six-category grammar to real WorldState via PAPER_STYLE_PACK; SceneCompiler.test.ts proves category resolution + interpolation + culling",
+      "met": true,
+      "note": null
+    },
+    {
+      "req": "REQ-162",
+      "criterion": "entity culling reuses the P3 SpatialPartition quadtree read-only (buildEntityQuadtree/queryQuadtree, zero reimplementation); terrain uses direct tile-range clamp; critical items in view always survive (structural containment test, not a heuristic)",
+      "met": true,
+      "note": null
+    },
+    {
+      "req": "REQ-150",
+      "criterion": "Camera.ts: pure exponential smoothing toward the player, render-layer-only state, never written to WorldState (dm-0004/dm-0082); player pose (idle/prejump/air) derived from jumpLock.phase + playerGrounded",
+      "met": true,
+      "note": null
+    }
+  ],
+  "outcome": "completed",
+  "closed_at": "2026-07-11T16:34:55.666Z"
+}

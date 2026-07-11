@@ -15,6 +15,7 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
 import { DEFAULT_GRAMMAR, type GrammarCategoryId } from '../../render/grammar/Grammar';
+import type { Raster2D } from '../../render/style/Raster2D';
 import {
   packSatisfiesGrammar,
   validatePack,
@@ -76,6 +77,10 @@ function makeFakePack(overrides: Partial<{
       const fresh: CachedVisual = { bitmap: { id: key, widthPx: request.widthPx, heightPx: request.heightPx }, anchorX: 0, anchorY: 0, padPx: 6 };
       cache.set(key, fresh);
       return fresh;
+    },
+    rasterize(request: VisualRequest, device: Raster2D): void {
+      device.setFillStyle(accents[DEFAULT_GRAMMAR.bindings[request.role as keyof typeof DEFAULT_GRAMMAR.bindings] ?? 'safe'] ?? '#000000');
+      device.fillRect(0, 0, request.widthPx, request.heightPx);
     },
     paletteAccent(category: GrammarCategoryId): string | null {
       return accents[category];
