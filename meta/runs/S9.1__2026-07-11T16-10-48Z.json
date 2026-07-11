@@ -1,0 +1,74 @@
+{
+  "slice": "S9.1",
+  "title": "Grammar schema + StylePack seam + render/ substrate & isolation scans",
+  "reqs": [
+    "REQ-070",
+    "REQ-071"
+  ],
+  "started_at": "2026-07-11T11:26:56.202Z",
+  "updated_at": "2026-07-11T16:10:48.407Z",
+  "current_stage": "handoff",
+  "stages": {
+    "reboot": {
+      "status": "done",
+      "at": "2026-07-11T11:26:56.203Z",
+      "note": "REBOOT done at session start: handoff read, pkg_hash s9-a1c0f3 confirmed, 560/560 green"
+    },
+    "select": {
+      "status": "done",
+      "at": "2026-07-11T11:26:56.296Z",
+      "note": "PLAN: goal=grammar+seam data; files=render/grammar/Grammar.ts,render/style/StylePack.ts,test/unit/RenderIsolation.test.ts; tests=Grammar.test.ts,StylePack.test.ts,RenderIsolation.test.ts"
+    },
+    "plan": {
+      "status": "done",
+      "at": "2026-07-11T16:07:44.038Z",
+      "note": "ANCHOR: new subtree, no existing system to freeze; dependency-mapped components/Behavior.ts (EntityKind union) as the sole src/ dependency"
+    },
+    "anchor": {
+      "status": "done",
+      "at": "2026-07-11T16:07:44.134Z",
+      "note": "IMPLEMENT: render/grammar/Grammar.ts (6-category schema, strict parser, dm-0084/dm-0085 bindings), render/style/StylePack.ts (asset-provider seam + validatePack), test/unit/RenderIsolation.test.ts (dm-0081/dm-0082 scans), tsconfig.json include, directory_structure.md render/ subtree"
+    },
+    "implement": {
+      "status": "done",
+      "at": "2026-07-11T16:07:44.235Z",
+      "note": "VERIFY: npm test green"
+    },
+    "verify": {
+      "status": "done",
+      "at": "2026-07-11T16:08:00.292Z",
+      "note": "INTEGRATE: PKG updated in-change (render/grammar, render/style_pack promoted from pending; 8 remaining S9.2-S9.10 pending nodes re-registered at corrected render/ paths; hash s9-a1c0f3 -> s9-b2d1a4); ledger at dm-0089 (dm-0081-0086 planning + dm-0087-0089 backlog notes already appended this session)"
+    },
+    "integrate": {
+      "status": "done",
+      "at": "2026-07-11T16:08:15.248Z",
+      "note": "REPORT: S9.1 -> COMPLETED (not VERIFIED — REQ-070/071 flip VERIFIED at S9.11 per the phase's four-state schedule, since the pack-side realization (S9.2 PaperStylePack) and full grammar-application (S9.3 scene compiler) are still ahead). No backlog REQ state change this slice."
+    },
+    "report": {
+      "status": "done",
+      "at": "2026-07-11T16:08:23.140Z",
+      "note": "HANDOFF: writing meta/handoff_latest.json"
+    },
+    "handoff": {
+      "status": "done",
+      "at": "2026-07-11T16:09:38.654Z",
+      "note": "HANDOFF written: meta/handoff_latest.json reflects S9.1 COMPLETED, pkg_hash s9-b2d1a4, next pick S9.2"
+    }
+  },
+  "acceptance": [
+    {
+      "req": "REQ-070",
+      "criterion": "DEFAULT_GRAMMAR ships all six categories with bindings total over RENDERABLE_ROLES; strict parser rejects unbound/double-bound roles, unknown categories, non-critical danger; StylePack.validatePack rejects accent/motion/audio overlap and achromatic-optimization/danger-chromatic violations — REQ-070's mixing prohibition enforced structurally on both the grammar and pack sides (Grammar.test.ts, StylePack.test.ts)",
+      "met": true,
+      "note": null
+    },
+    {
+      "req": "REQ-071",
+      "criterion": "Six structural categories each carry the palette/silhouette/motion/audio signature-role contract (StylePack interface); DEFAULT_GRAMMAR fixes the six ids + meanings; dm-0084 (achromatic optimization) and dm-0085 (goal->interactive) reconciliations closed in the binding data itself",
+      "met": true,
+      "note": null
+    }
+  ],
+  "outcome": "completed",
+  "closed_at": "2026-07-11T16:10:48.553Z"
+}

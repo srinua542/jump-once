@@ -129,17 +129,17 @@ Each phase lists its owned requirements, its **entry gate** (what must be true t
 - **Exit:** a level can be authored, playtested, and exported through the editor; telemetry round-trips into Campaign Intelligence. **MET** — the editor authors/playtests/exports headlessly and telemetry round-trips through the unmodified `processCampaign`. Per dm-0065, the "visual"/rendering sub-clauses of REQ-130/131 (and REQ-132's asset-delivery-speed clause, dm-0072) are a P9 share; P8 delivered every part that is pure logic/data and `node --test`-covered.
 
 ### P9 — Rendering, Audio & Visual Grammar
-- **Owns:** REQ-070, REQ-071, REQ-161, REQ-162, REQ-163, REQ-170, REQ-171, REQ-016(visual), REQ-001, REQ-002.
-- **Deliverables:** WebGL renderer with batching + object pooling + spatial partitioning; WebAudio; the six-category visual grammar as a data-driven style system; responsive scaling; Poki SDK (PokiSDK) lifecycle hooks (ad placement + loading-progress). dm-0038: portal scope narrowed to Poki only for now — no CrazyGames integration work is in scope.
+- **Owns:** REQ-070, REQ-071, REQ-161, REQ-162, REQ-163, REQ-170, REQ-171, REQ-016(visual), REQ-001, REQ-002, REQ-174(P9 share).
+- **Deliverables:** WebGL renderer with batching + object pooling + spatial partitioning; WebAudio; the six-category visual grammar as a data-driven style system; responsive scaling; Poki SDK (PokiSDK) lifecycle hooks (ad placement + loading-progress, incl. the `rewardedBreak` hook the REQ-174 skip/alt-route flow calls). dm-0038: portal scope narrowed to Poki only for now — no CrazyGames integration work is in scope.
 - **Exit:** a level renders at target fps with the correct visual signatures; dynamic quality scale-back verified under synthetic load.
 
 ### P10 — Content Generation
-- **Owns:** REQ-005, REQ-013, REQ-083, REQ-100, REQ-050(applied), REQ-015(applied).
-- **Deliverables:** chapters authored via the §9 7-step architecture; levels via the §10 pipeline; every level dual-path and routed through GDOS + validation; full campaign.
-- **Exit:** every shipped level is `VERIFIED` by P4+P5; macro curriculum validation passes for each chapter.
+- **Owns:** REQ-005, REQ-013, REQ-083, REQ-084, REQ-100, REQ-050(applied), REQ-015(applied), REQ-174(P10 share).
+- **Deliverables:** chapters authored via the §9 7-step architecture; levels via the §10 pipeline; every level dual-path and routed through GDOS + validation; the REQ-084 difficulty distribution (Easy 20% / Medium 35% / Hard 25% / Harder 15% / Very Hard 5%) satisfied across the full campaign; the REQ-174 rewarded-skip/alt-route flow wired per level (no IAP); full campaign.
+- **Exit:** every shipped level is `VERIFIED` by P4+P5; macro curriculum validation passes for each chapter; the campaign's difficulty-tier proportions match REQ-084 within calibrated tolerance.
 
 ### P11 — Optimization, Build Pipeline & Ship
-- **Owns:** REQ-160, REQ-161, REQ-162, REQ-163, REQ-172, REQ-173, REQ-132(release), REQ-022(final), REQ-P07(final).
+- **Owns:** REQ-160, REQ-161, REQ-162, REQ-163, REQ-172, REQ-173, REQ-132(release), REQ-022(final), REQ-P07(final), REQ-174(release audit).
 - **Deliverables:** zero-allocation audit of the runtime loop; automated build pipeline (compile + asset opt + run validation suite + package); final compliance audit against the entire PRD.
 - **Exit:** production build passes the full automated validation suite; every REQ is `VERIFIED`.
 

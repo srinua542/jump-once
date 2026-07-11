@@ -1,8 +1,8 @@
 {
   "schema_version": "1.0",
-  "generated_by_session": "2026-07-11T-session-9-visual-canon",
-  "pkg_hash": "s9-a1c0f3",
-  "notes": "Machine-readable mirror of the codebase. Read at every session start; update immediately on any structural code change (new module, changed dependency, changed GDOS mapping). See references/pkg_schema.md. NOTE: this session added NO code -- it recorded the committed art direction (Paper Collage) as design canon (docs/visual_design_bible.md, the visual-design-principle skill, ledger dm-0075/dm-0076). The forthcoming P9 render/StylePack modules are registered under pending_nodes (planned_slice P9); they materialize as real SystemNodes when P9 implements them.",
+  "generated_by_session": "2026-07-11T-session-9-p9-s9.1",
+  "pkg_hash": "s9-b2d1a4",
+  "notes": "Machine-readable mirror of the codebase. Read at every session start; update immediately on any structural code change. See references/pkg_schema.md. S9.1 (P9's first implementation slice) landed: render/grammar/Grammar.ts (the sixth versioned schema, style-agnostic REQ-070/071 core) and render/style/StylePack.ts (the dm-0076 asset-provider seam + validatePack, the pack-side mixing-prohibition enforcement), both promoted from pending_nodes to real SystemNodes. test/unit/RenderIsolation.test.ts scan-enforces the dm-0081 one-way rule (render/ imports src/+tools/ through named seams only; only render/tooling/ imports tools/; nothing under src/ or tools/ imports render/), the dm-0082 browser-global/wall-clock confinement (render/platform/ only), and Math.random exclusion. The remaining eight S9.2-S9.10 deliverables are re-registered under pending_nodes, replacing the three coarse pre-planning placeholders, each pointing at the corrected render/ (not src/render/) paths per dm-0081.",
   "nodes": [
     {
       "node_id": "core/vec2",
@@ -394,7 +394,8 @@
         "gen/pda",
         "gen/generator",
         "gen/concept",
-        "gen/pipeline"
+        "gen/pipeline",
+        "render/grammar"
       ],
       "volatile_state_flags": {
         "has_side_effects": false,
@@ -2287,6 +2288,51 @@
         "REQ-133",
         "REQ-032"
       ]
+    },
+    {
+      "node_id": "render/grammar",
+      "type": "SystemNode",
+      "file_path": "render/grammar/Grammar.ts",
+      "functional_summary": "S9.1 -- the sixth versioned schema (dm-0083): the style-agnostic core of REQ-070/071. Six GrammarCategory records (safe/danger/interactive/temporary/optimization/secret), each with critical: boolean (danger hard-pinned true, REQ-016) and a human meaning string. Total, single-valued bindings map every RenderableRole (the closed EntityKind union from components/Behavior + terrain + goal) to exactly one category -- the structural half of REQ-070's mixing prohibition (the pack-side half is StylePack.validatePack). DEFAULT_GRAMMAR binds goal -> interactive per dm-0085 (terracotta means exactly \"kills you\") and movingPlatform/conveyor -> optimization per dm-0084 (achromatic motion glyphs). Strict parser: dm-0010/0014 discipline, never throws, unknown keys rejected, version hard-pinned. Contains ZERO colour/shape/sound -- a material in this file is a defect (dm-0083/dm-0076 swappability).",
+      "gdos_alignment": "Section_8_Visual_Grammar",
+      "dependencies": [
+        "components/behavior"
+      ],
+      "dependents": [
+        "render/style_pack"
+      ],
+      "volatile_state_flags": {
+        "has_side_effects": false,
+        "state_dependencies": []
+      },
+      "last_verified_commit": "uncommitted-session-9-s9.1",
+      "backlog_refs": [
+        "REQ-070",
+        "REQ-071"
+      ]
+    },
+    {
+      "node_id": "render/style_pack",
+      "type": "SystemNode",
+      "file_path": "render/style/StylePack.ts",
+      "functional_summary": "S9.1 -- the art-style-agnostic asset-provider seam (dm-0076/dm-0083). StylePack interface: visual(request) -> CachedVisual (opaque BitmapHandle + anchor + pad, cache-by-key per bible §5), paletteAccent/motionSpec/audioPatch per GrammarCategoryId. validatePack(pack, grammar) enforces the pack-side half of REQ-070's mixing prohibition: accent uniqueness across categories, danger MUST be chromatic (REQ-016), optimization MUST be achromatic (dm-0084, palette signature is ink/cream motion glyphs), motion-class uniqueness (bible §1's six classes), audio-patch pairwise distinctness (REQ-071), and a cache-by-key probe (same request -> same bitmap handle, \"generate never per-frame\"). SynthPatch (procedural audio, zero binary assets in P9) and MotionSpec are pure data compiled by later slices (S9.6 audio executor, S9.3 scene compiler). \"Paper Collage\" (render/style/paper/, S9.2) is StylePack #1; a future pack implements the same interface with zero gameplay/data changes.",
+      "gdos_alignment": "Section_8_Visual_Grammar",
+      "design_ref": "docs/visual_design_bible.md",
+      "dependencies": [
+        "render/grammar"
+      ],
+      "dependents": [],
+      "volatile_state_flags": {
+        "has_side_effects": false,
+        "state_dependencies": []
+      },
+      "last_verified_commit": "uncommitted-session-9-s9.1",
+      "backlog_refs": [
+        "REQ-070",
+        "REQ-071",
+        "REQ-001",
+        "REQ-002"
+      ]
     }
   ],
   "edges": [
@@ -4107,6 +4153,18 @@
       "from": "gen/pipeline",
       "to": "gen/gen_profile",
       "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "render/grammar",
+      "to": "components/behavior",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "render/style_pack",
+      "to": "render/grammar",
+      "kind": "type_import"
     }
   ],
   "gdos_anchors": [
@@ -4220,35 +4278,122 @@
   ],
   "pending_nodes": [
     {
-      "node_id": "render/style_pack",
-      "type": "PlannedSystemNode",
-      "planned_slice": "P9",
-      "file_path": "src/render/StylePack.ts",
-      "functional_summary": "PLANNED (P9). The art-style-agnostic seam mandated by dm-0076: an abstract StylePack (asset provider) mapping (structuralCategory, behavior.kind, state) -> cached visual descriptor/bitmap. Gameplay/sim/logic stay style-blind; swapping the pack swaps every pixel with zero changes to level data, hitboxes, tapes, or the eval pipeline. Consumes sim state ONE-WAY (interpolationAlpha read-only; rendering never feeds a tick -- dm-0004). Exact interface + physical location (new src/render/ subtree vs. alongside tools/) and the render-vs-tools import direction (dm-0066) are P9-planning decisions. Contract shape fixed in docs/visual_design_bible.md.",
-      "gdos_alignment": "Section_8_Visual_Grammar",
-      "design_ref": "docs/visual_design_bible.md",
-      "backlog_refs": ["REQ-070", "REQ-071", "REQ-001", "REQ-002"]
-    },
-    {
       "node_id": "render/paper_style_pack",
       "type": "PlannedSystemNode",
-      "planned_slice": "P9",
-      "file_path": "src/render/PaperStylePack.ts",
-      "functional_summary": "PLANNED (P9). StylePack #1 -- the concrete 'Paper Collage' realization (dm-0075): the six REQ-071 structural categories rendered as cut-paper/dry-ink/printed-matter, procedurally generated from a seed hashed off entity identity/grid position (deterministic, Math.random still forbidden), states cached as separate bitmaps swapped by key. Port target of the reference engine in src/assets/paper-asset-library.html (PaperAssets facade + KindDraw/DecorDraw), which was simplified ~40% for readability-first in dm-0077 (single shared background grain not per-asset; 8 decor types; calm jitter seg~14/j~1; cache only meaningful gameplay states, direction via runtime transform) and refactored in dm-0078 for structural consistency (base geometry seeded by KIND ONLY so an entity is byte-identical across states, only overlays vary; a shared PaperBlocks 9-slice block library is the single source of all structural geometry -- floors/walls/platforms/entity bases) and dm-0079/dm-0080 for seamless CLEAN-SOLID terrain (a PaperTiles modular autotile kit -- center/edges/corners/isolated/platform-ends/wall-pieces, identical square collision, exposed-edge irregularity pinned to 0 at shared corners, polygons painted into one bitmap; interior wear/grain removed so solid masses are clean ink, torn only on the exposed silhouette -- the Limbo/GRIS look) -- P9 should port that simplified, block-library, clean-solid tile profile, not the original richness. Two open reconciliations for P9 planning: Optimization has no dedicated accent yet, and Danger doubles as the goal (must be silhouette-separable under REQ-070).",
+      "planned_slice": "P9 (S9.2)",
+      "file_path": "render/style/paper/*.ts",
+      "functional_summary": "PLANNED (S9.2). StylePack #1 -- 'Paper Collage' (dm-0075), realizing the render/style/StylePack.ts interface. Ports the reference engine (src/assets/paper-asset-library.html) as simplified in dm-0077 (single shared grain layer, 8 decor types, calm jitter) and refactored in dm-0078 (base(kind) + overlay(kind,state) so an entity is byte-identical across states) and dm-0080 (PaperTiles modular autotile kit; clean-solid interiors, external-boundary-only tearing). Draws only through an injected Raster2D device (dm-0086) -- no browser globals. Recolors the kit's terracotta conveyor chevrons to ink/cream (dm-0084) and the goal pennant to teal (dm-0085).",
       "gdos_alignment": "Section_8_Visual_Grammar",
       "design_ref": "docs/visual_design_bible.md",
       "asset_source": "src/assets/paper-asset-library.html",
-      "backlog_refs": ["REQ-070", "REQ-071", "REQ-150", "REQ-016"]
+      "backlog_refs": [
+        "REQ-070",
+        "REQ-071",
+        "REQ-150",
+        "REQ-016"
+      ]
     },
     {
-      "node_id": "render/renderer",
+      "node_id": "render/scene_compiler",
       "type": "PlannedSystemNode",
-      "planned_slice": "P9",
-      "file_path": "src/render/Renderer.ts",
-      "functional_summary": "PLANNED (P9). The first rendering surface in the project (everything before P9 is headless). Reads GameState one-way and draws via the active StylePack: generate-never-per-frame, cache-by-key (kind:state:size), merge solid tile runs, one background bitmap per level (camera = source-rect crop), tiny dynamic list, DPR cap. Owns the render-side share of REQ-161/162/163 (object pooling, render batching over P3's quadtree, async asset delivery + fps scale-back) and renders the P8 debug/overlay + editor plain-data descriptors (REQ-130/131). Determinism axiom extends here: requestAnimationFrame timing may drive interpolation only, never a tick or a replay-checked value.",
+      "planned_slice": "P9 (S9.3)",
+      "file_path": "render/scene/SceneCompiler.ts",
+      "functional_summary": "PLANNED (S9.3). Pure projection compileScene(state, previous, alpha, grammar, packHandles, viewport) -> DrawList. Interpolates by alpha (interpolationAlpha stays read-only, dm-0004/dm-0082); culls via the P3 SpatialPartition quadtree read-only (REQ-162); resolves every visible entity through the grammar to its pack visual; tags each item critical per its category (REQ-016 x REQ-163 interlock). Camera (render/scene/Camera.ts) is render-layer-only state, never written back.",
       "gdos_alignment": "Section_17_Rendering_Performance",
-      "design_ref": "docs/visual_design_bible.md",
-      "backlog_refs": ["REQ-161", "REQ-162", "REQ-163", "REQ-130", "REQ-131", "REQ-132", "REQ-150"]
+      "backlog_refs": [
+        "REQ-070",
+        "REQ-071",
+        "REQ-162",
+        "REQ-150"
+      ]
+    },
+    {
+      "node_id": "render/gl_executor",
+      "type": "PlannedSystemNode",
+      "planned_slice": "P9 (S9.4)",
+      "file_path": "render/gl/*.ts, render/pool/*.ts",
+      "functional_summary": "PLANNED (S9.4). Gl2Device (minimal enumerated WebGL2RenderingContext subset), Atlas (shelf-packs cached rasters, uploads once per level), Batcher (groups DrawList items by atlasPage+blend into instanced draws), GlRenderer (replays batches). Generic generation-counted Pool + ParticlePool (REQ-161). Tested via a recording FakeGl2 (dm-0086) -- call-sequence assertions, not pixels.",
+      "gdos_alignment": "Section_17_Rendering_Performance",
+      "backlog_refs": [
+        "REQ-161",
+        "REQ-162",
+        "REQ-170"
+      ]
+    },
+    {
+      "node_id": "render/feel",
+      "type": "PlannedSystemNode",
+      "planned_slice": "P9 (S9.5)",
+      "file_path": "render/feel/*.ts",
+      "functional_summary": "PLANNED (S9.5). Anticipation frames, squash-and-stretch, jump particle burst, landing impact (REQ-150 visual sub-clauses) as pure functions of observable state transitions. Defeat marker (REQ-016) renders the death cause at the defeat position, always critical. Curves come from a FeelProfile data record, no literals. Owns the dm-0089 death-feedback-timing open question (render-side hold vs. Lifecycle.ts change vs. silhouette-instant) -- decided here, not in S9.1.",
+      "gdos_alignment": "Section_16_Player_Controller",
+      "backlog_refs": [
+        "REQ-150",
+        "REQ-016"
+      ]
+    },
+    {
+      "node_id": "render/audio",
+      "type": "PlannedSystemNode",
+      "planned_slice": "P9 (S9.6)",
+      "file_path": "render/audio/*.ts",
+      "functional_summary": "PLANNED (S9.6). AudioDevice seam (minimal AudioContext subset); deriveAudioCues(previous, current) -> AudioCue[], pure and transition-driven (jump/defeat/goal/checkpoint/surface); PatchCompiler turns a category SynthPatch into a node-graph plan. Master gain exposes muteForBreak/resume for the Poki ad-break flow.",
+      "gdos_alignment": "Section_8_Visual_Grammar",
+      "backlog_refs": [
+        "REQ-071",
+        "REQ-170"
+      ]
+    },
+    {
+      "node_id": "render/assets",
+      "type": "PlannedSystemNode",
+      "planned_slice": "P9 (S9.7)",
+      "file_path": "render/assets/*.ts",
+      "functional_summary": "PLANNED (S9.7). Strict-parsed asset manifest (critical/deferred priority tiers); AssetLoader over an injected AssetFetcher; critical tier gates first render, deferred streams after; progress feeds gameLoadingFinished. DeliveryReport (bytes/elapsed via injected clock) is REQ-132's P9 share (dm-0072), diagnostic-only like the P8 profiler (dm-0067/dm-0082).",
+      "gdos_alignment": "Section_14_Internal_Production_Tools",
+      "backlog_refs": [
+        "REQ-163",
+        "REQ-132",
+        "REQ-002"
+      ]
+    },
+    {
+      "node_id": "render/shell",
+      "type": "PlannedSystemNode",
+      "planned_slice": "P9 (S9.8)",
+      "file_path": "render/shell/*.ts, render/platform/*.ts",
+      "functional_summary": "PLANNED (S9.8). GameShell: FrameScheduler tick -> Clock.advance(realDelta) -> N fixed Engine steps -> compileScene -> GlRenderer.draw + audio cues (bit-identical to a headless run given the same InputFrames -- the projection-purity proof, dm-0082). ViewportModel (letterbox/DPR-cap/fullscreen, REQ-171). InputCapture maps keys to InputFrame, prevents space/arrow default scroll. PortalSdk seam + PokiPortalSdk adapter (CDN script, dm-0086) + NullPortalSdk (dev/test): init->gameLoadingFinished->gameplayStart/Stop->commercialBreak/rewardedBreak, the latter also serving REQ-174's P9 hook share. render/platform/ is the ONLY code naming real browser globals.",
+      "gdos_alignment": "Section_18_Shipping_Release",
+      "backlog_refs": [
+        "REQ-170",
+        "REQ-171",
+        "REQ-001",
+        "REQ-002",
+        "REQ-174"
+      ]
+    },
+    {
+      "node_id": "render/tooling",
+      "type": "PlannedSystemNode",
+      "planned_slice": "P9 (S9.9)",
+      "file_path": "render/tooling/*.ts",
+      "functional_summary": "PLANNED (S9.9). paintOverlays() renders all six P8 debug descriptor kinds (tools/debug/Overlay.ts, dm-0065 P9 share); EditorSurface renders LevelDraft (tools/level_editor/EditorState.ts) and maps pointer/key input to the exact P8 EditorCommand set; inspector bindings call tools/debug/Inspector.ts verbatim. The ONLY render/ area permitted to import tools/ (dm-0081).",
+      "gdos_alignment": "Section_14_Internal_Production_Tools",
+      "backlog_refs": [
+        "REQ-130",
+        "REQ-131"
+      ]
+    },
+    {
+      "node_id": "render/quality",
+      "type": "PlannedSystemNode",
+      "planned_slice": "P9 (S9.10)",
+      "file_path": "render/quality/*.ts",
+      "functional_summary": "PLANNED (S9.10). Frame-time EMA over shell-reported durations; data-driven tier ladder with hysteresis + cooldown; applyTier(drawList, tier) may drop only critical: false items (the REQ-016 x REQ-163 interlock -- danger is structurally always-critical, dm-0083). The IRD P9 exit condition: verified under synthetic scripted frame-time load.",
+      "gdos_alignment": "Section_17_Rendering_Performance",
+      "backlog_refs": [
+        "REQ-163"
+      ]
     }
   ]
 }

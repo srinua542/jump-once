@@ -23,6 +23,6 @@
     "resolveJsonModule": true,
     "types": ["node"]
   },
-  "include": ["src/**/*.ts", "test/**/*.ts", "tools/**/*.ts"],
+  "include": ["src/**/*.ts", "test/**/*.ts", "tools/**/*.ts", "render/**/*.ts"],
   "exclude": ["node_modules", "dist"]
 }

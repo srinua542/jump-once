@@ -90,6 +90,7 @@
 | REQ-081 | Creativity & Iteration loop: generate → variations → GDOS eval → mutate/combine → compare to memory → select hybrid → improve → repeat to diminishing returns. | §9 | P5,P7 | VERIFIED |
 | REQ-082 | 9-stage mechanic lifecycle tracking (Introduction→…→Retirement); block reuse of exhausted mechanics; prune/convert on Retirement. | §9 | P5,P7 | VERIFIED |
 | REQ-083 | Strict chapter generation architecture: define 7 framework items (Theme, Learning Goal, Mental Model, Misconceptions, Subversion, Optimization, Final Exam) before any level generation. | §9 | P10 | NOT_STARTED |
+| REQ-084 | Campaign-wide difficulty distribution across the authored level pool: Easy 20% (teach mechanics, build confidence), Medium 35% (core experience, clever betrayals), Hard 25% (mechanic combinations, memorable troll moments), Harder 15% (complex deception for dedicated players), Very Hard 5% (endgame/creator-bait mastery levels). Calibrated data, not hardcoded per-level; enforced at macro curriculum validation (REQ-142). | §9 | P10 | NOT_STARTED |
 
 ## §10 Level Production Pipeline & Intent Verification
 
@@ -165,6 +166,7 @@
 | REQ-171 | Responsive UI scaling across resolutions, aspect ratios, and fullscreen transitions. | §18 | P9,P11 | NOT_STARTED |
 | REQ-172 | Fully automated build pipeline: compile optimized client builds, asset optimization passes, run the validation test suite, package deployment-ready artifacts. | §18 | P11 | NOT_STARTED |
 | REQ-173 | Completion bar: polished, definitive premium-indie quality; complete only when all systems/tools/data/docs are shipped-verified. | §18 | P11 | NOT_STARTED |
+| REQ-174 | Non-IAP monetization: an optional rewarded-ad unlock (Poki SDK `rewardedBreak`) lets a player skip a level or reveal an alternative route/hint; no in-app purchases or paid currency anywhere in the product. | §18 | P9,P10,P11 | NOT_STARTED |
 
 ## Protocol Requirements (from `/jump-once-protocol` skill + Directive)
 
