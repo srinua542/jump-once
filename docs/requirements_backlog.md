@@ -14,8 +14,8 @@
 
 | ID | Requirement | PRD | Phase | State |
 |----|-------------|-----|-------|-------|
-| REQ-001 | 2D puzzle-platformer targeting the premium web portal Poki; retention decided in first 30s. | §1 | P9,P11 | NOT_STARTED |
-| REQ-002 | Eliminate operational friction: no long loads, no complex progression, no text-heavy tutorials. | §1 | P9,P10 | NOT_STARTED |
+| REQ-001 | 2D puzzle-platformer targeting the premium web portal Poki; retention decided in first 30s. | §1 | P9,P11 | IN_PROGRESS |
+| REQ-002 | Eliminate operational friction: no long loads, no complex progression, no text-heavy tutorials. | §1 | P9,P10 | IN_PROGRESS |
 | REQ-003 | Prioritize continuous kinetic momentum and instant gameplay iteration. | §1 | P3,P10 | IN_PROGRESS |
 | REQ-004 | Single unchanging structural constraint: exactly one jump per level. | §1 | P3 | VERIFIED |
 | REQ-005 | Depth via level design (Level Devil–style subversion), not expanded power sets; logical fairness; deterministic rules. | §1 | P10 | NOT_STARTED |
@@ -79,8 +79,8 @@
 
 | ID | Requirement | PRD | Phase | State |
 |----|-------------|-----|-------|-------|
-| REQ-070 | Strict, unyielding Visual Grammar; standardized UX signatures; mixing signatures strictly prohibited. | §8 | P9 | NOT_STARTED |
-| REQ-071 | Six structural categories, each with fixed palette/silhouette/motion/audio signature (Safe, Danger, Interactive, Temporary, Optimization, Secret). | §8 | P9 | NOT_STARTED |
+| REQ-070 | Strict, unyielding Visual Grammar; standardized UX signatures; mixing signatures strictly prohibited. | §8 | P9 | VERIFIED |
+| REQ-071 | Six structural categories, each with fixed palette/silhouette/motion/audio signature (Safe, Danger, Interactive, Temporary, Optimization, Secret). | §8 | P9 | VERIFIED |
 
 ## §9 Production Workflow & Mechanic Lifecycle
 
@@ -126,8 +126,8 @@
 
 | ID | Requirement | PRD | Phase | State |
 |----|-------------|-----|-------|-------|
-| REQ-130 | Visual Level Editor: tile painting, grid-snapped object placement, hierarchical grouping, multi-step undo/redo, live in-editor playtest. | §14 | P8,P9 | IN_PROGRESS |
-| REQ-131 | Visual debug overlays (hitboxes, triggers, movement paths, simulated jump arcs, surface normals, physics states) + runtime inspection (pause, frame-step, variable manipulation, instant reload). | §14 | P8,P9 | IN_PROGRESS |
+| REQ-130 | Visual Level Editor: tile painting, grid-snapped object placement, hierarchical grouping, multi-step undo/redo, live in-editor playtest. | §14 | P8,P9 | VERIFIED |
+| REQ-131 | Visual debug overlays (hitboxes, triggers, movement paths, simulated jump arcs, surface normals, physics states) + runtime inspection (pause, frame-step, variable manipulation, instant reload). | §14 | P8,P9 | VERIFIED |
 | REQ-132 | Automated profiling: frame rate, memory allocations, scene load times, asset delivery speeds. | §14 | P8,P9,P11 | IN_PROGRESS |
 | REQ-133 | Telemetry: death-coordinate heatmaps, input recording for failure analysis, statistical difficulty spikes, fed back into GDOS for design-debt evaluation. | §14 | P8 | VERIFIED |
 
@@ -143,7 +143,7 @@
 
 | ID | Requirement | PRD | Phase | State |
 |----|-------------|-----|-------|-------|
-| REQ-150 | Player Character Controller: instant horizontal accel/decel; single jump with anticipation frames, squash-and-stretch, particle burst, camera tracking; jump state locks (horizontal-only) until scene reload. | §16 | P3,P9 | IN_PROGRESS |
+| REQ-150 | Player Character Controller: instant horizontal accel/decel; single jump with anticipation frames, squash-and-stretch, particle burst, camera tracking; jump state locks (horizontal-only) until scene reload. | §16 | P3,P9 | VERIFIED |
 | REQ-151 | Environmental elements: static geometry, moving platforms (linear/looping/triggered), collapsing floors, frictionless ice. | §16 | P3 | VERIFIED |
 | REQ-152 | Hazards & triggers: static spikes, timed laser arrays, moving hazards (instant defeat on intersection); pressure plates, proximity zones, mechanical doors that modify layout dynamically. | §16 | P3 | VERIFIED |
 | REQ-153 | Kinetic modifiers: directional launch springs, gravity-inverting zones, conveyors — alter velocity/inertia without consuming the single jump. | §16 | P3 | VERIFIED |
@@ -154,16 +154,16 @@
 | ID | Requirement | PRD | Phase | State |
 |----|-------------|-----|-------|-------|
 | REQ-160 | Zero-allocation runtime loop; preallocate all structural arrays/state objects upfront. | §17 | P3,P11 | IN_PROGRESS |
-| REQ-161 | Global object-pooling framework for particles, visual impacts, projectiles. | §17 | P9,P11 | NOT_STARTED |
+| REQ-161 | Global object-pooling framework for particles, visual impacts, projectiles. | §17 | P9,P11 | IN_PROGRESS |
 | REQ-162 | Render batching for static geometry/background; spatial partitioning (quadtree) so collision evaluates only the player's neighborhood. | §17 | P3,P9,P11 | IN_PROGRESS |
-| REQ-163 | Async asset delivery; continuous performance monitoring with automatic scale-back of non-critical visuals below target fps. | §17 | P9,P11 | NOT_STARTED |
+| REQ-163 | Async asset delivery; continuous performance monitoring with automatic scale-back of non-critical visuals below target fps. | §17 | P9,P11 | IN_PROGRESS |
 
 ## §18 Shipping, Automation & Release
 
 | ID | Requirement | PRD | Phase | State |
 |----|-------------|-----|-------|-------|
-| REQ-170 | Interface with WebGL/WebAudio; integrate the Poki SDK (PokiSDK) for ad placement + loading-progress lifecycle hooks. | §18 | P9,P11 | NOT_STARTED |
-| REQ-171 | Responsive UI scaling across resolutions, aspect ratios, and fullscreen transitions. | §18 | P9,P11 | NOT_STARTED |
+| REQ-170 | Interface with WebGL/WebAudio; integrate the Poki SDK (PokiSDK) for ad placement + loading-progress lifecycle hooks. | §18 | P9,P11 | IN_PROGRESS |
+| REQ-171 | Responsive UI scaling across resolutions, aspect ratios, and fullscreen transitions. | §18 | P9,P11 | IN_PROGRESS |
 | REQ-172 | Fully automated build pipeline: compile optimized client builds, asset optimization passes, run the validation test suite, package deployment-ready artifacts. | §18 | P11 | NOT_STARTED |
 | REQ-173 | Completion bar: polished, definitive premium-indie quality; complete only when all systems/tools/data/docs are shipped-verified. | §18 | P11 | NOT_STARTED |
 | REQ-174 | Non-IAP monetization: an optional rewarded-ad unlock (Poki SDK `rewardedBreak`) lets a player skip a level or reveal an alternative route/hint; no in-app purchases or paid currency anywhere in the product. | §18 | P9,P10,P11 | NOT_STARTED |

@@ -1,0 +1,81 @@
+{
+  "slice": "S9.7",
+  "title": "Asset manifest + async delivery + delivery-speed profiling",
+  "reqs": [
+    "REQ-163",
+    "REQ-132",
+    "REQ-002"
+  ],
+  "started_at": "2026-07-11T16:58:36.964Z",
+  "updated_at": "2026-07-11T17:02:58.887Z",
+  "current_stage": "handoff",
+  "stages": {
+    "reboot": {
+      "status": "done",
+      "at": "2026-07-11T16:58:36.965Z",
+      "note": "PLAN+ANCHOR: AssetManifest (7th versioned schema), AssetFetcher+WallClock seams, AssetLoader split into loadCriticalTier/streamDeferredTier"
+    },
+    "select": {
+      "status": "done",
+      "at": "2026-07-11T17:02:45.873Z",
+      "note": "PLAN complete"
+    },
+    "plan": {
+      "status": "done",
+      "at": "2026-07-11T17:02:45.991Z",
+      "note": "ANCHOR complete"
+    },
+    "anchor": {
+      "status": "done",
+      "at": "2026-07-11T17:02:46.105Z",
+      "note": "IMPLEMENT: render/assets/*.ts + AssetManifest.test.ts (7) + AssetLoader.test.ts (6); fixed a RenderIsolation false-positive (dm-0101)"
+    },
+    "implement": {
+      "status": "done",
+      "at": "2026-07-11T17:02:46.220Z",
+      "note": "VERIFY: npm test green (663/663)"
+    },
+    "verify": {
+      "status": "done",
+      "at": "2026-07-11T17:02:58.214Z",
+      "note": "INTEGRATE: PKG updated in-change (render/assets real node; hash s9-a7c3f9 -> s9-b8d4a0); ledger at dm-0101"
+    },
+    "integrate": {
+      "status": "done",
+      "at": "2026-07-11T17:02:58.321Z",
+      "note": "REPORT: S9.7 -> COMPLETED. REQ-163/132/002 gain their S9.7 share."
+    },
+    "report": {
+      "status": "done",
+      "at": "2026-07-11T17:02:58.675Z",
+      "note": "HANDOFF checkpoint"
+    },
+    "handoff": {
+      "status": "done",
+      "at": "2026-07-11T17:02:58.778Z",
+      "note": "handoff stage complete"
+    }
+  },
+  "acceptance": [
+    {
+      "req": "REQ-163",
+      "criterion": "loadCriticalTier gates readiness (blocks on critical, halts+errors on failure); streamDeferredTier runs after, degrading a failed asset without blocking or throwing — both tested against a scripted fake fetcher+clock",
+      "met": true,
+      "note": null
+    },
+    {
+      "req": "REQ-132",
+      "criterion": "per-asset elapsedMs via injected WallClock matches scripted deltas exactly (REQ-132 P9 asset-delivery-speed share); diagnostic-only, confined like the P8 profiler",
+      "met": true,
+      "note": null
+    },
+    {
+      "req": "REQ-002",
+      "criterion": "critical/deferred tiering means first render is gated only on truly essential assets — the async-delivery mechanism that keeps loads short",
+      "met": true,
+      "note": null
+    }
+  ],
+  "outcome": "completed",
+  "closed_at": "2026-07-11T17:02:58.993Z"
+}

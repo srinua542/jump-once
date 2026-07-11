@@ -1,0 +1,74 @@
+{
+  "slice": "S9.9",
+  "title": "Editor + debug-overlay UI over the P8 plain-data substrate",
+  "reqs": [
+    "REQ-130",
+    "REQ-131"
+  ],
+  "started_at": "2026-07-11T17:13:17.517Z",
+  "updated_at": "2026-07-11T17:24:21.652Z",
+  "current_stage": "handoff",
+  "stages": {
+    "reboot": {
+      "status": "done",
+      "at": "2026-07-11T17:13:17.518Z",
+      "note": "SELECT/PLAN/ANCHOR: S9.9 scope = render/tooling/{Overlay,EditorSurface,InspectorBindings}.ts per execution_plan.md P9 design summary point 11. Zero-assumption read tools/debug/Overlay.ts, tools/level_editor/EditorState.ts, tools/debug/Inspector.ts, tools/level_editor/Playtest.ts before writing any code."
+    },
+    "select": {
+      "status": "done",
+      "at": "2026-07-11T17:21:04.806Z",
+      "note": "IMPLEMENT: built render/tooling/Overlay.ts (paintOverlays -> OverlayDrawList, all six P8 descriptor kinds composed verbatim), render/tooling/EditorSurface.ts (compileEditorScene: LevelDraft -> real DrawList for terrain+entities via the SAME StylePack/Grammar pipeline the game uses, plus grid/selection chrome; mapEditorInput: pointer/key -> P8 EditorCommand/undo/redo, zero P8 modification), render/tooling/InspectorBindings.ts (applyInspectorCommand: UI command union -> one Inspector method call each). Amended render/scene/SceneCompiler.ts to export+generalize isSolidTile/terrainMask/terrainVariant/visualItem (tilemap-scoped, not WorldState-scoped) so EditorSurface reuses them verbatim instead of duplicating terrain-autotile logic."
+    },
+    "plan": {
+      "status": "done",
+      "at": "2026-07-11T17:21:04.907Z",
+      "note": "ANCHOR: dependency map — render/tooling/ depends on tools/debug/Overlay.ts, tools/debug/Inspector.ts, tools/level_editor/{EditorState,Playtest}.ts (P8, unmodified, signature-frozen), render/grammar/Grammar.ts, render/style/StylePack.ts, render/scene/{DrawList,SceneCompiler}.ts. No other render/ file may import tools/ (dm-0081, RenderIsolation.test.ts already enforces this)."
+    },
+    "anchor": {
+      "status": "done",
+      "at": "2026-07-11T17:21:15.180Z",
+      "note": "IMPLEMENT complete: render/tooling/Overlay.ts, render/tooling/EditorSurface.ts, render/tooling/InspectorBindings.ts built; render/scene/SceneCompiler.ts amended (isSolidTile/terrainMask/terrainVariant/visualItem exported + tilemap-scoped). 18 new tests: ToolingOverlay.test.ts (6), EditorSurface.test.ts (8), InspectorBindings.test.ts (4)."
+    },
+    "implement": {
+      "status": "done",
+      "at": "2026-07-11T17:21:16.863Z",
+      "note": "VERIFY: npm run build clean; npm test 699/699 green (up from 681). RenderIsolation.test.ts confirms render/tooling/ is the only render/ area importing tools/ and stays scan-clean otherwise (no browser globals, no wall-clock, no Math.random)."
+    },
+    "verify": {
+      "status": "done",
+      "at": "2026-07-11T17:21:20.469Z",
+      "note": "INTEGRATE: PKG updated in-change (render/tooling real node + both dependency directions incl. edges array; hash s9-c9e5b1 -> s9-d1f7a2); ledger at dm-0106; docs/task_slices.md flips S9.6-S9.9 COMPLETED; docs/IRD.md active-milestone status updated (9/11 P9 slices complete, 699/699 tests, render/ now nine subtrees)."
+    },
+    "integrate": {
+      "status": "done",
+      "at": "2026-07-11T17:24:11.555Z",
+      "note": "REPORT: S9.9 -> COMPLETED. REQ-130/131 gain their S9.9 render/UI share (P8 logic/data share already delivered at S8.1-S8.3); both stay IN_PROGRESS until S9.11's phase-level flip."
+    },
+    "report": {
+      "status": "done",
+      "at": "2026-07-11T17:24:17.487Z",
+      "note": "HANDOFF checkpoint"
+    },
+    "handoff": {
+      "status": "done",
+      "at": "2026-07-11T17:24:17.956Z",
+      "note": "handoff stage complete"
+    }
+  },
+  "acceptance": [
+    {
+      "req": "REQ-130",
+      "criterion": "(fill in)",
+      "met": false,
+      "note": null
+    },
+    {
+      "req": "REQ-131",
+      "criterion": "(fill in)",
+      "met": false,
+      "note": null
+    }
+  ],
+  "outcome": "completed",
+  "closed_at": "2026-07-11T17:24:21.747Z"
+}

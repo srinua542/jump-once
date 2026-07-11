@@ -45,7 +45,7 @@
  */
 
 import type { EntityDef } from '../../src/components/Entity';
-import { TILE_KIND_BY_ID } from '../../src/components/Tilemap';
+import { TILE_KIND_BY_ID, type TilemapDef } from '../../src/components/Tilemap';
 import { FIXED_STEP_SECONDS } from '../../src/core/Clock';
 import type { Vec2 } from '../../src/core/Vec2';
 import type { EntityState, JumpOnceState, WorldState } from '../../src/entities/World';
@@ -69,23 +69,28 @@ function lerpVec(a: Vec2, b: Vec2, t: number): Vec2 {
   return { x: lerp(a.x, b.x, t), y: lerp(a.y, b.y, t) };
 }
 
-/** Terrain tile-mask autotile, matching PaperTiles/PaperStylePack's convention: out-of-bounds counts SOLID. */
-function isSolidTile(world: WorldState, col: number, row: number): boolean {
-  const { width, height, tiles } = world.level.tilemap;
+/**
+ * Terrain tile-mask autotile, matching PaperTiles/PaperStylePack's convention:
+ * out-of-bounds counts SOLID. Scoped to a bare `TilemapDef` (not a whole
+ * `WorldState`) so S9.9's EditorSurface can reuse it verbatim against an
+ * unvalidated `LevelDraft.tilemap` — same shape, no duplicated logic.
+ */
+export function isSolidTile(tilemap: TilemapDef, col: number, row: number): boolean {
+  const { width, height, tiles } = tilemap;
   if (col < 0 || row < 0 || col >= width || row >= height) return true;
   return TILE_KIND_BY_ID[tiles[row * width + col]] === 'solid';
 }
 
-function terrainMask(world: WorldState, col: number, row: number): number {
-  const N = isSolidTile(world, col, row - 1) ? 1 : 0;
-  const E = isSolidTile(world, col + 1, row) ? 2 : 0;
-  const S = isSolidTile(world, col, row + 1) ? 4 : 0;
-  const W = isSolidTile(world, col - 1, row) ? 8 : 0;
+export function terrainMask(tilemap: TilemapDef, col: number, row: number): number {
+  const N = isSolidTile(tilemap, col, row - 1) ? 1 : 0;
+  const E = isSolidTile(tilemap, col + 1, row) ? 2 : 0;
+  const S = isSolidTile(tilemap, col, row + 1) ? 4 : 0;
+  const W = isSolidTile(tilemap, col - 1, row) ? 8 : 0;
   return N | E | S | W;
 }
 
 /** Position-hashed small variant set (0-2) — ported from the reference engine's terrain composer. */
-function terrainVariant(col: number, row: number): number {
+export function terrainVariant(col: number, row: number): number {
   return (((col * 3 + row * 7) % 3) + 3) % 3;
 }
 
@@ -117,7 +122,8 @@ function playerPose(world: WorldState): string {
   return 'idle';
 }
 
-function visualItem(pack: StylePack, request: VisualRequest, worldX: number, worldY: number, category: GrammarCategory | null): DrawItem {
+/** Exported for reuse by S9.9's EditorSurface — same request/DrawItem shape, no duplicated projection logic. */
+export function visualItem(pack: StylePack, request: VisualRequest, worldX: number, worldY: number, category: GrammarCategory | null): DrawItem {
   const cached = pack.visual(request);
   return {
     bitmap: cached.bitmap,
@@ -163,8 +169,8 @@ export function compileScene(
   const terrainCategory = resolveCategory(grammar, 'terrain');
   for (let row = minRow; row <= maxRow; row++) {
     for (let col = minCol; col <= maxCol; col++) {
-      if (!isSolidTile(world, col, row)) continue;
-      const mask = terrainMask(world, col, row);
+      if (!isSolidTile(world.level.tilemap, col, row)) continue;
+      const mask = terrainMask(world.level.tilemap, col, row);
       const variant = terrainVariant(col, row);
       const request: VisualRequest = {
         role: 'terrain',

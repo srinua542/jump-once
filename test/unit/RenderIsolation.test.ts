@@ -132,13 +132,16 @@ test('browser globals and DOM/WebGL/WebAudio types confined to render/platform/ 
   /* Naming a browser TYPE outside platform/ is forbidden too — it is what
      forces the enumerated-subset device seams (Gl2Device, AudioDevice, …)
      instead of leaking real DOM types through pure logic. */
+  /* `devicePixelRatio` is deliberately NOT in this list: it is a legitimate,
+     common field/parameter name for an ALREADY-READ DPR value injected into
+     pure logic (e.g. ViewportModel's ViewportInput.devicePixelRatio) — the
+     actual browser global access (`window.devicePixelRatio`) is still
+     caught because `window` itself is forbidden below. */
   const forbidden = [
     /\bdocument\b/,
     /\bwindow\b/,
     /\bnavigator\b/,
     /\brequestAnimationFrame\b/,
-    /\bdevicePixelRatio\b/,
-    /\bfetch\s*\(/,
     /\bHTMLCanvasElement\b/,
     /\bOffscreenCanvas\b/,
     /\bCanvasRenderingContext2D\b/,
@@ -148,6 +151,19 @@ test('browser globals and DOM/WebGL/WebAudio types confined to render/platform/ 
     /\bPokiSDK\b/,
     /\bgetContext\s*\(/,
   ];
+  /* `fetch` is checked separately: an injected AssetFetcher seam (S9.7)
+     legitimately DECLARES a method named `fetch` (`fetch(url: string):
+     Promise<...>`) and legitimately CALLS it on an injected instance
+     (`fetcher.fetch(url)`) — neither names the browser global. Only a bare
+     `fetch(` that is NOT a method call (no preceding `.`) and NOT a
+     signature declaration (no `):` return-type annotation following the
+     parameter list) is the real global call this scan exists to catch. */
+  function isForbiddenFetchCall(line: string): boolean {
+    if (!/\bfetch\s*\(/.test(line)) return false;
+    if (/\.\s*fetch\s*\(/.test(line)) return false; // obj.fetch(...) — a call on an injected instance
+    if (/\bfetch\s*\([^)]*\)\s*:\s*\S/.test(line)) return false; // fetch(...): ReturnType — an interface/method signature
+    return true;
+  }
   for (const file of RENDER_FILES) {
     if (file.startsWith('platform/')) continue;
     const stripped = stripCommentsAndStrings(readFileSync(join(RENDER, file), 'utf8'));
@@ -156,6 +172,7 @@ test('browser globals and DOM/WebGL/WebAudio types confined to render/platform/ 
       for (const pattern of forbidden) {
         assert.ok(!pattern.test(lines[n]), `render/${file}:${n + 1} matches ${pattern} — browser surface is confined to render/platform/; everything else uses the injected device seams`);
       }
+      assert.ok(!isForbiddenFetchCall(lines[n]), `render/${file}:${n + 1} calls the global fetch() directly — use the injected AssetFetcher seam instead`);
     }
   }
 });

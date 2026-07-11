@@ -1,0 +1,88 @@
+{
+  "slice": "S9.8",
+  "title": "App shell + responsive scaling + Poki SDK lifecycle",
+  "reqs": [
+    "REQ-170",
+    "REQ-171",
+    "REQ-001",
+    "REQ-002"
+  ],
+  "started_at": "2026-07-11T17:03:44.301Z",
+  "updated_at": "2026-07-11T17:13:09.517Z",
+  "current_stage": "handoff",
+  "stages": {
+    "reboot": {
+      "status": "done",
+      "at": "2026-07-11T17:03:44.302Z",
+      "note": "PLAN+ANCHOR: GameShell (Engine+StateManager+CANONICAL_PIPELINE wrapper, same P8 Playtest.ts precedent), ViewportModel (pure letterbox/DPR), InputCapture (pure key-state), PortalSdk+PortalLifecycle (Poki lifecycle)"
+    },
+    "select": {
+      "status": "done",
+      "at": "2026-07-11T17:12:58.838Z",
+      "note": "PLAN complete"
+    },
+    "plan": {
+      "status": "done",
+      "at": "2026-07-11T17:12:58.950Z",
+      "note": "ANCHOR complete: dependency-mapped Engine/StateManager/CANONICAL_PIPELINE (P1/P4 seams); render/platform/ deferred (dm-0103)"
+    },
+    "anchor": {
+      "status": "done",
+      "at": "2026-07-11T17:12:59.063Z",
+      "note": "IMPLEMENT: render/shell/*.ts + 4 test files (24 tests); fixed 2 RenderIsolation false-positives (dm-0102/fetch-already-fixed-at-S9.7)"
+    },
+    "implement": {
+      "status": "done",
+      "at": "2026-07-11T17:12:59.172Z",
+      "note": "VERIFY: npm test green (681/681)"
+    },
+    "verify": {
+      "status": "done",
+      "at": "2026-07-11T17:13:08.936Z",
+      "note": "INTEGRATE: PKG updated in-change (render/shell real node + its dependency edges; hash s9-b8d4a0 -> s9-c9e5b1); ledger at dm-0103"
+    },
+    "integrate": {
+      "status": "done",
+      "at": "2026-07-11T17:13:09.033Z",
+      "note": "REPORT: S9.8 -> COMPLETED. REQ-170/171/001/002 gain their S9.8 share; REQ-174's generic rewardedBreak hook exists via PortalSdk (P10 still owns the actual skip flow)."
+    },
+    "report": {
+      "status": "done",
+      "at": "2026-07-11T17:13:09.324Z",
+      "note": "HANDOFF checkpoint"
+    },
+    "handoff": {
+      "status": "done",
+      "at": "2026-07-11T17:13:09.421Z",
+      "note": "handoff stage complete"
+    }
+  },
+  "acceptance": [
+    {
+      "req": "REQ-170",
+      "criterion": "GameShell wraps Engine/StateManager/CANONICAL_PIPELINE; PortalSdk seam + NullPortalSdk; projection-purity proven bit-identical to headless drive",
+      "met": true,
+      "note": null
+    },
+    {
+      "req": "REQ-171",
+      "criterion": "ViewportModel: pure letterbox/DPR-cap[1,2]/fullscreen math; InputCapture: shouldPreventDefault for space/arrows, edge-triggered InputFrame mapping",
+      "met": true,
+      "note": null
+    },
+    {
+      "req": "REQ-001",
+      "criterion": "GameShell + PortalLifecycle establish the init->loadingFinished->gameplayStart lifecycle Poki's 'first 30s' retention model depends on",
+      "met": true,
+      "note": null
+    },
+    {
+      "req": "REQ-002",
+      "criterion": "gameLoadingFinished ordering + async-tiered assets (S9.7) keep loads short; no text-heavy tutorial surface added",
+      "met": true,
+      "note": null
+    }
+  ],
+  "outcome": "completed",
+  "closed_at": "2026-07-11T17:13:09.611Z"
+}

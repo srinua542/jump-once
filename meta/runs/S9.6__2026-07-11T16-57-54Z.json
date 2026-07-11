@@ -1,0 +1,74 @@
+{
+  "slice": "S9.6",
+  "title": "WebAudio procedural signatures + cue derivation",
+  "reqs": [
+    "REQ-071",
+    "REQ-170"
+  ],
+  "started_at": "2026-07-11T16:53:42.296Z",
+  "updated_at": "2026-07-11T16:57:54.014Z",
+  "current_stage": "handoff",
+  "stages": {
+    "reboot": {
+      "status": "done",
+      "at": "2026-07-11T16:53:42.297Z",
+      "note": "PLAN+ANCHOR: AudioDevice (enumerated subset+trace recorder), PatchCompiler (SynthPatch->node graph), CueDerivation (pure, reuses ImpulseEvents.landed), AudioExecutor (mute-gated scheduling)"
+    },
+    "select": {
+      "status": "done",
+      "at": "2026-07-11T16:57:44.594Z",
+      "note": "PLAN complete"
+    },
+    "plan": {
+      "status": "done",
+      "at": "2026-07-11T16:57:44.699Z",
+      "note": "ANCHOR complete: reused ImpulseEvents.landed from S9.5 rather than re-deriving"
+    },
+    "anchor": {
+      "status": "done",
+      "at": "2026-07-11T16:57:44.794Z",
+      "note": "IMPLEMENT: render/audio/*.ts + Audio.test.ts (11 tests); scoped cue set per dm-0099 (grep-confirmed no checkpoint mechanic exists)"
+    },
+    "implement": {
+      "status": "done",
+      "at": "2026-07-11T16:57:44.895Z",
+      "note": "VERIFY: npm test green (651/651)"
+    },
+    "verify": {
+      "status": "done",
+      "at": "2026-07-11T16:57:53.426Z",
+      "note": "INTEGRATE: PKG updated in-change (render/audio real node; hash s9-f6b2e8 -> s9-a7c3f9); ledger at dm-0100"
+    },
+    "integrate": {
+      "status": "done",
+      "at": "2026-07-11T16:57:53.521Z",
+      "note": "REPORT: S9.6 -> COMPLETED. REQ-071/170 gain their S9.6 share."
+    },
+    "report": {
+      "status": "done",
+      "at": "2026-07-11T16:57:53.819Z",
+      "note": "HANDOFF checkpoint"
+    },
+    "handoff": {
+      "status": "done",
+      "at": "2026-07-11T16:57:53.917Z",
+      "note": "handoff stage complete"
+    }
+  },
+  "acceptance": [
+    {
+      "req": "REQ-071",
+      "criterion": "six category patches compile to structurally distinct node-graph plans (createOscillator vs createNoiseSource correctly discriminated by waveform); cue derivation is pure and transition-driven",
+      "met": true,
+      "note": null
+    },
+    {
+      "req": "REQ-170",
+      "criterion": "AudioDevice: the enumerated WebAudio seam; render/platform/ (S9.8) will bind the real AudioContext — no browser globals here (RenderIsolation scan holds)",
+      "met": true,
+      "note": null
+    }
+  ],
+  "outcome": "completed",
+  "closed_at": "2026-07-11T16:57:54.110Z"
+}

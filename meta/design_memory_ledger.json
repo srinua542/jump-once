@@ -1086,6 +1086,105 @@
       "emotion_targeted": "N/A (correctness bug, caught before any downstream slice built on the wrong assumption).",
       "misconception_created": "None — the fix is unconditional and the regression is now pinned by GameFeel.test.ts's anticipation-frame integration test.",
       "why_alternatives_rejected": "N/A — this was a straightforward bug fix once the failing integration test identified it; no alternative design was considered."
+    },
+    {
+      "id": "dm-0099",
+      "date": "2026-07-11",
+      "status": "ACCEPTED",
+      "title": "S9.6 audio cues are strictly category-bound (landed/defeat/goal only) — no generic jump-liftoff cue, and no checkpoint cue since the mechanic does not exist",
+      "why_it_exists": "REQ-071 fixes an audio signature per STRUCTURAL CATEGORY (the six PaperStylePack.AUDIO_PATCH entries) — it does not name a \"player action\" audio channel. Early P9 planning prose (execution_plan.md's S9.6 deliverable text) listed \"jump/defeat/goal/checkpoint/surface class\" as example transitions to derive cues from, written before S9.6 actually read the codebase. A zero-assumption grep at S9.6 confirms Jump Once has no checkpoint mechanic anywhere (its whole design is the one-jump lock + instant restart, dm-0018) — there is nothing to derive a checkpoint cue from.",
+      "problem_it_solves": "deriveAudioCues (render/audio/CueDerivation.ts) emits exactly three cue shapes, each resolving to one of the six EXISTING category patches: landed (categorized by what was landed on — tile or entity, reusing render/feel/ImpulseEvents.landed rather than re-deriving the edge), defeat (always danger), goal (always interactive). A generic jump-liftoff sound was considered and left out: jump is a player action with no bound structural category, and inventing a seventh \"always danger-adjacent\" or ad hoc patch outside the six-category system would be exactly the kind of ungoverned signature REQ-070 exists to prevent. If a jump sound is wanted later, it needs its own explicitly-designed data channel (a genuine new scope decision), not a silent stretch of the category system.",
+      "emotion_targeted": "N/A (scope honesty, correcting pre-implementation planning prose against the real codebase).",
+      "misconception_created": "A future session must not assume a checkpoint mechanic is coming later in P9/P10 just because early planning prose mentioned the word — it does not exist and was never designed; the one-jump-lock axiom is the entire save-state model.",
+      "why_alternatives_rejected": "Binding a jump cue to an arbitrary existing category (e.g., always \"safe\") was rejected: it would make that category's sound mean two unrelated things (its own structural signal AND every jump), diluting REQ-070's \"no mixing signatures\" intent even though jump itself is not a rendered category — the principle still applies to what a category's SOUND is understood to mean."
+    },
+    {
+      "id": "dm-0100",
+      "date": "2026-07-11",
+      "status": "ACCEPTED",
+      "title": "AudioExecutor.muteForBreak() stops scheduleCues from issuing ANY device calls while muted, not just silences them",
+      "why_it_exists": "Poki's documented ad-break requirement (verified against sdk.poki.com at P9 planning, dm-0086) is \"audio and keyboard input disabled during commercialBreaks\". A literal reading could be satisfied by merely setting the master gain to 0 while still constructing and scheduling oscillator/gain nodes underneath (silent but resource-churning) — a shallower compliance than the spirit of \"disabled\".",
+      "problem_it_solves": "createAudioExecutor tracks its own `muted` boolean independently of AudioDevice.setMasterGain (which it also calls, for defense-in-depth): scheduleCues checks `muted` FIRST and returns immediately, issuing zero device calls at all while muted — proven by a test asserting the device trace length is unchanged across a scheduleCues call made while muted. resume() restores both the gain and the gating.",
+      "emotion_targeted": "N/A (compliance correctness).",
+      "misconception_created": "None — this is a straightforward strengthening of the mute contract beyond the minimum a literal reading would require.",
+      "why_alternatives_rejected": "Muting only via setMasterGain(0) (letting cues still schedule silently) was rejected as a shallower, resource-wasteful interpretation of \"disabled\" that a stricter, still-simple implementation avoids for free."
+    },
+    {
+      "id": "dm-0101",
+      "date": "2026-07-11",
+      "status": "ACCEPTED",
+      "title": "RenderIsolation.test.ts's fetch-confinement check refined to distinguish a real global fetch() call from an injected AssetFetcher seam's method",
+      "why_it_exists": "S9.1's dm-0082 browser-global scan forbade any `fetch(` outside render/platform/ with a blanket regex. S9.7 introduced render/assets/AssetFetcher.ts, whose whole purpose is to DECLARE a `fetch(url: string): Promise<FetchOutcome>` method on an injected interface (never the browser global) and CALL it as `fetcher.fetch(url)` inside AssetLoader.ts — both legitimate, both flagged as false positives by the original blanket pattern.",
+      "problem_it_solves": "The scan now special-cases fetch: it still forbids a bare, uncalled-on-an-object `fetch(...)` that is not followed by a `): ReturnType` signature annotation (the actual global-call shape this rule exists to catch), while explicitly allowing `.fetch(` (a method call on any injected instance) and `fetch(...): Promise<...>` (an interface/type member declaration). This is the same class of pattern every other device seam (Gl2Device, AudioDevice, Raster2D) already gets right by construction — fetch needed special-casing only because \"fetch\" is both a common, legitimate method name AND the specific browser global this rule polices, unlike e.g. `getContext(` which has no legitimate non-browser meaning in this codebase.",
+      "emotion_targeted": "N/A (test-infrastructure correctness).",
+      "misconception_created": "None — the refined check is strictly narrower than before (fewer false positives), never broader; nothing that was correctly forbidden before is now allowed.",
+      "why_alternatives_rejected": "Renaming AssetFetcher's method away from `fetch` (e.g., to `deliver` or `request`) to dodge the scan was rejected: `fetch` is the correct, idiomatic name for what the seam does, and the scan should be precise rather than the code awkward."
+    },
+    {
+      "id": "dm-0102",
+      "date": "2026-07-11",
+      "status": "ACCEPTED",
+      "title": "RenderIsolation.test.ts's devicePixelRatio check removed as a redundant false-positive source — window is already forbidden separately",
+      "why_it_exists": "S9.8's render/shell/ViewportModel.ts legitimately declares a `devicePixelRatio: number` field on its pure ViewportInput data type — the ALREADY-READ DPR value the caller injects, never a reference to the browser global. The blanket `/\\bdevicePixelRatio\\b/` scan pattern (S9.1) flagged this field declaration as if it were a live global access.",
+      "problem_it_solves": "Removed the standalone devicePixelRatio pattern from the forbidden list: the real hazard it existed to catch — `window.devicePixelRatio` — is already caught by the separate, still-active `\\bwindow\\b` pattern, since `window` itself cannot appear outside render/platform/. A bare `devicePixelRatio` identifier is legitimate anywhere in render/ as a data field/parameter name; only combined with `window.` is it an actual global read, and that combination is still forbidden. Same class of fix as dm-0101's fetch( narrowing.",
+      "emotion_targeted": "N/A (test-infrastructure correctness).",
+      "misconception_created": "None — strictly narrower than before; window.devicePixelRatio anywhere outside render/platform/ is still caught via the window check.",
+      "why_alternatives_rejected": "Renaming the field to something like dprHint to dodge the scan was rejected: devicePixelRatio is the correct, standard name for this value; the scan should be precise instead."
+    },
+    {
+      "id": "dm-0103",
+      "date": "2026-07-11",
+      "status": "ACCEPTED",
+      "title": "render/platform/ is deliberately NOT created in S9.8 — real browser-global bindings are deferred until a real browser/build pipeline exists (P11)",
+      "why_it_exists": "S9.8's deliverable list (execution_plan.md) names both render/shell/*.ts and render/platform/*.ts. render/platform/ is defined (dm-0081/dm-0086) as the ONLY place real browser globals (canvas context creation, requestAnimationFrame, the PokiSDK CDN script global, fullscreen APIs, a real AudioContext) may be named — but this project has no build/bundle pipeline or browser test harness yet (P11 owns \"automated build pipeline\"; the P9 plan's own open question 3 already flagged \"browser smoke harness timing\" as unresolved, deferring real-browser verification to P11). Writing browser-binding code now would mean shipping logic that has literally never executed, guessed against documented APIs rather than proven against a real environment — exactly the kind of ungrounded work the zero-assumption and no-placeholder disciplines exist to prevent.",
+      "problem_it_solves": "S9.8 delivers render/shell/{GameShell,ViewportModel,InputCapture,PortalSdk,PortalLifecycle}.ts complete and fully tested: every seam (Engine/StateManager/CANONICAL_PIPELINE reuse, compileScene, camera, audio cues, defeat marker, Poki lifecycle ordering) is real, working, verified logic. What is NOT built is the thin adapter layer that would bind these to an actual canvas/rAF/AudioContext/PokiSDK global — that binding is pure plumbing with no logic of its own once written, and it can only be honestly verified once a real browser environment exists to run it in (P11's build pipeline + browser smoke test, per the standing open question). No stub/placeholder files are created under render/platform/ — the directory does not exist yet, which is more honest than an empty or guessed-at stand-in.",
+      "emotion_targeted": "N/A (scope honesty under a real environment constraint).",
+      "misconception_created": "A future session must not assume the game can run in an actual browser after S9.8 — every seam is proven against hand-rolled fakes only. render/platform/ remains the FIRST thing P11's build-pipeline work (or an earlier session that sets up a real browser harness) must create; RenderIsolation.test.ts's `if (file.startsWith('platform/')) continue;` clauses are already written and will apply the moment real files appear there.",
+      "why_alternatives_rejected": "Writing best-guess platform bindings now (a plausible-looking canvas/rAF/AudioContext adapter, untested) was rejected: it would read as \"done\" in the PKG/backlog while being unverified guesswork, and a subtle mismatch with the real API (a wrong event name, a wrong buffer layout) would surface only much later, in a context with less memory of why the code was written that way."
+    },
+    {
+      "id": "dm-0104",
+      "date": "2026-07-11",
+      "status": "ACCEPTED",
+      "title": "Debug overlays are semantic, device-free primitives (rect/polyline/label) — never forced through the BitmapHandle/DrawItem texture-atlas pipeline",
+      "why_it_exists": "S9.9's render/tooling/Overlay.ts paints the six P8 debug descriptor kinds (hitbox AABBs, trigger wiring lines, mover paths, the jump-arc preview, the ground normal, the physics-state snapshot). None of these are gameplay-grammar visuals — they have no StylePack role, no palette accent, no cached bitmap. Coercing them through StylePack.visual()/rasterize() would mean inventing a fake VisualRequest role for pure debug wireframes, polluting the one seam (dm-0083) that exists to keep art style swappable.",
+      "problem_it_solves": "paintOverlays returns an OverlayDrawList of rect/polyline/label primitives tagged with a semantic `source` (hitbox/trigger/path/jumpArc/normal/physicsState) and no colour. Exactly like render/shell's deferred render/platform/ (dm-0103), the actual stroke-colour-per-source mapping is a future executor's job once a real canvas exists — this stays pure data, testable without any device.",
+      "emotion_targeted": "N/A (architectural purity of the StylePack seam).",
+      "misconception_created": "A future slice must not assume render/tooling/Overlay.ts produces anything drawable on its own — it is one more device-free layer, same as every other render/ subtree pre-render/platform/.",
+      "why_alternatives_rejected": "Giving each primitive a hardcoded hex colour was rejected: colour-as-a-literal-in-logic is exactly the anti-pattern the whole StylePack seam exists to prevent, even for debug-only chrome — and it buys nothing since no executor exists yet to consume it."
+    },
+    {
+      "id": "dm-0105",
+      "date": "2026-07-11",
+      "status": "ACCEPTED",
+      "title": "render/scene/SceneCompiler.ts's terrain-autotile helpers (isSolidTile/terrainMask/terrainVariant) narrowed from WorldState to bare TilemapDef, and exported alongside visualItem — reused verbatim by S9.9's EditorSurface",
+      "why_it_exists": "S9.9's EditorSurface.compileEditorScene needs to paint a P8 LevelDraft's terrain with the exact same autotile mask/variant the shipped game uses (WYSIWYG editing) — but a LevelDraft has no WorldState, only a bare TilemapDef (structurally identical to WorldState.level.tilemap). The three helpers only ever touched world.level.tilemap internally.",
+      "problem_it_solves": "Narrowing their parameter from WorldState to TilemapDef is a pure signature change (S9.3 is COMPLETED-not-VERIFIED, so amendment is allowed per the four-state discipline, precedented twice already this phase: dm-0090, dm-0095) — compileScene's own call sites were updated to pass world.level.tilemap, behavior unchanged, all S9.3/S9.4 tests still green. This lets EditorSurface reuse the identical terrain-projection logic with ZERO duplication, instead of hand-rolling a second autotile mask calculation that could silently drift from the shipped renderer's.",
+      "emotion_targeted": "N/A (duplication-avoidance, correctness-by-construction).",
+      "misconception_created": "None — the exported helpers are strictly more general (any TilemapDef-shaped caller) while compileScene's own behavior is provably unchanged (same tests, same call pattern with one extra field access).",
+      "why_alternatives_rejected": "Re-deriving the mask/variant math independently inside EditorSurface was rejected outright: EditorState.ts's own header already documents \"no duplicated shape exists\" as a load-bearing LevelDraft design principle, and two renderers computing terrain autotile independently is precisely the kind of drift the project's single-source-of-truth discipline forbids."
+    },
+    {
+      "id": "dm-0106",
+      "date": "2026-07-11",
+      "status": "ACCEPTED",
+      "title": "InspectorBindings.applyInspectorCommand is a closed UI-command union dispatching to exactly one Inspector method call each — no new logic",
+      "why_it_exists": "The execution plan's S9.9 deliverable asks for \"inspector bindings expose pause/step/reload/variable-edit as UI commands calling P8's Inspector verbatim.\" dm-0070 already settled how setVariable must work (commit through StateManager, never in-place) entirely inside tools/debug/Inspector.ts.",
+      "problem_it_solves": "A UI panel needs a single dispatchable command type (e.g. for a keybinding table or button row) rather than calling five differently-shaped Inspector methods directly. applyInspectorCommand is a pure switch with one line per case — it cannot drift from Inspector's own behavior because it does nothing but call it.",
+      "emotion_targeted": "N/A.",
+      "misconception_created": "None.",
+      "why_alternatives_rejected": "Adding batching, debouncing, or a command-history log at this layer was rejected as scope creep beyond what S9.9 asks for — undo/redo already exists at the EDITOR-draft layer (EditorState.ts), and the Inspector's pause/step/reload/setVariable controls have no analogous history requirement in the P8 design."
+    },
+    {
+      "id": "dm-0107",
+      "date": "2026-07-11",
+      "status": "ACCEPTED",
+      "title": "Quality tiers gate a generic nonCriticalBudget truncation over DrawList, not a per-item particle/decoration/grain classification",
+      "why_it_exists": "The original P9 planning prose (design summary point 12, written before S9.2-S9.4 landed) described the tier ladder as \"full -> reduced-particles -> no-deferred-decoration -> no-grain,\" implying per-category dropping. Zero-assumption check at S9.10 start found this does not correspond to anything in the shipped DrawItem shape: particles are spawned directly into render/pool/ParticlePool.ts and never enter a DrawList at all (render/feel/ImpulseEvents.spawnBurst acquires pool handles, full stop); grain and decor are baked INSIDE PaperStylePack.rasterize()'s bitmap content (render/style/paper/Geometry.ts's grain(), the 8-type decor set) — neither is a separate, taggable DrawItem field. DrawItem.critical (pinned since S9.3/S9.4 with a comment literally naming \"the quality controller (S9.10)\") is the ONLY quality-relevant field that actually exists.",
+      "problem_it_solves": "QualityTier.applyTier(drawList, tier) keeps every critical:true item unconditionally and truncates critical:false items to tier.nonCriticalBudget, order-preserving. This is a faithful, honest realization of the REQ-016 x REQ-163 interlock against the CODE AS IT ACTUALLY SHIPPED, not a re-derivation of a decor/particle taxonomy that would require inventing new DrawItem fields (and duplicating classification logic already implicit in how each render/ subtree already decided what is/isn't critical, via render/grammar/Grammar.ts's category.critical and render/feel/DefeatMarker.ts's always-critical marker).",
+      "emotion_targeted": "N/A (zero-assumption correction of stale planning prose against actual shipped code).",
+      "misconception_created": "A future slice must not assume DrawItem carries a decor/particle/grain kind tag — it does not. If P11 or a later phase wants tier-differentiated dropping (e.g. drop grain before decor before entities), that requires a NEW DrawItem field written by the SceneCompiler itself (the same pattern dm-0093 already established for \"pressurePlate/spring pressed state would need a new WorldState field, never re-derived logic\").",
+      "why_alternatives_rejected": "Re-deriving a decor/particle/grain classification inside render/quality/ by pattern-matching bitmap ids or VisualRequest.role strings was rejected: it would silently duplicate categorization logic that belongs to whichever module actually produces each DrawItem, and would drift the moment a StylePack or the scene compiler changed its role/state naming."
     }
   ],
   "rejected_ideas": [],

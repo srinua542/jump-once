@@ -1,0 +1,67 @@
+{
+  "slice": "S9.10",
+  "title": "Dynamic quality scale-back (hysteresis tiers; REQ-016 critical-interlock)",
+  "reqs": [
+    "REQ-163"
+  ],
+  "started_at": "2026-07-11T17:24:29.233Z",
+  "updated_at": "2026-07-11T17:31:08.614Z",
+  "current_stage": "handoff",
+  "stages": {
+    "reboot": {
+      "status": "done",
+      "at": "2026-07-11T17:24:29.234Z",
+      "note": "SELECT/PLAN/ANCHOR: S9.10 scope = render/quality/{QualityProfile,QualityController,QualityTier}.ts per execution_plan.md design summary point 12. Zero-assumption: grepped render/ for existing decor/particle/grain DrawItem fields -- none exist (particles live in ParticlePool, never enter DrawList; grain/decor are baked into PaperStylePack.rasterize() bitmap content). The REQ-016 x REQ-163 interlock is already pinned in DrawList.ts's own DrawItem.critical field comment: applyTier may drop only critical:false items. Scoped the tier ladder as a nonCriticalBudget truncation over DrawList, not a re-invented decor/particle classification that doesn't exist in the shipped code."
+    },
+    "select": {
+      "status": "done",
+      "at": "2026-07-11T17:26:46.712Z",
+      "note": "PLAN: QualityProfile.ts (tiers ladder + emaAlpha + degrade/upgradeThresholdMs + cooldownTicks + stabilityWindowTicks, DEFAULT_QUALITY_PROFILE), QualityController.ts (createQualityController/currentTier/reportFrameTime pure EMA state machine, render-layer-only state exactly like CameraState per dm-0004/dm-0082), QualityTier.ts (applyTier: order-preserving critical-preserving truncation)."
+    },
+    "plan": {
+      "status": "done",
+      "at": "2026-07-11T17:26:52.563Z",
+      "note": "ANCHOR: render/quality/ depends only on render/scene/DrawList.ts (type-only). No src/ or tools/ dependency. RenderIsolation.test.ts already scans render/quality/ for browser globals/wall-clock/Math.random with no changes needed."
+    },
+    "anchor": {
+      "status": "done",
+      "at": "2026-07-11T17:26:53.607Z",
+      "note": "IMPLEMENT complete: render/quality/{QualityProfile,QualityController,QualityTier}.ts built. 12 new tests in QualityController.test.ts covering the IRD exit condition: hysteresis gap, cooldown-blocks-oscillation, stability-window-must-be-consecutive, critical-item-interlock, tier-index bounds, purity."
+    },
+    "implement": {
+      "status": "done",
+      "at": "2026-07-11T17:29:54.371Z",
+      "note": "VERIFY: npm run build clean; npm test 711/711 green (up from 699). RenderIsolation.test.ts confirms render/quality/ stays scan-clean (no browser globals, no wall-clock, no Math.random, no tools/ import)."
+    },
+    "verify": {
+      "status": "done",
+      "at": "2026-07-11T17:29:55.452Z",
+      "note": "INTEGRATE: PKG updated in-change (render/quality real node + both dependency directions incl. edges array; hash s9-d1f7a2 -> s9-e4b8c3; pending_nodes now EMPTY -- all eleven P9 render/ subtrees are real nodes); ledger at dm-0107; docs/task_slices.md flips S9.10 COMPLETED."
+    },
+    "integrate": {
+      "status": "done",
+      "at": "2026-07-11T17:30:58.720Z",
+      "note": "REPORT: S9.10 -> COMPLETED. REQ-163 gains its S9.10 quality-controller share (P9's synthetic-load-verified IRD exit condition met); REQ-016 gains its critical-interlock-under-quality-scaling share. Both stay IN_PROGRESS until S9.11's phase-level flip (REQ-163 also has a P11 zero-allocation-audit remainder per the plan's VERIFIED schedule; REQ-016 applies further to authored content at P10)."
+    },
+    "report": {
+      "status": "done",
+      "at": "2026-07-11T17:31:05.173Z",
+      "note": "HANDOFF checkpoint"
+    },
+    "handoff": {
+      "status": "done",
+      "at": "2026-07-11T17:31:05.557Z",
+      "note": "handoff stage complete"
+    }
+  },
+  "acceptance": [
+    {
+      "req": "REQ-163",
+      "criterion": "(fill in)",
+      "met": false,
+      "note": null
+    }
+  ],
+  "outcome": "completed",
+  "closed_at": "2026-07-11T17:31:08.770Z"
+}

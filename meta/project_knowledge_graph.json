@@ -1,8 +1,8 @@
 {
   "schema_version": "1.0",
-  "generated_by_session": "2026-07-11T-session-9-p9-s9.5",
-  "pkg_hash": "s9-f6b2e8",
-  "notes": "Machine-readable mirror of the codebase. Read at every session start; update immediately on any structural code change. See references/pkg_schema.md. S9.5 landed: render/feel/{FeelProfile,SquashStretch,ImpulseEvents,DefeatMarker}.ts, promoted from pending_nodes. Resolves dm-0089 (dm-0097) and fixes a real S9.2 caching bug found by S9.5's own integration test (dm-0098, render/paper_style_pack amended). Five pending_nodes remain for S9.6-S9.10 (audio, assets, shell, tooling, quality -- S9.6-S9.10 are NOT yet built; this session stops after S9.5 per explicit user scope).",
+  "generated_by_session": "2026-07-11T-session-9-p9-s9.11-close",
+  "pkg_hash": "s9-f2a9d7",
+  "notes": "Machine-readable mirror of the codebase. Read at every session start; update immediately on any structural code change. See references/pkg_schema.md. P9 -- Rendering, Audio & Visual Grammar -- is VERIFIED (docs/verification/P9.md); milestone M4 -- Presentable is CLOSED. All eleven render/ subtrees (grammar, style/paper, scene, gl, pool, feel, audio, assets, shell, tooling, quality) are real nodes with zero pending_nodes. render/platform/ (real browser-global bindings) remains deliberately un-created -- deferred to P11 (dm-0103). REQ-070/071/130/131/150 flipped VERIFIED; REQ-001/002/016/132/161/162/163/170/171 stay IN_PROGRESS with a P10/P11 remainder. Next: P10 -- Content Generation (S10.1 chapter architecture authoring).",
   "nodes": [
     {
       "node_id": "core/vec2",
@@ -2124,7 +2124,9 @@
         "components/level",
         "schema/parse"
       ],
-      "dependents": [],
+      "dependents": [
+        "render/tooling"
+      ],
       "volatile_state_flags": {
         "has_side_effects": false,
         "state_dependencies": []
@@ -2151,7 +2153,8 @@
       ],
       "dependents": [
         "tools/inspector",
-        "tools/telemetry_capture"
+        "tools/telemetry_capture",
+        "render/tooling"
       ],
       "volatile_state_flags": {
         "has_side_effects": false,
@@ -2177,7 +2180,9 @@
         "systems/player_control",
         "systems/player_physics"
       ],
-      "dependents": [],
+      "dependents": [
+        "render/tooling"
+      ],
       "volatile_state_flags": {
         "has_side_effects": false,
         "state_dependencies": []
@@ -2198,7 +2203,9 @@
         "entities/world",
         "tools/playtest"
       ],
-      "dependents": [],
+      "dependents": [
+        "render/tooling"
+      ],
       "volatile_state_flags": {
         "has_side_effects": false,
         "state_dependencies": []
@@ -2306,7 +2313,8 @@
         "components/behavior"
       ],
       "dependents": [
-        "render/style_pack"
+        "render/style_pack",
+        "render/tooling"
       ],
       "volatile_state_flags": {
         "has_side_effects": false,
@@ -2329,7 +2337,9 @@
         "render/grammar",
         "render/raster2d"
       ],
-      "dependents": [],
+      "dependents": [
+        "render/tooling"
+      ],
       "volatile_state_flags": {
         "has_side_effects": false,
         "state_dependencies": []
@@ -2426,7 +2436,10 @@
         "entities/world",
         "systems/spatial_partition"
       ],
-      "dependents": [],
+      "dependents": [
+        "render/tooling",
+        "render/quality"
+      ],
       "volatile_state_flags": {
         "has_side_effects": false,
         "state_dependencies": []
@@ -2500,6 +2513,124 @@
       "last_verified_commit": "uncommitted-session-9-s9.5",
       "backlog_refs": [
         "REQ-150",
+        "REQ-016"
+      ]
+    },
+    {
+      "node_id": "render/audio",
+      "type": "SystemNode",
+      "file_path": "render/audio/{AudioDevice,PatchCompiler,CueDerivation,AudioExecutor}.ts",
+      "functional_summary": "S9.6 -- WebAudio procedural signatures + cue derivation (REQ-071 audio share; REQ-170 WebAudio share). AudioDevice: minimal enumerated AudioContext/OscillatorNode/GainNode subset + createTraceAudioDevice, a pure recorder, no real audio graph. PatchCompiler.compilePatch(patch, device) turns a category SynthPatch (PaperStylePack.AUDIO_PATCH, S9.2) into a gain-envelope + oscillator-or-noise-source + master-connect call sequence; noise-waveform patches never touch createOscillator/setFrequencyRamp and vice versa. CueDerivation.deriveAudioCues(previous, current, grammar) is pure and transition-driven, reusing render/feel/ImpulseEvents.landed (S9.5) rather than re-deriving the airborne->grounded edge; emits exactly three cue shapes (landed categorized by what was landed on, defeat->danger, goal->interactive) -- dm-0099 documents why a generic jump-liftoff cue and a checkpoint cue are deliberately NOT built (no bound category for the former; the mechanic does not exist for the latter, grep-verified). AudioExecutor gates scheduleCues on a mute flag (dm-0100): muteForBreak() stops ANY device calls, not just silences them, matching the Poki ad-break requirement's spirit, not just its letter. 11 tests (Audio.test.ts).",
+      "gdos_alignment": "Section_8_Visual_Grammar",
+      "dependencies": [
+        "render/style_pack",
+        "render/grammar",
+        "render/feel",
+        "entities/world"
+      ],
+      "dependents": [],
+      "volatile_state_flags": {
+        "has_side_effects": false,
+        "state_dependencies": []
+      },
+      "last_verified_commit": "uncommitted-session-9-s9.6",
+      "backlog_refs": [
+        "REQ-071",
+        "REQ-170"
+      ]
+    },
+    {
+      "node_id": "render/assets",
+      "type": "SystemNode",
+      "file_path": "render/assets/{AssetManifest,AssetFetcher,AssetLoader}.ts",
+      "functional_summary": "S9.7 -- asset manifest + async delivery + delivery-speed profiling (REQ-163 async share; REQ-132 P9 share, dm-0072; REQ-002 no-long-loads). AssetManifest is the SEVENTH versioned schema (strict-parsed, dm-0010/0014 discipline): entries with id/url/kind/priority(critical|deferred)/bytes. AssetFetcher + WallClock are injected seams (dm-0086) -- no real fetch()/Date.now() outside render/platform/. AssetLoader splits delivery into loadCriticalTier (blocks first render on every critical asset; a failure halts and surfaces a typed {id,message} error, never throws) and streamDeferredTier (runs after, degrading -- skipping, recording ok:false -- a failed deferred asset without blocking or throwing); totalManifestBytes is the progress denominator. Per-asset elapsedMs (via the injected WallClock) is diagnostic-only data, the same confinement contract as dm-0067/dm-0082. dm-0101 fixed a real RenderIsolation false-positive this slice surfaced: the scan's blanket fetch( pattern flagged AssetFetcher's legitimate interface method; narrowed to catch only a real bare global call. 22 tests (AssetManifest.test.ts + AssetLoader.test.ts).",
+      "gdos_alignment": "Section_14_Internal_Production_Tools",
+      "dependencies": [],
+      "dependents": [],
+      "volatile_state_flags": {
+        "has_side_effects": false,
+        "state_dependencies": []
+      },
+      "last_verified_commit": "uncommitted-session-9-s9.7",
+      "backlog_refs": [
+        "REQ-163",
+        "REQ-132",
+        "REQ-002"
+      ]
+    },
+    {
+      "node_id": "render/shell",
+      "type": "SystemNode",
+      "file_path": "render/shell/{GameShell,ViewportModel,InputCapture,PortalSdk,PortalLifecycle}.ts",
+      "functional_summary": "S9.8 -- the per-frame orchestrator (REQ-170/171/001/002). GameShell.createGameShell wraps Engine+StateManager+CANONICAL_PIPELINE (the same P8 Playtest.ts precedent, extended with real-time-driven step counts via Engine.tick(realDeltaSeconds), camera smoothing, compileScene, audio-cue derivation, the defeat marker, and Poki lifecycle triggers) -- projection-purity PROVEN: sim state bit-identical to a headless Engine/StateManager/CANONICAL_PIPELINE run fed the same InputFrames. gameplayStart fires on first meaningful input, gameplayStop on leaving 'playing', both re-arming across a reload (proven against a REAL spike-defeat scenario, not a fabricated WorldState). ViewportModel.computeViewport is pure letterbox/DPR-cap[1,2]/fullscreen-passthrough math (REQ-171). InputCapture is pure key-state->InputFrame mapping with edge-triggered jump/reset (matching InputFrame's own contract) + shouldPreventDefault for space/arrows (REQ-171 no-page-scroll). PortalSdk is the typed Poki lifecycle interface + NullPortalSdk (dev/test AND Poki's own recommended local-dev mode). PortalLifecycle orchestrates boot->reportLoadingFinished ordering and wraps commercialBreak with mute+input-suspend (via/finally, restores even on rejection). dm-0102/dm-0103 fixed RenderIsolation false-positives found this slice (devicePixelRatio field name; fetch already fixed at S9.7). dm-0104 (see below) explicitly defers render/platform/ -- the real browser-global bindings (canvas/rAF/AudioContext/PokiSDK CDN adapter) -- to when a real browser/build pipeline exists (P11); no stub files created. 24 tests (GameShell.test.ts + ViewportModel.test.ts + InputCapture.test.ts + PortalLifecycle.test.ts).",
+      "gdos_alignment": "Section_18_Shipping_Release",
+      "dependencies": [
+        "core/engine",
+        "core/state_manager",
+        "eval/agent_harness",
+        "render/scene_compiler",
+        "render/camera",
+        "render/audio",
+        "render/feel",
+        "render/style_pack"
+      ],
+      "dependents": [],
+      "volatile_state_flags": {
+        "has_side_effects": false,
+        "state_dependencies": []
+      },
+      "last_verified_commit": "uncommitted-session-9-s9.8",
+      "backlog_refs": [
+        "REQ-170",
+        "REQ-171",
+        "REQ-001",
+        "REQ-002",
+        "REQ-174"
+      ]
+    },
+    {
+      "node_id": "render/tooling",
+      "type": "SystemNode",
+      "file_path": "render/tooling/{Overlay,EditorSurface,InspectorBindings}.ts",
+      "functional_summary": "S9.9 -- REQ-130/131 P9 render/UI share: the ONLY render/ area permitted to import tools/ (dm-0081). Overlay.ts.paintOverlays(state, jumpArcTicks) composes all six P8 tools/debug/Overlay.ts descriptor kinds (hitbox/trigger/path/jumpArc/normal/physicsState) verbatim into a semantic, device-free OverlayDrawList (rect/polyline/label primitives) -- colour/stroke choices deliberately deferred to a future render/platform/ executor (P11), same precedent as dm-0103. EditorSurface.ts.compileEditorScene(draft, grammar, pack, tileSizePx, selection) paints a P8 LevelDraft (tools/level_editor/EditorState.ts) through the REAL StylePack/Grammar pipeline for terrain+entities (reusing render/scene/SceneCompiler.ts's isSolidTile/terrainMask/terrainVariant/visualItem verbatim, amended this slice to be tilemap-scoped rather than WorldState-scoped so a LevelDraft.tilemap -- structurally identical to WorldState.level.tilemap -- can reuse them with zero duplicated autotile logic) -- WYSIWYG: the editor draws exactly what the shipped scene compiler would. grid/selection are editor-only UI chrome (no grammar signature) as a separate StylePack-free primitive list. mapEditorInput(event, draft) maps raw pointer/key events to P8's EditorCommand union or undo/redo, never applying it -- P8's applyCommand/undo/redo/snapToGrid are called by the TEST, never re-implemented here (proven: placeEntity through this mapping still lands grid-snapped via P8's own logic). InspectorBindings.ts.applyInspectorCommand dispatches a closed UI-command union to exactly one tools/debug/Inspector.ts method call each -- zero new mutation logic, dm-0070's commit-through-StateManager discipline stays entirely inside Inspector.setVariable. Zero P8 module modified. 18 new tests (ToolingOverlay.test.ts, EditorSurface.test.ts, InspectorBindings.test.ts).",
+      "gdos_alignment": "Section_13_Encapsulated_Geometry, Section_18_Shipping_Release",
+      "dependencies": [
+        "tools/overlay",
+        "tools/inspector",
+        "tools/editor_state",
+        "tools/playtest",
+        "render/grammar",
+        "render/style_pack",
+        "render/scene_compiler"
+      ],
+      "dependents": [],
+      "volatile_state_flags": {
+        "has_side_effects": false,
+        "state_dependencies": []
+      },
+      "last_verified_commit": "uncommitted-session-9-s9.9",
+      "backlog_refs": [
+        "REQ-130",
+        "REQ-131"
+      ]
+    },
+    {
+      "node_id": "render/quality",
+      "type": "SystemNode",
+      "file_path": "render/quality/{QualityProfile,QualityController,QualityTier}.ts",
+      "functional_summary": "S9.10 -- REQ-163 dynamic quality scale-back, the IRD P9 exit condition. QualityProfile.ts: render-layer tuning data (dm-0083, same class as CameraProfile/FeelProfile, not a full versioned external schema) -- an ordered best-to-worst tier ladder (full/reducedParticles/noDeferredDecoration/noGrain), each rung carrying a nonCriticalBudget (null only on the best tier), emaAlpha, degrade/upgradeThresholdMs (hysteresis gap), cooldownTicks, stabilityWindowTicks. QualityController.ts: createQualityController/currentTier/reportFrameTime -- a pure frame-time EMA state machine (QualityControllerState is render-layer-only, never WorldState/GameState, threaded exactly like CameraState per dm-0004/dm-0082); degrade takes priority over upgrade on any tick where both would fire, steps exactly one rung, never skips; upgrade additionally requires stabilityWindowTicks CONSECUTIVE good ticks (any bad tick resets the streak to zero); both directions share one cooldownTicks floor since the last transition, which is what actually prevents boundary oscillation (hysteresis alone is not sufficient at tick-by-tick cadence). QualityTier.ts: applyTier(drawList, tier) -- the REQ-016 x REQ-163 interlock itself, already pinned as a contract comment on DrawItem.critical since S9.3/S9.4: order-preserving, keeps every critical item unconditionally and truncates critical:false items to the tier budget. Zero-assumption finding: particles live entirely in ParticlePool (never enter DrawList) and grain/decor are baked into PaperStylePack.rasterize() bitmap content -- neither is a separate DrawItem field, so the tier ladder gates via nonCriticalBudget truncation over DrawList rather than a per-item decor/particle/grain classification that does not exist in the shipped code (dm-0107). 12 new tests (QualityController.test.ts) -- the IRD exit condition: hysteresis gap, cooldown-blocks-oscillation, stability-window-must-be-consecutive, never-drops-critical, tier-index bounds, purity.",
+      "gdos_alignment": "Section_16_Deterministic_Physics, Section_18_Shipping_Release",
+      "dependencies": [
+        "render/scene_compiler"
+      ],
+      "dependents": [],
+      "volatile_state_flags": {
+        "has_side_effects": false,
+        "state_dependencies": []
+      },
+      "last_verified_commit": "uncommitted-session-9-s9.10",
+      "backlog_refs": [
+        "REQ-163",
         "REQ-016"
       ]
     }
@@ -4442,6 +4573,126 @@
       "from": "render/feel",
       "to": "render/pool",
       "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "render/audio",
+      "to": "render/style_pack",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "render/audio",
+      "to": "render/grammar",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "render/audio",
+      "to": "render/feel",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "render/audio",
+      "to": "entities/world",
+      "kind": "type_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "render/shell",
+      "to": "core/engine",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "render/shell",
+      "to": "core/state_manager",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "render/shell",
+      "to": "eval/agent_harness",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "render/shell",
+      "to": "render/scene_compiler",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "render/shell",
+      "to": "render/camera",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "render/shell",
+      "to": "render/audio",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "render/shell",
+      "to": "render/feel",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "render/shell",
+      "to": "render/style_pack",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "render/tooling",
+      "to": "tools/overlay",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "render/tooling",
+      "to": "tools/inspector",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "render/tooling",
+      "to": "tools/editor_state",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "render/tooling",
+      "to": "tools/playtest",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "render/tooling",
+      "to": "render/scene_compiler",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "render/tooling",
+      "to": "render/grammar",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "render/tooling",
+      "to": "render/style_pack",
+      "kind": "value_import"
+    },
+    {
+      "type": "DependencyEdge",
+      "from": "render/quality",
+      "to": "render/scene_compiler",
+      "kind": "type_import"
     }
   ],
   "gdos_anchors": [
@@ -4553,69 +4804,5 @@
       ]
     }
   ],
-  "pending_nodes": [
-    {
-      "node_id": "render/audio",
-      "type": "PlannedSystemNode",
-      "planned_slice": "P9 (S9.6)",
-      "file_path": "render/audio/*.ts",
-      "functional_summary": "PLANNED (S9.6). AudioDevice seam (minimal AudioContext subset); deriveAudioCues(previous, current) -> AudioCue[], pure and transition-driven (jump/defeat/goal/checkpoint/surface); PatchCompiler turns a category SynthPatch into a node-graph plan. Master gain exposes muteForBreak/resume for the Poki ad-break flow.",
-      "gdos_alignment": "Section_8_Visual_Grammar",
-      "backlog_refs": [
-        "REQ-071",
-        "REQ-170"
-      ]
-    },
-    {
-      "node_id": "render/assets",
-      "type": "PlannedSystemNode",
-      "planned_slice": "P9 (S9.7)",
-      "file_path": "render/assets/*.ts",
-      "functional_summary": "PLANNED (S9.7). Strict-parsed asset manifest (critical/deferred priority tiers); AssetLoader over an injected AssetFetcher; critical tier gates first render, deferred streams after; progress feeds gameLoadingFinished. DeliveryReport (bytes/elapsed via injected clock) is REQ-132's P9 share (dm-0072), diagnostic-only like the P8 profiler (dm-0067/dm-0082).",
-      "gdos_alignment": "Section_14_Internal_Production_Tools",
-      "backlog_refs": [
-        "REQ-163",
-        "REQ-132",
-        "REQ-002"
-      ]
-    },
-    {
-      "node_id": "render/shell",
-      "type": "PlannedSystemNode",
-      "planned_slice": "P9 (S9.8)",
-      "file_path": "render/shell/*.ts, render/platform/*.ts",
-      "functional_summary": "PLANNED (S9.8). GameShell: FrameScheduler tick -> Clock.advance(realDelta) -> N fixed Engine steps -> compileScene -> GlRenderer.draw + audio cues (bit-identical to a headless run given the same InputFrames -- the projection-purity proof, dm-0082). ViewportModel (letterbox/DPR-cap/fullscreen, REQ-171). InputCapture maps keys to InputFrame, prevents space/arrow default scroll. PortalSdk seam + PokiPortalSdk adapter (CDN script, dm-0086) + NullPortalSdk (dev/test): init->gameLoadingFinished->gameplayStart/Stop->commercialBreak/rewardedBreak, the latter also serving REQ-174's P9 hook share. render/platform/ is the ONLY code naming real browser globals.",
-      "gdos_alignment": "Section_18_Shipping_Release",
-      "backlog_refs": [
-        "REQ-170",
-        "REQ-171",
-        "REQ-001",
-        "REQ-002",
-        "REQ-174"
-      ]
-    },
-    {
-      "node_id": "render/tooling",
-      "type": "PlannedSystemNode",
-      "planned_slice": "P9 (S9.9)",
-      "file_path": "render/tooling/*.ts",
-      "functional_summary": "PLANNED (S9.9). paintOverlays() renders all six P8 debug descriptor kinds (tools/debug/Overlay.ts, dm-0065 P9 share); EditorSurface renders LevelDraft (tools/level_editor/EditorState.ts) and maps pointer/key input to the exact P8 EditorCommand set; inspector bindings call tools/debug/Inspector.ts verbatim. The ONLY render/ area permitted to import tools/ (dm-0081).",
-      "gdos_alignment": "Section_14_Internal_Production_Tools",
-      "backlog_refs": [
-        "REQ-130",
-        "REQ-131"
-      ]
-    },
-    {
-      "node_id": "render/quality",
-      "type": "PlannedSystemNode",
-      "planned_slice": "P9 (S9.10)",
-      "file_path": "render/quality/*.ts",
-      "functional_summary": "PLANNED (S9.10). Frame-time EMA over shell-reported durations; data-driven tier ladder with hysteresis + cooldown; applyTier(drawList, tier) may drop only critical: false items (the REQ-016 x REQ-163 interlock -- danger is structurally always-critical, dm-0083). The IRD P9 exit condition: verified under synthetic scripted frame-time load.",
-      "gdos_alignment": "Section_17_Rendering_Performance",
-      "backlog_refs": [
-        "REQ-163"
-      ]
-    }
-  ]
+  "pending_nodes": []
 }
