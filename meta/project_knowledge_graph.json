@@ -1,8 +1,8 @@
 {
   "schema_version": "1.0",
-  "generated_by_session": "2026-07-11T-session-8",
-  "pkg_hash": "s8-c8f3a2",
-  "notes": "Machine-readable mirror of the codebase. Read at every session start; update immediately on any structural code change (new module, changed dependency, changed GDOS mapping). See references/pkg_schema.md.",
+  "generated_by_session": "2026-07-11T-session-9-visual-canon",
+  "pkg_hash": "s9-a1c0f3",
+  "notes": "Machine-readable mirror of the codebase. Read at every session start; update immediately on any structural code change (new module, changed dependency, changed GDOS mapping). See references/pkg_schema.md. NOTE: this session added NO code -- it recorded the committed art direction (Paper Collage) as design canon (docs/visual_design_bible.md, the visual-design-principle skill, ledger dm-0075/dm-0076). The forthcoming P9 render/StylePack modules are registered under pending_nodes (planned_slice P9); they materialize as real SystemNodes when P9 implements them.",
   "nodes": [
     {
       "node_id": "core/vec2",
@@ -4218,5 +4218,37 @@
       ]
     }
   ],
-  "pending_nodes": []
+  "pending_nodes": [
+    {
+      "node_id": "render/style_pack",
+      "type": "PlannedSystemNode",
+      "planned_slice": "P9",
+      "file_path": "src/render/StylePack.ts",
+      "functional_summary": "PLANNED (P9). The art-style-agnostic seam mandated by dm-0076: an abstract StylePack (asset provider) mapping (structuralCategory, behavior.kind, state) -> cached visual descriptor/bitmap. Gameplay/sim/logic stay style-blind; swapping the pack swaps every pixel with zero changes to level data, hitboxes, tapes, or the eval pipeline. Consumes sim state ONE-WAY (interpolationAlpha read-only; rendering never feeds a tick -- dm-0004). Exact interface + physical location (new src/render/ subtree vs. alongside tools/) and the render-vs-tools import direction (dm-0066) are P9-planning decisions. Contract shape fixed in docs/visual_design_bible.md.",
+      "gdos_alignment": "Section_8_Visual_Grammar",
+      "design_ref": "docs/visual_design_bible.md",
+      "backlog_refs": ["REQ-070", "REQ-071", "REQ-001", "REQ-002"]
+    },
+    {
+      "node_id": "render/paper_style_pack",
+      "type": "PlannedSystemNode",
+      "planned_slice": "P9",
+      "file_path": "src/render/PaperStylePack.ts",
+      "functional_summary": "PLANNED (P9). StylePack #1 -- the concrete 'Paper Collage' realization (dm-0075): the six REQ-071 structural categories rendered as cut-paper/dry-ink/printed-matter, procedurally generated from a seed hashed off entity identity/grid position (deterministic, Math.random still forbidden), states cached as separate bitmaps swapped by key. Port target of the reference engine in src/assets/paper-asset-library.html (PaperAssets facade + KindDraw/DecorDraw). Two open reconciliations for P9 planning: Optimization has no dedicated accent yet, and Danger doubles as the goal (must be silhouette-separable under REQ-070).",
+      "gdos_alignment": "Section_8_Visual_Grammar",
+      "design_ref": "docs/visual_design_bible.md",
+      "asset_source": "src/assets/paper-asset-library.html",
+      "backlog_refs": ["REQ-070", "REQ-071", "REQ-150", "REQ-016"]
+    },
+    {
+      "node_id": "render/renderer",
+      "type": "PlannedSystemNode",
+      "planned_slice": "P9",
+      "file_path": "src/render/Renderer.ts",
+      "functional_summary": "PLANNED (P9). The first rendering surface in the project (everything before P9 is headless). Reads GameState one-way and draws via the active StylePack: generate-never-per-frame, cache-by-key (kind:state:size), merge solid tile runs, one background bitmap per level (camera = source-rect crop), tiny dynamic list, DPR cap. Owns the render-side share of REQ-161/162/163 (object pooling, render batching over P3's quadtree, async asset delivery + fps scale-back) and renders the P8 debug/overlay + editor plain-data descriptors (REQ-130/131). Determinism axiom extends here: requestAnimationFrame timing may drive interpolation only, never a tick or a replay-checked value.",
+      "gdos_alignment": "Section_17_Rendering_Performance",
+      "design_ref": "docs/visual_design_bible.md",
+      "backlog_refs": ["REQ-161", "REQ-162", "REQ-163", "REQ-130", "REQ-131", "REQ-132", "REQ-150"]
+    }
+  ]
 }

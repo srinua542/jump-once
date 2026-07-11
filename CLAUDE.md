@@ -21,6 +21,7 @@ A "small unrelated task" is exactly the case that causes drift. Do not skip this
 - **Single source of truth:** all mutable state lives in `src/core/StateManager.ts`; systems are stateless between frames; state is immutable (return copies, never mutate in place).
 - **Data-driven:** no gameplay values/geometry hardcoded in logic — everything is a parsed data payload.
 - **Determinism:** never introduce `Math.random` or delta-time scaling; RNG and the fixed-step clock are threaded through state (see `meta/design_memory_ledger.json` dm-0003, dm-0004).
+- **Art style is swappable:** nothing in gameplay/sim/logic ever references the art style. The renderer consumes an abstract **StylePack** seam; "Paper Collage" is StylePack #1, replaceable with zero gameplay/data changes (dm-0075, dm-0076). Rendering reads state one-way — it never feeds simulation.
 
 ## After any structural change
 
@@ -29,6 +30,15 @@ Update `meta/project_knowledge_graph.json` (node + both dependency directions) *
 ## Phase discipline
 
 Work is gated into phases P0–P11 / milestones M0–M6. **No phase starts until its predecessors are `VERIFIED`.** Content generation (levels/chapters) is HARD-GATED behind milestone **M2** (GDOS + validation + tools verified). See `docs/IRD.md`.
+
+## Visual direction
+
+The committed art direction is **Paper Collage** (cut paper, dry ink, printed matter), expressed
+through the strict six-category Visual Grammar (REQ-070/071). Before ANY visual/asset/rendering/UI
+decision, **invoke the `/visual-design-principle` skill**. Canon lives in
+`docs/visual_design_bible.md`; the reference asset engine is `src/assets/paper-asset-library.html`
+(+ `src/assets/environment/`). Rendering code is gated to **P9** (author its execution-plan
+section first, REQ-P02) — until then this is design canon only.
 
 ## End of session
 
@@ -40,6 +50,7 @@ Write `meta/handoff_latest.json` before you stop. See `docs/session_protocol.md`
 - `docs/IRD.md` — phase roadmap, DAG, milestones, gates.
 - `docs/task_slices.md` — session-sized work queue.
 - `docs/execution_plan.md` — plan for the phase currently in flight.
+- `docs/visual_design_bible.md` — the committed art direction (Paper Collage) + the swappable-StylePack mandate; art-direction input to P9.
 - `docs/session_protocol.md` — the full session procedure.
 
 ## Toolchain notes

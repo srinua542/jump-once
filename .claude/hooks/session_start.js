@@ -28,6 +28,7 @@ lines.push('  2. Read meta/handoff_latest.json (summary below).');
 lines.push('  3. Parse meta/project_knowledge_graph.json; confirm pkg_hash matches the handoff.');
 lines.push('  4. Run `npm test`; if red, fix the regression before new code.');
 lines.push('See CLAUDE.md and docs/session_protocol.md for the invariants.');
+lines.push('VISUAL: art direction = Paper Collage (docs/visual_design_bible.md); renderer is art-style-agnostic via a swappable StylePack (dm-0075/0076). For any visual/asset/render decision, invoke /visual-design-principle. Rendering code is gated to P9.');
 lines.push('');
 
 try {

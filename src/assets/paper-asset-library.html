@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Paper Asset Library — schema-driven collage kit</title>
+<link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
+<style>
+  :root{ --ink:#232019; --cream:#ece5d4; }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  body{
+    margin:0; background:var(--cream); color:var(--ink);
+    font-family:'Patrick Hand','Comic Sans MS','Chalkboard SE',cursive;
+    display:flex; flex-direction:column; align-items:center; min-height:100vh;
+  }
+  body::before{
+    content:""; position:fixed; inset:0; pointer-events:none; opacity:.5; z-index:50;
+    background-image:radial-gradient(rgba(35,32,25,.05) 1px, transparent 1px);
+    background-size:5px 5px;
+  }
+  header{
+    width:100%; max-width:1040px; padding:14px 16px 4px;
+    display:flex; align-items:flex-end; justify-content:space-between; flex-wrap:wrap; gap:8px;
+  }
+  .logo{display:flex; align-items:baseline; gap:12px;}
+  .logo h1{
+    margin:0; font-size:26px; letter-spacing:4px; line-height:1;
+    background:var(--ink); color:var(--cream); padding:8px 14px 6px;
+    transform:rotate(-1.2deg); box-shadow:3px 3px 0 rgba(35,32,25,.18);
+  }
+  .logo .tag{font-size:14px; letter-spacing:1.5px; opacity:.75;}
+  nav{display:flex; gap:10px;}
+  .tab{
+    font-family:inherit; font-size:15px; letter-spacing:2px; cursor:pointer;
+    border:2px solid var(--ink); background:var(--cream); color:var(--ink);
+    padding:6px 14px 4px; transform:rotate(1deg); box-shadow:2.5px 2.5px 0 var(--ink);
+  }
+  .tab:nth-child(2){transform:rotate(-1.2deg);}
+  .tab.active{background:var(--ink); color:var(--cream);}
+  .tab:active{transform:translate(2px,2px); box-shadow:0 0 0 var(--ink);}
+  main{width:100%; max-width:1040px; padding:10px 12px 40px;}
+  #hud{
+    display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap;
+    padding:4px 4px 8px; font-size:14px; letter-spacing:1.2px;
+  }
+  #hud .pill{background:var(--ink); color:var(--cream); padding:2px 10px; transform:rotate(-.8deg);}
+  #hud .soft{opacity:.7;}
+  .frame{
+    border:3px solid var(--ink); background:var(--cream);
+    box-shadow:5px 5px 0 rgba(35,32,25,.22); line-height:0;
+  }
+  .frame canvas{width:100%; height:auto; display:block;}
+  #libraryView{display:none;}
+  /* ---------- design bible ---------- */
+  #docView{display:none;}
+  .doc{max-width:880px; margin:0 auto; padding:4px 2px;}
+  .doc section{margin:30px 0;}
+  .doc h3{
+    display:inline-block; margin:0 0 12px; font-size:16px; letter-spacing:3px;
+    background:var(--ink); color:var(--cream); padding:4px 12px 2px; transform:rotate(-1deg);
+    box-shadow:2px 2px 0 rgba(35,32,25,.2);
+  }
+  .doc p{margin:7px 0; font-size:16px; line-height:1.55; letter-spacing:.3px;}
+  .doc ul{margin:6px 0; padding-left:20px;}
+  .doc li{font-size:15.5px; line-height:1.55; margin:6px 0;}
+  .rule{border-left:3px solid var(--ink); padding:2px 0 3px 12px; margin:12px 0;}
+  .rule b{letter-spacing:1.2px;}
+  .demos{display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:14px; margin:14px 0 6px;}
+  .demo{border:2px solid var(--ink); background:var(--cream); box-shadow:3px 3px 0 rgba(35,32,25,.18); padding:6px;}
+  .demo canvas{width:100%; height:auto; display:block;}
+  .demo .cap{
+    font-size:12.5px; letter-spacing:1px; padding-top:5px; text-align:center;
+    border-top:1.5px dashed rgba(35,32,25,.3); margin-top:5px;
+  }
+  .swatches{display:grid; grid-template-columns:repeat(auto-fill,minmax(196px,1fr)); gap:12px; margin:12px 0;}
+  .sw{
+    display:flex; gap:10px; align-items:center; border:2px solid var(--ink);
+    padding:6px 8px; background:var(--cream); box-shadow:3px 3px 0 rgba(35,32,25,.15);
+  }
+  .sw canvas{width:56px; height:44px; flex:none;}
+  .sw .m{font-size:13px; line-height:1.4;}
+  .sw .m b{letter-spacing:1px;}
+  .habit{margin:10px 0; padding:8px 12px; border:2px dashed rgba(35,32,25,.45); background:rgba(255,255,250,.35);}
+  .habit b{letter-spacing:1px;}
+  footer{font-size:13px; letter-spacing:1.5px; opacity:.6; padding:0 16px 26px; text-align:center; line-height:1.5;}
+  code{font-family:ui-monospace,monospace; font-size:12px; background:rgba(35,32,25,.08); padding:1px 5px;}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">
+    <h1>PAPER ASSET KIT</h1>
+    <div class="tag">schema-driven collage library<br><span style="opacity:.6">tilemap · entities · triggers · decor</span></div>
+  </div>
+  <nav>
+    <button class="tab active" id="tabPrev">LEVEL PREVIEW</button>
+    <button class="tab" id="tabLib">ASSET LIBRARY</button>
+    <button class="tab" id="tabDoc">DESIGN BIBLE</button>
+  </nav>
+</header>
+
+<main>
+  <div id="previewView">
+    <div id="hud">
+      <span class="pill" id="hudId">—</span>
+      <span class="soft" id="hudTitle">—</span>
+      <span class="pill" id="hudPar">—</span>
+    </div>
+    <div class="frame"><canvas id="level" width="960" height="640"></canvas></div>
+    <div id="hud" style="padding-top:8px">
+      <span class="soft">rendered straight from the level JSON — tiles merged to runs, one cached bitmap per asset, animation only for kinetic kinds</span>
+    </div>
+  </div>
+  <div id="libraryView">
+    <div id="hud"><span class="soft">every <code>behavior.kind</code> in the schema + trigger wiring + reusable decor — all procedural, all cached</span></div>
+    <div class="frame" id="sheetWrap"></div>
+  </div>
+  <div id="docView"><div class="doc">
+
+    <section>
+      <h3>FIRST PRINCIPLES</h3>
+      <p>The world is assembled from cut paper, dry ink and printed matter — never digitally painted. Richness comes from composition, texture and handcrafted imperfection, not from detail.</p>
+      <div class="rule"><b>1 · SILHOUETTE FIRST.</b> Every gameplay object must read as a pure black shape. If you threshold the frame to two colors and can't tell spike from platform from player, the design has failed — no amount of texture rescues it.</div>
+      <div class="rule"><b>2 · GAMEPLAY IS INK, DECOR IS PAPER.</b> Everything you can touch is charcoal black (plus one restrained accent for its function). Everything you can't touch is tinted paper behind it. The eye learns this contract in seconds.</div>
+      <div class="rule"><b>3 · FUNCTION GETS THE ACCENT.</b> Color marks behavior, not beauty: terracotta = danger and goal, teal = logic and zones, pink = soft and breakable, lavender = exits and altered rules. An accent that doesn't mean something is noise.</div>
+      <div class="rule"><b>4 · NEGATIVE SPACE IS A MATERIAL.</b> Large open cream areas are deliberate composition, not emptiness waiting to be filled. Cutting a decor piece is usually the improvement.</div>
+      <div class="rule"><b>5 · JITTER THE SHAPE, NEVER THE HITBOX.</b> Colliders stay clean rectangles at exact grid positions; only the drawn polygon wobbles. Rough edges are a costume the physics never wears.</div>
+      <div class="rule"><b>6 · IMPERFECT, NOT SLOPPY.</b> Vertex jitter stays within ±2px, wear erases at most ~15% of a fill. Past that the object stops looking printed and starts looking broken.</div>
+      <div class="rule"><b>7 · ABSENCE HAS A COSTUME TOO.</b> Things that vanish, haven't happened yet, or only exist as rules (zones, fake platforms, collapsed floors) are drawn as dashed outlines. Dashes mean "the idea of a thing."</div>
+      <div class="rule"><b>8 · SAME FUNCTION, SAME SHAPE, EVERYWHERE.</b> A spike is always triangles, a plate is always a terracotta dome, an eye always means "this watches you." The vocabulary never gets synonyms.</div>
+    </section>
+
+    <section>
+      <h3>COMPOSITION PATTERNS</h3>
+      <p>Every screen should hold together like a magazine spread: one oversized anchor shape (a giant circle, a torn panel, a black paper block), one counterweight on the opposite third, and small clustered details (birds, crosses, scribbles) that guide the eye along the play route.</p>
+      <ul>
+        <li><b>Fixed layer order,</b> composed bottom-up: paper ground → soft tinted stains → oversized collage pieces → symbols, splatters and grain → tiles → static entities → dynamic entities → labels/UI. Nothing ever draws out of its layer.</li>
+        <li><b>Tiny library, infinite screens.</b> Reuse the same ~16 decor assets everywhere; the hand-assembled feel comes from randomizing position, scale, rotation, opacity and tint per placement — never from authoring new art.</li>
+        <li><b>Decor obeys a no-fly zone.</b> Nothing decorative within half a tile of a walkable surface or hazard, and decor contrast stays below gameplay contrast (tints and low alpha, never full ink).</li>
+        <li><b>One or two accents per level.</b> Pick the level's accent pair up front and tint stains, torn paper and collage pieces from it. Harmony is a budget, and it's small.</li>
+        <li><b>Detail clusters in odd numbers,</b> placed where you want the eye to travel next — usually just above the intended route.</li>
+      </ul>
+      <div class="demos">
+        <div class="demo"><canvas id="d-layers"></canvas><div class="cap">THE LAYER STACK — COMPOSED ONCE, BOTTOM-UP</div></div>
+        <div class="demo"><canvas id="d-grainstain"></canvas><div class="cap">STAINS + GRAIN: ATMOSPHERE AT NEAR-ZERO CONTRAST</div></div>
+      </div>
+    </section>
+
+    <section>
+      <h3>COLOR SYSTEM</h3>
+      <div class="swatches">
+        <div class="sw"><canvas data-c="#232019"></canvas><div class="m"><b>INK</b> <code>#232019</code><br>all gameplay structure, tiles, silhouettes</div></div>
+        <div class="sw"><canvas data-c="#f6f0e2"></canvas><div class="m"><b>CREAM</b> <code>#ece5d4</code><br>the paper ground; also door openings, eyes</div></div>
+        <div class="sw"><canvas data-c="#cd5b33"></canvas><div class="m"><b>TERRACOTTA</b> <code>#cd5b33</code><br>danger + goal: teeth, beams, plates, the flag</div></div>
+        <div class="sw"><canvas data-c="#8fb5ac"></canvas><div class="m"><b>DUSTY TEAL</b> <code>#8fb5ac</code><br>logic: zones, trigger wires, watching eyes</div></div>
+        <div class="sw"><canvas data-c="#e0a3a9"></canvas><div class="m"><b>FADED PINK</b> <code>#e0a3a9</code><br>soft + breakable: crumbling floors, pads, lamps</div></div>
+        <div class="sw"><canvas data-c="#a998c9"></canvas><div class="m"><b>LAVENDER</b> <code>#a998c9</code><br>exits + altered rules: open doors, gravity, moons</div></div>
+        <div class="sw"><canvas data-c="#d8c49c"></canvas><div class="m"><b>AGED BEIGE</b> <code>#d8c49c</code><br>printed matter: newsprint, graph paper, tape</div></div>
+        <div class="sw"><canvas data-c="#9fbfca"></canvas><div class="m"><b>WASHED BLUE</b> <code>#9fbfca</code><br>cold + slippery: ice, winter levels</div></div>
+      </div>
+      <ul>
+        <li>Accents sit <b>on ink or on cream — never on each other.</b> Terracotta teeth on a black crusher works; terracotta on teal vibrates and cheapens both.</li>
+        <li>Backgrounds use accents at <b>10–20% alpha as stains,</b> ~85% as cut paper. Full-strength accent is reserved for gameplay meaning.</li>
+        <li>Pure white exists only in the player's eyes and tiny highlights — everything else "white" is cream, so the page never breaks the paper illusion.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h3>PROCEDURAL INK TRICKS</h3>
+      <div class="demos">
+        <div class="demo"><canvas id="d-jitter"></canvas><div class="cap">VERTEX JITTER: SUBDIVIDE EDGES ~9PX, WOBBLE ±1.5PX</div></div>
+        <div class="demo"><canvas id="d-wear"></canvas><div class="cap">DRY-BRUSH WEAR: NONE → LIGHT → HEAVY (destination-out)</div></div>
+        <div class="demo"><canvas id="d-overshoot"></canvas><div class="cap">BRUSH OVERSHOOT: STROKES PAST THE TOP EDGE SELL THE PRINT</div></div>
+        <div class="demo"><canvas id="d-seeds"></canvas><div class="cap">SEEDED RNG: SAME ASSET, THREE SEEDS — NEVER TWINS, ALWAYS DETERMINISTIC</div></div>
+        <div class="demo"><canvas id="d-half"></canvas><div class="cap">TWO-ARC HALF FILL: LAMPS, BLADES, MOONS FROM ONE MOVE</div></div>
+        <div class="demo"><canvas id="d-splat"></canvas><div class="cap">SPLATTER: DISTANCE² CLUSTERING READS AS FLICKED INK</div></div>
+      </div>
+      <ul>
+        <li><b>Rough polygon:</b> walk each edge in ~9px steps and offset every step by ±jitter. One helper gives every rectangle, triangle and slab in the game its cut-paper edge.</li>
+        <li><b>Wear:</b> switch to <code>destination-out</code> and erase low-alpha specks plus a few thin scratches. Erasing reads as missing ink; painting light spots on top reads as dirt — always erase.</li>
+        <li><b>Grain:</b> 1px specks, half dark half near-white, at 4–7% alpha. Cheap, and it unifies every surface into the same paper stock.</li>
+        <li><b>Splatter:</b> offset droplets by <code>rnd()·rnd()·radius</code> — squaring the roll clusters them near the center like real flicked ink.</li>
+        <li><b>Seed from identity, not randomness:</b> hash the entity id or grid position into the RNG. Every platform is unique, yet identical on every reload and every death.</li>
+        <li><b>States are frames, not filters:</b> door open/closed, laser on/off, floor intact/cracking are separately cached bitmaps the engine swaps by key — never runtime tinting on one bitmap.</li>
+        <li><b>Hand-drawn strokes:</b> the same jitter walk applied to a single line gives ropes, ladders, arrows, lashes and scribbles — one primitive, a dozen assets.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h3>PERFORMANCE HABITS</h3>
+      <div class="habit"><b>GENERATE NEVER-PER-FRAME.</b> Procedural drawing happens at three moments only: asset creation, level load, and appearance change. The frame loop is exclusively <code>drawImage()</code> of cached canvases plus the handful of kinetic entities.</div>
+      <div class="habit"><b>CACHE BY KEY, PAD FOR JITTER.</b> One <code>Map</code> keyed <code>kind:state:size</code>. Render sprites with ~6px padding so wobble and overshoot survive without clipping, and blit with that offset baked in.</div>
+      <div class="habit"><b>MERGE BEFORE YOU DRAW.</b> Collapse solid tile runs into one bitmap per run — 14 blits instead of 96 for this fixture, and the rough edge flows continuously instead of repeating per tile.</div>
+      <div class="habit"><b>ONE BACKGROUND BITMAP PER LEVEL.</b> Compose the entire collage once at full world size; the camera is a <code>drawImage</code> source-rect crop. Scrolling costs the same as standing still.</div>
+      <div class="habit"><b>KEEP THE DYNAMIC LIST TINY.</b> Split static/dynamic at load. In this fixture only the platform, hazard, laser phase, conveyor sweep and spring bob tick per frame — everything else is dead weight the loop never touches.</div>
+      <div class="habit"><b>CAP THE PIXEL RATIO.</b> DPR 2 for gameplay, 1.5 for big poster sheets. Past that you pay 4× the pixels for sharpness nobody perceives on textured art.</div>
+      <div class="habit"><b>AVOID THE SLOW PATHS IN THE HOT LOOP.</b> No <code>shadowBlur</code>, no <code>filter</code>, no <code>save/restore</code> churn, reset <code>setLineDash([])</code> after every dashed pass, and keep blit coordinates integer-aligned where the art allows.</div>
+    </section>
+
+    <section>
+      <h3>MEMORY HABITS</h3>
+      <ul>
+        <li><b>Budget before you cache:</b> a canvas costs <code>w·h·4·DPR²</code> bytes. This fixture's whole library is a few MB; a careless "variant per instance" policy is how paper games balloon to hundreds.</li>
+        <li><b>Variants by seed, not by storage.</b> Three or four cached variants per asset, chosen by position hash, beat fifty stored uniques — the eye can't tell past four.</li>
+        <li><b>Scope caches to the level.</b> Background and merged tile runs die with the level; only the shared kind/state library survives across loads. Clear the <code>Map</code> on transition and let GC do its job.</li>
+        <li><b>Prefer one big bitmap over many small draws,</b> but split anything wider than ~4096px into slices — mobile GPUs quietly downsample oversized canvases.</li>
+        <li><b>Never hold contexts you don't need:</b> keep the canvas, drop the generator state. The draw functions are pure and can rebuild anything from a seed.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h3>GOTCHAS FROM THE TRENCHES</h3>
+      <ul>
+        <li><b>Bound every procedural scan.</b> This very page shipped a blank screen because a tile-run scan trusted <code>tileAt()</code>, which reports out-of-bounds as solid — and walked off the map forever. Loops that read generated data get explicit bounds, no exceptions.</li>
+        <li><b>Erasure needs its own layer.</b> <code>destination-out</code> wear punches holes through everything beneath it — apply it inside the padded sprite canvas, never on the composed scene.</li>
+        <li><b>Draw text twice.</b> Canvas labels render before webfonts load; paint immediately with the fallback, repaint once on <code>document.fonts.ready</code>.</li>
+        <li><b>Squint test every new entity:</b> shrink it to 50% and desaturate. If it isn't instantly nameable, simplify the silhouette before adding any texture.</li>
+        <li><b>Randomize decor at compose time, never at draw time</b> — a placement that shimmers between frames instantly betrays the handmade illusion.</li>
+      </ul>
+    </section>
+
+  </div></div>
+</main>
+<footer>
+  library API: <code>PaperAssets.entity(kind, state)</code> · <code>PaperAssets.tileRun(len, variant)</code> · <code>PaperAssets.decor(name)</code> — returns cached canvases sized to the tile grid
+</footer>
+
+<script>
+"use strict";
+/* ============================================================
+   PAPER COLLAGE ASSET LIBRARY
+   One procedural draw function per schema behavior.kind.
+   Everything renders once into cached canvases; the runtime
+   only calls drawImage(). Consumes the level JSON directly.
+   ============================================================ */
+const INK='#232019', CREAM='#ece5d4', TEAL='#8fb5ac', TEALD='#6f9c93',
+      PINK='#e0a3a9', TERRA='#cd5b33', BEIGE='#d8c49c', LAV='#a998c9',
+      WBLUE='#9fbfca';
+const DPR=Math.min(2, Math.max(1.5, window.devicePixelRatio||1));
+
+/* ---------- seeded rng + rough-paper helpers ---------- */
+function RNG(seed){ let a=(seed>>>0)||1;
+  return function(){ a|=0; a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a);
+    t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
+function roughPoly(g,pts,rnd,j=1.5,seg=9){
+  g.beginPath();
+  for(let i=0;i<pts.length;i++){
+    const a=pts[i], b=pts[(i+1)%pts.length];
+    const dx=b[0]-a[0], dy=b[1]-a[1], n=Math.max(1,Math.round(Math.hypot(dx,dy)/seg));
+    for(let k=0;k<n;k++){
+      const t=k/n, x=a[0]+dx*t+(rnd()-.5)*j*2, y=a[1]+dy*t+(rnd()-.5)*j*2;
+      i===0&&k===0 ? g.moveTo(x,y) : g.lineTo(x,y);
+    }
+  }
+  g.closePath();
+}
+function roughRect(g,x,y,w,h,rnd,j=1.5){ roughPoly(g,[[x,y],[x+w,y],[x+w,y+h],[x,y+h]],rnd,j); }
+function fillRough(g,x,y,w,h,c,rnd,j){ g.fillStyle=c; roughRect(g,x,y,w,h,rnd,j); g.fill(); }
+function wear(g,x,y,w,h,rnd,amt=1){
+  g.save(); g.globalCompositeOperation='destination-out';
+  const n=Math.floor(w*h/130*amt);
+  for(let i=0;i<n;i++){ g.globalAlpha=.1+rnd()*.28;
+    g.beginPath(); g.arc(x+rnd()*w,y+rnd()*h,.4+rnd()*1.3,0,7); g.fill(); }
+  for(let i=0;i<Math.max(2,amt*3);i++){ g.globalAlpha=.07+rnd()*.13; g.lineWidth=.5+rnd();
+    const px=x+rnd()*w, py=y+rnd()*h, a=rnd()*Math.PI, l=4+rnd()*w*.35;
+    g.beginPath(); g.moveTo(px,py); g.lineTo(px+Math.cos(a)*l,py+Math.sin(a)*l); g.stroke(); }
+  g.restore(); g.globalAlpha=1;
+}
+function grain(g,x,y,w,h,rnd,alpha=.05,density=180){
+  const n=Math.floor(w*h/density);
+  for(let i=0;i<n;i++){ g.fillStyle= rnd()<.5?`rgba(35,32,25,${alpha*rnd()})`:`rgba(255,255,250,${alpha*rnd()})`;
+    g.fillRect(x+rnd()*w,y+rnd()*h,1,1); }
+}
+function roughLine(g,x1,y1,x2,y2,rnd,wdt=2,j=1){
+  g.lineWidth=wdt; g.lineCap='round';
+  const n=Math.max(2,Math.round(Math.hypot(x2-x1,y2-y1)/8));
+  g.beginPath(); g.moveTo(x1,y1);
+  for(let k=1;k<=n;k++){ const t=k/n;
+    g.lineTo(x1+(x2-x1)*t+(rnd()-.5)*j*2, y1+(y2-y1)*t+(rnd()-.5)*j*2); }
+  g.stroke();
+}
+function inkSplat(g,cx,cy,rnd,scale=1,color=INK){
+  g.fillStyle=color;
+  const n=8+Math.floor(rnd()*10);
+  for(let i=0;i<n;i++){ const a=rnd()*6.28, d=rnd()*rnd()*18*scale;
+    g.globalAlpha=.5+rnd()*.5;
+    g.beginPath(); g.arc(cx+Math.cos(a)*d,cy+Math.sin(a)*d,(.5+rnd()*2)*scale,0,7); g.fill(); }
+  g.globalAlpha=1;
+}
+function sprite(w,h,seed,fn){
+  const c=document.createElement('canvas');
+  c.width=Math.ceil(w*DPR); c.height=Math.ceil(h*DPR);
+  const g=c.getContext('2d'); g.scale(DPR,DPR);
+  fn(g,w,h,RNG(seed));
+  c._w=w; c._h=h; return c;
+}
+function blit(g,s,x,y){ g.drawImage(s,x,y,s._w,s._h); }
+function inkBlock(g,x,y,w,h,rnd,color=INK,j=2){
+  fillRough(g,x,y,w,h,color,rnd,j);
+  g.strokeStyle=color; g.globalAlpha=.85;
+  for(let i=0;i<Math.max(2,w/60);i++){
+    const px=x+2+rnd()*(w-24);
+    roughLine(g,px,y+1,px+12+rnd()*14,y+.5,rnd,1.6,.6);
+  }
+  g.globalAlpha=1;
+  wear(g,x,y,w,h,rnd,Math.min(1.4,40/Math.sqrt(w*h)+.7));
+}
+
+/* ============================================================
+   ENTITY DRAW FUNCTIONS — one per schema behavior.kind
+   Each draws into a local box: origin = tile top-left, size T.
+   state lets the engine request visual variants.
+   ============================================================ */
+const KindDraw={
+  movingPlatform(g,T,rnd){
+    inkBlock(g,2,T*.36,T-4,T*.26,rnd,INK,1.6);
+    g.strokeStyle=INK; g.fillStyle=INK;                       // ↔ glyph
+    roughLine(g,T*.3,T*.24,T*.7,T*.24,rnd,2,.5);
+    roughPoly(g,[[T*.3,T*.19],[T*.2,T*.24],[T*.3,T*.29]],rnd,.5,4); g.fill();
+    roughPoly(g,[[T*.7,T*.19],[T*.8,T*.24],[T*.7,T*.29]],rnd,.5,4); g.fill();
+  },
+  collapsingFloor(g,T,rnd,state='intact'){
+    inkBlock(g,2,2,T-4,T-4,rnd,PINK,2);
+    g.strokeStyle=INK; g.lineWidth=1.6;
+    roughLine(g,T*.55,4,T*.42,T*.5,rnd,1.6,1.6);
+    roughLine(g,T*.42,T*.5,T*.6,T-4,rnd,1.6,1.6);
+    roughLine(g,T*.42,T*.5,T*.2,T*.66,rnd,1.4,1.4);
+    if(state!=='intact'){                                     // cracking
+      roughLine(g,T*.75,4,T*.8,T-4,rnd,1.8,2.2);
+      roughLine(g,T*.2,4,T*.16,T*.5,rnd,1.6,2);
+      g.fillStyle=INK;
+      for(let i=0;i<7;i++) g.fillRect(rnd()*T, T-6+rnd()*10, 2.5,2.5);
+    }
+  },
+  iceSurface(g,T,rnd){
+    fillRough(g,2,2,T-4,T-4,WBLUE,rnd,1.6);
+    g.strokeStyle='rgba(255,255,252,.85)'; g.lineWidth=3;     // gloss
+    roughLine(g,T*.2,T*.75,T*.62,T*.3,rnd,3,.8);
+    roughLine(g,T*.5,T*.85,T*.8,T*.55,rnd,2,.7);
+    g.strokeStyle='rgba(35,32,25,.5)'; g.lineWidth=1.2;       // drips
+    for(let i=0;i<3;i++) roughLine(g,T*(.25+i*.25),T-3,T*(.25+i*.25),T+4,rnd,1.4,.4);
+    wear(g,2,2,T-4,T-4,rnd,.6);
+    grain(g,2,2,T-4,T-4,rnd,.07,120);
+  },
+  spike(g,T,rnd){
+    g.fillStyle=INK;
+    const n=4, s=T/n;
+    for(let i=0;i<n;i++){ const px=i*s;
+      roughPoly(g,[[px,T],[px+s/2,T-s*1.25],[px+s,T]],rnd,.9,6); g.fill(); }
+  },
+  laser(g,T,rnd,state='on'){                                  // emitter head
+    inkBlock(g,T*.28,T*.14,T*.24,T*.72,rnd,INK,1.2);
+    g.fillStyle= state==='on' ? TERRA : 'rgba(205,91,51,.35)';
+    g.fillRect(T*.46,T*.42,T*.1,T*.16);
+    g.strokeStyle=INK;
+    roughLine(g,T*.2,T*.1,T*.2,T*.24,rnd,1.6,.4);
+    roughLine(g,T*.2,T*.76,T*.2,T*.9,rnd,1.6,.4);
+  },
+  movingHazard(g,T,rnd){                                      // spiky ink ball
+    const cx=T/2, cy=T/2, r=T*.24;
+    g.fillStyle=INK;
+    for(let i=0;i<10;i++){ const a=i/10*6.283;
+      roughPoly(g,[
+        [cx+Math.cos(a-.28)*r, cy+Math.sin(a-.28)*r],
+        [cx+Math.cos(a)*(r+T*.14), cy+Math.sin(a)*(r+T*.14)],
+        [cx+Math.cos(a+.28)*r, cy+Math.sin(a+.28)*r]],rnd,.6,5);
+      g.fill(); }
+    g.beginPath(); g.arc(cx,cy,r,0,7); g.fill();
+    g.fillStyle=PINK; g.beginPath(); g.arc(cx,cy,r*.45,0,7); g.fill();
+    wear(g,cx-r,cy-r,r*2,r*2,rnd,.5);
+  },
+  pressurePlate(g,T,rnd,state='idle'){
+    const up = state==='idle' ? T*.16 : T*.06;
+    inkBlock(g,T*.12,T-.14*T,T*.76,T*.14,rnd,INK,1.2);        // base
+    g.fillStyle=TERRA;                                        // plate
+    roughRect(g,T*.2,T-.14*T-up,T*.6,up+2,rnd,1); g.fill();
+    wear(g,T*.2,T-.14*T-up,T*.6,up,rnd,.4);
+    if(state!=='idle'){ g.strokeStyle=INK;                    // press ticks
+      roughLine(g,T*.12,T*.62,T*.2,T*.72,rnd,1.4,.4);
+      roughLine(g,T*.88,T*.62,T*.8,T*.72,rnd,1.4,.4); }
+  },
+  proximityZone(g,T,rnd){
+    g.strokeStyle=TEALD; g.lineWidth=2; g.setLineDash([5,5]);
+    g.beginPath(); g.arc(T/2,T/2,T*.42,0,7); g.stroke(); g.setLineDash([]);
+    /* eye */
+    const s=T*.24, cx=T/2, cy=T/2;
+    g.fillStyle=TEAL; g.beginPath();
+    g.moveTo(cx-s,cy); g.quadraticCurveTo(cx,cy-s*.85,cx+s,cy);
+    g.quadraticCurveTo(cx,cy+s*.85,cx-s,cy); g.fill();
+    g.strokeStyle=INK; g.lineWidth=1.6; g.beginPath();
+    g.moveTo(cx-s,cy); g.quadraticCurveTo(cx,cy-s*.85,cx+s,cy);
+    g.quadraticCurveTo(cx,cy+s*.85,cx-s,cy); g.stroke();
+    g.fillStyle=CREAM; g.beginPath(); g.arc(cx,cy,s*.4,0,7); g.fill();
+    g.fillStyle=INK; g.beginPath(); g.arc(cx,cy,s*.18,0,7); g.fill();
+  },
+  door(g,T,rnd,state='closed'){
+    fillRough(g,T*.14,T*.02,T*.72,T*.98,INK,rnd,1.8);
+    wear(g,T*.14,T*.02,T*.72,T,rnd,.9);
+    if(state==='open'){
+      fillRough(g,T*.26,T*.12,T*.48,T*.84,LAV,rnd,1);
+      grain(g,T*.26,T*.12,T*.48,T*.84,rnd,.07,90);
+    }else{
+      fillRough(g,T*.26,T*.12,T*.48,T*.84,'#171512',rnd,1);
+      g.fillStyle=CREAM; g.beginPath();                       // handle
+      g.arc(T*.64,T*.55,2.4,0,7); g.fill();
+    }
+  },
+  spring(g,T,rnd,state='idle'){
+    const ext = state==='idle' ? T*.3 : T*.52;
+    inkBlock(g,T*.2,T-.12*T,T*.6,T*.12,rnd,INK,1);            // base
+    g.strokeStyle=INK; g.lineWidth=2.6; g.lineCap='round';    // coil
+    g.beginPath();
+    const zz=5;
+    for(let i=0;i<=zz;i++){
+      const yy=T-.12*T-(i/zz)*ext, xx=T/2+((i%2)?1:-1)*T*.14;
+      i===0? g.moveTo(T/2,T-.12*T) : g.lineTo(xx,yy);
+    }
+    g.lineTo(T/2,T-.12*T-ext); g.stroke();
+    fillRough(g,T*.24,T-.12*T-ext-T*.1,T*.52,T*.1,PINK,rnd,1);// pad
+    if(state!=='idle'){ g.strokeStyle=TERRA;
+      for(let i=-1;i<=1;i++)
+        roughLine(g,T/2+i*T*.14,T*.26,T/2+i*T*.17,T*.1,rnd,1.6,.5); }
+  },
+  gravityZone(g,T,rnd,state='invert'){                        // gravityScale<0
+    g.strokeStyle=LAV; g.lineWidth=2.2; g.setLineDash([6,5]);
+    roughRect(g,3,3,T-6,T-6,rnd,1); g.stroke(); g.setLineDash([]);
+    g.globalAlpha=.14; g.fillStyle=LAV; g.fillRect(4,4,T-8,T-8); g.globalAlpha=1;
+    const up = state!=='normal';
+    g.strokeStyle=INK; g.fillStyle=INK;
+    for(let i=0;i<2;i++){ const px=T*(.35+i*.3), y1=up?T*.68:T*.32, y2=up?T*.32:T*.68;
+      roughLine(g,px,y1,px,y2,rnd,2,.5);
+      roughPoly(g, up?[[px-4,y2+7],[px,y2-1],[px+4,y2+7]]:[[px-4,y2-7],[px,y2+1],[px+4,y2-7]],rnd,.5,4);
+      g.fill(); }
+    for(let i=0;i<5;i++){ g.fillStyle=INK; g.fillRect(6+rnd()*(T-12),6+rnd()*(T-12),1.8,1.8); }
+  },
+  conveyor(g,T,rnd,state='right'){
+    const dir = state==='left' ? -1 : 1;
+    inkBlock(g,2,T*.36,T-4,T*.28,rnd,INK,1.6);
+    g.fillStyle=CREAM;                                        // rollers
+    g.beginPath(); g.arc(T*.14,T*.5,T*.08,0,7); g.arc(T*.86,T*.5,T*.08,0,7); g.fill();
+    g.strokeStyle=INK; g.lineWidth=1.4;
+    g.beginPath(); g.arc(T*.14,T*.5,T*.08,0,7); g.stroke();
+    g.beginPath(); g.arc(T*.86,T*.5,T*.08,0,7); g.stroke();
+    g.strokeStyle=TERRA; g.lineWidth=2.2;                     // chevrons
+    for(let i=0;i<3;i++){ const px=T*(.32+i*.18);
+      g.beginPath();
+      g.moveTo(px-4*dir,T*.44); g.lineTo(px+3*dir,T*.5); g.lineTo(px-4*dir,T*.56);
+      g.stroke(); }
+  },
+};
+/* player / markers / goal */
+function drawPlayer(g,cx,baseY,rnd,pose='idle',s=1){
+  g.save(); g.translate(cx,baseY); g.scale(s,s);
+  g.fillStyle=INK;
+  const air=pose==='air', sq=pose==='prejump'?1:0;
+  if(!air){ fillRough(g,-5.5,-8+sq*2,3.4,8-sq*2,INK,rnd,.5);
+            fillRough(g,2.1,-8+sq*2,3.4,8-sq*2,INK,rnd,.5); }
+  else{ fillRough(g,-6.5,-9,3.4,6,INK,rnd,.5); fillRough(g,3.1,-7,3.4,5,INK,rnd,.5); }
+  const bh=pose==='prejump'?12:14, bt=air?-24:-8-bh;
+  roughPoly(g,[[-5,bt],[5,bt],[7.5,air?-9:-8+sq*2],[-7.5,air?-9:-8+sq*2]],rnd,.7,5); g.fill();
+  const hy=bt-6.5+(pose==='prejump'?1.5:0);
+  g.beginPath(); g.arc(0,hy,8,0,7); g.fill();
+  roughPoly(g,[[-8,hy-2],[8,hy-2],[8,hy+4],[-8,hy+4]],rnd,.6,6); g.fill();
+  g.fillStyle='#fff'; g.beginPath();
+  g.arc(-3,hy-.5,1.7,0,7); g.arc(3.4,hy-.5,1.7,0,7); g.fill();
+  g.restore();
+}
+function drawFlag(g,x,groundY,rnd,s=1){
+  g.save(); g.translate(x,groundY); g.scale(s,s);
+  g.strokeStyle=INK; roughLine(g,0,0,0,-52,rnd,3,.8);
+  g.fillStyle=TERRA; roughPoly(g,[[1,-52],[30,-43],[1,-33]],rnd,1,6); g.fill();
+  fillRough(g,-7,-3,14,4,INK,rnd,.8);
+  g.restore();
+}
+function drawSpawnMarker(g,cx,baseY,rnd){
+  g.strokeStyle='rgba(35,32,25,.6)'; g.lineWidth=2; g.setLineDash([4,4]);
+  g.beginPath(); g.arc(cx,baseY-18,16,0,7); g.stroke(); g.setLineDash([]);
+  g.fillStyle=INK;
+  roughLine(g,cx,baseY-52,cx,baseY-40,rnd,2,.4);
+  roughPoly(g,[[cx-5,baseY-40],[cx,baseY-33],[cx+5,baseY-40]],rnd,.5,4); g.fill();
+}
+/* decor library */
+const DecorDraw={
+  tornPaper(g,w,h,rnd,c=PINK){ g.fillStyle=c;
+    roughPoly(g,[[4,4],[w-4,4],[w-4,h-4],[4,h-4]],rnd,Math.min(w,h)*.09,10); g.fill();
+    grain(g,4,4,w-8,h-8,rnd,.07,110); wear(g,4,4,w-8,h-8,rnd,.5); },
+  graphPaper(g,w,h,rnd){ g.fillStyle='#e9e0ca';
+    roughPoly(g,[[4,4],[w-4,4],[w-4,h-4],[4,h-4]],rnd,2.5,10); g.fill();
+    g.strokeStyle='rgba(35,32,25,.28)'; g.lineWidth=.8;
+    for(let x=12;x<w-6;x+=9){ g.beginPath(); g.moveTo(x,7); g.lineTo(x,h-7); g.stroke(); }
+    for(let y=12;y<h-6;y+=9){ g.beginPath(); g.moveTo(7,y); g.lineTo(w-7,y); g.stroke(); }
+    wear(g,4,4,w-8,h-8,rnd,.4); },
+  newspaper(g,w,h,rnd){ g.fillStyle=BEIGE;
+    roughPoly(g,[[4,4],[w-4,4],[w-4,h-4],[4,h-4]],rnd,3,9); g.fill();
+    fillRough(g,10,10,w*.5,7,INK,rnd,.6);
+    g.strokeStyle='rgba(35,32,25,.55)'; g.lineWidth=1.2;
+    for(let y=24;y<h-8;y+=6){ g.beginPath(); g.moveTo(10,y); g.lineTo(10+w-24-rnd()*14,y); g.stroke(); }
+    wear(g,4,4,w-8,h-8,rnd,.5); },
+  paintBlob(g,w,h,rnd,c=TEAL){ g.fillStyle=c;
+    g.beginPath();
+    for(let i=0;i<=14;i++){ const a=i/14*6.283, r=Math.min(w,h)*.4*(.8+rnd()*.3);
+      const x=w/2+Math.cos(a)*r, y=h/2+Math.sin(a)*r*.85;
+      i===0?g.moveTo(x,y):g.lineTo(x,y); }
+    g.fill(); grain(g,6,6,w-12,h-12,rnd,.08,90); wear(g,6,6,w-12,h-12,rnd,.5); },
+  tape(g,w,h,rnd){ g.globalAlpha=.8; g.fillStyle='#e4d8b6';
+    roughPoly(g,[[6,h*.3],[w-6,h*.24],[w-8,h*.72],[8,h*.78]],rnd,2.5,8); g.fill();
+    g.globalAlpha=1; grain(g,6,h*.24,w-12,h*.5,rnd,.1,60); },
+  brushStroke(g,w,h,rnd,c=INK){ g.strokeStyle=c; g.lineCap='round';
+    for(let i=0;i<4;i++){ g.lineWidth=3.5-i*.7; g.globalAlpha=1-i*.2;
+      roughLine(g,8,h/2+(i-1.5)*2.4,w-8-i*6,h/2+(i-1.5)*3,rnd,g.lineWidth,1.6); }
+    g.globalAlpha=1; },
+  splatter(g,w,h,rnd){ inkSplat(g,w/2,h/2,rnd,1.5);
+    g.fillStyle=INK; g.beginPath(); g.arc(w/2,h/2,5,0,7); g.fill(); },
+  scribble(g,w,h,rnd){ g.strokeStyle='rgba(35,32,25,.7)';
+    for(let i=0;i<5;i++) roughLine(g,10+rnd()*8,h*.3+i*6,w-10-rnd()*10,h*.28+i*6,rnd,1.3,2.4); },
+  lamp(g,w,h,rnd){ g.strokeStyle=INK; roughLine(g,w/2,2,w/2,h*.36,rnd,2.4,.6);
+    const cy=h*.36+h*.2, r=h*.2;
+    g.fillStyle=PINK; g.beginPath(); g.arc(w/2,cy,r,0,7); g.fill();
+    g.fillStyle=INK; g.beginPath(); g.arc(w/2,cy,r,Math.PI,0); g.closePath(); g.fill();
+    wear(g,w/2-r,cy-r,r*2,r*2,rnd,.7);
+    for(let i=0;i<7;i++){ const a=Math.PI*(.12+i*.126);
+      roughLine(g,w/2+Math.cos(a)*(r+4),cy+Math.sin(a)*(r+4),w/2+Math.cos(a)*(r+10),cy+Math.sin(a)*(r+10),rnd,1.6,.5); } },
+  bird(g,w,h,rnd){ g.save(); g.translate(w/2,h/2); const s=Math.min(w,h)*.3;
+    g.fillStyle=INK;
+    roughPoly(g,[[-s,-s*.1],[-s*.2,-s*.55],[s*.7,-s*.25],[s,-s*.4],[s*.75,0],[0,s*.3]],rnd,.7,5); g.fill();
+    g.strokeStyle=INK;
+    for(let i=0;i<3;i++) roughLine(g,s+4,-s*.3+i*4,s+10,-s*.35+i*4,rnd,1.2,.3);
+    g.restore(); },
+  eye(g,w,h,rnd){ const s=Math.min(w,h)*.34, cx=w/2, cy=h/2;
+    g.fillStyle=TEAL; g.beginPath();
+    g.moveTo(cx-s,cy); g.quadraticCurveTo(cx,cy-s*.85,cx+s,cy);
+    g.quadraticCurveTo(cx,cy+s*.85,cx-s,cy); g.fill();
+    g.strokeStyle=INK; g.lineWidth=2; g.beginPath();
+    g.moveTo(cx-s,cy); g.quadraticCurveTo(cx,cy-s*.85,cx+s,cy);
+    g.quadraticCurveTo(cx,cy+s*.85,cx-s,cy); g.stroke();
+    g.fillStyle=CREAM; g.beginPath(); g.arc(cx,cy,s*.42,0,7); g.fill();
+    g.fillStyle=INK; roughPoly(g,[[cx,cy-s*.26],[cx+s*.24,cy+s*.18],[cx-s*.24,cy+s*.18]],rnd,.6,5); g.fill();
+    for(let i=0;i<7;i++){ const a=-Math.PI*.8+i*(Math.PI*.6/6);
+      roughLine(g,cx+Math.cos(a)*(s+3),cy+Math.sin(a)*(s*.8+3),cx+Math.cos(a)*(s+8),cy+Math.sin(a)*(s*.8+8),rnd,1.4,.4); } },
+  moon(g,w,h,rnd){ const r=Math.min(w,h)*.34;
+    g.fillStyle=LAV; g.beginPath(); g.arc(w/2,h/2,r,0,7); g.fill();
+    g.save(); g.globalCompositeOperation='destination-out';
+    g.beginPath(); g.arc(w/2+r*.5,h/2-r*.3,r*.8,0,7); g.fill(); g.restore();
+    wear(g,w/2-r,h/2-r,r*2,r*2,rnd,.5); },
+  arch(g,w,h,rnd){ const aw=Math.min(w,h)*.5;
+    g.fillStyle=TEAL; g.beginPath();
+    g.moveTo(w/2-aw/2,h*.82); g.lineTo(w/2-aw/2,h*.4);
+    g.arc(w/2,h*.4,aw/2,Math.PI,0); g.lineTo(w/2+aw/2,h*.82);
+    g.lineTo(w/2+aw*.24,h*.82); g.lineTo(w/2+aw*.24,h*.46);
+    g.arc(w/2,h*.46,aw*.24,0,Math.PI,true); g.lineTo(w/2-aw*.24,h*.82);
+    g.closePath(); g.fill();
+    grain(g,w/2-aw/2,h*.2,aw,h*.6,rnd,.08,80); },
+  crosses(g,w,h,rnd){ g.strokeStyle=INK;
+    for(let i=0;i<3;i++){ const px=w*.24+i*w*.26, py=h/2+(i%2?-4:4);
+      roughLine(g,px-5,py-5,px+5,py+5,rnd,2,.4);
+      roughLine(g,px+5,py-5,px-5,py+5,rnd,2,.4); } },
+  building(g,w,h,rnd){ const x=w/2-24, baseY=h-6;
+    g.fillStyle=TERRA; fillRough(g,x,baseY-64,44,64,TERRA,rnd,1.5);
+    fillRough(g,x+12,baseY-78,20,16,TERRA,rnd,1.3);
+    g.fillStyle=INK; fillRough(g,x+15,baseY-22,13,22,INK,rnd,.8);
+    for(let r=0;r<2;r++)for(let c=0;c<2;c++) g.fillRect(x+9+c*18,baseY-56+r*13,6,7);
+    grain(g,x,baseY-78,44,78,rnd,.08,90); },
+  ladder(g,w,h,rnd){ const x=w/2-10;
+    g.strokeStyle=INK;
+    roughLine(g,x,8,x+2,h-8,rnd,2.4,1);
+    roughLine(g,x+20,8,x+18,h-8,rnd,2.4,1);
+    for(let y=18;y<h-10;y+=12) roughLine(g,x-1,y,x+21,y-1,rnd,2,.7); },
+};
+
+/* ============================================================
+   PaperAssets — the cached library facade
+   ============================================================ */
+const PaperAssets=(function(){
+  const cache=new Map();
+  function get(key,w,h,seed,fn){
+    if(!cache.has(key)) cache.set(key,sprite(w,h,seed,fn));
+    return cache.get(key);
+  }
+  return {
+    tileRun(len,T,variant=0){
+      return get(`run:${len}:${T}:${variant}`, len*T+12, T+12, 400+len*7+variant*131,
+        (g,w,h,rnd)=>{ g.translate(6,6); inkBlock(g,0,0,len*T,T,rnd,INK,2.2); });
+    },
+    entity(kind,T,state=''){
+      const fn=KindDraw[kind]; if(!fn) return null;
+      return get(`e:${kind}:${state}:${T}`, T+12, T+12, 900+kind.length*37+state.length*11,
+        (g,w,h,rnd)=>{ g.translate(6,6); fn(g,T,rnd,state||undefined); });
+    },
+    decor(name,w=90,h=70,seed=1){
+      return get(`d:${name}:${w}x${h}:${seed}`, w, h, 7000+seed*97,
+        (g,ww,hh,rnd)=>DecorDraw[name](g,ww,hh,rnd));
+    },
+    player(pose,T){
+      return get(`p:${pose}:${T}`, T*.8, T*.9, 300+pose.length,
+        (g,w,h,rnd)=>drawPlayer(g,w/2,h-2,rnd,pose,T/58));
+    },
+    flag(T){ return get(`flag:${T}`, T, T+16, 306,
+        (g,w,h,rnd)=>drawFlag(g,w*.3,h-4,rnd,T/64)); },
+  };
+})();
+
+/* ============================================================
+   THE LEVEL JSON (schema fixture, verbatim)
+   ============================================================ */
+const LEVEL={
+  schemaVersion:1, levelId:"fixture-all-kinds",
+  title:"Schema fixture: every kind and action",
+  tilemap:{ width:12, height:8, tileSize:1, tiles:[
+    1,1,1,1,1,1,1,1,1,1,1,1,
+    1,0,0,0,0,0,0,0,0,0,0,1,
+    1,0,0,0,0,0,0,0,0,0,0,1,
+    1,0,0,0,0,0,0,0,0,0,0,1,
+    1,0,0,0,0,0,0,0,0,0,0,1,
+    1,0,0,0,0,0,0,0,0,0,0,1,
+    1,0,0,0,0,0,0,0,0,0,0,1,
+    1,1,1,1,1,1,1,1,1,1,1,1 ]},
+  entities:[
+    {id:"e-movingPlatform", transform:{position:{x:3,y:5},facing:1},
+     behavior:{kind:"movingPlatform",waypoints:[{x:0,y:0},{x:4,y:0}],speed:2,mode:"looping"}},
+    {id:"e-collapsingFloor",transform:{position:{x:5,y:6},facing:1},
+     behavior:{kind:"collapsingFloor",collapseDelaySeconds:0.25}},
+    {id:"e-iceSurface",transform:{position:{x:7,y:6},facing:1},behavior:{kind:"iceSurface"}},
+    {id:"e-spike",transform:{position:{x:9,y:6},facing:1},behavior:{kind:"spike"}},
+    {id:"e-laser",transform:{position:{x:2,y:3},facing:1},
+     behavior:{kind:"laser",periodSeconds:2,onFractionOfPeriod:0.5,phaseSeconds:0.5}},
+    {id:"e-movingHazard",transform:{position:{x:4,y:3},facing:1},
+     behavior:{kind:"movingHazard",waypoints:[{x:0,y:0},{x:0,y:3}],speed:1.5,mode:"linear"}},
+    {id:"e-pressurePlate",transform:{position:{x:6,y:6},facing:1},behavior:{kind:"pressurePlate"}},
+    {id:"e-proximityZone",transform:{position:{x:8,y:3},facing:1},behavior:{kind:"proximityZone"}},
+    {id:"e-door",transform:{position:{x:10,y:5},facing:1},behavior:{kind:"door",initiallyOpen:false}},
+    {id:"e-spring",transform:{position:{x:3,y:6},facing:1},
+     behavior:{kind:"spring",launchVelocity:{x:0,y:-12}}},
+    {id:"e-gravityZone",transform:{position:{x:5,y:2},facing:1},
+     behavior:{kind:"gravityZone",gravityScale:-1}},
+    {id:"e-conveyor",transform:{position:{x:7,y:2},facing:1},
+     behavior:{kind:"conveyor",surfaceVelocityX:3}},
+  ],
+  triggers:[
+    {id:"t-open",source:"e-pressurePlate",targets:["e-door"],action:"openDoor",once:false},
+    {id:"t-close",source:"e-proximityZone",targets:["e-door"],action:"closeDoor",once:false},
+    {id:"t-toggle",source:"e-pressurePlate",targets:["e-door"],action:"toggleDoor",once:true},
+    {id:"t-collapse",source:"e-proximityZone",targets:["e-collapsingFloor"],action:"collapseFloor",once:true},
+    {id:"t-activate",source:"e-pressurePlate",targets:["e-movingPlatform"],action:"activatePlatform",once:false},
+  ],
+  constraints:{ spawn:{x:1.5,y:6},
+    goal:{position:{x:10.5,y:2},halfExtents:{x:0.5,y:0.5}},
+    parTimeTiersSeconds:[30,20,12,8,5] },
+};
+
+/* ============================================================
+   LEVEL PREVIEW RENDERER (tilemap approach)
+   - tiles merged into horizontal runs → one cached bitmap each
+   - background collage composed once
+   - per-frame: blit caches + animate kinetic kinds only
+   ============================================================ */
+const T=80, MAP=LEVEL.tilemap, LW=MAP.width*T, LH=MAP.height*T;
+const cvs=document.getElementById('level'), ctx=cvs.getContext('2d');
+cvs.width=LW*DPR; cvs.height=LH*DPR;
+document.getElementById('hudId').textContent=LEVEL.levelId;
+document.getElementById('hudTitle').textContent=LEVEL.title;
+document.getElementById('hudPar').textContent='PAR '+LEVEL.constraints.parTimeTiersSeconds.join(' / ')+'s';
+
+function tileAt(x,y){ return (x<0||y<0||x>=MAP.width||y>=MAP.height)?1:MAP.tiles[y*MAP.width+x]; }
+/* merge solid tiles into horizontal runs */
+const runs=[];
+for(let y=0;y<MAP.height;y++){
+  let x=0;
+  while(x<MAP.width){
+    if(tileAt(x,y)===1){ let len=1;
+      while(x+len<MAP.width && tileAt(x+len,y)===1) len++;
+      runs.push({x,y,len,variant:y%3}); x+=len; }
+    else x++;
+  }
+}
+/* background collage, cached once */
+const BG=sprite(LW,LH,777,(g,W,H,rnd)=>{
+  g.fillStyle=CREAM; g.fillRect(0,0,W,H);
+  g.globalAlpha=.85; g.fillStyle=TEAL;
+  g.beginPath(); g.arc(210,190,120,0,7); g.fill(); g.globalAlpha=1;
+  const put=(name,x,y,w,h,seed,rot=0)=>{ const s=PaperAssets.decor(name,w,h,seed);
+    g.save(); g.translate(x,y); g.rotate(rot); g.drawImage(s,-w/2,-h/2,w,h); g.restore(); };
+  put('tornPaper',560,140,240,180,3,.03);
+  put('graphPaper',760,420,150,110,4,-.05);
+  put('newspaper',350,470,140,95,5,.06);
+  put('paintBlob',830,180,150,120,6);
+  put('tape',560,60,110,44,7,-.08);
+  put('moon',900,110,110,110,8);
+  put('arch',150,430,120,130,9);
+  put('bird',700,250,60,44,10);
+  put('bird',760,290,44,34,11);
+  put('scribble',260,330,120,50,12);
+  put('crosses',460,360,90,30,13);
+  inkSplat(g,420,220,RNG(21),1.1);
+  put('lamp',640,10,70,150,14);
+  grain(g,0,0,W,H,RNG(31),.05,240);
+});
+
+/* entity runtime table */
+const ents=LEVEL.entities.map(e=>({...e, kind:e.behavior.kind,
+  px:e.transform.position.x*T, py:e.transform.position.y*T }));
+const byId=Object.fromEntries(ents.map(e=>[e.id,e]));
+let time=0;
+
+function pingpong(t,legs){ // waypoints offsets in tiles
+  const segs=[]; let total=0;
+  for(let i=0;i<legs.length-1;i++){ const d=Math.hypot(legs[i+1].x-legs[i].x,legs[i+1].y-legs[i].y);
+    segs.push(d); total+=d; }
+  const cyc=total*2, tt=t%cyc, fwd=tt<total, dd=fwd?tt:cyc-tt;
+  let acc=0;
+  for(let i=0;i<segs.length;i++){
+    if(dd<=acc+segs[i]){ const k=(dd-acc)/segs[i];
+      return { x:legs[i].x+(legs[i+1].x-legs[i].x)*k, y:legs[i].y+(legs[i+1].y-legs[i].y)*k }; }
+    acc+=segs[i];
+  }
+  return legs[legs.length-1];
+}
+function laserOn(b,t){ return (((t+b.phaseSeconds)%b.periodSeconds)/b.periodSeconds)<b.onFractionOfPeriod; }
+function beamSpan(e){ // raycast to next solid tile in facing dir
+  const cy=Math.round(e.transform.position.y), dir=e.transform.facing||1;
+  let cx=Math.round(e.transform.position.x)+dir;
+  while(tileAt(cx,cy)===0) cx+=dir;
+  return dir>0 ? {x1:e.px+T*.56, x2:cx*T} : {x1:cx*T+T, x2:e.px+T*.44};
+}
+
+function render(){
+  ctx.setTransform(DPR,0,0,DPR,0,0);
+  ctx.drawImage(BG,0,0,LW,LH);
+  /* tiles (cached runs) */
+  for(const r of runs) blit(ctx, PaperAssets.tileRun(r.len,T,r.variant), r.x*T-6, r.y*T-6);
+  /* zones + statics + kinetics */
+  for(const e of ents){
+    const b=e.behavior; let dx=0, dy=0, state='';
+    if(b.kind==='movingPlatform'||b.kind==='movingHazard'){
+      const off=pingpong(time*b.speed, b.waypoints);
+      dx=off.x*T; dy=off.y*T;
+      /* dashed waypoint path */
+      ctx.strokeStyle='rgba(35,32,25,.35)'; ctx.setLineDash([5,6]); ctx.lineWidth=2;
+      ctx.beginPath();
+      ctx.moveTo(e.px+T/2+b.waypoints[0].x*T, e.py+T/2+b.waypoints[0].y*T);
+      const wl=b.waypoints[b.waypoints.length-1];
+      ctx.lineTo(e.px+T/2+wl.x*T, e.py+T/2+wl.y*T);
+      ctx.stroke(); ctx.setLineDash([]);
+    }
+    if(b.kind==='laser'){
+      state = laserOn(b,time) ? 'on':'off';
+      const sp=beamSpan(e), yy=e.py+T/2;
+      if(state==='on'){ ctx.strokeStyle=TERRA; ctx.lineWidth=3; ctx.setLineDash([9,6]); }
+      else{ ctx.strokeStyle='rgba(205,91,51,.28)'; ctx.lineWidth=1.6; ctx.setLineDash([2,7]); }
+      ctx.beginPath(); ctx.moveTo(sp.x1,yy); ctx.lineTo(sp.x2,yy); ctx.stroke(); ctx.setLineDash([]);
+    }
+    if(b.kind==='door') state = b.initiallyOpen ? 'open':'closed';
+    if(b.kind==='conveyor') state = b.surfaceVelocityX<0 ? 'left':'right';
+    if(b.kind==='gravityZone') state = b.gravityScale<0 ? 'invert':'normal';
+    if(b.kind==='spring') state = (Math.sin(time*3)>.93) ? 'launch':'idle';
+    if(b.kind==='pressurePlate') state='idle';
+    if(b.kind==='collapsingFloor') state = (time%6>4.6) ? 'cracking':'intact';
+    const spr=PaperAssets.entity(b.kind,T,state);
+    if(spr) blit(ctx,spr, e.px+dx-6, e.py+dy-6);
+    /* animated conveyor chevron sweep on top of cache */
+    if(b.kind==='conveyor'){
+      const dir=Math.sign(b.surfaceVelocityX)||1, ph=(time*Math.abs(b.surfaceVelocityX)*T*.25)%(T*.18);
+      ctx.strokeStyle='rgba(236,229,212,.9)'; ctx.lineWidth=2.2;
+      for(let i=0;i<3;i++){ const px=e.px+T*.28+((i*T*.18+ph*dir)%(T*.5)+T*.5)%(T*.5);
+        ctx.beginPath();
+        ctx.moveTo(px-4*dir,e.py+T*.44); ctx.lineTo(px+3*dir,e.py+T*.5); ctx.lineTo(px-4*dir,e.py+T*.56);
+        ctx.stroke(); }
+    }
+    /* id label */
+    ctx.fillStyle='rgba(35,32,25,.55)'; ctx.font="11px 'Patrick Hand',cursive";
+    ctx.textAlign='center';
+    ctx.fillText(b.kind, e.px+T/2+dx, e.py+dy+T+11);
+  }
+  /* trigger wires (source → target dashed teal) */
+  ctx.strokeStyle='rgba(111,156,147,.5)'; ctx.setLineDash([3,6]); ctx.lineWidth=1.6;
+  for(const tr of LEVEL.triggers){
+    const s=byId[tr.source], t2=byId[tr.targets[0]]; if(!s||!t2) continue;
+    ctx.beginPath();
+    ctx.moveTo(s.px+T/2, s.py+T*.35);
+    ctx.quadraticCurveTo((s.px+t2.px)/2+T/2, Math.min(s.py,t2.py)-T*.5, t2.px+T/2, t2.py+T*.3);
+    ctx.stroke();
+  }
+  ctx.setLineDash([]);
+  /* spawn + goal */
+  const sp=LEVEL.constraints.spawn, gl=LEVEL.constraints.goal;
+  blit(ctx, PaperAssets.player('idle',T), sp.x*T-T*.4, (sp.y+1)*T-T*.9);
+  drawSpawnMarkerRT(sp.x*T,(sp.y+1)*T);
+  const gx=gl.position.x*T, gy=gl.position.y*T;
+  ctx.strokeStyle='rgba(205,91,51,.55)'; ctx.setLineDash([5,5]); ctx.lineWidth=2;
+  ctx.strokeRect(gx-gl.halfExtents.x*T, gy-gl.halfExtents.y*T, gl.halfExtents.x*2*T, gl.halfExtents.y*2*T);
+  ctx.setLineDash([]);
+  blit(ctx, PaperAssets.flag(T), gx-T*.3, gy-gl.halfExtents.y*T-T*.28);
+}
+let spawnCache=null;
+function drawSpawnMarkerRT(x,y){
+  if(!spawnCache) spawnCache=sprite(60,64,881,(g,w,h,rnd)=>drawSpawnMarker(g,30,60,rnd));
+  blit(ctx,spawnCache,x-30,y-62);
+}
+
+let playing=true, last=performance.now();
+(function loop(now){
+  requestAnimationFrame(loop);
+  const dt=Math.min(.033,(now-last)/1000); last=now;
+  if(!playing) return;
+  time+=dt; render();
+})(performance.now());
+
+/* ============================================================
+   ASSET LIBRARY SHEET — second canvas, composed once
+   ============================================================ */
+const CW=168, CH=118;
+function centerEnt(kind,state,scale=.8){
+  return (g,rnd)=>{ const t=CH*scale;
+    g.save(); g.translate((CW-t)/2,(CH-t)/2); KindDraw[kind](g,t,rnd,state||undefined); g.restore(); };
+}
+function centerDecor(name,w,h){
+  return (g,rnd)=>{ g.save(); g.translate((CW-w)/2,(CH-h)/2); DecorDraw[name](g,w,h,rnd); g.restore(); };
+}
+function miniWire(srcKind,dstKind,label){
+  return (g,rnd)=>{
+    const t=52;
+    g.save(); g.translate(14,(CH-t)/2-6); KindDraw[srcKind](g,t,rnd); g.restore();
+    g.save(); g.translate(CW-14-t,(CH-t)/2-6);
+    KindDraw[dstKind](g,t,rnd, dstKind==='door' ? (label.includes('open')?'open':'closed') :
+                               dstKind==='collapsingFloor' ? 'cracking' : undefined);
+    g.restore();
+    g.strokeStyle=TEALD; g.setLineDash([4,5]); g.lineWidth=2;
+    g.beginPath(); g.moveTo(14+t+4,CH/2-6);
+    g.quadraticCurveTo(CW/2,CH/2-30,CW-14-t-8,CH/2-6); g.stroke(); g.setLineDash([]);
+    g.fillStyle=TEALD;
+    roughPoly(g,[[CW-14-t-8,CH/2-11],[CW-14-t-1,CH/2-6],[CW-14-t-8,CH/2-1]],rnd,.5,4); g.fill();
+    g.fillStyle=INK; g.font="10.5px 'Patrick Hand',cursive"; g.textAlign='center';
+    g.fillText(label, CW/2, CH/2+16);
+  };
+}
+const SECTIONS=[
+ {title:'TILEMAP', items:[
+   {n:'TILE (1)', f:(g,rnd)=>{ g.save(); g.translate(CW/2-34,CH/2-34); inkBlock(g,0,0,68,68,rnd,INK,2); g.restore(); }},
+   {n:'RUN ×3 (MERGED)', f:(g,rnd)=>{ g.save(); g.translate(14,CH/2-20); inkBlock(g,0,0,CW-28,40,rnd,INK,2.2); g.restore(); }},
+   {n:'TILE VARIANTS', f:(g,rnd)=>{ for(let i=0;i<3;i++){ g.save(); g.translate(16+i*46,CH/2-20);
+       inkBlock(g,0,0,40,40,RNG(500+i*77),INK,2); g.restore(); } }},
+ ]},
+ {title:'PLAYER & CONSTRAINTS', items:[
+   {n:'PLAYER IDLE', f:(g,rnd)=>drawPlayer(g,CW/2,CH-24,rnd,'idle',1.4)},
+   {n:'PLAYER AIR', f:(g,rnd)=>drawPlayer(g,CW/2,CH-30,rnd,'air',1.4)},
+   {n:'SPAWN', f:(g,rnd)=>drawSpawnMarker(g,CW/2,CH-20,rnd)},
+   {n:'GOAL', f:(g,rnd)=>{ g.strokeStyle='rgba(205,91,51,.55)'; g.setLineDash([5,5]); g.lineWidth=2;
+      g.strokeRect(CW/2-32,CH/2-24,64,64); g.setLineDash([]);
+      drawFlag(g,CW/2-6,CH/2+38,rnd,1.1); }},
+ ]},
+ {title:'BEHAVIOR KINDS — SURFACES', items:[
+   {n:'movingPlatform', f:centerEnt('movingPlatform')},
+   {n:'collapsingFloor · intact', f:centerEnt('collapsingFloor','intact')},
+   {n:'collapsingFloor · cracking', f:centerEnt('collapsingFloor','cracking')},
+   {n:'iceSurface', f:centerEnt('iceSurface')},
+   {n:'conveyor → ', f:centerEnt('conveyor','right')},
+   {n:'conveyor ← ', f:centerEnt('conveyor','left')},
+ ]},
+ {title:'BEHAVIOR KINDS — HAZARDS', items:[
+   {n:'spike', f:centerEnt('spike')},
+   {n:'laser · on', f:(g,rnd)=>{ centerEnt('laser','on')(g,rnd);
+      g.strokeStyle=TERRA; g.lineWidth=3; g.setLineDash([9,6]);
+      g.beginPath(); g.moveTo(CW/2+8,CH/2); g.lineTo(CW-12,CH/2); g.stroke(); g.setLineDash([]); }},
+   {n:'laser · off', f:(g,rnd)=>{ centerEnt('laser','off')(g,rnd);
+      g.strokeStyle='rgba(205,91,51,.3)'; g.lineWidth=1.6; g.setLineDash([2,7]);
+      g.beginPath(); g.moveTo(CW/2+8,CH/2); g.lineTo(CW-12,CH/2); g.stroke(); g.setLineDash([]); }},
+   {n:'movingHazard', f:centerEnt('movingHazard')},
+ ]},
+ {title:'BEHAVIOR KINDS — LOGIC & MOTION', items:[
+   {n:'pressurePlate · idle', f:centerEnt('pressurePlate','idle')},
+   {n:'pressurePlate · pressed', f:centerEnt('pressurePlate','pressed')},
+   {n:'proximityZone', f:centerEnt('proximityZone')},
+   {n:'door · closed', f:centerEnt('door','closed')},
+   {n:'door · open', f:centerEnt('door','open')},
+   {n:'spring · idle', f:centerEnt('spring','idle')},
+   {n:'spring · launch', f:centerEnt('spring','launch')},
+   {n:'gravityZone (scale −1)', f:centerEnt('gravityZone','invert')},
+ ]},
+ {title:'TRIGGER ACTIONS (WIRING)', items:[
+   {n:'openDoor', f:miniWire('pressurePlate','door','plate → openDoor')},
+   {n:'closeDoor', f:miniWire('proximityZone','door','zone → closeDoor')},
+   {n:'toggleDoor · once', f:miniWire('pressurePlate','door','plate → toggle (once)')},
+   {n:'collapseFloor', f:miniWire('proximityZone','collapsingFloor','zone → collapse')},
+   {n:'activatePlatform', f:miniWire('pressurePlate','movingPlatform','plate → activate')},
+ ]},
+ {title:'DECOR LIBRARY (reusable, tinted & scattered at compose time)', items:[
+   {n:'TORN PAPER', f:centerDecor('tornPaper',96,62)},
+   {n:'GRAPH PAPER', f:centerDecor('graphPaper',92,66)},
+   {n:'NEWSPAPER', f:centerDecor('newspaper',96,64)},
+   {n:'PAINT BLOB', f:centerDecor('paintBlob',92,74)},
+   {n:'MASKING TAPE', f:centerDecor('tape',100,46)},
+   {n:'BRUSH STROKE', f:centerDecor('brushStroke',110,36)},
+   {n:'INK SPLATTER', f:centerDecor('splatter',80,70)},
+   {n:'PENCIL SCRIBBLE', f:centerDecor('scribble',110,50)},
+   {n:'HANGING LAMP', f:centerDecor('lamp',70,104)},
+   {n:'BIRD', f:centerDecor('bird',70,50)},
+   {n:'EYE SYMBOL', f:centerDecor('eye',84,66)},
+   {n:'MOON', f:centerDecor('moon',80,74)},
+   {n:'ARCH', f:centerDecor('arch',84,84)},
+   {n:'CROSSES ×××', f:centerDecor('crosses',90,34)},
+   {n:'BUILDING', f:centerDecor('building',80,96)},
+   {n:'LADDER', f:centerDecor('ladder',60,100)},
+ ]},
+];
+
+(function buildSheet(){
+  const root=document.getElementById('sheetWrap');
+  const SD=Math.min(DPR,1.5);
+  const W=960, M=20, cols=5, gap=8;
+  const cellW=(W-2*M-(cols-1)*gap)/cols, sc=cellW/CW, cellH=CH*sc+24;
+  const L=[]; let y=118;
+  SECTIONS.forEach(sec=>{
+    L.push({sec,hy:y,iy:y+40});
+    y+=40+Math.ceil(sec.items.length/cols)*(cellH+gap)+22;
+  });
+  const H=y+6;
+  const cv=document.createElement('canvas');
+  cv.width=Math.ceil(W*SD); cv.height=Math.ceil(H*SD);
+  cv.style.width='100%'; cv.style.height='auto';
+  root.appendChild(cv);
+  function tag(g,x,ty,text,rot){
+    g.save(); g.translate(x,ty); g.rotate(rot);
+    g.font="15px 'Patrick Hand',cursive";
+    const tw=g.measureText(text).width+22;
+    fillRough(g,0,0,tw,25,INK,RNG(Math.round(x*3+ty)),1.2);
+    g.fillStyle=CREAM; g.textBaseline='middle'; g.textAlign='left';
+    g.fillText(text,11,13.5); g.restore();
+  }
+  function draw(){
+    const g=cv.getContext('2d');
+    g.setTransform(SD,0,0,SD,0,0);
+    const rnd=RNG(999);
+    g.fillStyle=CREAM; g.fillRect(0,0,W,H);
+    [[TEAL,150,90,70],[PINK,780,70,55],[BEIGE,460,H*.3,90],[LAV,850,H*.55,80],
+     [TEAL,120,H*.7,85],[PINK,540,H*.9,60]].forEach(([c,x,yy,r])=>{
+      g.globalAlpha=.12; g.fillStyle=c; g.beginPath(); g.arc(x,yy,r,0,7); g.fill(); });
+    g.globalAlpha=1; grain(g,0,0,W,H,rnd,.045,340);
+    inkSplat(g,910,H*.15,RNG(91),.8); inkSplat(g,46,H*.8,RNG(92),.7);
+    /* title */
+    g.save(); g.translate(M+2,22); g.rotate(-.018);
+    fillRough(g,0,0,306,64,INK,RNG(5),2); wear(g,0,0,306,64,RNG(51),.8);
+    g.fillStyle=CREAM; g.textAlign='left'; g.textBaseline='alphabetic';
+    g.font="26px 'Patrick Hand',cursive"; g.letterSpacing='5px';
+    g.fillText('PAPER ASSET LIBRARY',18,41); g.letterSpacing='0px';
+    g.restore();
+    g.fillStyle=INK; g.textAlign='left'; g.font="13px 'Patrick Hand',cursive";
+    g.fillText('one procedural draw fn per schemaVersion-1 behavior.kind — cached to bitmaps at load', M+330, 44);
+    g.fillText('states shown where the engine can request variants (open/closed, on/off, intact/cracking…)', M+330, 64);
+    g.fillText('fixture: '+LEVEL.levelId+'  ·  '+LEVEL.entities.length+' entities  ·  '+LEVEL.triggers.length+' triggers', M+330, 84);
+    /* sections */
+    L.forEach(({sec,hy,iy},si)=>{
+      tag(g,M,hy,sec.title, si%2?.012:-.014);
+      sec.items.forEach((item,idx)=>{
+        const cx=M+(idx%cols)*(cellW+gap), cy=iy+Math.floor(idx/cols)*(cellH+gap);
+        const r2=RNG(1000+si*97+idx*13);
+        g.save(); g.translate(cx,cy); g.scale(sc,sc);
+        g.beginPath(); g.rect(-5,-5,CW+10,CH+10); g.clip();
+        item.f(g,r2); g.restore();
+        g.fillStyle=INK; g.textAlign='center'; g.textBaseline='alphabetic';
+        g.font="11.5px 'Patrick Hand',cursive"; g.letterSpacing='1px';
+        g.fillText(item.n, cx+cellW/2, cy+CH*sc+16); g.letterSpacing='0px';
+      });
+      if(si<L.length-1){
+        const dy=iy+Math.ceil(sec.items.length/cols)*(cellH+gap)+6;
+        g.strokeStyle='rgba(35,32,25,.6)';
+        roughLine(g,M,dy,W-M,dy,RNG(70+si),1.5,1.3);
+      }
+    });
+  }
+  draw();
+  if(document.fonts && document.fonts.ready) document.fonts.ready.then(draw);
+})();
+
+/* ---------- design bible: paint the live demos once ---------- */
+(function paintDemos(){
+  function demo(id,w,h,seed,fn){
+    const c=document.getElementById(id); if(!c) return;
+    c.width=w*DPR; c.height=h*DPR;
+    const g=c.getContext('2d'); g.scale(DPR,DPR);
+    g.fillStyle=CREAM; g.fillRect(0,0,w,h);
+    grain(g,0,0,w,h,RNG(seed*3+1),.05,220);
+    fn(g,RNG(seed));
+  }
+  demo('d-jitter',260,96,11,(g,rnd)=>{
+    g.fillStyle=INK; g.fillRect(26,24,86,48);            // machine rect
+    fillRough(g,150,24,86,48,INK,rnd,2.2);               // paper rect
+  });
+  demo('d-wear',260,96,12,(g)=>{
+    [[0,20],[.9,98],[1.9,176]].forEach(([amt,x],i)=>{
+      const r=RNG(50+i*17);
+      fillRough(g,x,24,64,48,INK,r,1.8);
+      if(amt) wear(g,x,24,64,48,r,amt);
+    });
+  });
+  demo('d-overshoot',260,96,13,(g,rnd)=>{
+    inkBlock(g,30,32,200,34,rnd,INK,2);
+  });
+  demo('d-grainstain',260,96,14,(g,rnd)=>{
+    g.globalAlpha=.18; g.fillStyle=TEAL;
+    g.beginPath(); g.arc(80,50,40,0,7); g.fill();
+    g.fillStyle=PINK; g.beginPath(); g.arc(182,42,32,0,7); g.fill();
+    g.globalAlpha=1;
+    grain(g,0,0,260,96,rnd,.12,55);
+  });
+  demo('d-splat',260,96,15,(g,rnd)=>{
+    inkSplat(g,72,48,rnd,1.5);
+    g.fillStyle=INK; g.beginPath(); g.arc(72,48,5,0,7); g.fill();
+    inkSplat(g,182,48,RNG(99),1.1,TERRA);
+    g.fillStyle=TERRA; g.beginPath(); g.arc(182,48,3.6,0,7); g.fill();
+  });
+  demo('d-seeds',260,96,16,(g)=>{
+    for(let i=0;i<3;i++) inkBlock(g,22,14+i*27,216,17,RNG(i*777+5),INK,1.8);
+  });
+  demo('d-half',260,96,17,(g)=>{
+    const ball=(cx,c2)=>{
+      g.fillStyle=c2; g.beginPath(); g.arc(cx,48,26,0,7); g.fill();
+      g.fillStyle=INK; g.beginPath(); g.arc(cx,48,26,Math.PI,0); g.closePath(); g.fill();
+      wear(g,cx-26,22,52,52,RNG(cx),.7);
+    };
+    ball(72,PINK); ball(182,TEAL);
+  });
+  demo('d-layers',260,96,18,(g)=>{
+    const L=[['paper','#f2ecdc'],['stains + grain',BEIGE],['collage',TEAL],['tiles / entities',INK],['dynamics',TERRA]];
+    L.forEach(([n,c],i)=>{
+      const x=10+i*22, y=66-i*12, r=RNG(i*13+40);
+      g.fillStyle=c; roughRect(g,x,y,96,19,r,1.2); g.fill();
+      g.strokeStyle=INK; g.lineWidth=1.3; roughRect(g,x,y,96,19,RNG(i*13+80),1.2); g.stroke();
+      g.fillStyle=INK; g.font="10.5px 'Patrick Hand',cursive"; g.textAlign='left';
+      g.fillText(n, x+101, y+13);
+    });
+  });
+  /* color chips */
+  document.querySelectorAll('.sw canvas').forEach((c,i)=>{
+    const col=c.dataset.c;
+    c.width=56*DPR; c.height=44*DPR;
+    const g=c.getContext('2d'); g.scale(DPR,DPR);
+    g.fillStyle=CREAM; g.fillRect(0,0,56,44);
+    const r=RNG(i*31+7);
+    fillRough(g,4,4,48,36,col,r,1.6);
+    wear(g,4,4,48,36,r,.6);
+    g.strokeStyle='rgba(35,32,25,.45)'; g.lineWidth=1.2;
+    roughRect(g,4,4,48,36,RNG(i*31+9),1.4); g.stroke();
+  });
+  if(document.fonts && document.fonts.ready)
+    document.fonts.ready.then(()=>demo('d-layers',260,96,18,(g)=>{
+      const L=[['paper','#f2ecdc'],['stains + grain',BEIGE],['collage',TEAL],['tiles / entities',INK],['dynamics',TERRA]];
+      L.forEach(([n,c],i)=>{
+        const x=10+i*22, y=66-i*12;
+        g.fillStyle=c; roughRect(g,x,y,96,19,RNG(i*13+40),1.2); g.fill();
+        g.strokeStyle=INK; g.lineWidth=1.3; roughRect(g,x,y,96,19,RNG(i*13+80),1.2); g.stroke();
+        g.fillStyle=INK; g.font="10.5px 'Patrick Hand',cursive"; g.textAlign='left';
+        g.fillText(n, x+101, y+13);
+      });
+    }));
+})();
+
+/* ---------- tabs ---------- */
+const TABS=[['tabPrev','previewView'],['tabLib','libraryView'],['tabDoc','docView']];
+function showTab(id){
+  TABS.forEach(([t,v])=>{
+    document.getElementById(t).classList.toggle('active', t===id);
+    document.getElementById(v).style.display = t===id ? 'block':'none';
+  });
+  playing = (id==='tabPrev');
+}
+TABS.forEach(([t])=>{ document.getElementById(t).onclick=()=>showTab(t); });
+</script>
+</body>
+</html>
