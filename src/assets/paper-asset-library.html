@@ -242,7 +242,7 @@ const DPR=Math.min(2, Math.max(1.5, window.devicePixelRatio||1));
 function RNG(seed){ let a=(seed>>>0)||1;
   return function(){ a|=0; a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a);
     t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
-function roughPoly(g,pts,rnd,j=1.5,seg=9){
+function roughPoly(g,pts,rnd,j=1.0,seg=14){
   g.beginPath();
   for(let i=0;i<pts.length;i++){
     const a=pts[i], b=pts[(i+1)%pts.length];
@@ -254,7 +254,7 @@ function roughPoly(g,pts,rnd,j=1.5,seg=9){
   }
   g.closePath();
 }
-function roughRect(g,x,y,w,h,rnd,j=1.5){ roughPoly(g,[[x,y],[x+w,y],[x+w,y+h],[x,y+h]],rnd,j); }
+function roughRect(g,x,y,w,h,rnd,j=1.0){ roughPoly(g,[[x,y],[x+w,y],[x+w,y+h],[x,y+h]],rnd,j); }
 function fillRough(g,x,y,w,h,c,rnd,j){ g.fillStyle=c; roughRect(g,x,y,w,h,rnd,j); g.fill(); }
 function wear(g,x,y,w,h,rnd,amt=1){
   g.save(); g.globalCompositeOperation='destination-out';
@@ -271,9 +271,9 @@ function grain(g,x,y,w,h,rnd,alpha=.05,density=180){
   for(let i=0;i<n;i++){ g.fillStyle= rnd()<.5?`rgba(35,32,25,${alpha*rnd()})`:`rgba(255,255,250,${alpha*rnd()})`;
     g.fillRect(x+rnd()*w,y+rnd()*h,1,1); }
 }
-function roughLine(g,x1,y1,x2,y2,rnd,wdt=2,j=1){
+function roughLine(g,x1,y1,x2,y2,rnd,wdt=2,j=.8){
   g.lineWidth=wdt; g.lineCap='round';
-  const n=Math.max(2,Math.round(Math.hypot(x2-x1,y2-y1)/8));
+  const n=Math.max(2,Math.round(Math.hypot(x2-x1,y2-y1)/12));
   g.beginPath(); g.moveTo(x1,y1);
   for(let k=1;k<=n;k++){ const t=k/n;
     g.lineTo(x1+(x2-x1)*t+(rnd()-.5)*j*2, y1+(y2-y1)*t+(rnd()-.5)*j*2); }
@@ -295,7 +295,7 @@ function sprite(w,h,seed,fn){
   c._w=w; c._h=h; return c;
 }
 function blit(g,s,x,y){ g.drawImage(s,x,y,s._w,s._h); }
-function inkBlock(g,x,y,w,h,rnd,color=INK,j=2){
+function inkBlock(g,x,y,w,h,rnd,color=INK,j=1.4){
   fillRough(g,x,y,w,h,color,rnd,j);
   g.strokeStyle=color; g.globalAlpha=.85;
   for(let i=0;i<Math.max(2,w/60);i++){
@@ -340,7 +340,6 @@ const KindDraw={
     g.strokeStyle='rgba(35,32,25,.5)'; g.lineWidth=1.2;       // drips
     for(let i=0;i<3;i++) roughLine(g,T*(.25+i*.25),T-3,T*(.25+i*.25),T+4,rnd,1.4,.4);
     wear(g,2,2,T-4,T-4,rnd,.6);
-    grain(g,2,2,T-4,T-4,rnd,.07,120);
   },
   spike(g,T,rnd){
     g.fillStyle=INK;
@@ -398,7 +397,6 @@ const KindDraw={
     wear(g,T*.14,T*.02,T*.72,T,rnd,.9);
     if(state==='open'){
       fillRough(g,T*.26,T*.12,T*.48,T*.84,LAV,rnd,1);
-      grain(g,T*.26,T*.12,T*.48,T*.84,rnd,.07,90);
     }else{
       fillRough(g,T*.26,T*.12,T*.48,T*.84,'#171512',rnd,1);
       g.fillStyle=CREAM; g.beginPath();                       // handle
@@ -433,19 +431,13 @@ const KindDraw={
       g.fill(); }
     for(let i=0;i<5;i++){ g.fillStyle=INK; g.fillRect(6+rnd()*(T-12),6+rnd()*(T-12),1.8,1.8); }
   },
-  conveyor(g,T,rnd,state='right'){
-    const dir = state==='left' ? -1 : 1;
+  conveyor(g,T,rnd){                                          // single cached body — direction is shown by the live chevron sweep, not a second canvas
     inkBlock(g,2,T*.36,T-4,T*.28,rnd,INK,1.6);
     g.fillStyle=CREAM;                                        // rollers
     g.beginPath(); g.arc(T*.14,T*.5,T*.08,0,7); g.arc(T*.86,T*.5,T*.08,0,7); g.fill();
     g.strokeStyle=INK; g.lineWidth=1.4;
     g.beginPath(); g.arc(T*.14,T*.5,T*.08,0,7); g.stroke();
     g.beginPath(); g.arc(T*.86,T*.5,T*.08,0,7); g.stroke();
-    g.strokeStyle=TERRA; g.lineWidth=2.2;                     // chevrons
-    for(let i=0;i<3;i++){ const px=T*(.32+i*.18);
-      g.beginPath();
-      g.moveTo(px-4*dir,T*.44); g.lineTo(px+3*dir,T*.5); g.lineTo(px-4*dir,T*.56);
-      g.stroke(); }
   },
 };
 /* player / markers / goal */
@@ -480,63 +472,34 @@ function drawSpawnMarker(g,cx,baseY,rnd){
   roughPoly(g,[[cx-5,baseY-40],[cx,baseY-33],[cx+5,baseY-40]],rnd,.5,4); g.fill();
 }
 /* decor library */
+/* Curated decor set — 8 reusable pieces (was 16). Levels get their variety
+   from placement/scale/rotation/tint at compose time, not from more art types.
+   Per-asset grain removed: the single background grain layer is the shared
+   paper texture; decor stays low-contrast so it never competes with gameplay. */
 const DecorDraw={
   tornPaper(g,w,h,rnd,c=PINK){ g.fillStyle=c;
-    roughPoly(g,[[4,4],[w-4,4],[w-4,h-4],[4,h-4]],rnd,Math.min(w,h)*.09,10); g.fill();
-    grain(g,4,4,w-8,h-8,rnd,.07,110); wear(g,4,4,w-8,h-8,rnd,.5); },
+    roughPoly(g,[[4,4],[w-4,4],[w-4,h-4],[4,h-4]],rnd,Math.min(w,h)*.07,12); g.fill();
+    wear(g,4,4,w-8,h-8,rnd,.5); },
   graphPaper(g,w,h,rnd){ g.fillStyle='#e9e0ca';
-    roughPoly(g,[[4,4],[w-4,4],[w-4,h-4],[4,h-4]],rnd,2.5,10); g.fill();
+    roughPoly(g,[[4,4],[w-4,4],[w-4,h-4],[4,h-4]],rnd,2,12); g.fill();
     g.strokeStyle='rgba(35,32,25,.28)'; g.lineWidth=.8;
     for(let x=12;x<w-6;x+=9){ g.beginPath(); g.moveTo(x,7); g.lineTo(x,h-7); g.stroke(); }
     for(let y=12;y<h-6;y+=9){ g.beginPath(); g.moveTo(7,y); g.lineTo(w-7,y); g.stroke(); }
     wear(g,4,4,w-8,h-8,rnd,.4); },
-  newspaper(g,w,h,rnd){ g.fillStyle=BEIGE;
-    roughPoly(g,[[4,4],[w-4,4],[w-4,h-4],[4,h-4]],rnd,3,9); g.fill();
-    fillRough(g,10,10,w*.5,7,INK,rnd,.6);
-    g.strokeStyle='rgba(35,32,25,.55)'; g.lineWidth=1.2;
-    for(let y=24;y<h-8;y+=6){ g.beginPath(); g.moveTo(10,y); g.lineTo(10+w-24-rnd()*14,y); g.stroke(); }
-    wear(g,4,4,w-8,h-8,rnd,.5); },
   paintBlob(g,w,h,rnd,c=TEAL){ g.fillStyle=c;
     g.beginPath();
     for(let i=0;i<=14;i++){ const a=i/14*6.283, r=Math.min(w,h)*.4*(.8+rnd()*.3);
       const x=w/2+Math.cos(a)*r, y=h/2+Math.sin(a)*r*.85;
       i===0?g.moveTo(x,y):g.lineTo(x,y); }
-    g.fill(); grain(g,6,6,w-12,h-12,rnd,.08,90); wear(g,6,6,w-12,h-12,rnd,.5); },
-  tape(g,w,h,rnd){ g.globalAlpha=.8; g.fillStyle='#e4d8b6';
-    roughPoly(g,[[6,h*.3],[w-6,h*.24],[w-8,h*.72],[8,h*.78]],rnd,2.5,8); g.fill();
-    g.globalAlpha=1; grain(g,6,h*.24,w-12,h*.5,rnd,.1,60); },
+    g.fill(); wear(g,6,6,w-12,h-12,rnd,.5); },
   brushStroke(g,w,h,rnd,c=INK){ g.strokeStyle=c; g.lineCap='round';
     for(let i=0;i<4;i++){ g.lineWidth=3.5-i*.7; g.globalAlpha=1-i*.2;
-      roughLine(g,8,h/2+(i-1.5)*2.4,w-8-i*6,h/2+(i-1.5)*3,rnd,g.lineWidth,1.6); }
+      roughLine(g,8,h/2+(i-1.5)*2.4,w-8-i*6,h/2+(i-1.5)*3,rnd,g.lineWidth,1.2); }
     g.globalAlpha=1; },
   splatter(g,w,h,rnd){ inkSplat(g,w/2,h/2,rnd,1.5);
     g.fillStyle=INK; g.beginPath(); g.arc(w/2,h/2,5,0,7); g.fill(); },
   scribble(g,w,h,rnd){ g.strokeStyle='rgba(35,32,25,.7)';
-    for(let i=0;i<5;i++) roughLine(g,10+rnd()*8,h*.3+i*6,w-10-rnd()*10,h*.28+i*6,rnd,1.3,2.4); },
-  lamp(g,w,h,rnd){ g.strokeStyle=INK; roughLine(g,w/2,2,w/2,h*.36,rnd,2.4,.6);
-    const cy=h*.36+h*.2, r=h*.2;
-    g.fillStyle=PINK; g.beginPath(); g.arc(w/2,cy,r,0,7); g.fill();
-    g.fillStyle=INK; g.beginPath(); g.arc(w/2,cy,r,Math.PI,0); g.closePath(); g.fill();
-    wear(g,w/2-r,cy-r,r*2,r*2,rnd,.7);
-    for(let i=0;i<7;i++){ const a=Math.PI*(.12+i*.126);
-      roughLine(g,w/2+Math.cos(a)*(r+4),cy+Math.sin(a)*(r+4),w/2+Math.cos(a)*(r+10),cy+Math.sin(a)*(r+10),rnd,1.6,.5); } },
-  bird(g,w,h,rnd){ g.save(); g.translate(w/2,h/2); const s=Math.min(w,h)*.3;
-    g.fillStyle=INK;
-    roughPoly(g,[[-s,-s*.1],[-s*.2,-s*.55],[s*.7,-s*.25],[s,-s*.4],[s*.75,0],[0,s*.3]],rnd,.7,5); g.fill();
-    g.strokeStyle=INK;
-    for(let i=0;i<3;i++) roughLine(g,s+4,-s*.3+i*4,s+10,-s*.35+i*4,rnd,1.2,.3);
-    g.restore(); },
-  eye(g,w,h,rnd){ const s=Math.min(w,h)*.34, cx=w/2, cy=h/2;
-    g.fillStyle=TEAL; g.beginPath();
-    g.moveTo(cx-s,cy); g.quadraticCurveTo(cx,cy-s*.85,cx+s,cy);
-    g.quadraticCurveTo(cx,cy+s*.85,cx-s,cy); g.fill();
-    g.strokeStyle=INK; g.lineWidth=2; g.beginPath();
-    g.moveTo(cx-s,cy); g.quadraticCurveTo(cx,cy-s*.85,cx+s,cy);
-    g.quadraticCurveTo(cx,cy+s*.85,cx-s,cy); g.stroke();
-    g.fillStyle=CREAM; g.beginPath(); g.arc(cx,cy,s*.42,0,7); g.fill();
-    g.fillStyle=INK; roughPoly(g,[[cx,cy-s*.26],[cx+s*.24,cy+s*.18],[cx-s*.24,cy+s*.18]],rnd,.6,5); g.fill();
-    for(let i=0;i<7;i++){ const a=-Math.PI*.8+i*(Math.PI*.6/6);
-      roughLine(g,cx+Math.cos(a)*(s+3),cy+Math.sin(a)*(s*.8+3),cx+Math.cos(a)*(s+8),cy+Math.sin(a)*(s*.8+8),rnd,1.4,.4); } },
+    for(let i=0;i<5;i++) roughLine(g,10+rnd()*8,h*.3+i*6,w-10-rnd()*10,h*.28+i*6,rnd,1.3,1.8); },
   moon(g,w,h,rnd){ const r=Math.min(w,h)*.34;
     g.fillStyle=LAV; g.beginPath(); g.arc(w/2,h/2,r,0,7); g.fill();
     g.save(); g.globalCompositeOperation='destination-out';
@@ -548,23 +511,7 @@ const DecorDraw={
     g.arc(w/2,h*.4,aw/2,Math.PI,0); g.lineTo(w/2+aw/2,h*.82);
     g.lineTo(w/2+aw*.24,h*.82); g.lineTo(w/2+aw*.24,h*.46);
     g.arc(w/2,h*.46,aw*.24,0,Math.PI,true); g.lineTo(w/2-aw*.24,h*.82);
-    g.closePath(); g.fill();
-    grain(g,w/2-aw/2,h*.2,aw,h*.6,rnd,.08,80); },
-  crosses(g,w,h,rnd){ g.strokeStyle=INK;
-    for(let i=0;i<3;i++){ const px=w*.24+i*w*.26, py=h/2+(i%2?-4:4);
-      roughLine(g,px-5,py-5,px+5,py+5,rnd,2,.4);
-      roughLine(g,px+5,py-5,px-5,py+5,rnd,2,.4); } },
-  building(g,w,h,rnd){ const x=w/2-24, baseY=h-6;
-    g.fillStyle=TERRA; fillRough(g,x,baseY-64,44,64,TERRA,rnd,1.5);
-    fillRough(g,x+12,baseY-78,20,16,TERRA,rnd,1.3);
-    g.fillStyle=INK; fillRough(g,x+15,baseY-22,13,22,INK,rnd,.8);
-    for(let r=0;r<2;r++)for(let c=0;c<2;c++) g.fillRect(x+9+c*18,baseY-56+r*13,6,7);
-    grain(g,x,baseY-78,44,78,rnd,.08,90); },
-  ladder(g,w,h,rnd){ const x=w/2-10;
-    g.strokeStyle=INK;
-    roughLine(g,x,8,x+2,h-8,rnd,2.4,1);
-    roughLine(g,x+20,8,x+18,h-8,rnd,2.4,1);
-    for(let y=18;y<h-10;y+=12) roughLine(g,x-1,y,x+21,y-1,rnd,2,.7); },
+    g.closePath(); g.fill(); },
 };
 
 /* ============================================================
@@ -668,31 +615,30 @@ for(let y=0;y<MAP.height;y++){
   while(x<MAP.width){
     if(tileAt(x,y)===1){ let len=1;
       while(x+len<MAP.width && tileAt(x+len,y)===1) len++;
-      runs.push({x,y,len,variant:y%3}); x+=len; }
+      runs.push({x,y,len,variant:y%2}); x+=len; }
     else x++;
   }
 }
 /* background collage, cached once */
 const BG=sprite(LW,LH,777,(g,W,H,rnd)=>{
   g.fillStyle=CREAM; g.fillRect(0,0,W,H);
-  g.globalAlpha=.85; g.fillStyle=TEAL;
+  g.globalAlpha=.5; g.fillStyle=TEAL;                        // anchor stain, low contrast
   g.beginPath(); g.arc(210,190,120,0,7); g.fill(); g.globalAlpha=1;
+  /* Decor kept deliberately low-contrast (DECOR_ALPHA) so it never competes
+     with gameplay ink. Variety comes from placement/scale/rotation/tint, not
+     from more asset types — 8 pieces, composed once. */
+  const DECOR_ALPHA=.62;
   const put=(name,x,y,w,h,seed,rot=0)=>{ const s=PaperAssets.decor(name,w,h,seed);
-    g.save(); g.translate(x,y); g.rotate(rot); g.drawImage(s,-w/2,-h/2,w,h); g.restore(); };
+    g.save(); g.globalAlpha=DECOR_ALPHA; g.translate(x,y); g.rotate(rot);
+    g.drawImage(s,-w/2,-h/2,w,h); g.restore(); };
   put('tornPaper',560,140,240,180,3,.03);
   put('graphPaper',760,420,150,110,4,-.05);
-  put('newspaper',350,470,140,95,5,.06);
   put('paintBlob',830,180,150,120,6);
-  put('tape',560,60,110,44,7,-.08);
   put('moon',900,110,110,110,8);
   put('arch',150,430,120,130,9);
-  put('bird',700,250,60,44,10);
-  put('bird',760,290,44,34,11);
   put('scribble',260,330,120,50,12);
-  put('crosses',460,360,90,30,13);
-  inkSplat(g,420,220,RNG(21),1.1);
-  put('lamp',640,10,70,150,14);
-  grain(g,0,0,W,H,RNG(31),.05,240);
+  g.globalAlpha=.5; inkSplat(g,420,220,RNG(21),1.1); g.globalAlpha=1;
+  grain(g,0,0,W,H,RNG(31),.05,240);                         // the single shared paper texture
 });
 
 /* entity runtime table */
@@ -749,7 +695,6 @@ function render(){
       ctx.beginPath(); ctx.moveTo(sp.x1,yy); ctx.lineTo(sp.x2,yy); ctx.stroke(); ctx.setLineDash([]);
     }
     if(b.kind==='door') state = b.initiallyOpen ? 'open':'closed';
-    if(b.kind==='conveyor') state = b.surfaceVelocityX<0 ? 'left':'right';
     if(b.kind==='gravityZone') state = b.gravityScale<0 ? 'invert':'normal';
     if(b.kind==='spring') state = (Math.sin(time*3)>.93) ? 'launch':'idle';
     if(b.kind==='pressurePlate') state='idle';
@@ -852,8 +797,7 @@ const SECTIONS=[
    {n:'collapsingFloor · intact', f:centerEnt('collapsingFloor','intact')},
    {n:'collapsingFloor · cracking', f:centerEnt('collapsingFloor','cracking')},
    {n:'iceSurface', f:centerEnt('iceSurface')},
-   {n:'conveyor → ', f:centerEnt('conveyor','right')},
-   {n:'conveyor ← ', f:centerEnt('conveyor','left')},
+   {n:'conveyor (dir = live sweep)', f:centerEnt('conveyor')},
  ]},
  {title:'BEHAVIOR KINDS — HAZARDS', items:[
    {n:'spike', f:centerEnt('spike')},
@@ -885,20 +829,12 @@ const SECTIONS=[
  {title:'DECOR LIBRARY (reusable, tinted & scattered at compose time)', items:[
    {n:'TORN PAPER', f:centerDecor('tornPaper',96,62)},
    {n:'GRAPH PAPER', f:centerDecor('graphPaper',92,66)},
-   {n:'NEWSPAPER', f:centerDecor('newspaper',96,64)},
    {n:'PAINT BLOB', f:centerDecor('paintBlob',92,74)},
-   {n:'MASKING TAPE', f:centerDecor('tape',100,46)},
    {n:'BRUSH STROKE', f:centerDecor('brushStroke',110,36)},
    {n:'INK SPLATTER', f:centerDecor('splatter',80,70)},
    {n:'PENCIL SCRIBBLE', f:centerDecor('scribble',110,50)},
-   {n:'HANGING LAMP', f:centerDecor('lamp',70,104)},
-   {n:'BIRD', f:centerDecor('bird',70,50)},
-   {n:'EYE SYMBOL', f:centerDecor('eye',84,66)},
    {n:'MOON', f:centerDecor('moon',80,74)},
    {n:'ARCH', f:centerDecor('arch',84,84)},
-   {n:'CROSSES ×××', f:centerDecor('crosses',90,34)},
-   {n:'BUILDING', f:centerDecor('building',80,96)},
-   {n:'LADDER', f:centerDecor('ladder',60,100)},
  ]},
 ];
 

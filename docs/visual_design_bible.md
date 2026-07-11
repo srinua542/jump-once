@@ -102,7 +102,8 @@ Collage is the active pack, they are binding.
    positions; only the *drawn* polygon wobbles. Rough edges are a costume the physics never
    wears. (This is what makes the art layer safely swappable over unchanged physics.)
 6. **Imperfect, not sloppy.** Vertex jitter ≤ ±2px; wear erases ≤ ~15% of a fill. Past that it
-   looks broken, not printed.
+   looks broken, not printed. The kit was tuned toward the calm end of this range in the dm-0077
+   simplification (edge subdivision ~14px, jitter ~±1px) — readability first, texture second.
 7. **Absence has a costume too.** Things that vanish, haven't happened, or exist only as rules
    (zones, fake platforms, collapsed floors) are drawn as **dashed outlines**.
 8. **Same function, same shape, everywhere.** A spike is always triangles; a plate is always a
@@ -115,9 +116,10 @@ Collage is the active pack, they are binding.
 - **Fixed layer order, composed bottom-up:** paper ground → soft tinted stains → oversized
   collage pieces → symbols/splatters/grain → tiles → static entities → dynamic entities →
   labels/UI. Nothing draws out of its layer.
-- **Tiny library, infinite screens.** Reuse ~16 decor assets everywhere; the hand-assembled
-  feel comes from randomising position/scale/rotation/opacity/tint **per placement**, never from
-  authoring new art.
+- **Tiny library, infinite screens.** Reuse a **small decor set (~6–10, currently 8)** everywhere;
+  the hand-assembled feel comes from randomising position/scale/rotation/opacity/tint **per
+  placement**, never from authoring new art. Adding decor *types* is almost never the answer —
+  vary placement instead (dm-0077).
 - **Decor obeys a no-fly zone:** nothing decorative within half a tile of a walkable surface or
   hazard; decor contrast stays below gameplay contrast (tints/low alpha, never full ink).
 - **One or two accents per level**, chosen up front; stains and torn paper tint from that pair.
@@ -136,8 +138,11 @@ as the *simulation* RNG is threaded through state (dm-0003/dm-0004).
   gives every rect/triangle/slab its cut-paper edge.
 - **Wear:** `destination-out` erase of low-alpha specks + thin scratches (erasing reads as
   missing ink; painting dirt reads wrong).
-- **Grain:** 1px specks, half dark/half near-white, 4–7% alpha — unifies every surface into one
-  paper stock.
+- **Grain is ONE shared layer, not per-asset (dm-0077).** 1px specks, half dark/half near-white,
+  4–7% alpha, applied **once** to the composed background — this is the shared paper texture that
+  unifies every surface into one paper stock. Gameplay sprites are drawn as **clean, un-grained
+  ink** so their silhouettes stay bold; per-object grain is forbidden (it softens silhouettes and
+  multiplies work for no readability gain).
 - **Splatter:** offset droplets by `rnd()·rnd()·radius` (squaring clusters them like flicked ink).
 - **States are frames, not filters:** door open/closed, laser on/off, floor intact/cracking are
   **separately cached bitmaps** swapped by key — never runtime tinting of one bitmap.
@@ -160,6 +165,10 @@ REQ-161/162/163 (object pooling, render batching, async asset delivery, fps scal
 - **One background bitmap per level.** Compose the whole collage once at world size; the camera
   is a `drawImage` source-rect crop — scrolling costs the same as standing still.
 - **Keep the dynamic list tiny.** Split static/dynamic at load; only genuinely kinetic kinds tick.
+- **Cache only meaningful gameplay states (dm-0077).** Cache a separate bitmap only for states the
+  player must distinguish (open/closed, on/off, intact/cracking, idle/pressed). Pure *direction* or
+  mirroring is a runtime transform (flip / a live glyph sweep), not a second cached canvas — e.g.
+  the conveyor caches one body and shows direction via its animated chevrons.
 - **Cap the pixel ratio** (DPR 2 gameplay / 1.5 for large sheets). Scope all `w·h·4·DPR²` canvas
   budgeting to the level; clear the level-scoped cache on transition.
 - **Avoid slow paths in the hot loop:** no `shadowBlur`, no `filter`, no `save/restore` churn;

@@ -82,6 +82,12 @@ goal. Both are flagged for P9 execution-plan resolution in the bible.
   (2 gameplay / 1.5 sheets); scope caches to the level and clear on transition.
 - No `shadowBlur`/`filter`/`save-restore` churn in the hot loop; reset `setLineDash([])` after
   dashed passes; integer-align blits.
+- **Simplicity discipline (dm-0077):** grain is ONE shared background layer, never per-asset
+  (gameplay sprites are clean un-grained ink — bold silhouettes); keep the decor set small (~6–10,
+  currently 8) and get variety from placement, not new asset types; cache a bitmap only for
+  *meaningful gameplay states*, using a runtime transform (flip / live glyph) for mere direction;
+  favour the calm end of the jitter range (subdivision ~14px, jitter ~±1px). Readability over
+  decorative richness, always.
 
 ## Accessibility & fairness (REQ-016, and level-design-principle §"responsibly")
 
