@@ -9,7 +9,7 @@ This document holds one section per phase, authored *before* that phase's implem
 - **P5 — GDOS Scoring Engine: CLOSED — VERIFIED**, see `docs/verification/P5.md`. Section below authored before S5.1 code per REQ-P02, via a first-principles adversarial review of the original slice table (dm-0031–dm-0035; table restructured — Design Memory moved ahead of the Kill Switch and CDRE). All nine slices S5.1–S5.9 ran the SDLC loop (archives in `meta/runs/S5.*`); checkpoints C5.1–C5.9 passed (336/336 tests). Implementation decisions dm-0036–dm-0042. Second of the three M2 pillars.
 - **P6 — Campaign Intelligence: CLOSED — VERIFIED**, see `docs/verification/P6.md`. Section below authored before S6.1 code per REQ-P02, via a first-principles adversarial review (dm-0043–dm-0048; table restructured to six slices S6.1–S6.6). All six slices ran the SDLC loop (archives in `meta/runs/S6.*`); checkpoints C6.1–C6.5 passed (420/420 tests). Implementation decisions dm-0049–dm-0053. Third and final M2 pillar. **Milestone M2 — Design Intelligence Operational is VERIFIED. The content-generation hard gate is OPEN.**
 - **P7 — PDA & Procedural Generation + Mechanic Lifecycle: CLOSED — VERIFIED**, see `docs/verification/P7.md`. Section authored before S7.1 code per REQ-P02 via a first-principles adversarial review (dm-0054–dm-0060). All eight slices S7.1–S7.8 ran the SDLC loop (archives in `meta/runs/S7.*`); 498/498 tests green. Implementation decisions dm-0061–dm-0064. First of the two M3 pillars.
-- **P8 — Internal Production Tools: section below, authored before S8.1 code per REQ-P02, via a first-principles adversarial review (dm-0065–dm-0070; table restructured to seven slices S8.1–S8.7).** Second and final M3 pillar — active phase.
+- **P8 — Internal Production Tools: CLOSED — VERIFIED**, see `docs/verification/P8.md`. Section below authored before S8.1 code per REQ-P02, via a first-principles adversarial review (dm-0065–dm-0070; table restructured to seven slices S8.1–S8.7). All seven slices ran the SDLC loop (archives in `meta/runs/S8.*`); 560/560 tests green. Implementation decisions dm-0071–dm-0074. Second and final M3 pillar. **Milestone M3 — Production Capable is CLOSED (VERIFIED). The content-authoring gate is fully open; P10 unlocks. Next phase: P9 — Rendering, Audio & Visual Grammar.**
 
 Covers the phases that were in flight: **P0 (Governance & Protocol Infrastructure)** and **P1 (Deterministic Core Architecture)** — together, milestone **M0 — Foundation Locked**. Per the Directive, this plan is written *before* implementation code and defines the work, governing PRD requirements, dependencies, deliverables, validation criteria, and completion checkpoints. A new execution plan will be authored at the start of each subsequent phase.
 
@@ -745,7 +745,9 @@ All checkpoints C7.1–C7.7 pass; `manufactureLevel` produces a schema-valid lev
 ---
 ---
 
-# P8 — Internal Production Tools  *(section authored before S8.1 code per REQ-P02; adversarial review ledgered dm-0065–dm-0070)*
+# P8 — Internal Production Tools  *(CLOSED — VERIFIED, `docs/verification/P8.md`; authored before S8.1 code per REQ-P02; adversarial review ledgered dm-0065–dm-0070; implementation dm-0071–dm-0074)*
+
+> **CLOSED at S8.7.** All seven slices COMPLETED, 560/560 tests green. The editor authors/playtests/exports a level headlessly and telemetry round-trips into the unmodified `processCampaign` (the IRD exit condition). REQ-133 flipped VERIFIED; REQ-130/131/132 hold a P9 (render/UI) + P11 (release) remainder (dm-0065/dm-0072). `tools/` isolation is scan-enforced (dm-0066/dm-0074); zero changes to `src/eval/` or `src/gen/`. **Milestone M3 — Production Capable is CLOSED** (P7 ✓ + P8 ✓); P10 unlocks. Retained below as the historical record.
 
 ## Governing requirements
 

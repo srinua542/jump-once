@@ -1,0 +1,67 @@
+{
+  "slice": "S8.5",
+  "title": "Telemetry capture",
+  "reqs": [
+    "REQ-133"
+  ],
+  "started_at": "2026-07-11T01:34:26.359Z",
+  "updated_at": "2026-07-11T01:34:35.225Z",
+  "current_stage": "handoff",
+  "stages": {
+    "reboot": {
+      "status": "done",
+      "at": "2026-07-11T01:34:26.360Z",
+      "note": "Reboot: 544/544 green before S8.5."
+    },
+    "select": {
+      "status": "done",
+      "at": "2026-07-11T01:34:26.466Z",
+      "note": "Selected S8.5 (depends on S8.1's playtest driver)."
+    },
+    "plan": {
+      "status": "done",
+      "at": "2026-07-11T01:34:26.582Z",
+      "note": "Plan: recordSession reuses PlaytestSession; TelemetryRecord = minimal replayable unit, ArchetypeRun-compatible (dm-0044); replay-derived analysis not live logging (dm-0068)."
+    },
+    "anchor": {
+      "status": "done",
+      "at": "2026-07-11T01:34:26.692Z",
+      "note": "Anchor: read TapeIO.ts, Evidence.ts (ArchetypeRun shape), Rng.ts (createRng normalizes seed>>>0) zero-assumption; decided to read the normalized seed from the initial rng.seed -- no src/eval/ modification."
+    },
+    "implement": {
+      "status": "done",
+      "at": "2026-07-11T01:34:26.799Z",
+      "note": "Implement: tools/telemetry/Capture.ts + Capture.test.ts (6 tests)."
+    },
+    "verify": {
+      "status": "done",
+      "at": "2026-07-11T01:34:26.905Z",
+      "note": "Verify: npm test 550/550 green (+6). tsc clean. Captured record test-proven to replay bit-identically via headless replayTape (the reuse contract, proven not asserted) and to be deterministic."
+    },
+    "integrate": {
+      "status": "done",
+      "at": "2026-07-11T01:34:34.895Z",
+      "note": "Integrate: PKG +1 node (tools/telemetry_capture); dependents on core/state, components/level, entities/world, schema/tape_io, tools/playtest. Hash s8-a1b8d5 -> s8-b3c9e6. No new ledger decision -- applied dm-0044/dm-0068 as pre-registered."
+    },
+    "report": {
+      "status": "done",
+      "at": "2026-07-11T01:34:35.001Z",
+      "note": "Report: S8.5 COMPLETED; REQ-133 IN_PROGRESS (part 1 of 2 delivered)."
+    },
+    "handoff": {
+      "status": "done",
+      "at": "2026-07-11T01:34:35.110Z",
+      "note": "Handoff: continuing to S8.6 in-session."
+    }
+  },
+  "acceptance": [
+    {
+      "req": "REQ-133",
+      "criterion": "Part 1 (live capture as ArchetypeRun-compatible replayable record) delivered; part 2 (heatmap + GDOS round-trip) is S8.6.",
+      "met": true,
+      "note": null
+    }
+  ],
+  "outcome": "completed",
+  "closed_at": "2026-07-11T01:34:35.335Z"
+}

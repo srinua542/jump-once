@@ -778,6 +778,50 @@
       "emotion_targeted": "Confidence that even the most invasive-sounding tool in the project (a live variable editor) cannot quietly break the immutability guarantee every other system depends on.",
       "misconception_created": "A reader might assume \"variable manipulation\" means unrestricted field access; it means committing a validated state patch through the one sanctioned mutation point, same as a physics or lifecycle system tick.",
       "why_alternatives_rejected": "A direct-mutation debug editor for convenience/speed: violates dm-0004/dm-0043 outright and risks corrupting `previous`-snapshot invariants relied on elsewhere (e.g. render interpolation, once P9 exists). A separate \"debug state\" shadow copy reconciled later: adds a second source of truth exactly where StateManager already provides one canonical commit point."
+    },
+    {
+      "id": "dm-0071",
+      "date": "2026-07-11",
+      "status": "ACCEPTED",
+      "title": "S8.1 clarifies dm-0066: CANONICAL_PIPELINE (AgentHarness) is a named tools/ public seam into src/eval/",
+      "why_it_exists": "dm-0066 pre-registered a whitelist of public src/eval/ entry points tools/ may consume (evaluateLevel/judgeLevel, the P4 audits, analyzeTape, processCampaign, manufactureLevel, discoverOpportunities) before S8.1 code was written. Implementing the S8.1 live-playtest driver (tools/level_editor/Playtest.ts) surfaced a real omission: assembling the Engine at all requires CANONICAL_PIPELINE, the normative system order exported from src/eval/AgentHarness.ts -- CLAUDE.md itself calls it \"the only sanctioned engine assembly order\". That constant was not on the pre-registered list.",
+      "problem_it_solves": "Rather than duplicating CANONICAL_PIPELINE as a second array inside tools/ (a single-source-of-truth violation risking drift between the eval-side and tools-side simulation if a system is ever added or reordered), Playtest.ts imports CANONICAL_PIPELINE directly from src/eval/AgentHarness.ts. This decision formally adds AgentHarness (for CANONICAL_PIPELINE only) to the dm-0066 whitelist, enforced by test/unit/ToolsIsolation.test.ts alongside the pre-existing campaign/ (analyzeTape/processCampaign) allowance.",
+      "emotion_targeted": "Confidence that the isolation rule reflects what the code actually needs, not a first-draft guess frozen before any implementation existed.",
+      "misconception_created": "A reader diffing dm-0066 against the ToolsIsolation scan might think the scan is under-enforcing; this entry records why AgentHarness is allowed alongside campaign/, not omitted by oversight.",
+      "why_alternatives_rejected": "Re-deriving/duplicating the six-system pipeline array inside tools/level_editor/Playtest.ts: creates a second source of truth for the single most load-bearing assembly order in the project, risking silent divergence between eval-side and tools-side simulation. Importing the six systems individually and re-freezing an equivalent array: identical duplication risk with extra code."
+    },
+    {
+      "id": "dm-0072",
+      "date": "2026-07-11",
+      "status": "ACCEPTED",
+      "title": "REQ-132 asset-delivery-speed clause is a P9 share; backlog phase column P8,P11 -> P8,P9,P11",
+      "why_it_exists": "REQ-132 enumerates four profiling targets: frame rate, memory allocations, scene load times, AND asset delivery speeds. The first three are measurable now against the existing engine (S8.4 delivers them: timeSection for frame/section timing, countAllocations for allocations, sceneLoadTiming for scene load). But asset delivery speed presupposes an asset pipeline -- textures, audio, sprite atlases -- none of which exists before P9 (Rendering, Audio & Visual Grammar). This is the SAME class of finding as dm-0065 (REQ-130/131 presuppose a rendering surface P9 builds): a requirement whose clauses span the P8/P9 boundary.",
+      "problem_it_solves": "Prevents S8.4/S8.7 from silently claiming full REQ-132 coverage when one of its four named clauses is genuinely unbuildable in P8. The backlog phase column is amended P8,P11 -> P8,P9,P11 (exact-string edit, diff-verified): P8 delivers frame/allocation/scene-load profiling, P9 adds asset-delivery-speed profiling once an asset pipeline exists, P11 owns the release-audit profiling share. REQ-132 stays IN_PROGRESS through all three. Same treatment, same precedent (dm-0008 multi-phase discipline) as REQ-150 at P3 and REQ-130/131 at S8.1/S8.2.",
+      "emotion_targeted": "Honesty in the four-state ledger -- a requirement is only VERIFIED when every clause it names is genuinely built, not when the phase that owned the buildable clauses closes.",
+      "misconception_created": "A reader might think S8.4 under-delivered REQ-132; it delivered every clause that is buildable against the pre-P9 engine, and the phase column now documents exactly which clause waits for P9.",
+      "why_alternatives_rejected": "Building a stub asset-delivery-speed profiler in P8: there are no assets to measure delivery of -- it would measure nothing, a placeholder (forbidden). Claiming full REQ-132 at S8.7 despite the missing clause: falsifies the ledger. Leaving the phase column P8,P11: would let REQ-132 wrongly appear fully P8-owned-plus-release, hiding the P9 dependency."
+    },
+    {
+      "id": "dm-0073",
+      "date": "2026-07-11",
+      "status": "ACCEPTED",
+      "title": "TelemetryProfile is a fourth versioned calibration schema (heatmap bin size); resolves P8 plan open question 1",
+      "why_it_exists": "S8.6 death-heatmap binning needs a bin-size constant. The data-driven axiom forbids a numeric literal in telemetry logic. P8 plan open question 1 asked whether this lives in a new TelemetryProfile or an extension of CampaignProfile.",
+      "problem_it_solves": "A new tools/telemetry/TelemetryProfile.ts -- a fourth versioned, strict-parsed calibration record (telemetryProfileSchemaVersion, DEFAULT_TELEMETRY_PROFILE frozen, path-qualified parse, unknown-key/bad-version/non-positive rejection) alongside ScoringProfile/CampaignProfile/GenProfile. Following dm-0057 exactly: telemetry calibration is a P8-owned concern (heatmap bin size now; P9/P11 may add asset-timing or spike-sensitivity constants), so coupling it to the verified CampaignProfile would force a version bump on a document that did not change meaning. binWorldSize default 1 (one world unit); deriveDeathHeatmap bins by floor(pos/binWorldSize). Zero literals in DeathHeatmap.ts.",
+      "emotion_targeted": "Consistency -- a fourth calibration concern gets a fourth schema, the same separation-of-concerns discipline the first three got, rather than an ad hoc constant or a coupling that muddies CampaignProfile.",
+      "misconception_created": "A full versioned strict-parsed schema for one number may look heavy; it is the established project pattern (GenProfile started nearly as small at S7.1 and grew per slice), and it gives P9/P11 telemetry-calibration additions a home without a later refactor.",
+      "why_alternatives_rejected": "Extending CampaignProfile: couples P8 telemetry calibration to a verified P6 schema, forcing version bumps on an unchanged document (exactly what dm-0057 rejected for GenProfile). A bare constant in DeathHeatmap.ts: violates the data-driven axiom (no numeric literals in logic). A plain unversioned options object: loses the strict-parse/round-trip guarantees every other calibration record in the project has."
+    },
+    {
+      "id": "dm-0074",
+      "date": "2026-07-11",
+      "status": "ACCEPTED",
+      "title": "S8.6 refines dm-0066: tools/ may TYPE-import gdos output types (ArchetypeRun) and Archetype names, distinct from gate internals",
+      "why_it_exists": "dm-0066 forbade tools/ from importing src/eval/gdos/ with a blanket path regex. Implementing S8.6 (tools/telemetry/DeathHeatmap.ts) surfaced that adapting a live capture into the shape analyzeTape/processCampaign consume requires naming ArchetypeRun (a DTO defined in gdos/Evidence.ts) and ArchetypeName (eval/Archetypes.ts) -- both public evaluation OUTPUT types, not scoring-gate internals. The blanket regex conflated the two, and the ToolsIsolation scan (correctly) failed.",
+      "problem_it_solves": "The ToolsIsolation scan is refined to mirror GenIsolation exactly: (1) gdos SCORING-GATE internals (Emotional/Streamability/InfoDensity/Score/Economy/Curation) stay forbidden even as types -- scoring is behind judgeLevel; (2) gdos/Evidence + gdos/Report output types and eval/Archetypes names are allowed as TYPE-ONLY imports (import type, which compiles away to zero runtime coupling -- the same allowance dm-0047 grants gen/ for campaign types, and that Evidence.ts itself uses for verdict types). Value imports from gdos/ and eval/local/AgentPolicy/Evaluate/EmergentFun remain forbidden entirely; the one-way rule (nothing in src/ imports tools/) is untouched. This is a refinement that distinguishes public output types from gate internals, not a weakening -- exactly the class of pre-registered-list gap dm-0071 closed for CANONICAL_PIPELINE.",
+      "emotion_targeted": "Trust that the isolation scan enforces the REAL safety property (no coupling to gate/audit internals) rather than an over-broad path match that would force telemetry to duplicate evaluation DTOs.",
+      "misconception_created": "Allowing gdos/ type imports might look like a hole; the scan still blocks every value import from gdos/ and every gate-internal module, and requires the surviving gdos/Evidence + Archetypes imports to be import-type-only -- verified per file.",
+      "why_alternatives_rejected": "Duplicating ArchetypeRun/ArchetypeName as tools-local types: a second source of truth for the exact shape analyzeTape consumes, guaranteed to drift. Keeping the blanket ban and routing through a re-export: adds an indirection module for no safety gain. Building the ChapterRecord adaptation outside tools/ (in a caller): the P8 plan explicitly assigns toArchetypeRun/round-trip to S8.6, and the round-trip is the IRD P8 exit proof."
     }
   ],
   "rejected_ideas": [],

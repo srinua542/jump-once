@@ -1,0 +1,67 @@
+{
+  "slice": "S8.2",
+  "title": "Debug overlay descriptors",
+  "reqs": [
+    "REQ-131"
+  ],
+  "started_at": "2026-07-11T01:23:46.936Z",
+  "updated_at": "2026-07-11T01:27:20.660Z",
+  "current_stage": "handoff",
+  "stages": {
+    "reboot": {
+      "status": "done",
+      "at": "2026-07-11T01:23:46.938Z",
+      "note": "Reboot: 524/524 green before S8.2."
+    },
+    "select": {
+      "status": "done",
+      "at": "2026-07-11T01:27:03.402Z",
+      "note": "Selected S8.2 per the P8 plan; REQ-131 flipped IN_PROGRESS."
+    },
+    "plan": {
+      "status": "done",
+      "at": "2026-07-11T01:27:03.513Z",
+      "note": "Plan: hitbox/trigger/path/jump-arc/normal/physics-state descriptors, all pure functions of WorldState/JumpOnceState."
+    },
+    "anchor": {
+      "status": "done",
+      "at": "2026-07-11T01:27:03.625Z",
+      "note": "Anchor: read EntityKinematics.ts (confirmed mover position math is module-private -- path descriptor reuses AUTHORED waypoints instead, zero duplication) and PlayerPhysics.ts (confirmed stepPlayerPhysics is exported and pure) zero-assumption before designing jumpArcDescriptor. Confirmed TUNING.playerHalfExtents for the player hitbox."
+    },
+    "implement": {
+      "status": "done",
+      "at": "2026-07-11T01:27:09.318Z",
+      "note": "Implement: tools/debug/Overlay.ts (6 descriptor functions) + Overlay.test.ts (7 tests)."
+    },
+    "verify": {
+      "status": "done",
+      "at": "2026-07-11T01:27:09.428Z",
+      "note": "Verify: npm test 531/531 green (+7). tsc clean. jumpArcDescriptor test-proven read-only (session state unchanged after preview)."
+    },
+    "integrate": {
+      "status": "done",
+      "at": "2026-07-11T01:27:14.431Z",
+      "note": "Integrate: PKG +1 node (tools/overlay), dependents updated on core/vec2, core/state, components/tuning, components/trigger, entities/world, systems/player_control, systems/player_physics. Hash s8-c1a2f7 -> s8-d4e9b1. No new ledger decision -- S8.2 applied dm-0065/dm-0066 as pre-registered, no new design gap surfaced."
+    },
+    "report": {
+      "status": "done",
+      "at": "2026-07-11T01:27:20.410Z",
+      "note": "Report: S8.2 flipped COMPLETED; REQ-131 flipped IN_PROGRESS (P8 share part 1 of 2; part 2 + P9 remain)."
+    },
+    "handoff": {
+      "status": "done",
+      "at": "2026-07-11T01:27:20.542Z",
+      "note": "Handoff: continuing directly to S8.3 in the same session (finish P8)."
+    }
+  },
+  "acceptance": [
+    {
+      "req": "REQ-131",
+      "criterion": "Part 1 (overlay descriptors) delivered this slice; part 2 (runtime inspection) is S8.3; P9 presentation share remains -- backlog stays IN_PROGRESS overall (dm-0008).",
+      "met": true,
+      "note": null
+    }
+  ],
+  "outcome": "completed",
+  "closed_at": "2026-07-11T01:27:20.788Z"
+}

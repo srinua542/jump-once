@@ -1,0 +1,67 @@
+{
+  "slice": "S8.4",
+  "title": "Profiling instrumentation",
+  "reqs": [
+    "REQ-132"
+  ],
+  "started_at": "2026-07-11T01:29:19.464Z",
+  "updated_at": "2026-07-11T01:31:27.211Z",
+  "current_stage": "handoff",
+  "stages": {
+    "reboot": {
+      "status": "done",
+      "at": "2026-07-11T01:29:19.466Z",
+      "note": "Reboot: 537/537 green before S8.4."
+    },
+    "select": {
+      "status": "done",
+      "at": "2026-07-11T01:31:18.194Z",
+      "note": "Selected S8.4 (independent slice, depends only on P1)."
+    },
+    "plan": {
+      "status": "done",
+      "at": "2026-07-11T01:31:18.305Z",
+      "note": "Plan: Profiler class with timeSection/sceneLoadTiming/countAllocations/report; injectable clock defaulting to performance.now (dm-0067 wall-clock exception)."
+    },
+    "anchor": {
+      "status": "done",
+      "at": "2026-07-11T01:31:18.412Z",
+      "note": "Anchor: profiler imports nothing from src/ (timing wraps caller thunks); confirmed dm-0067 permits performance.now only in tools/profiler/, enforced by the S8.1 ToolsIsolation wall-clock-confinement scan."
+    },
+    "implement": {
+      "status": "done",
+      "at": "2026-07-11T01:31:18.530Z",
+      "note": "Implement: tools/profiler/Profiler.ts + Profiler.test.ts (7 tests)."
+    },
+    "verify": {
+      "status": "done",
+      "at": "2026-07-11T01:31:18.636Z",
+      "note": "Verify: npm test 544/544 green (+7). tsc clean. ToolsIsolation wall-clock scan passes with performance.now now present in tools/profiler/ (dm-0067 confinement proven live)."
+    },
+    "integrate": {
+      "status": "done",
+      "at": "2026-07-11T01:31:26.885Z",
+      "note": "Integrate: PKG +1 node (tools/profiler, no src/ deps). Hash s8-e7f2c3 -> s8-a1b8d5. Ledger +1 (dm-0072: REQ-132 asset-delivery clause is P9's; phase column amended)."
+    },
+    "report": {
+      "status": "done",
+      "at": "2026-07-11T01:31:26.991Z",
+      "note": "Report: S8.4 COMPLETED; REQ-132 IN_PROGRESS (P8 share done, P9+P11 shares remain)."
+    },
+    "handoff": {
+      "status": "done",
+      "at": "2026-07-11T01:31:27.101Z",
+      "note": "Handoff: continuing to S8.5 in-session."
+    }
+  },
+  "acceptance": [
+    {
+      "req": "REQ-132",
+      "criterion": "P8 share (frame/allocation/scene-load profiling) delivered. Asset-delivery-speed clause is a P9 share (dm-0072, no asset pipeline before P9); P11 owns release-audit share. Backlog phase column amended P8,P11 -> P8,P9,P11; REQ-132 stays IN_PROGRESS.",
+      "met": true,
+      "note": null
+    }
+  ],
+  "outcome": "completed",
+  "closed_at": "2026-07-11T01:31:27.325Z"
+}

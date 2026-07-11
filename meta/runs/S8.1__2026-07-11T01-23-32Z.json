@@ -1,0 +1,67 @@
+{
+  "slice": "S8.1",
+  "title": "Editor draft/authoring state + live-playtest driver + export",
+  "reqs": [
+    "REQ-130"
+  ],
+  "started_at": "2026-07-11T01:13:57.261Z",
+  "updated_at": "2026-07-11T01:23:32.206Z",
+  "current_stage": "handoff",
+  "stages": {
+    "reboot": {
+      "status": "done",
+      "at": "2026-07-11T01:13:57.303Z",
+      "note": "Reboot confirmed clean (498/498, pkg s7-b6f2e3) before S8.1 code."
+    },
+    "select": {
+      "status": "done",
+      "at": "2026-07-11T01:23:11.495Z",
+      "note": "Selected S8.1 per the P8 plan pick-list; REQ-130 flipped IN_PROGRESS."
+    },
+    "plan": {
+      "status": "done",
+      "at": "2026-07-11T01:23:11.678Z",
+      "note": "Plan: EditorState.ts (LevelDraft over plain-string ids, snapshot-based undo/redo, exportDraft via parseLevel) + Playtest.ts (interactive Engine/StateManager wrapper reusing CANONICAL_PIPELINE) + ToolsIsolation.test.ts."
+    },
+    "anchor": {
+      "status": "done",
+      "at": "2026-07-11T01:23:11.861Z",
+      "note": "Anchor: read State.ts/StateManager.ts/Engine.ts/World.ts/Parse.ts/Serialize.ts/Level.ts/Entity.ts/Behavior.ts/Trigger.ts/Collider.ts/Transform.ts/Tilemap.ts/AgentHarness.ts zero-assumption before writing; confirmed EntityId/TriggerId brands minted only by parseLevel, drove the draft's plain-string-id design; confirmed CANONICAL_PIPELINE is the sanctioned assembly export."
+    },
+    "implement": {
+      "status": "done",
+      "at": "2026-07-11T01:23:19.242Z",
+      "note": "Implement: EditorState.ts, Playtest.ts, ToolsIsolation.test.ts, EditorState.test.ts (15 tests), Playtest.test.ts (6 tests) written."
+    },
+    "verify": {
+      "status": "done",
+      "at": "2026-07-11T01:23:19.423Z",
+      "note": "Verify: npm test 524/524 green (+26: 15 EditorState, 6 Playtest, 5 ToolsIsolation-actually-6). tsc clean. Playtest.feedInput proven bit-identical to AgentHarness.replayTape for the same frames -- the reuse contract is test-proven, not asserted."
+    },
+    "integrate": {
+      "status": "done",
+      "at": "2026-07-11T01:23:25.923Z",
+      "note": "Integrate: PKG +2 nodes (tools/editor_state, tools/playtest), dependents updated on core/engine, core/state_manager, core/clock, core/state, entities/world, eval/agent_harness, components/level, core/vec2, schema/parse. Hash s7-b6f2e3 -> s8-c1a2f7. Ledger +1 (dm-0071: clarifies dm-0066 -- AgentHarness/CANONICAL_PIPELINE is a named tools/ seam, discovered during implementation, not guessed at plan time)."
+    },
+    "report": {
+      "status": "done",
+      "at": "2026-07-11T01:23:26.108Z",
+      "note": "Report: S8.1 slice flipped COMPLETED in task_slices.md; REQ-130 flipped IN_PROGRESS in requirements_backlog.md (its P9 share remains, so no VERIFIED flip yet, correct per dm-0008)."
+    },
+    "handoff": {
+      "status": "done",
+      "at": "2026-07-11T01:23:32.030Z",
+      "note": "Handoff: proceeding directly to S8.2 in the same session per the user's 'finish P8' instruction; no session-boundary handoff write needed until P8 fully closes at S8.7."
+    }
+  },
+  "acceptance": [
+    {
+      "req": "REQ-130",
+      "criterion": "P8 share delivered: draft state, playtest driver, export. P9 share (rendering/UI) remains, so backlog REQ-130 stays IN_PROGRESS overall (dm-0008).",
+      "met": true,
+      "note": null
+    }
+  ],
+  "outcome": "completed",
+  "closed_at": "2026-07-11T01:23:32.381Z"
+}

@@ -1,0 +1,67 @@
+{
+  "slice": "S8.7",
+  "title": "P8 verification report + REQ flips + M3 closure",
+  "reqs": [
+    "REQ-P02"
+  ],
+  "started_at": "2026-07-11T01:43:52.100Z",
+  "updated_at": "2026-07-11T01:50:21.557Z",
+  "current_stage": "handoff",
+  "stages": {
+    "reboot": {
+      "status": "done",
+      "at": "2026-07-11T01:43:52.101Z",
+      "note": "Reboot: 560/560 green before S8.7 report."
+    },
+    "select": {
+      "status": "done",
+      "at": "2026-07-11T01:50:03.843Z",
+      "note": "Selected S8.7 (final P8 slice; depends on S8.1-S8.6)."
+    },
+    "plan": {
+      "status": "done",
+      "at": "2026-07-11T01:50:03.920Z",
+      "note": "Plan: file docs/verification/P8.md; run real subtractivePass; flip REQ-133 VERIFIED; close M3 across IRD/execution_plan/task_slices; write handoff pointing at P9."
+    },
+    "anchor": {
+      "status": "done",
+      "at": "2026-07-11T01:50:03.998Z",
+      "note": "Anchor: reused P7's S7.8 report as the format template; read the subtractivePass engine signature (InventoryItem/SubtractiveAnswers) before running it for real."
+    },
+    "implement": {
+      "status": "done",
+      "at": "2026-07-11T01:50:12.242Z",
+      "note": "Implement: docs/verification/P8.md filed (slice->deliverable->proof map, exit-gate evidence, per-REQ verdicts, subtractive pass 8-kept/0-candidates/clean, dm-0065-0074, M3-closure section)."
+    },
+    "verify": {
+      "status": "done",
+      "at": "2026-07-11T01:50:12.398Z",
+      "note": "Verify: npm test 560/560; gate 0 blocking/0 warning; ledger byte-idempotent (74 decisions); subtractivePass ran the real engine (8 kept, clean); REQ-133 flip diff-verified to exactly that row."
+    },
+    "integrate": {
+      "status": "done",
+      "at": "2026-07-11T01:50:12.478Z",
+      "note": "Integrate: no new production modules in S8.7 (report + doc updates only), so pkg_hash s8-c8f3a2 holds; no new ledger decision. IRD/execution_plan/task_slices carry CLOSED/VERIFIED banners; M3 marked CLOSED across all three + the IRD milestone table."
+    },
+    "report": {
+      "status": "done",
+      "at": "2026-07-11T01:50:21.400Z",
+      "note": "Report: REQ-133 flipped VERIFIED; REQ-130/131/132 IN_PROGRESS (P9+P11 shares); S8.7 + all P8 slices COMPLETED; M3 CLOSED."
+    },
+    "handoff": {
+      "status": "done",
+      "at": "2026-07-11T01:50:21.478Z",
+      "note": "Handoff: meta/handoff_latest.json rewritten — M3 CLOSED, P9 next (author its plan first), three uncommitted verified phases flagged, render-vs-tools import direction flagged for P9 planning."
+    }
+  },
+  "acceptance": [
+    {
+      "req": "REQ-P02",
+      "criterion": "P8 verification report filed (docs/verification/P8.md) mapping every P8 REQ to a passing test, matching the discipline every phase since P2 got.",
+      "met": true,
+      "note": null
+    }
+  ],
+  "outcome": "completed",
+  "closed_at": "2026-07-11T01:50:21.633Z"
+}

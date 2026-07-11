@@ -1,0 +1,67 @@
+{
+  "slice": "S8.3",
+  "title": "Runtime inspection controller",
+  "reqs": [
+    "REQ-131"
+  ],
+  "started_at": "2026-07-11T01:28:04.575Z",
+  "updated_at": "2026-07-11T01:29:14.056Z",
+  "current_stage": "handoff",
+  "stages": {
+    "reboot": {
+      "status": "done",
+      "at": "2026-07-11T01:28:04.576Z",
+      "note": "Reboot: 531/531 green before S8.3."
+    },
+    "select": {
+      "status": "done",
+      "at": "2026-07-11T01:29:05.168Z",
+      "note": "Selected S8.3 (depends on S8.1's PlaytestSession.commit seam)."
+    },
+    "plan": {
+      "status": "done",
+      "at": "2026-07-11T01:29:05.357Z",
+      "note": "Plan: Inspector wrapping PlaytestSession; setVariable via StateManager.commit (dm-0070), pause gates feedInput, stepFrame always advances one tick."
+    },
+    "anchor": {
+      "status": "done",
+      "at": "2026-07-11T01:29:05.466Z",
+      "note": "Anchor: reused S8.1's already-read StateManager/State/World contracts; PlaytestSession.commit was added at S8.1 precisely as the dm-0070 seam -- no new files needed reading."
+    },
+    "implement": {
+      "status": "done",
+      "at": "2026-07-11T01:29:05.573Z",
+      "note": "Implement: tools/debug/Inspector.ts + Inspector.test.ts (6 tests)."
+    },
+    "verify": {
+      "status": "done",
+      "at": "2026-07-11T01:29:05.680Z",
+      "note": "Verify: npm test 537/537 green (+6). tsc clean. setVariable test-proven: prior frozen snapshot untouched, patched state drives engine deterministically."
+    },
+    "integrate": {
+      "status": "done",
+      "at": "2026-07-11T01:29:13.731Z",
+      "note": "Integrate: PKG +1 node (tools/inspector); dependents on core/state, entities/world, tools/playtest. Hash s8-d4e9b1 -> s8-e7f2c3. No new ledger decision -- S8.3 applied dm-0070 as pre-registered."
+    },
+    "report": {
+      "status": "done",
+      "at": "2026-07-11T01:29:13.837Z",
+      "note": "Report: S8.3 COMPLETED; REQ-131 P8 share fully delivered (both parts)."
+    },
+    "handoff": {
+      "status": "done",
+      "at": "2026-07-11T01:29:13.946Z",
+      "note": "Handoff: continuing to S8.4 in-session."
+    }
+  },
+  "acceptance": [
+    {
+      "req": "REQ-131",
+      "criterion": "Part 2 (runtime inspection) delivered; REQ-131's full P8 share (parts 1+2) now complete. P9 presentation share remains -- backlog stays IN_PROGRESS.",
+      "met": true,
+      "note": null
+    }
+  ],
+  "outcome": "completed",
+  "closed_at": "2026-07-11T01:29:14.168Z"
+}

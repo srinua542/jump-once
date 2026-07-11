@@ -128,13 +128,13 @@ Session-sized, dependency-ordered work units. Each slice is small enough to comp
 
 | Slice | Title | REQs | Depends | State |
 |-------|-------|------|---------|-------|
-| S8.1 | Editor draft/authoring state + live-playtest driver + export | REQ-130 (P8 share) | M3-P7 ✓ (P2 ✓, P3 ✓) | NOT_STARTED |
-| S8.2 | Debug overlay descriptors (hitbox/trigger/path/jump-arc/normal/state) | REQ-131 (P8 share, part 1) | P3 ✓ | NOT_STARTED |
-| S8.3 | Runtime inspection controller (pause/step/variable-edit/reload) | REQ-131 (P8 share, part 2) | S8.1 | NOT_STARTED |
-| S8.4 | Profiling instrumentation | REQ-132 (P8 share) | P1 ✓ | NOT_STARTED |
-| S8.5 | Telemetry capture | REQ-133 (part 1) | S8.1 | NOT_STARTED |
-| S8.6 | Telemetry analysis + GDOS round-trip | REQ-133 (part 2), REQ-032 (P8 share) | S8.5, P6 ✓ | NOT_STARTED |
-| S8.7 | Phase-8 verification report; M3 closure | REQ-P02 | S8.1–S8.6 | NOT_STARTED |
+| S8.1 | Editor draft/authoring state + live-playtest driver + export | REQ-130 (P8 share) | M3-P7 ✓ (P2 ✓, P3 ✓) | COMPLETED |
+| S8.2 | Debug overlay descriptors (hitbox/trigger/path/jump-arc/normal/state) | REQ-131 (P8 share, part 1) | P3 ✓ | COMPLETED |
+| S8.3 | Runtime inspection controller (pause/step/variable-edit/reload) | REQ-131 (P8 share, part 2) | S8.1 | COMPLETED |
+| S8.4 | Profiling instrumentation | REQ-132 (P8 share) | P1 ✓ | COMPLETED |
+| S8.5 | Telemetry capture | REQ-133 (part 1) | S8.1 | COMPLETED |
+| S8.6 | Telemetry analysis + GDOS round-trip | REQ-133 (part 2), REQ-032 (P8 share) | S8.5, P6 ✓ | COMPLETED |
+| S8.7 | Phase-8 verification report; M3 closure | REQ-P02 | S8.1–S8.6 | COMPLETED |
 
 ## Phase 9 — Rendering, Audio & Visual Grammar
 
@@ -172,13 +172,12 @@ Session-sized, dependency-ordered work units. Each slice is small enough to comp
 
 ## Next-session pick-list (top of queue)
 
-**P7 — PDA & Procedural Generation + Mechanic Lifecycle is VERIFIED** (`docs/verification/P7.md`); all eight P7 slices COMPLETED, 498/498 tests green, pkg `s7-b6f2e3`. Six REQs flipped VERIFIED (060/081/082/053/054/061); REQ-090/091/012 retain a P10 share. The generation pipeline (`src/gen/`) is built and verified; the IRD exit condition is proven by `GenPipeline.test.ts`.
+**P8 — Internal Production Tools is VERIFIED** (`docs/verification/P8.md`); all seven P8 slices COMPLETED, 560/560 tests green, pkg `s8-c8f3a2`. REQ-133 flipped VERIFIED; REQ-130/131/132 retain a P9 (render/UI) + P11 (release) share (dm-0065/dm-0072); REQ-032's P8 share delivered. The `tools/` subtree (editor, debug, profiler, telemetry) is built and scan-isolated; the IRD exit condition — a level authored/playtested/exported headlessly, telemetry round-tripping into the unmodified `processCampaign` — is proven by `EditorState`/`Playtest`/`DeathHeatmap` tests.
 
-**P8 — Internal Production Tools execution-plan section is authored** (`docs/execution_plan.md` §P8, adversarial review dm-0065–dm-0070; table above restructured to S8.1–S8.7). Active phase.
+**Milestone M3 — Production Capable is CLOSED** (P7 ✓ + P8 ✓). The content-authoring gate is fully open; **P10 unlocks** (it follows P9 in the DAG).
 
-1. **Start at S8.1** — editor draft/authoring state + live-playtest driver + export (REQ-130 P8 share); also lands the `tools/` isolation scan (dm-0066) as the first `tools/**/*.ts` module.
-2. Key P8 design decisions to hold: REQ-130/131's *visual*/rendering sub-clauses are P9's share, not P8's (dm-0065; backlog Phase columns already amended to `P8,P9`) — P8 builds pure logic/data only, zero canvas/DOM/WebGL; wall-clock reads are permitted only inside `tools/profiler/` (dm-0067); death-heatmap coordinates are replay-derived, never live-position-logged (dm-0068); difficulty-spike detection reuses P6's `processCampaign` verbatim, no new algorithm (dm-0069); debug variable edits go through `StateManager.commit()`, never in-place (dm-0070).
-3. Note the boundary P8 must respect: `tools/` consumes the pure `src/gen/` pipeline and `src/eval/` audits as libraries through public entry points only — never modifies them (mirrors dm-0057's `gen/` isolation).
-4. Content authoring (P10) remains hard-gated behind M3 (P7 ✓ + P8, not yet closed). Do NOT author `LevelDefinition` content in P8 — its job is the editor + telemetry tooling.
+1. **P9 — Rendering, Audio & Visual Grammar is the next phase.** Author its execution-plan section FIRST (REQ-P02), via the same adversarial-review discipline every phase since P2 got. P9 owns REQ-070/071/161/162/163/170/171/016(visual)/001/002 AND inherits the deferred P8/P9 shares of REQ-130/131 (render the editor + overlays — dm-0065) and REQ-132 (asset-delivery-speed profiling — dm-0072).
+2. The P8 tooling is the substrate P9's UI renders: `tools/debug/Overlay.ts` descriptors, `tools/level_editor/` draft/playtest state, `tools/profiler/` — all plain data awaiting a presentation layer. Consume them; don't re-derive them.
+3. P10 (Content Generation) is now unblocked by M3's closure but sits after P9 in the DAG. When P10 opens, it authors real chapters/levels THROUGH the P7 `manufactureLevel` pipeline + P8 editor, closing out REQ-090/091/012's P10 shares.
 
-*(Content generation was hard-gated until M2 — P4+P5+P6 — verified. The gate is open for the phases that build the generation pipeline (P7 ✓) and tooling (P8, in progress). Actual chapter/level authoring is P10, milestone M3 = P7 + P8.)*
+*(Content generation was hard-gated until M3 — P7 (pipeline) + P8 (tooling) — verified. M3 is now CLOSED, so actual chapter/level authoring (P10) is unlocked — but P9 renders first.)*

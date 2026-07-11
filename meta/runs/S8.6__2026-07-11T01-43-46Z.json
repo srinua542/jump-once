@@ -1,0 +1,74 @@
+{
+  "slice": "S8.6",
+  "title": "Telemetry analysis + GDOS round-trip",
+  "reqs": [
+    "REQ-133",
+    "REQ-032"
+  ],
+  "started_at": "2026-07-11T01:43:29.967Z",
+  "updated_at": "2026-07-11T01:43:46.015Z",
+  "current_stage": "handoff",
+  "stages": {
+    "reboot": {
+      "status": "done",
+      "at": "2026-07-11T01:43:29.967Z",
+      "note": "Reboot: 550/550 green before S8.6."
+    },
+    "select": {
+      "status": "done",
+      "at": "2026-07-11T01:43:30.047Z",
+      "note": "Selected S8.6 (depends on S8.5 capture + P6)."
+    },
+    "plan": {
+      "status": "done",
+      "at": "2026-07-11T01:43:30.132Z",
+      "note": "Plan: deriveDeathHeatmap by replay (dm-0068), toArchetypeRun substitution (dm-0044), reuse processCampaign for round-trip (dm-0069), TelemetryProfile for bin calibration (dm-0073)."
+    },
+    "anchor": {
+      "status": "done",
+      "at": "2026-07-11T01:43:30.212Z",
+      "note": "Anchor: read Evidence.ts (ArchetypeRun), CampaignState.ts (BehaviorSignals/LevelRecord), CampaignDirector.ts (ChapterRecord/processCampaign), CampaignFixtures.ts + CampaignDirector.test.ts (LevelRecord assembly pattern), GenProfile.ts (strict-parse pattern to mirror), replayObserved signature (TickObservation with runState+playerPosition) zero-assumption."
+    },
+    "implement": {
+      "status": "done",
+      "at": "2026-07-11T01:43:30.292Z",
+      "note": "Implement: tools/telemetry/TelemetryProfile.ts + DeathHeatmap.ts + DeathHeatmap.test.ts (9 tests); refined ToolsIsolation scan for gdos-output-type-only imports (dm-0074)."
+    },
+    "verify": {
+      "status": "done",
+      "at": "2026-07-11T01:43:30.369Z",
+      "note": "Verify: npm test 560/560 green (+10, incl. the refined ToolsIsolation scan). Heatmap test-proven == direct replay-and-inspect; telemetry LevelRecord round-trips UNMODIFIED processCampaign; git confirms zero src/eval/campaign/ (and zero src/eval/) changes (isolation held)."
+    },
+    "integrate": {
+      "status": "done",
+      "at": "2026-07-11T01:43:37.981Z",
+      "note": "Integrate: PKG +2 nodes (tools/telemetry_profile, tools/death_heatmap); dependents on schema/parse, components/level, eval/agent_harness, tools/telemetry_capture. Hash s8-b3c9e6 -> s8-c8f3a2. Ledger +2 (dm-0073 TelemetryProfile fourth calibration schema; dm-0074 ToolsIsolation refinement for gdos-output-type-only imports)."
+    },
+    "report": {
+      "status": "done",
+      "at": "2026-07-11T01:43:45.861Z",
+      "note": "Report: S8.6 COMPLETED; REQ-133 full P8 scope done (flip decision at S8.7); REQ-032 P8 share delivered (already VERIFIED at P6)."
+    },
+    "handoff": {
+      "status": "done",
+      "at": "2026-07-11T01:43:45.937Z",
+      "note": "Handoff: continuing to S8.7 (P8 verification report + M3 closure) in-session."
+    }
+  },
+  "acceptance": [
+    {
+      "req": "REQ-133",
+      "criterion": "Part 2 (heatmap by replay + GDOS round-trip) delivered; REQ-133's full P8 scope (parts 1+2) now complete.",
+      "met": true,
+      "note": null
+    },
+    {
+      "req": "REQ-032",
+      "criterion": "P8 share (live-capture toArchetypeRun feeding UNMODIFIED analyzeTape/processCampaign) delivered; REQ-032 was already VERIFIED at P6 close (dm-0044 contract) -- this delivers its documented outstanding P8 engineering.",
+      "met": true,
+      "note": null
+    }
+  ],
+  "outcome": "completed",
+  "closed_at": "2026-07-11T01:43:46.097Z"
+}

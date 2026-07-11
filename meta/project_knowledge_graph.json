@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
-  "generated_by_session": "2026-07-10T-session-7",
-  "pkg_hash": "s7-b6f2e3",
+  "generated_by_session": "2026-07-11T-session-8",
+  "pkg_hash": "s8-c8f3a2",
   "notes": "Machine-readable mirror of the codebase. Read at every session start; update immediately on any structural code change (new module, changed dependency, changed GDOS mapping). See references/pkg_schema.md.",
   "nodes": [
     {
@@ -29,7 +29,9 @@
         "eval/gdos/evidence",
         "eval/gdos/infodensity",
         "eval/evaluate",
-        "eval/emergent_fun"
+        "eval/emergent_fun",
+        "tools/editor_state",
+        "tools/overlay"
       ],
       "volatile_state_flags": {
         "has_side_effects": false,
@@ -86,7 +88,8 @@
         "eval/local/optimization",
         "eval/gdos/streamability",
         "eval/evaluate",
-        "gen/generator"
+        "gen/generator",
+        "tools/playtest"
       ],
       "volatile_state_flags": {
         "has_side_effects": false,
@@ -125,7 +128,11 @@
         "eval/agent_harness",
         "eval/local/search",
         "eval/emergent_fun",
-        "eval/campaign/tape_analyzer"
+        "eval/campaign/tape_analyzer",
+        "tools/playtest",
+        "tools/overlay",
+        "tools/inspector",
+        "tools/telemetry_capture"
       ],
       "volatile_state_flags": {
         "has_side_effects": false,
@@ -179,7 +186,8 @@
         "core/engine",
         "entities/world",
         "eval/agent_harness",
-        "eval/local/search"
+        "eval/local/search",
+        "tools/playtest"
       ],
       "volatile_state_flags": {
         "has_side_effects": true,
@@ -207,7 +215,8 @@
       ],
       "dependents": [
         "eval/agent_harness",
-        "eval/local/search"
+        "eval/local/search",
+        "tools/playtest"
       ],
       "volatile_state_flags": {
         "has_side_effects": true,
@@ -467,7 +476,8 @@
         "components/level",
         "schema/serialize",
         "schema/parse",
-        "systems/sensors"
+        "systems/sensors",
+        "tools/overlay"
       ],
       "volatile_state_flags": {
         "has_side_effects": false,
@@ -530,7 +540,11 @@
         "eval/evaluate",
         "eval/local/counterfactual",
         "gen/generator",
-        "gen/pipeline"
+        "gen/pipeline",
+        "tools/editor_state",
+        "tools/playtest",
+        "tools/telemetry_capture",
+        "tools/death_heatmap"
       ],
       "volatile_state_flags": {
         "has_side_effects": false,
@@ -597,7 +611,9 @@
         "gen/lifecycle",
         "gen/generator",
         "gen/concept",
-        "gen/intent_gate"
+        "gen/intent_gate",
+        "tools/editor_state",
+        "tools/telemetry_profile"
       ],
       "volatile_state_flags": {
         "has_side_effects": false,
@@ -637,7 +653,11 @@
         "eval/agent_harness",
         "eval/local/search",
         "eval/local/exploit",
-        "eval/local/counterfactual"
+        "eval/local/counterfactual",
+        "tools/playtest",
+        "tools/overlay",
+        "tools/inspector",
+        "tools/telemetry_capture"
       ],
       "volatile_state_flags": {
         "has_side_effects": false,
@@ -665,7 +685,8 @@
         "systems/sensors",
         "eval/archetypes",
         "eval/local/exploit",
-        "eval/emergent_fun"
+        "eval/emergent_fun",
+        "tools/overlay"
       ],
       "volatile_state_flags": {
         "has_side_effects": false,
@@ -725,7 +746,8 @@
         "systems/spatial_partition"
       ],
       "dependents": [
-        "eval/agent_harness"
+        "eval/agent_harness",
+        "tools/overlay"
       ],
       "volatile_state_flags": {
         "has_side_effects": false,
@@ -860,7 +882,8 @@
         "systems/system"
       ],
       "dependents": [
-        "eval/agent_harness"
+        "eval/agent_harness",
+        "tools/overlay"
       ],
       "volatile_state_flags": {
         "has_side_effects": false,
@@ -932,7 +955,8 @@
         "eval/local/softlock",
         "eval/local/exploit",
         "eval/gdos/evidence",
-        "eval/local/counterfactual"
+        "eval/local/counterfactual",
+        "tools/telemetry_capture"
       ],
       "volatile_state_flags": {
         "has_side_effects": false,
@@ -1029,7 +1053,9 @@
         "eval/local/solvability",
         "eval/local/optimization",
         "eval/evaluate",
-        "eval/local/counterfactual"
+        "eval/local/counterfactual",
+        "tools/playtest",
+        "tools/death_heatmap"
       ],
       "volatile_state_flags": {
         "has_side_effects": false,
@@ -2077,6 +2103,189 @@
         "REQ-061",
         "REQ-091",
         "REQ-012"
+      ]
+    },
+    {
+      "node_id": "tools/editor_state",
+      "type": "SystemNode",
+      "file_path": "tools/level_editor/EditorState.ts",
+      "functional_summary": "S8.1 -- REQ-130 P8 share (dm-0065): the editor draft-authoring state model. LevelDraft mirrors the raw JSON shape parseLevel accepts, using plain string ids (EntityId/TriggerId brands are minted only by the schema validator, dm-0013) plus editor-only groups metadata (no schema representation, dropped at export). applyCommand/undo/redo are FULL-SNAPSHOT based (not hand-rolled inverses) so undo restores the exact prior draft by construction. Commands: paintTile, placeEntity (grid-snapped via snapToGrid), groupEntities, ungroup. exportDraft is a thin call into the real parseLevel -- zero new validation logic. Pure logic/data only; no rendering (dm-0065 -- presentation is P9).",
+      "gdos_alignment": "Section_14_Internal_Production_Tools",
+      "dependencies": [
+        "core/vec2",
+        "components/level",
+        "schema/parse"
+      ],
+      "dependents": [],
+      "volatile_state_flags": {
+        "has_side_effects": false,
+        "state_dependencies": []
+      },
+      "last_verified_commit": "uncommitted-session-7",
+      "backlog_refs": [
+        "REQ-130"
+      ]
+    },
+    {
+      "node_id": "tools/playtest",
+      "type": "SystemNode",
+      "file_path": "tools/level_editor/Playtest.ts",
+      "functional_summary": "S8.1 -- REQ-130 P8 share (dm-0065): the live in-editor playtest driver. startPlaytest(def, seed) assembles the EXISTING Engine/StateManager with CANONICAL_PIPELINE (src/eval/AgentHarness -- \"the only sanctioned engine assembly order\"), not a new simulation. feedInput commits the frame as state.input then advances exactly one fixed step (engine.tick(FIXED_STEP_SECONDS)) -- the identical per-tick drive contract AgentHarness.runAgent/replayTape already use, proven by test to reproduce replayTape bit-for-bit given the same frames. stepFrame = feedInput(NEUTRAL_INPUT) (frame-stepping substrate for S8.3). commit exposes the one sanctioned mutation point (dm-0070) for the S8.3 Inspector. reload re-instantiates via createInitialState. Pure interactive wrapper; no rendering (dm-0065).",
+      "gdos_alignment": "Section_14_Internal_Production_Tools",
+      "dependencies": [
+        "core/engine",
+        "core/state_manager",
+        "core/clock",
+        "core/state",
+        "entities/world",
+        "eval/agent_harness",
+        "components/level"
+      ],
+      "dependents": [
+        "tools/inspector",
+        "tools/telemetry_capture"
+      ],
+      "volatile_state_flags": {
+        "has_side_effects": false,
+        "state_dependencies": []
+      },
+      "last_verified_commit": "uncommitted-session-7",
+      "backlog_refs": [
+        "REQ-130"
+      ]
+    },
+    {
+      "node_id": "tools/overlay",
+      "type": "SystemNode",
+      "file_path": "tools/debug/Overlay.ts",
+      "functional_summary": "S8.2 -- REQ-131 P8 share part 1 (dm-0065): pure debug-overlay descriptors, all plain data (no rendering). hitboxDescriptors: player (TUNING.playerHalfExtents) + every entity AABB at position+collider.offset. triggerDescriptors: each wiring records source/target positions resolved by entity id. pathDescriptors: a movers OWN AUTHORED waypoints offset by its transform position -- static level data, zero duplication of EntityKinematics closed-form math (dm-0016), which resolves WHERE a mover is, not the paths shape. jumpArcDescriptor: folds the REAL playerControlSystem+stepPlayerPhysics (P3, unmodified) over a local state copy for N steps, never committing -- a read-only forward preview, test-proven not to mutate the live session. normalDescriptor/physicsStateDescriptor: read existing WorldState fields only (dm-0009); groundNormal is (0,-1) y-down iff grounded, else honestly null (no wall-contact side is tracked).",
+      "gdos_alignment": "Section_14_Internal_Production_Tools",
+      "dependencies": [
+        "core/vec2",
+        "core/state",
+        "components/tuning",
+        "components/trigger",
+        "entities/world",
+        "systems/player_control",
+        "systems/player_physics"
+      ],
+      "dependents": [],
+      "volatile_state_flags": {
+        "has_side_effects": false,
+        "state_dependencies": []
+      },
+      "last_verified_commit": "uncommitted-session-8",
+      "backlog_refs": [
+        "REQ-131"
+      ]
+    },
+    {
+      "node_id": "tools/inspector",
+      "type": "SystemNode",
+      "file_path": "tools/debug/Inspector.ts",
+      "functional_summary": "S8.3 -- REQ-131 P8 share part 2 (dm-0070): runtime inspection controller wrapping an S8.1 PlaytestSession. pause/resume gate feedInput (a no-op while paused); stepFrame always advances exactly one tick with neutral input regardless of pause state (frame-step-while-paused is the normal debugging motion). setVariable(patch) is the load-bearing decision: a debug variable edit is NOT an in-place snapshot mutation (would violate dm-0004/dm-0043) -- it builds an explicit next state {...current, world:{...current.world, ...patch}} and commits through the SAME StateManager.commit() every system output uses (exposed by PlaytestSession.commit), the one sanctioned mutation point, test-proven to leave the prior frozen snapshot untouched and to drive the engine deterministically on the next step. reload re-instantiates via the session. paused is local controller bookkeeping, not game state. No rendering (dm-0065).",
+      "gdos_alignment": "Section_14_Internal_Production_Tools",
+      "dependencies": [
+        "core/state",
+        "entities/world",
+        "tools/playtest"
+      ],
+      "dependents": [],
+      "volatile_state_flags": {
+        "has_side_effects": false,
+        "state_dependencies": []
+      },
+      "last_verified_commit": "uncommitted-session-8",
+      "backlog_refs": [
+        "REQ-131"
+      ]
+    },
+    {
+      "node_id": "tools/profiler",
+      "type": "SystemNode",
+      "file_path": "tools/profiler/Profiler.ts",
+      "functional_summary": "S8.4 -- REQ-132 P8 share (dm-0067): profiling instrumentation. Profiler.timeSection(label, fn) wraps a synchronous section, accumulates count/total/mean/max under the label, returns the callees value unchanged; sceneLoadTiming times a loader callback (no import of instantiateWorld -- caller supplies it); countAllocations is a manual deterministic tally (NOT process.memoryUsage, which is non-reproducible); report() gives a read-only ProfileReport sorted by label. THE ONE place permitted to read a wall clock (default performance.now) per dm-0067 -- diagnostic-only metadata that never feeds WorldState/replay and is never imported by src/; the clock is injectable so accumulation math is deterministically testable. Imports nothing from src/. No rendering (dm-0065).",
+      "gdos_alignment": "Section_14_Internal_Production_Tools",
+      "dependencies": [],
+      "dependents": [],
+      "volatile_state_flags": {
+        "has_side_effects": false,
+        "state_dependencies": [
+          "wall_clock (diagnostic-only, dm-0067)"
+        ]
+      },
+      "last_verified_commit": "uncommitted-session-8",
+      "backlog_refs": [
+        "REQ-132"
+      ]
+    },
+    {
+      "node_id": "tools/telemetry_capture",
+      "type": "SystemNode",
+      "file_path": "tools/telemetry/Capture.ts",
+      "functional_summary": "S8.5 -- REQ-133 part 1 (dm-0068): live telemetry capture. recordSession(def, seed) reuses the S8.1 PlaytestSession driver (no independent capture loop); capture(frame) = session.feedInput with the frame appended; finalize() freezes the minimal replayable unit TelemetryRecord {levelId, seed, tape, outcome, attempts, ticksElapsed} -- every ArchetypeRun field except the archetype label (a live human capture has no archetype; S8.6 supplies the label to adapt it for analyzeTape, dm-0044). The normalized uint32 seed is read from the session initial rng.seed (= createRng(seed).seed), the canonical tape seed that re-normalizes idempotently, so replayTape of the finalized tape reproduces the run bit-for-bit with zero duplication of AgentHarness private normalizeSeed. Death coords/behavior signals are RECOVERED by replay in S8.6, never logged live (dm-0068). No eval internals, no gen, no rendering, no wall clock.",
+      "gdos_alignment": "Section_14_Internal_Production_Tools__Section_4_Player_Behavior_Model",
+      "dependencies": [
+        "core/state",
+        "components/level",
+        "entities/world",
+        "schema/tape_io",
+        "tools/playtest"
+      ],
+      "dependents": [
+        "tools/death_heatmap"
+      ],
+      "volatile_state_flags": {
+        "has_side_effects": false,
+        "state_dependencies": []
+      },
+      "last_verified_commit": "uncommitted-session-8",
+      "backlog_refs": [
+        "REQ-133"
+      ]
+    },
+    {
+      "node_id": "tools/telemetry_profile",
+      "type": "SystemNode",
+      "file_path": "tools/telemetry/TelemetryProfile.ts",
+      "functional_summary": "S8.6 -- FOURTH versioned strict-parsed calibration schema (dm-0073) alongside ScoringProfile/CampaignProfile/GenProfile. Holds heatmap.binWorldSize (>0). parseTelemetryProfile never throws, rejects unknown keys/bad version/non-positive bin. DEFAULT frozen (binWorldSize 1). Separate per dm-0073/dm-0057: telemetry calibration is P8-owned; coupling to CampaignProfile would force version bumps on an unchanged verified schema. Imports only the SchemaError type.",
+      "gdos_alignment": "Section_14_Internal_Production_Tools",
+      "dependencies": [
+        "schema/parse"
+      ],
+      "dependents": [
+        "tools/death_heatmap"
+      ],
+      "volatile_state_flags": {
+        "has_side_effects": false,
+        "state_dependencies": []
+      },
+      "last_verified_commit": "uncommitted-session-8",
+      "backlog_refs": [
+        "REQ-133"
+      ]
+    },
+    {
+      "node_id": "tools/death_heatmap",
+      "type": "SystemNode",
+      "file_path": "tools/telemetry/DeathHeatmap.ts",
+      "functional_summary": "S8.6 -- REQ-133 part 2 + REQ-032 P8 share (dm-0068/dm-0069/dm-0073/dm-0074). deriveDeathHeatmap RECOVERS death coords by replaying each record via the verified replayObserved (AgentHarness seam) and binning defeated-tick positions by floor(pos/binWorldSize) -- no live position log (dm-0068). toArchetypeRun is the dm-0044 substitution point: adapts a live TelemetryRecord into the ArchetypeRun analyzeTape/processCampaign consume, supplying only the archetype label; no new spike-detection logic (stays P6 processCampaign, dm-0069). Imports gdos/Evidence ArchetypeRun + eval/Archetypes ArchetypeName as TYPES only (dm-0074). Test-proven heatmap==direct-replay; telemetry LevelRecord round-trips UNMODIFIED processCampaign (IRD P8 exit second half); zero campaign/ changes.",
+      "gdos_alignment": "Section_14_Internal_Production_Tools__Section_4_Player_Behavior_Model",
+      "dependencies": [
+        "components/level",
+        "eval/agent_harness",
+        "tools/telemetry_capture",
+        "tools/telemetry_profile"
+      ],
+      "dependents": [],
+      "volatile_state_flags": {
+        "has_side_effects": false,
+        "state_dependencies": []
+      },
+      "last_verified_commit": "uncommitted-session-8",
+      "backlog_refs": [
+        "REQ-133",
+        "REQ-032"
       ]
     }
   ],
