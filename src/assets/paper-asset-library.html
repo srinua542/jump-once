@@ -108,7 +108,7 @@
     </div>
     <div class="frame"><canvas id="level" width="960" height="640"></canvas></div>
     <div id="hud" style="padding-top:8px">
-      <span class="soft">rendered straight from the level JSON — tiles merged to runs, one cached bitmap per asset, animation only for kinetic kinds</span>
+      <span class="soft">rendered straight from the level JSON — connected terrain merges to one seamless silhouette, one cached bitmap per asset, animation only for kinetic kinds</span>
     </div>
   </div>
   <div id="libraryView">
@@ -222,7 +222,7 @@
   </div></div>
 </main>
 <footer>
-  library API: <code>PaperAssets.entity(kind, state)</code> · <code>PaperAssets.tileRun(len, variant)</code> · <code>PaperAssets.decor(name)</code> — returns cached canvases sized to the tile grid
+  library API: <code>PaperAssets.entity(kind, state)</code> · <code>PaperBlocks.piece(variant)</code> · <code>PaperAssets.decor(name)</code> — connected terrain composes to one seamless silhouette; rough edges live only on external boundaries
 </footer>
 
 <script>
@@ -295,67 +295,204 @@ function sprite(w,h,seed,fn){
   c._w=w; c._h=h; return c;
 }
 function blit(g,s,x,y){ g.drawImage(s,x,y,s._w,s._h); }
-function inkBlock(g,x,y,w,h,rnd,color=INK,j=1.4){
-  fillRough(g,x,y,w,h,color,rnd,j);
-  g.strokeStyle=color; g.globalAlpha=.85;
-  for(let i=0;i<Math.max(2,w/60);i++){
-    const px=x+2+rnd()*(w-24);
-    roughLine(g,px,y+1,px+12+rnd()*14,y+.5,rnd,1.6,.6);
+/* ============================================================
+   PAPER BLOCK LIBRARY — the single source of truth for every
+   structural (block-based) asset. blockSlab() is the ONE rough
+   ink-slab generator: only its OUTER edges get the torn/cut
+   jitter; inner edges stay flush so pieces tile seamlessly into
+   linear floors, walls and platforms. A 9-slice variant set
+   (corners + edges + center) is generated from it. Every
+   block-based entity assembles its BASE from these — no entity
+   invents its own rectangle geometry, which keeps silhouettes
+   consistent and maximizes cache reuse.
+   ============================================================ */
+const BLOCK_EDGES={                         // which sides carry the outer torn edge
+  tl:{t:1,l:1}, t:{t:1}, tr:{t:1,r:1},
+  l:{l:1},      c:{},    r:{r:1},
+  bl:{b:1,l:1}, b:{b:1},  br:{b:1,r:1},
+  all:{t:1,r:1,b:1,l:1},
+};
+function blockSlab(g,x,y,w,h,rnd,edges=BLOCK_EDGES.all,color=INK,j=1.4){
+  const IN=2, BLEED=1;                      // outer edges inset+jittered; inner edges flush and bled outward so neighbours OVERLAP (no crack)
+  const xa=edges.l?x+IN:x-BLEED, xb=edges.r?x+w-IN:x+w+BLEED;
+  const ya=edges.t?y+IN:y-BLEED, yb=edges.b?y+h-IN:y+h+BLEED;
+  const corners=[[xa,ya],[xb,ya],[xb,yb],[xa,yb]];
+  const outer=[edges.t,edges.r,edges.b,edges.l];      // segment order: top,right,bottom,left
+  g.fillStyle=color; g.beginPath();
+  for(let i=0;i<4;i++){
+    const a=corners[i], b=corners[(i+1)%4];
+    const dx=b[0]-a[0], dy=b[1]-a[1], n=Math.max(1,Math.round(Math.hypot(dx,dy)/14));
+    const jj=outer[i]?j:0;                             // jitter ONLY on outer (exposed) edges; inner edges stay dead straight
+    for(let k=0;k<n;k++){ const t=k/n, px=a[0]+dx*t+(rnd()-.5)*jj*2, py=a[1]+dy*t+(rnd()-.5)*jj*2;
+      (i===0&&k===0)?g.moveTo(px,py):g.lineTo(px,py); }
   }
-  g.globalAlpha=1;
-  wear(g,x,y,w,h,rnd,Math.min(1.4,40/Math.sqrt(w*h)+.7));
+  g.closePath(); g.fill();
+  if(edges.t){                              // faint dry-brush highlight on the exposed top edge only
+    g.strokeStyle=color; g.globalAlpha=.4;
+    for(let i=0;i<Math.max(1,w/90);i++){ const px=x+3+rnd()*(w-22);
+      roughLine(g,px,ya+1.5,px+10+rnd()*10,ya+1,rnd,1.2,.4); }
+    g.globalAlpha=1;
+  }
+  // NO interior wear/grain (dm-0079): structural blocks are CLEAN SOLID ink;
+  // only the exposed OUTLINE is torn. Interior specks were the "noisy black".
 }
+/* back-compat alias: a fully-torn free-standing slab (all four edges outer) */
+function inkBlock(g,x,y,w,h,rnd,color=INK,j=1.4){ blockSlab(g,x,y,w,h,rnd,BLOCK_EDGES.all,color,j); }
+const PaperBlocks=(function(){
+  const cache=new Map();
+  return {
+    EDGES:BLOCK_EDGES,
+    VARIANTS:['tl','t','tr','l','c','r','bl','b','br'],
+    /* the canonical sized slab every base / floor / platform draws through */
+    slab(g,x,y,w,h,rnd,edges=BLOCK_EDGES.all,color=INK,j=1.4){ blockSlab(g,x,y,w,h,rnd,edges,color,j); },
+    /* one cached 9-slice tile — for wall/floor/platform assembly and the sheet */
+    piece(variant,T,seed=0){
+      const key=`blk:${variant}:${T}:${seed}`;
+      if(!cache.has(key)) cache.set(key, sprite(T+12,T+12,600+seed*17+variant.charCodeAt(0)*7,
+        (g,w,h,rnd)=>{ g.translate(6,6); blockSlab(g,0,0,T,T,rnd,BLOCK_EDGES[variant]||BLOCK_EDGES.all,INK,1.4); }));
+      return cache.get(key);
+    },
+  };
+})();
+
+/* ============================================================
+   PAPER TILE SYSTEM — a modular, seamless terrain tileset.
+   One construction kit: every tile is a T×T cell whose gameplay
+   COLLISION box is always a perfect, identical square; only the
+   EXPOSED surfaces are drawn. A tile fills its cell with clean
+   solid ink and gives a gently torn paper edge to any side/corner
+   that faces empty space, while sides touching a neighbour stay
+   dead-straight and flush. Edge irregularity tapers to 0 at the
+   shared corners, so adjacent tiles ALWAYS meet seamlessly —
+   arbitrary combinations (platforms, walls, cliffs, floating
+   islands, enclosed rooms) read as ONE continuous cut-paper mass
+   with no cracks, seams or overlaps. Decoration never crosses the
+   silhouette or a connection point. Tiles draw within [0,T] only
+   (edges erode INWARD), so they blit at exact grid coordinates
+   with zero padding and can never overhang a neighbour.
+   ============================================================ */
+const TILE_BITS={ N:1, E:2, S:4, W:8 };       // set bit = that orthogonal neighbour is SOLID (edge is INTERNAL/flush)
+const PaperTiles=(function(){
+  const cache=new Map();
+  function tornEdge(pts, ax,ay, bx,by, inx,iny, amp, rnd){
+    // walk a→b, pushing points; offset each INWARD (inx,iny) by an envelope that is
+    // 0 at both corners and gentle in the middle → flush corners (seamless) + torn middle.
+    const len=Math.hypot(bx-ax,by-ay), n=Math.max(2,Math.round(len/11));
+    for(let k=0;k<=n;k++){ const t=k/n, env=Math.min(t,1-t)*2;
+      const d=(0.35+rnd()*0.65)*amp*env;
+      pts.push([ax+(bx-ax)*t + inx*d, ay+(by-ay)*t + iny*d]);
+    }
+  }
+  function drawTile(g,T,mask,rnd,color){
+    const sN=mask&TILE_BITS.N, sE=mask&TILE_BITS.E, sS=mask&TILE_BITS.S, sW=mask&TILE_BITS.W;
+    const amp=Math.max(1.4, T*0.035), pts=[];
+    // clockwise; inward normal per edge: top +y, right -x, bottom -y, left +x
+    if(sN) pts.push([0,0],[T,0]); else tornEdge(pts,0,0,T,0, 0,1, amp,rnd);
+    if(sE) pts.push([T,0],[T,T]); else tornEdge(pts,T,0,T,T, -1,0, amp,rnd);
+    if(sS) pts.push([T,T],[0,T]); else tornEdge(pts,T,T,0,T, 0,-1, amp,rnd);
+    if(sW) pts.push([0,T],[0,0]); else tornEdge(pts,0,T,0,0, 1,0, amp,rnd);
+    g.fillStyle=color; g.beginPath();
+    for(let i=0;i<pts.length;i++){ i? g.lineTo(pts[i][0],pts[i][1]) : g.moveTo(pts[i][0],pts[i][1]); }
+    g.closePath(); g.fill();
+    if(!sN){ g.strokeStyle=color; g.globalAlpha=.35;         // faint highlight on an exposed top edge only
+      for(let i=0;i<Math.max(1,T/90);i++){ const px=4+rnd()*(T-24);
+        roughLine(g,px,2.5,px+10+rnd()*10,2,rnd,1.1,.4); }
+      g.globalAlpha=1; }
+  }
+  /* paint a tile DIRECTLY into a context at world (ox,oy). Terrain composes with
+     this (not per-tile drawImage) so adjacent flush edges live in the same
+     coordinate space and can never show a sub-pixel sampling seam. */
+  function paint(g,mask,T,ox,oy,variant,color){
+    g.save(); g.translate(ox,oy);
+    drawTile(g,T,mask,RNG(1300+mask*29+(variant||0)*131),color||INK);
+    g.restore();
+  }
+  return {
+    BITS:TILE_BITS,
+    /* 4-neighbour mask from a solid predicate (out-of-bounds handled by the predicate) */
+    maskAt(isSolid,x,y){
+      return (isSolid(x,y-1)?TILE_BITS.N:0)|(isSolid(x+1,y)?TILE_BITS.E:0)|
+             (isSolid(x,y+1)?TILE_BITS.S:0)|(isSolid(x-1,y)?TILE_BITS.W:0);
+    },
+    paint,
+    /* one cached tile per (mask,variant,size,color) — for isolated display in the sheet */
+    tile(mask,T,variant=0,color=INK){
+      const key=`tile:${mask}:${T}:${variant}:${color}`;
+      if(!cache.has(key)) cache.set(key, sprite(T,T, 0, (g)=>paint(g,mask,T,0,0,variant,color)));
+      return cache.get(key);
+    },
+  };
+})();
+/* named masks — the documented construction kit (bit N=1,E=2,S=4,W=8 = neighbour solid) */
+const TILE_NAMES={
+  center:15, top:14, bottom:11, left:7, right:13,
+  cornerTL:6, cornerTR:12, cornerBL:3, cornerBR:9,
+  isolated:0, platformLeft:2, platformMid:10, platformRight:8,
+  wallTop:4, wallMid:5, wallBottom:1,
+};
 
 /* ============================================================
    ENTITY DRAW FUNCTIONS — one per schema behavior.kind
    Each draws into a local box: origin = tile top-left, size T.
    state lets the engine request visual variants.
    ============================================================ */
+/* Each entry separates BASE geometry (identical in every state) from a
+   state OVERLAY (indicators, beams, accents, moving parts). Block-based
+   entities build their base through PaperBlocks.slab — the shared library —
+   so no entity invents its own rectangle. drawEntity() seeds the base from
+   the KIND alone, so the silhouette/proportions never shift between states. */
 const KindDraw={
-  movingPlatform(g,T,rnd){
-    inkBlock(g,2,T*.36,T-4,T*.26,rnd,INK,1.6);
+  movingPlatform:{ base(g,T,rnd){
+    PaperBlocks.slab(g,2,T*.36,T-4,T*.26,rnd,BLOCK_EDGES.all,INK,1.4);
     g.strokeStyle=INK; g.fillStyle=INK;                       // ↔ glyph
     roughLine(g,T*.3,T*.24,T*.7,T*.24,rnd,2,.5);
     roughPoly(g,[[T*.3,T*.19],[T*.2,T*.24],[T*.3,T*.29]],rnd,.5,4); g.fill();
     roughPoly(g,[[T*.7,T*.19],[T*.8,T*.24],[T*.7,T*.29]],rnd,.5,4); g.fill();
-  },
-  collapsingFloor(g,T,rnd,state='intact'){
-    inkBlock(g,2,2,T-4,T-4,rnd,PINK,2);
-    g.strokeStyle=INK; g.lineWidth=1.6;
-    roughLine(g,T*.55,4,T*.42,T*.5,rnd,1.6,1.6);
-    roughLine(g,T*.42,T*.5,T*.6,T-4,rnd,1.6,1.6);
-    roughLine(g,T*.42,T*.5,T*.2,T*.66,rnd,1.4,1.4);
-    if(state!=='intact'){                                     // cracking
+  }},
+  collapsingFloor:{
+    base(g,T,rnd){
+      PaperBlocks.slab(g,2,2,T-4,T-4,rnd,BLOCK_EDGES.all,PINK,1.6);
+      g.strokeStyle=INK; g.lineWidth=1.6;                     // structural fault lines (always present)
+      roughLine(g,T*.55,4,T*.42,T*.5,rnd,1.6,1.6);
+      roughLine(g,T*.42,T*.5,T*.6,T-4,rnd,1.6,1.6);
+      roughLine(g,T*.42,T*.5,T*.2,T*.66,rnd,1.4,1.4);
+    },
+    overlay(g,T,rnd,state){                                   // cracking = extra fissures + rubble
+      if(!state || state==='intact') return;
+      g.strokeStyle=INK; g.lineWidth=1.6;
       roughLine(g,T*.75,4,T*.8,T-4,rnd,1.8,2.2);
       roughLine(g,T*.2,4,T*.16,T*.5,rnd,1.6,2);
       g.fillStyle=INK;
       for(let i=0;i<7;i++) g.fillRect(rnd()*T, T-6+rnd()*10, 2.5,2.5);
-    }
+    },
   },
-  iceSurface(g,T,rnd){
-    fillRough(g,2,2,T-4,T-4,WBLUE,rnd,1.6);
+  iceSurface:{ base(g,T,rnd){
+    PaperBlocks.slab(g,2,2,T-4,T-4,rnd,BLOCK_EDGES.all,WBLUE,1.4);
     g.strokeStyle='rgba(255,255,252,.85)'; g.lineWidth=3;     // gloss
     roughLine(g,T*.2,T*.75,T*.62,T*.3,rnd,3,.8);
     roughLine(g,T*.5,T*.85,T*.8,T*.55,rnd,2,.7);
     g.strokeStyle='rgba(35,32,25,.5)'; g.lineWidth=1.2;       // drips
     for(let i=0;i<3;i++) roughLine(g,T*(.25+i*.25),T-3,T*(.25+i*.25),T+4,rnd,1.4,.4);
-    wear(g,2,2,T-4,T-4,rnd,.6);
-  },
-  spike(g,T,rnd){
+  }},
+  spike:{ base(g,T,rnd){                                      // not block-based: a pure sharp silhouette
     g.fillStyle=INK;
     const n=4, s=T/n;
     for(let i=0;i<n;i++){ const px=i*s;
       roughPoly(g,[[px,T],[px+s/2,T-s*1.25],[px+s,T]],rnd,.9,6); g.fill(); }
+  }},
+  laser:{
+    base(g,T,rnd){                                            // emitter block + mounts — identical on/off
+      PaperBlocks.slab(g,T*.28,T*.14,T*.24,T*.72,rnd,BLOCK_EDGES.all,INK,1.2);
+      g.strokeStyle=INK;
+      roughLine(g,T*.2,T*.1,T*.2,T*.24,rnd,1.6,.4);
+      roughLine(g,T*.2,T*.76,T*.2,T*.9,rnd,1.6,.4);
+    },
+    overlay(g,T,rnd,state){                                   // only the aperture indicator changes
+      g.fillStyle = state==='off' ? 'rgba(205,91,51,.35)' : TERRA;
+      g.fillRect(T*.46,T*.42,T*.1,T*.16);
+    },
   },
-  laser(g,T,rnd,state='on'){                                  // emitter head
-    inkBlock(g,T*.28,T*.14,T*.24,T*.72,rnd,INK,1.2);
-    g.fillStyle= state==='on' ? TERRA : 'rgba(205,91,51,.35)';
-    g.fillRect(T*.46,T*.42,T*.1,T*.16);
-    g.strokeStyle=INK;
-    roughLine(g,T*.2,T*.1,T*.2,T*.24,rnd,1.6,.4);
-    roughLine(g,T*.2,T*.76,T*.2,T*.9,rnd,1.6,.4);
-  },
-  movingHazard(g,T,rnd){                                      // spiky ink ball
+  movingHazard:{ base(g,T,rnd){                               // spiky ink ball (not block-based)
     const cx=T/2, cy=T/2, r=T*.24;
     g.fillStyle=INK;
     for(let i=0;i<10;i++){ const a=i/10*6.283;
@@ -367,18 +504,19 @@ const KindDraw={
     g.beginPath(); g.arc(cx,cy,r,0,7); g.fill();
     g.fillStyle=PINK; g.beginPath(); g.arc(cx,cy,r*.45,0,7); g.fill();
     wear(g,cx-r,cy-r,r*2,r*2,rnd,.5);
+  }},
+  pressurePlate:{
+    base(g,T,rnd){ PaperBlocks.slab(g,T*.12,T-.14*T,T*.76,T*.14,rnd,BLOCK_EDGES.all,INK,1.2); },
+    overlay(g,T,rnd,state){                                   // plate height + press ticks
+      const up = state==='pressed' ? T*.06 : T*.16;
+      g.fillStyle=TERRA; roughRect(g,T*.2,T-.14*T-up,T*.6,up+2,rnd,1); g.fill();
+      wear(g,T*.2,T-.14*T-up,T*.6,up,rnd,.4);
+      if(state==='pressed'){ g.strokeStyle=INK;
+        roughLine(g,T*.12,T*.62,T*.2,T*.72,rnd,1.4,.4);
+        roughLine(g,T*.88,T*.62,T*.8,T*.72,rnd,1.4,.4); }
+    },
   },
-  pressurePlate(g,T,rnd,state='idle'){
-    const up = state==='idle' ? T*.16 : T*.06;
-    inkBlock(g,T*.12,T-.14*T,T*.76,T*.14,rnd,INK,1.2);        // base
-    g.fillStyle=TERRA;                                        // plate
-    roughRect(g,T*.2,T-.14*T-up,T*.6,up+2,rnd,1); g.fill();
-    wear(g,T*.2,T-.14*T-up,T*.6,up,rnd,.4);
-    if(state!=='idle'){ g.strokeStyle=INK;                    // press ticks
-      roughLine(g,T*.12,T*.62,T*.2,T*.72,rnd,1.4,.4);
-      roughLine(g,T*.88,T*.62,T*.8,T*.72,rnd,1.4,.4); }
-  },
-  proximityZone(g,T,rnd){
+  proximityZone:{ base(g,T,rnd){
     g.strokeStyle=TEALD; g.lineWidth=2; g.setLineDash([5,5]);
     g.beginPath(); g.arc(T/2,T/2,T*.42,0,7); g.stroke(); g.setLineDash([]);
     /* eye */
@@ -391,55 +529,67 @@ const KindDraw={
     g.quadraticCurveTo(cx,cy+s*.85,cx-s,cy); g.stroke();
     g.fillStyle=CREAM; g.beginPath(); g.arc(cx,cy,s*.4,0,7); g.fill();
     g.fillStyle=INK; g.beginPath(); g.arc(cx,cy,s*.18,0,7); g.fill();
+  }},
+  door:{
+    base(g,T,rnd){ PaperBlocks.slab(g,T*.14,T*.02,T*.72,T*.98,rnd,BLOCK_EDGES.all,INK,1.8); },
+    overlay(g,T,rnd,state){                                   // inner panel: open (lavender) vs closed
+      if(state==='open'){ fillRough(g,T*.26,T*.12,T*.48,T*.84,LAV,rnd,1); }
+      else{ fillRough(g,T*.26,T*.12,T*.48,T*.84,'#171512',rnd,1);
+        g.fillStyle=CREAM; g.beginPath(); g.arc(T*.64,T*.55,2.4,0,7); g.fill(); }   // handle
+    },
   },
-  door(g,T,rnd,state='closed'){
-    fillRough(g,T*.14,T*.02,T*.72,T*.98,INK,rnd,1.8);
-    wear(g,T*.14,T*.02,T*.72,T,rnd,.9);
-    if(state==='open'){
-      fillRough(g,T*.26,T*.12,T*.48,T*.84,LAV,rnd,1);
-    }else{
-      fillRough(g,T*.26,T*.12,T*.48,T*.84,'#171512',rnd,1);
-      g.fillStyle=CREAM; g.beginPath();                       // handle
-      g.arc(T*.64,T*.55,2.4,0,7); g.fill();
-    }
+  spring:{
+    base(g,T,rnd){ PaperBlocks.slab(g,T*.2,T-.12*T,T*.6,T*.12,rnd,BLOCK_EDGES.all,INK,1); },
+    overlay(g,T,rnd,state){                                   // coil + pad extend on launch
+      const ext = state==='launch' ? T*.52 : T*.3;
+      g.strokeStyle=INK; g.lineWidth=2.6; g.lineCap='round';
+      g.beginPath(); const zz=5;
+      for(let i=0;i<=zz;i++){ const yy=T-.12*T-(i/zz)*ext, xx=T/2+((i%2)?1:-1)*T*.14;
+        i===0? g.moveTo(T/2,T-.12*T) : g.lineTo(xx,yy); }
+      g.lineTo(T/2,T-.12*T-ext); g.stroke();
+      fillRough(g,T*.24,T-.12*T-ext-T*.1,T*.52,T*.1,PINK,rnd,1);
+      if(state==='launch'){ g.strokeStyle=TERRA;
+        for(let i=-1;i<=1;i++) roughLine(g,T/2+i*T*.14,T*.26,T/2+i*T*.17,T*.1,rnd,1.6,.5); }
+    },
   },
-  spring(g,T,rnd,state='idle'){
-    const ext = state==='idle' ? T*.3 : T*.52;
-    inkBlock(g,T*.2,T-.12*T,T*.6,T*.12,rnd,INK,1);            // base
-    g.strokeStyle=INK; g.lineWidth=2.6; g.lineCap='round';    // coil
-    g.beginPath();
-    const zz=5;
-    for(let i=0;i<=zz;i++){
-      const yy=T-.12*T-(i/zz)*ext, xx=T/2+((i%2)?1:-1)*T*.14;
-      i===0? g.moveTo(T/2,T-.12*T) : g.lineTo(xx,yy);
-    }
-    g.lineTo(T/2,T-.12*T-ext); g.stroke();
-    fillRough(g,T*.24,T-.12*T-ext-T*.1,T*.52,T*.1,PINK,rnd,1);// pad
-    if(state!=='idle'){ g.strokeStyle=TERRA;
-      for(let i=-1;i<=1;i++)
-        roughLine(g,T/2+i*T*.14,T*.26,T/2+i*T*.17,T*.1,rnd,1.6,.5); }
+  gravityZone:{
+    base(g,T,rnd){                                            // zone boundary + speckle (state-independent)
+      g.strokeStyle=LAV; g.lineWidth=2.2; g.setLineDash([6,5]);
+      roughRect(g,3,3,T-6,T-6,rnd,1); g.stroke(); g.setLineDash([]);
+      g.globalAlpha=.14; g.fillStyle=LAV; g.fillRect(4,4,T-8,T-8); g.globalAlpha=1;
+      g.fillStyle=INK;
+      for(let i=0;i<5;i++) g.fillRect(6+rnd()*(T-12),6+rnd()*(T-12),1.8,1.8);
+    },
+    overlay(g,T,rnd,state){                                   // arrows point per gravity direction
+      const up = state!=='normal';
+      g.strokeStyle=INK; g.fillStyle=INK;
+      for(let i=0;i<2;i++){ const px=T*(.35+i*.3), y1=up?T*.68:T*.32, y2=up?T*.32:T*.68;
+        roughLine(g,px,y1,px,y2,rnd,2,.5);
+        roughPoly(g, up?[[px-4,y2+7],[px,y2-1],[px+4,y2+7]]:[[px-4,y2-7],[px,y2+1],[px+4,y2-7]],rnd,.5,4);
+        g.fill(); }
+    },
   },
-  gravityZone(g,T,rnd,state='invert'){                        // gravityScale<0
-    g.strokeStyle=LAV; g.lineWidth=2.2; g.setLineDash([6,5]);
-    roughRect(g,3,3,T-6,T-6,rnd,1); g.stroke(); g.setLineDash([]);
-    g.globalAlpha=.14; g.fillStyle=LAV; g.fillRect(4,4,T-8,T-8); g.globalAlpha=1;
-    const up = state!=='normal';
-    g.strokeStyle=INK; g.fillStyle=INK;
-    for(let i=0;i<2;i++){ const px=T*(.35+i*.3), y1=up?T*.68:T*.32, y2=up?T*.32:T*.68;
-      roughLine(g,px,y1,px,y2,rnd,2,.5);
-      roughPoly(g, up?[[px-4,y2+7],[px,y2-1],[px+4,y2+7]]:[[px-4,y2-7],[px,y2+1],[px+4,y2-7]],rnd,.5,4);
-      g.fill(); }
-    for(let i=0;i<5;i++){ g.fillStyle=INK; g.fillRect(6+rnd()*(T-12),6+rnd()*(T-12),1.8,1.8); }
-  },
-  conveyor(g,T,rnd){                                          // single cached body — direction is shown by the live chevron sweep, not a second canvas
-    inkBlock(g,2,T*.36,T-4,T*.28,rnd,INK,1.6);
+  conveyor:{ base(g,T,rnd){                                   // belt body — direction shown by the live chevron sweep
+    PaperBlocks.slab(g,2,T*.36,T-4,T*.28,rnd,BLOCK_EDGES.all,INK,1.6);
     g.fillStyle=CREAM;                                        // rollers
     g.beginPath(); g.arc(T*.14,T*.5,T*.08,0,7); g.arc(T*.86,T*.5,T*.08,0,7); g.fill();
     g.strokeStyle=INK; g.lineWidth=1.4;
     g.beginPath(); g.arc(T*.14,T*.5,T*.08,0,7); g.stroke();
     g.beginPath(); g.arc(T*.86,T*.5,T*.08,0,7); g.stroke();
-  },
+  }},
 };
+/* Base geometry is seeded by KIND ONLY, so an entity's silhouette, proportions
+   and block structure are byte-identical in every state; only the overlay
+   (indicators, beams, accents, moving parts) varies. This is the single rule
+   that makes laser·on and laser·off — and every stateful entity — structurally
+   identical. Applies to all current and future block-based entities. */
+function hashSeed(base,str){ let s=base>>>0; for(let i=0;i<str.length;i++) s=(Math.imul(s,31)+str.charCodeAt(i))>>>0; return s>>>0; }
+function drawEntity(g,kind,T,state){
+  const def=KindDraw[kind]; if(!def) return false;
+  def.base(g,T,RNG(hashSeed(900,kind)));
+  if(def.overlay) def.overlay(g,T,RNG(hashSeed(hashSeed(1700,kind),state||'')),state||undefined);
+  return true;
+}
 /* player / markers / goal */
 function drawPlayer(g,cx,baseY,rnd,pose='idle',s=1){
   g.save(); g.translate(cx,baseY); g.scale(s,s);
@@ -524,14 +674,10 @@ const PaperAssets=(function(){
     return cache.get(key);
   }
   return {
-    tileRun(len,T,variant=0){
-      return get(`run:${len}:${T}:${variant}`, len*T+12, T+12, 400+len*7+variant*131,
-        (g,w,h,rnd)=>{ g.translate(6,6); inkBlock(g,0,0,len*T,T,rnd,INK,2.2); });
-    },
-    entity(kind,T,state=''){
-      const fn=KindDraw[kind]; if(!fn) return null;
-      return get(`e:${kind}:${state}:${T}`, T+12, T+12, 900+kind.length*37+state.length*11,
-        (g,w,h,rnd)=>{ g.translate(6,6); fn(g,T,rnd,state||undefined); });
+    entity(kind,T,state=''){                                   // base (kind-seeded, state-independent) + state overlay
+      if(!KindDraw[kind]) return null;
+      return get(`e:${kind}:${state}:${T}`, T+12, T+12, 0,
+        (g,w,h,rnd)=>{ g.translate(6,6); drawEntity(g,kind,T,state); });
     },
     decor(name,w=90,h=70,seed=1){
       return get(`d:${name}:${w}x${h}:${seed}`, w, h, 7000+seed*97,
@@ -608,17 +754,24 @@ document.getElementById('hudTitle').textContent=LEVEL.title;
 document.getElementById('hudPar').textContent='PAR '+LEVEL.constraints.parTimeTiersSeconds.join(' / ')+'s';
 
 function tileAt(x,y){ return (x<0||y<0||x>=MAP.width||y>=MAP.height)?1:MAP.tiles[y*MAP.width+x]; }
-/* merge solid tiles into horizontal runs */
-const runs=[];
-for(let y=0;y<MAP.height;y++){
-  let x=0;
-  while(x<MAP.width){
-    if(tileAt(x,y)===1){ let len=1;
-      while(x+len<MAP.width && tileAt(x+len,y)===1) len++;
-      runs.push({x,y,len,variant:y%2}); x+=len; }
-    else x++;
+/* ============================================================
+   TERRAIN — autotiled from the modular PaperTiles kit. Each solid
+   cell picks a tile by its 4-neighbour mask (out-of-bounds counts
+   as SOLID, so the map's outer frame edge is clean/flush and only
+   edges facing the play area are torn) and a position-hashed
+   variant, blitted at its exact grid cell. Connected tiles share
+   flush, corner-pinned edges → the whole terrain is ONE clean
+   solid cut-paper mass with a torn silhouette and NO internal
+   seams, cracks or speckle. Composed once into a cached bitmap.
+   ============================================================ */
+const TERRAIN=sprite(LW,LH,4242,(g)=>{
+  const solid=(x,y)=> (x<0||y<0||x>=MAP.width||y>=MAP.height) ? true : MAP.tiles[y*MAP.width+x]===1;
+  for(let y=0;y<MAP.height;y++)for(let x=0;x<MAP.width;x++){
+    if(!solid(x,y)) continue;
+    const mask=PaperTiles.maskAt(solid,x,y), variant=((x*3+y*7)%3+3)%3;
+    PaperTiles.paint(g,mask,T,x*T,y*T,variant,INK);
   }
-}
+});
 /* background collage, cached once */
 const BG=sprite(LW,LH,777,(g,W,H,rnd)=>{
   g.fillStyle=CREAM; g.fillRect(0,0,W,H);
@@ -671,8 +824,8 @@ function beamSpan(e){ // raycast to next solid tile in facing dir
 function render(){
   ctx.setTransform(DPR,0,0,DPR,0,0);
   ctx.drawImage(BG,0,0,LW,LH);
-  /* tiles (cached runs) */
-  for(const r of runs) blit(ctx, PaperAssets.tileRun(r.len,T,r.variant), r.x*T-6, r.y*T-6);
+  /* terrain — one continuous cached silhouette */
+  ctx.drawImage(TERRAIN,0,0,LW,LH);                          // one continuous terrain mass — no internal seams
   /* zones + statics + kinetics */
   for(const e of ents){
     const b=e.behavior; let dx=0, dy=0, state='';
@@ -755,7 +908,7 @@ let playing=true, last=performance.now();
 const CW=168, CH=118;
 function centerEnt(kind,state,scale=.8){
   return (g,rnd)=>{ const t=CH*scale;
-    g.save(); g.translate((CW-t)/2,(CH-t)/2); KindDraw[kind](g,t,rnd,state||undefined); g.restore(); };
+    g.save(); g.translate((CW-t)/2,(CH-t)/2); drawEntity(g,kind,t,state); g.restore(); };
 }
 function centerDecor(name,w,h){
   return (g,rnd)=>{ g.save(); g.translate((CW-w)/2,(CH-h)/2); DecorDraw[name](g,w,h,rnd); g.restore(); };
@@ -763,10 +916,10 @@ function centerDecor(name,w,h){
 function miniWire(srcKind,dstKind,label){
   return (g,rnd)=>{
     const t=52;
-    g.save(); g.translate(14,(CH-t)/2-6); KindDraw[srcKind](g,t,rnd); g.restore();
+    g.save(); g.translate(14,(CH-t)/2-6); drawEntity(g,srcKind,t,''); g.restore();
     g.save(); g.translate(CW-14-t,(CH-t)/2-6);
-    KindDraw[dstKind](g,t,rnd, dstKind==='door' ? (label.includes('open')?'open':'closed') :
-                               dstKind==='collapsingFloor' ? 'cracking' : undefined);
+    drawEntity(g,dstKind,t, dstKind==='door' ? (label.includes('open')?'open':'closed') :
+                            dstKind==='collapsingFloor' ? 'cracking' : '');
     g.restore();
     g.strokeStyle=TEALD; g.setLineDash([4,5]); g.lineWidth=2;
     g.beginPath(); g.moveTo(14+t+4,CH/2-6);
@@ -783,6 +936,30 @@ const SECTIONS=[
    {n:'RUN ×3 (MERGED)', f:(g,rnd)=>{ g.save(); g.translate(14,CH/2-20); inkBlock(g,0,0,CW-28,40,rnd,INK,2.2); g.restore(); }},
    {n:'TILE VARIANTS', f:(g,rnd)=>{ for(let i=0;i<3;i++){ g.save(); g.translate(16+i*46,CH/2-20);
        inkBlock(g,0,0,40,40,RNG(500+i*77),INK,2); g.restore(); } }},
+ ]},
+ {title:'STRUCTURAL BLOCKS · 9-SLICE (single source of truth — floors · walls · platforms)', items:[
+   {n:'9-slice wall (tl…br)', f:(g,rnd)=>{ const s=28, ox=CW/2-s*1.5, oy=CH/2-s*1.5,
+       V=[['tl','t','tr'],['l','c','r'],['bl','b','br']];
+       for(let r=0;r<3;r++)for(let c=0;c<3;c++){ const p=PaperBlocks.piece(V[r][c],s,0);
+         g.drawImage(p,ox+c*s-6,oy+r*s-6,p._w,p._h); } }},
+   {n:'linear floor (b · b · b)', f:(g,rnd)=>{ const s=26, oy=CH/2-8;
+       for(let i=0;i<5;i++){ const p=PaperBlocks.piece('b',s,0); g.drawImage(p,CW/2-s*2.5+i*s-6,oy-6,p._w,p._h); } }},
+   {n:'platform (l · c · c · r)', f:(g,rnd)=>{ const s=26, oy=CH/2-8, V=['l','c','c','r'];
+       for(let i=0;i<4;i++){ const p=PaperBlocks.piece(V[i],s,0); g.drawImage(p,CW/2-s*2+i*s-6,oy-6,p._w,p._h); } }},
+ ]},
+ {title:'TERRAIN TILE SYSTEM · autotiled & seamless (identical square collision — only exposed surfaces change)', items:[
+   {n:'the kit — every mask', f:(g)=>{ const s=15, cols=6, rows=3, ox=CW/2-cols*s/2, oy=CH/2-rows*s/2;
+       for(let m=0;m<16;m++){ PaperTiles.paint(g,m,s,ox+(m%cols)*s,oy+Math.floor(m/cols)*s,0,INK); } }},
+   {n:'seamless 3×3 block', f:(g)=>{ const s=24, ox=CW/2-s*1.5, oy=CH/2-s*1.5, S=(x,y)=>x>=0&&x<3&&y>=0&&y<3;
+       for(let y=0;y<3;y++)for(let x=0;x<3;x++) PaperTiles.paint(g,PaperTiles.maskAt(S,x,y),s,ox+x*s,oy+y*s,(x+y)%3,INK); }},
+   {n:'floating platform  l·c·c·r', f:(g)=>{ const s=22, ox=CW/2-s*2, oy=CH/2-s/2, S=(x,y)=>y===0&&x>=0&&x<4;
+       for(let x=0;x<4;x++) PaperTiles.paint(g,PaperTiles.maskAt(S,x,0),s,ox+x*s,oy,x%3,INK); }},
+   {n:'vertical wall  t·c·c·b', f:(g)=>{ const s=22, ox=CW/2-s/2, oy=CH/2-s*2, S=(x,y)=>x===0&&y>=0&&y<4;
+       for(let y=0;y<4;y++) PaperTiles.paint(g,PaperTiles.maskAt(S,0,y),s,ox,oy+y*s,y%3,INK); }},
+   {n:'isolated block', f:(g)=>{ PaperTiles.paint(g,PaperTiles.BITS.N&0,Math.min(CW,CH)*.42,CW/2-Math.min(CW,CH)*.21,CH/2-Math.min(CW,CH)*.21,0,INK); }},
+   {n:'enclosed room (hollow)', f:(g)=>{ const s=15, W=7,Hh=6, ox=CW/2-W*s/2, oy=CH/2-Hh*s/2,
+       S=(x,y)=> (x>=0&&x<W&&y>=0&&y<Hh) && (x===0||x===W-1||y===0||y===Hh-1);
+       for(let y=0;y<Hh;y++)for(let x=0;x<W;x++) if(S(x,y)) PaperTiles.paint(g,PaperTiles.maskAt(S,x,y),s,ox+x*s,oy+y*s,(x+y)%3,INK); }},
  ]},
  {title:'PLAYER & CONSTRAINTS', items:[
    {n:'PLAYER IDLE', f:(g,rnd)=>drawPlayer(g,CW/2,CH-24,rnd,'idle',1.4)},

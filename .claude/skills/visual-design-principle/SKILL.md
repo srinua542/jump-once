@@ -65,6 +65,27 @@ goal. Both are flagged for P9 execution-plan resolution in the bible.
    has a costume** — vanished/rule-only things are dashed outlines. 8. **Same function, same
    shape, everywhere** — the vocabulary never gets synonyms.
 
+## Base geometry vs. state — the block library (dm-0078)
+
+- **An entity's base is identical in every state.** Base geometry (silhouette, proportions, block
+  structure) must be byte-identical across states; only functional overlays (indicators, beams,
+  accents, moving parts) change. Seed the base from the *kind alone*, never the state — otherwise
+  the hand-cut jitter re-rolls per state and the silhouette shifts (the laser·on/off bug). Split
+  every stateful entity into `base(g,T,rnd)` + `overlay(g,T,rnd,state)`.
+- **Block-based structure comes from the shared block library.** Floors, walls, platforms, and all
+  block-based entity bases assemble from one 9-slice rough-ink slab generator (`top-left…center…
+  bottom-right`, plus `all`). Only outer edges carry the torn jitter; inner edges stay flush so
+  pieces tile seamlessly. It is the single source of truth for structural geometry — never invent a
+  bespoke rectangle, and never re-implement the slab elsewhere.
+- **Terrain uses the modular tile system, and structure stays CLEAN SOLID (dm-0080).** Terrain is
+  autotiled from `PaperTiles` (a T×T kit: center, edges, corners, isolated, platform ends, wall
+  pieces) with an identical square collision box per tile. Seamless by construction: exposed-edge
+  irregularity tapers to 0 at shared corners, tiles erode inward only, and the level composes by
+  painting polygons into one bitmap (no per-tile `drawImage` seam). **Interior fills carry NO wear,
+  grain, or specks** — only the exposed silhouette is torn (the clean Limbo/GRIS look). If a solid
+  black mass looks noisy/speckly or shows internal seams, that is a bug. Decoration never crosses a
+  silhouette or a connection point.
+
 ## Procedural & determinism rules
 
 - Generate art from a **seeded RNG hashed off entity identity / grid position** — unique per

@@ -101,13 +101,58 @@ Collage is the active pack, they are binding.
 5. **Jitter the shape, never the hitbox.** Colliders stay clean rectangles at exact grid
    positions; only the *drawn* polygon wobbles. Rough edges are a costume the physics never
    wears. (This is what makes the art layer safely swappable over unchanged physics.)
-6. **Imperfect, not sloppy.** Vertex jitter ≤ ±2px; wear erases ≤ ~15% of a fill. Past that it
-   looks broken, not printed. The kit was tuned toward the calm end of this range in the dm-0077
-   simplification (edge subdivision ~14px, jitter ~±1px) — readability first, texture second.
+6. **Imperfect, not sloppy — and structure stays CLEAN SOLID.** Vertex jitter ≤ ±2px lives on
+   *exposed outlines only*. Interior fills of structural blocks/terrain carry **no wear, grain, or
+   specks** (dm-0080) — those made the black read as noisy and are gone; the torn silhouette alone
+   carries the handmade look. Wear/grain stay on decor and the single shared background layer, never
+   on the solid masses. (Tuned to the calm end in dm-0077: subdivision ~14px, jitter ~±1px.)
 7. **Absence has a costume too.** Things that vanish, haven't happened, or exist only as rules
    (zones, fake platforms, collapsed floors) are drawn as **dashed outlines**.
 8. **Same function, same shape, everywhere.** A spike is always triangles; a plate is always a
    terracotta dome; an eye always means "this watches you." The vocabulary never gets synonyms.
+9. **Same entity, same base across states (dm-0078).** An entity's base geometry — silhouette,
+   proportions, block structure — is **byte-identical in every state**; only functional overlays
+   (indicators, beams, accents, moving parts) change. The base is seeded from the *kind alone*,
+   never from the state, so `laser·on` and `laser·off` share one emitter block instead of
+   re-rolling their jitter. Block-based entities assemble that base from the shared **block
+   library** (§4a), never bespoke rectangles. Applies to every current and future entity.
+
+### §4a · The block library — single source of structural geometry
+
+All block-based structure (floors, walls, platforms, laser emitters, doors, conveyors, pressure
+plates, springs, collapsing floors, and anything similar) is drawn through **one** rough-ink slab
+generator exposed as a **9-slice set**: `top-left, top, top-right, left, center, right,
+bottom-left, bottom, bottom-right` (plus `all` for free-standing pieces). Only a slab's *outer*
+edges carry the torn/cut jitter; inner edges stay flush, so pieces tile seamlessly into linear
+floors/walls/platforms. No entity invents its own rectangle. This is the single source of truth
+for structural geometry — it improves consistency (every block reads as the same paper stock),
+maintainability (edge look changes in one place), and cache reuse. The procedural system keeps
+**base geometry separate from state-specific visuals**: `base(kind)` + `overlay(kind,state)`.
+
+**Seamless connection + clean solid masses (dm-0080, realizing & refining dm-0079).** Connected structure must read as ONE
+continuous cut-paper mass — no visible cracks, white lines, seams, or speckle — and the mass must
+be a **clean solid**, not a grainy/worn field (the Limbo/GRIS-style look is the target). Terrain is
+built from a **modular tile system** (`PaperTiles`): a construction kit where every tile is a T×T
+cell whose gameplay collision box is a perfect, identical square, and only the *exposed* surfaces
+are drawn. Rules, applied to every block-based asset (terrain, walls, platforms, doors, laser
+emitters, conveyors, and any future entity):
+
+1. **Roughness only on external boundaries; the interior is clean solid ink.** An edge that touches
+   another solid cell is *internal*: dead-straight, flush, no jitter, no highlight. Only exposed
+   edges get the torn outline + a faint top highlight. **No interior wear, grain, or specks** — the
+   per-object wear that made the black read as noisy is removed for structural assets.
+2. **Exposed-edge irregularity tapers to 0 at the shared corners,** and tiles erode *inward* only
+   (never overhang their cell). Adjacent tiles therefore meet at identical flush corners and can
+   never gap or overlap — seamless by construction, for any combination.
+3. **Terrain composes by painting tile polygons directly into one bitmap** (same coordinate space,
+   not per-tile `drawImage`), so there is no sub-pixel sampling seam. Autotiled by a 4-neighbour
+   mask; out-of-bounds counts as solid, so the map's outer frame is flush and only edges facing the
+   play area are torn.
+4. **The kit is a complete, production tileset:** center, four edges, four outer corners, isolated
+   block, floating-platform ends (left/mid/right), and vertical-wall pieces (top/mid/bottom) — all
+   from one generator, so any structure (platforms, cliffs, floating islands, enclosed rooms) tiles
+   seamlessly. Every tile shares the same proportions, outline weight, orthographic side view, and
+   material; decoration (cracks, doodles, texture) never alters a silhouette or a connection point.
 
 ---
 

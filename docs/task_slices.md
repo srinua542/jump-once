@@ -138,17 +138,23 @@ Session-sized, dependency-ordered work units. Each slice is small enough to comp
 
 ## Phase 9 — Rendering, Audio & Visual Grammar
 
-> **Package version policy (dm-0038):** any new runtime/dev dependency introduced from S9.1 onward (WebGL/audio libs if used, and the Poki SDK in S9.5) is pinned to the latest version published on the npm registry as of that slice's implementation date, not a stale/cached version. This mirrors the toolchain bump already applied to the existing devDependencies (`typescript` ^5.4.0 → ^7.0.2 as of 2026-07; `@types/node` already at latest ^26.1.1) — re-verified 291/291 green under the new toolchain.
+> **Package version policy (dm-0038, re-verified at P9 planning 2026-07-11):** any new runtime/dev dependency introduced from S9.1 onward is pinned to the latest **stable** version published on the npm registry as of that slice's implementation date. At P9 open: `typescript` 7.0.2 and `@types/node` 26.1.1 confirmed exact-latest against registry.npmjs.org; **P9 adds zero new npm dependencies** (dm-0086 — raw WebGL2/WebAudio/Canvas2D via `lib: ["DOM"]`, hand-rolled test fakes, Poki SDK via its official CDN script; `@poki/sdk@0.0.4` weighed and rejected as pre-1.0).
+
+> **Restructured at P9 planning per the REQ-P02 adversarial review (dm-0081–dm-0086)** — see `docs/execution_plan.md` P9 section. The original seven-slice table predated the P6–P8 findings and the Paper Collage art canon (dm-0075–dm-0080): it omitted the inherited REQ-130/131/132 shares, REQ-150's visual sub-clauses, REQ-016's visual share, and StylePack #1 itself, and built the renderer before the grammar data.
 
 | Slice | Title | REQs | Depends | State |
 |-------|-------|------|---------|-------|
-| S9.1 | WebGL renderer + batching | REQ-162, REQ-170 | S3.8 | NOT_STARTED |
-| S9.2 | Object pooling framework | REQ-161 | S9.1 | NOT_STARTED |
-| S9.3 | Visual grammar style system (6 categories) | REQ-070, REQ-071 | S9.1 | NOT_STARTED |
-| S9.4 | WebAudio signatures | REQ-071 | S9.1 | NOT_STARTED |
-| S9.5 | Responsive scaling + Poki SDK lifecycle hooks (dm-0038: Poki only, no CrazyGames) | REQ-170, REQ-171 | S9.1 | NOT_STARTED |
-| S9.6 | Dynamic quality scale-back | REQ-163 | S9.2 | NOT_STARTED |
-| S9.7 | Phase-9 verification report | REQ-P02 | S9.1–S9.6 | NOT_STARTED |
+| S9.1 | Grammar schema + StylePack seam + `render/` substrate & isolation scans; bible reconciliations closed (dm-0084/dm-0085) | REQ-070, REQ-071 (grammar) | P8 ✓, art canon | NOT_STARTED |
+| S9.2 | PaperStylePack — port of the reference asset engine (dm-0075/0077/0078/0080 rules pinned by tests) | REQ-071 (realization) | S9.1 | NOT_STARTED |
+| S9.3 | Scene compiler + camera + quadtree culling + interpolation | REQ-070/071 (applied), REQ-162 (partitioning), REQ-150 (camera) | S9.2 | NOT_STARTED |
+| S9.4 | WebGL2 executor + atlas + batching + object pools | REQ-161, REQ-162 (batching), REQ-170 (WebGL) | S9.3 | NOT_STARTED |
+| S9.5 | Game feel (anticipation/squash-stretch/burst) + fairness visuals | REQ-150 (visual), REQ-016 (visual) | S9.3, S9.4 | NOT_STARTED |
+| S9.6 | WebAudio procedural signatures + cue derivation | REQ-071 (audio), REQ-170 (WebAudio) | S9.1 | NOT_STARTED |
+| S9.7 | Asset manifest + async delivery + delivery-speed profiling | REQ-163 (async), REQ-132 (P9 share), REQ-002 | S9.1 | NOT_STARTED |
+| S9.8 | App shell + responsive scaling + Poki SDK lifecycle (dm-0038: Poki only) | REQ-170, REQ-171, REQ-001, REQ-002 | S9.4, S9.6, S9.7 | NOT_STARTED |
+| S9.9 | Editor + debug-overlay UI over the P8 plain-data substrate | REQ-130 (P9 share), REQ-131 (P9 share) | S9.4 | NOT_STARTED |
+| S9.10 | Dynamic quality scale-back (hysteresis tiers; REQ-016 critical-interlock) | REQ-163 | S9.8 | NOT_STARTED |
+| S9.11 | Phase-9 verification report; M4 closure | REQ-P02 | S9.1–S9.10 | NOT_STARTED |
 
 ## Phase 10 — Content Generation
 

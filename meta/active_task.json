@@ -1,0 +1,72 @@
+{
+  "slice": "S9.1",
+  "title": "Grammar schema + StylePack seam + render/ substrate & isolation scans",
+  "reqs": [
+    "REQ-070",
+    "REQ-071"
+  ],
+  "started_at": "2026-07-11T11:26:56.202Z",
+  "updated_at": "2026-07-11T11:26:56.297Z",
+  "current_stage": "select",
+  "stages": {
+    "reboot": {
+      "status": "done",
+      "at": "2026-07-11T11:26:56.203Z",
+      "note": "REBOOT done at session start: handoff read, pkg_hash s9-a1c0f3 confirmed, 560/560 green"
+    },
+    "select": {
+      "status": "in_progress",
+      "at": "2026-07-11T11:26:56.296Z",
+      "note": null
+    },
+    "plan": {
+      "status": "pending",
+      "at": null,
+      "note": null
+    },
+    "anchor": {
+      "status": "pending",
+      "at": null,
+      "note": null
+    },
+    "implement": {
+      "status": "pending",
+      "at": null,
+      "note": null
+    },
+    "verify": {
+      "status": "pending",
+      "at": null,
+      "note": null
+    },
+    "integrate": {
+      "status": "pending",
+      "at": null,
+      "note": null
+    },
+    "report": {
+      "status": "pending",
+      "at": null,
+      "note": null
+    },
+    "handoff": {
+      "status": "pending",
+      "at": null,
+      "note": null
+    }
+  },
+  "acceptance": [
+    {
+      "req": "REQ-070",
+      "criterion": "(fill in)",
+      "met": false,
+      "note": null
+    },
+    {
+      "req": "REQ-071",
+      "criterion": "(fill in)",
+      "met": false,
+      "note": null
+    }
+  ]
+}
