@@ -1,0 +1,145 @@
+{
+  "frameworkSchemaVersion": 1,
+  "chapterId": "ch1-read-the-rhythm",
+  "title": "Read the Rhythm",
+  "theme": "danger keeps time, and time can be read",
+  "learningGoal": "observe a hazard cycle fully before committing the one jump rather than reacting mid-air",
+  "mentalModel": "every timed hazard has a period, and the gap between beats is the only safe window",
+  "misconceptions": [
+    "a beam that is off now will stay off long enough",
+    "moving danger can always be out-run by jumping sooner"
+  ],
+  "subversion": "the beam you timed turns lethal exactly as a habitual early jump would land",
+  "optimizationFocus": "entering the gap on the earliest safe beat rather than the most obvious later one",
+  "finalExam": "thread a desynchronised laser and a moving hazard on a single well-timed jump",
+  "levelSlots": [
+    {
+      "slotId": "ch1-read-the-rhythm-L1-curiosity",
+      "archetype": "observation",
+      "intentSentence": "Spend the one jump on the decisive observation read because the bare corridor offers no help and a habitual early commitment falls into the pit.",
+      "oneJumpDecision": "where along the approach to spend the only jump given what the level reveals",
+      "mechanics": [],
+      "difficultyTarget": {
+        "executionPrecision": 0.15,
+        "readingComplexity": 0,
+        "timingStrictness": 0.04999999999999999,
+        "routeAmbiguity": 0
+      },
+      "emotionalPhase": "curiosity",
+      "targetDifficultyTier": "easy",
+      "seed": 1011,
+      "rewardedSkip": {
+        "available": false
+      }
+    },
+    {
+      "slotId": "ch1-read-the-rhythm-L2-confidence",
+      "archetype": "timing",
+      "intentSentence": "Spend the one jump on the decisive timing read because the laser reshapes the approach and a habitual early commitment falls into the pit.",
+      "oneJumpDecision": "where along the approach to spend the only jump given what the level reveals",
+      "mechanics": [
+        "laser"
+      ],
+      "difficultyTarget": {
+        "executionPrecision": 0.15,
+        "readingComplexity": 0,
+        "timingStrictness": 0.04999999999999999,
+        "routeAmbiguity": 0
+      },
+      "emotionalPhase": "confidence",
+      "targetDifficultyTier": "easy",
+      "seed": 1021,
+      "rewardedSkip": {
+        "available": false
+      }
+    },
+    {
+      "slotId": "ch1-read-the-rhythm-L3-surpriseBetrayal",
+      "archetype": "prediction",
+      "intentSentence": "Spend the one jump on the decisive prediction read because the movingHazard reshapes the approach and a habitual early commitment falls into the pit.",
+      "oneJumpDecision": "where along the approach to spend the only jump given what the level reveals",
+      "mechanics": [
+        "movingHazard"
+      ],
+      "difficultyTarget": {
+        "executionPrecision": 0.15,
+        "readingComplexity": 0,
+        "timingStrictness": 0.04999999999999999,
+        "routeAmbiguity": 0
+      },
+      "emotionalPhase": "surpriseBetrayal",
+      "targetDifficultyTier": "easy",
+      "seed": 1031,
+      "rewardedSkip": {
+        "available": false
+      }
+    },
+    {
+      "slotId": "ch1-read-the-rhythm-L4-realization",
+      "archetype": "timing",
+      "intentSentence": "Spend the one jump on the decisive timing read because the laser reshapes the approach and a habitual early commitment falls into the pit.",
+      "oneJumpDecision": "where along the approach to spend the only jump given what the level reveals",
+      "mechanics": [
+        "laser"
+      ],
+      "difficultyTarget": {
+        "executionPrecision": 0.4,
+        "readingComplexity": 0.25,
+        "timingStrictness": 0.30000000000000004,
+        "routeAmbiguity": 0.2
+      },
+      "emotionalPhase": "realization",
+      "targetDifficultyTier": "medium",
+      "seed": 1041,
+      "rewardedSkip": {
+        "available": true,
+        "altRouteHint": "the laser route rewards a later, calmer commit"
+      }
+    },
+    {
+      "slotId": "ch1-read-the-rhythm-L5-mastery",
+      "archetype": "execution",
+      "intentSentence": "Spend the one jump on the decisive execution read because the movingHazard reshapes the approach and a habitual early commitment falls into the pit.",
+      "oneJumpDecision": "where along the approach to spend the only jump given what the level reveals",
+      "mechanics": [
+        "movingHazard"
+      ],
+      "difficultyTarget": {
+        "executionPrecision": 0.4,
+        "readingComplexity": 0.25,
+        "timingStrictness": 0.30000000000000004,
+        "routeAmbiguity": 0.2
+      },
+      "emotionalPhase": "mastery",
+      "targetDifficultyTier": "medium",
+      "seed": 1051,
+      "rewardedSkip": {
+        "available": true,
+        "altRouteHint": "the movingHazard route rewards a later, calmer commit"
+      }
+    },
+    {
+      "slotId": "ch1-read-the-rhythm-L6-renewedUncertainty",
+      "archetype": "timing",
+      "intentSentence": "Spend the one jump on the decisive timing read because the laser and movingHazard together reshape the approach and a habitual early commitment falls into the pit.",
+      "oneJumpDecision": "where along the approach to spend the only jump given what the level reveals",
+      "mechanics": [
+        "laser",
+        "movingHazard"
+      ],
+      "difficultyTarget": {
+        "executionPrecision": 0.4,
+        "readingComplexity": 0.25,
+        "timingStrictness": 0.30000000000000004,
+        "routeAmbiguity": 0.2
+      },
+      "emotionalPhase": "renewedUncertainty",
+      "targetDifficultyTier": "medium",
+      "seed": 1061,
+      "rewardedSkip": {
+        "available": true,
+        "altRouteHint": "the laser route rewards a later, calmer commit"
+      }
+    }
+  ]
+}

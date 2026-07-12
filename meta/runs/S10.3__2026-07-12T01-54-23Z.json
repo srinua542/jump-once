@@ -1,0 +1,81 @@
+{
+  "slice": "S10.3",
+  "title": "Pilot chapter end-to-end + GDOS calibration",
+  "reqs": [
+    "REQ-100",
+    "REQ-005",
+    "REQ-050"
+  ],
+  "started_at": "2026-07-12T01:54:22.898Z",
+  "updated_at": "2026-07-12T01:54:23.650Z",
+  "current_stage": "handoff",
+  "stages": {
+    "reboot": {
+      "status": "done",
+      "at": "2026-07-12T01:54:22.899Z",
+      "note": "reboot"
+    },
+    "select": {
+      "status": "done",
+      "at": "2026-07-12T01:54:22.966Z",
+      "note": "select"
+    },
+    "plan": {
+      "status": "done",
+      "at": "2026-07-12T01:54:23.028Z",
+      "note": "plan: calibrate profile, generate pilot ch1"
+    },
+    "anchor": {
+      "status": "done",
+      "at": "2026-07-12T01:54:23.094Z",
+      "note": "anchor: read Exploit/Curriculum/CampaignDirector"
+    },
+    "implement": {
+      "status": "done",
+      "at": "2026-07-12T01:54:23.152Z",
+      "note": "implement: content-calibration-v1, clean-palette reauthor, generateCampaign.js, pilot ch1 6/6, smoke test, dm-0115/0116/0117"
+    },
+    "verify": {
+      "status": "done",
+      "at": "2026-07-12T01:54:23.213Z",
+      "note": "verify: 759 green, pilot 6/6"
+    },
+    "integrate": {
+      "status": "done",
+      "at": "2026-07-12T01:54:23.465Z",
+      "note": "integrate"
+    },
+    "report": {
+      "status": "done",
+      "at": "2026-07-12T01:54:23.527Z",
+      "note": "report"
+    },
+    "handoff": {
+      "status": "done",
+      "at": "2026-07-12T01:54:23.587Z",
+      "note": "handoff"
+    }
+  },
+  "acceptance": [
+    {
+      "req": "REQ-100",
+      "criterion": "all pilot levels dual-path",
+      "met": true,
+      "note": null
+    },
+    {
+      "req": "REQ-005",
+      "criterion": "levels via real pipeline, depth via design",
+      "met": true,
+      "note": null
+    },
+    {
+      "req": "REQ-050",
+      "criterion": "overgenerate-and-curate: highest GDOS score selected by code",
+      "met": true,
+      "note": null
+    }
+  ],
+  "outcome": "completed",
+  "closed_at": "2026-07-12T01:54:23.713Z"
+}

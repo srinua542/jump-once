@@ -13,6 +13,8 @@
     "gate": "node tools/sdlc/gate.js",
     "gate:full": "node tools/sdlc/gate.js --with-tests",
     "stage": "node tools/sdlc/stage.js status",
+    "generate:campaign": "node tools/sdlc/generateCampaign.js",
+    "validate:campaign": "node tools/sdlc/validateCampaign.js",
     "clean": "node -e \"require('fs').rmSync('dist',{recursive:true,force:true})\""
   },
   "devDependencies": {

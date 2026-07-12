@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "profileId": "content-calibration-v1",
+  "emotional": {
+    "thresholds": {
+      "curiosity": 35,
+      "confidence": 35,
+      "surprise": 0,
+      "mastery": 3
+    },
+    "confidenceAttemptPenalty": 5,
+    "curiosityDivergenceGain": 200,
+    "surpriseAttemptGain": 32,
+    "masteryDeltaReferenceSeconds": 4
+  },
+  "streamability": {
+    "thresholds": {
+      "shareability": 5,
+      "clipPotential": 0,
+      "reactionDensity": 5,
+      "replayValue": 5
+    },
+    "reactionEventReferencePerSecond": 3,
+    "clipSurpriseGain": 0.6,
+    "clipKineticGain": 10,
+    "replayDeltaGain": 15,
+    "replayRouteGain": 10,
+    "shareWeights": {
+      "reaction": 1,
+      "clip": 1,
+      "replay": 1
+    }
+  },
+  "infoDensity": {
+    "viewportTilesX": 16,
+    "viewportTilesY": 12,
+    "minElementsPerScreen": 1,
+    "maxElementsPerScreen": 8,
+    "fairnessLookbackTicks": 30,
+    "fairnessRadiusTiles": 2
+  },
+  "novelty": {
+    "histogramWeight": 1,
+    "geometryWeight": 1,
+    "trajectoryWeight": 1
+  }
+}

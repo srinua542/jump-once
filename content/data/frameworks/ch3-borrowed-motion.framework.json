@@ -1,0 +1,145 @@
+{
+  "frameworkSchemaVersion": 1,
+  "chapterId": "ch3-borrowed-motion",
+  "title": "Borrowed Motion",
+  "theme": "momentum you did not create can still be yours",
+  "learningGoal": "fold an external push into the single jump instead of fighting it",
+  "mentalModel": "springs and gravity fields add to your velocity, and the jump composes with them",
+  "misconceptions": [
+    "a spring simply replaces your jump",
+    "a gravity field only ever gets in the way"
+  ],
+  "subversion": "the spring that looks like a free launch overshoots the goal unless the jump is withheld",
+  "optimizationFocus": "spending the jump to trim borrowed momentum rather than to add more",
+  "finalExam": "ride a field into a spring and land the goal by holding the jump until the last instant",
+  "levelSlots": [
+    {
+      "slotId": "ch3-borrowed-motion-L1-curiosity",
+      "archetype": "physics",
+      "intentSentence": "Spend the one jump on the decisive physics read because the bare corridor offers no help and a habitual early commitment falls into the pit.",
+      "oneJumpDecision": "where along the approach to spend the only jump given what the level reveals",
+      "mechanics": [],
+      "difficultyTarget": {
+        "executionPrecision": 0.15,
+        "readingComplexity": 0,
+        "timingStrictness": 0.04999999999999999,
+        "routeAmbiguity": 0
+      },
+      "emotionalPhase": "curiosity",
+      "targetDifficultyTier": "easy",
+      "seed": 3011,
+      "rewardedSkip": {
+        "available": false
+      }
+    },
+    {
+      "slotId": "ch3-borrowed-motion-L2-confidence",
+      "archetype": "physics",
+      "intentSentence": "Spend the one jump on the decisive physics read because the spring reshapes the approach and a habitual early commitment falls into the pit.",
+      "oneJumpDecision": "where along the approach to spend the only jump given what the level reveals",
+      "mechanics": [
+        "spring"
+      ],
+      "difficultyTarget": {
+        "executionPrecision": 0.4,
+        "readingComplexity": 0.25,
+        "timingStrictness": 0.30000000000000004,
+        "routeAmbiguity": 0.2
+      },
+      "emotionalPhase": "confidence",
+      "targetDifficultyTier": "medium",
+      "seed": 3021,
+      "rewardedSkip": {
+        "available": false
+      }
+    },
+    {
+      "slotId": "ch3-borrowed-motion-L3-surpriseBetrayal",
+      "archetype": "resourceManagement",
+      "intentSentence": "Spend the one jump on the decisive resourceManagement read because the gravityZone reshapes the approach and a habitual early commitment falls into the pit.",
+      "oneJumpDecision": "where along the approach to spend the only jump given what the level reveals",
+      "mechanics": [
+        "gravityZone"
+      ],
+      "difficultyTarget": {
+        "executionPrecision": 0.4,
+        "readingComplexity": 0.25,
+        "timingStrictness": 0.30000000000000004,
+        "routeAmbiguity": 0.2
+      },
+      "emotionalPhase": "surpriseBetrayal",
+      "targetDifficultyTier": "medium",
+      "seed": 3031,
+      "rewardedSkip": {
+        "available": false
+      }
+    },
+    {
+      "slotId": "ch3-borrowed-motion-L4-realization",
+      "archetype": "planning",
+      "intentSentence": "Spend the one jump on the decisive planning read because the spring reshapes the approach and a habitual early commitment falls into the pit.",
+      "oneJumpDecision": "where along the approach to spend the only jump given what the level reveals",
+      "mechanics": [
+        "spring"
+      ],
+      "difficultyTarget": {
+        "executionPrecision": 0.6,
+        "readingComplexity": 0.44999999999999996,
+        "timingStrictness": 0.5,
+        "routeAmbiguity": 0.39999999999999997
+      },
+      "emotionalPhase": "realization",
+      "targetDifficultyTier": "hard",
+      "seed": 3041,
+      "rewardedSkip": {
+        "available": true,
+        "altRouteHint": "the spring route rewards a later, calmer commit"
+      }
+    },
+    {
+      "slotId": "ch3-borrowed-motion-L5-mastery",
+      "archetype": "execution",
+      "intentSentence": "Spend the one jump on the decisive execution read because the gravityZone reshapes the approach and a habitual early commitment falls into the pit.",
+      "oneJumpDecision": "where along the approach to spend the only jump given what the level reveals",
+      "mechanics": [
+        "gravityZone"
+      ],
+      "difficultyTarget": {
+        "executionPrecision": 0.6,
+        "readingComplexity": 0.44999999999999996,
+        "timingStrictness": 0.5,
+        "routeAmbiguity": 0.39999999999999997
+      },
+      "emotionalPhase": "mastery",
+      "targetDifficultyTier": "hard",
+      "seed": 3051,
+      "rewardedSkip": {
+        "available": true,
+        "altRouteHint": "the gravityZone route rewards a later, calmer commit"
+      }
+    },
+    {
+      "slotId": "ch3-borrowed-motion-L6-renewedUncertainty",
+      "archetype": "psychologicalPressure",
+      "intentSentence": "Spend the one jump on the decisive psychologicalPressure read because the spring and gravityZone together reshape the approach and a habitual early commitment falls into the pit.",
+      "oneJumpDecision": "where along the approach to spend the only jump given what the level reveals",
+      "mechanics": [
+        "spring",
+        "gravityZone"
+      ],
+      "difficultyTarget": {
+        "executionPrecision": 0.8,
+        "readingComplexity": 0.65,
+        "timingStrictness": 0.7000000000000001,
+        "routeAmbiguity": 0.6000000000000001
+      },
+      "emotionalPhase": "renewedUncertainty",
+      "targetDifficultyTier": "harder",
+      "seed": 3061,
+      "rewardedSkip": {
+        "available": true,
+        "altRouteHint": "the spring route rewards a later, calmer commit"
+      }
+    }
+  ]
+}

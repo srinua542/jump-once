@@ -1,0 +1,81 @@
+{
+  "slice": "S10.1",
+  "title": "Content schema + content/ subtree + chapter architecture authoring",
+  "reqs": [
+    "REQ-083",
+    "REQ-015",
+    "REQ-174"
+  ],
+  "started_at": "2026-07-12T01:11:33.779Z",
+  "updated_at": "2026-07-12T01:31:14.520Z",
+  "current_stage": "handoff",
+  "stages": {
+    "reboot": {
+      "status": "done",
+      "at": "2026-07-12T01:11:33.780Z",
+      "note": "REBOOT done: 711 green, pkg s10-b7c1e4"
+    },
+    "select": {
+      "status": "done",
+      "at": "2026-07-12T01:22:11.079Z",
+      "note": "SELECT: S10.1, reqs REQ-083/015/174"
+    },
+    "plan": {
+      "status": "done",
+      "at": "2026-07-12T01:22:11.157Z",
+      "note": "PLAN: 6 chapters (4 families+combo+mastery) x 6 arc-phase slots = 36 levels; ChapterFramework 8th schema; content/ subtree; empirical finding: generator surprise structurally ~0, honest-close path chosen"
+    },
+    "anchor": {
+      "status": "done",
+      "at": "2026-07-12T01:22:11.220Z",
+      "note": "ANCHOR: schema type boundaries frozen (ChapterFramework/CampaignManifest parsers)"
+    },
+    "implement": {
+      "status": "done",
+      "at": "2026-07-12T01:31:07.135Z",
+      "note": "IMPLEMENT: content/schema/*, ContentIsolation+ContentSchema+ContentCampaign tests, 6 frameworks+manifest authored"
+    },
+    "verify": {
+      "status": "done",
+      "at": "2026-07-12T01:31:07.214Z",
+      "note": "VERIFY: 741/741 green, 30 new content tests"
+    },
+    "integrate": {
+      "status": "done",
+      "at": "2026-07-12T01:31:14.320Z",
+      "note": "INTEGRATE: PKG schema nodes materialized at S10.6 consolidation (pre-declared in pending_nodes)"
+    },
+    "report": {
+      "status": "done",
+      "at": "2026-07-12T01:31:14.388Z",
+      "note": "REPORT: S10.1 COMPLETED"
+    },
+    "handoff": {
+      "status": "done",
+      "at": "2026-07-12T01:31:14.456Z",
+      "note": "HANDOFF: proceeding to S10.2 same session"
+    }
+  },
+  "acceptance": [
+    {
+      "req": "REQ-083",
+      "criterion": "7-step framework schema + all 6 chapters authored+parsed",
+      "met": true,
+      "note": null
+    },
+    {
+      "req": "REQ-015",
+      "criterion": "arc-completeness a structural parse invariant; every chapter covers 6 phases in order",
+      "met": true,
+      "note": null
+    },
+    {
+      "req": "REQ-174",
+      "criterion": "rewardedSkip field required per slot; authored across campaign",
+      "met": true,
+      "note": null
+    }
+  ],
+  "outcome": "completed",
+  "closed_at": "2026-07-12T01:31:14.584Z"
+}

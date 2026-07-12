@@ -2633,6 +2633,78 @@
         "REQ-163",
         "REQ-016"
       ]
+    },
+    {
+      "node_id": "content/schema/chapter_framework",
+      "type": "SystemNode",
+      "file_path": "content/schema/ChapterFramework.ts",
+      "functional_summary": "REQ-083 seven-step chapter framework schema (8th versioned, strict-parsed) + ChapterLevelSlot. Enforces the six-phase emotional arc (REQ-015) as a parse invariant and owns the DifficultyTier vocabulary. dm-0109.",
+      "gdos_alignment": "Section_9_Chapter_Architecture",
+      "dependencies": [],
+      "dependents": ["content/schema/campaign_manifest", "content/difficulty_estimator", "content/assembler", "content/campaign_assembler"],
+      "volatile_state_flags": { "has_side_effects": false, "state_dependencies": [] },
+      "last_verified_commit": "uncommitted-session-10-p10",
+      "backlog_refs": ["REQ-083", "REQ-015", "REQ-174"]
+    },
+    {
+      "node_id": "content/schema/campaign_manifest",
+      "type": "SystemNode",
+      "file_path": "content/schema/CampaignManifest.ts",
+      "functional_summary": "Campaign roster schema: ordered chapter ids + REQ-084 target difficulty distribution + tolerance. Strict-parsed. dm-0108.",
+      "gdos_alignment": "Section_9_Difficulty_Distribution",
+      "dependencies": ["content/schema/chapter_framework"],
+      "dependents": ["content/campaign_assembler"],
+      "volatile_state_flags": { "has_side_effects": false, "state_dependencies": [] },
+      "last_verified_commit": "uncommitted-session-10-p10",
+      "backlog_refs": ["REQ-084"]
+    },
+    {
+      "node_id": "content/difficulty_estimator",
+      "type": "SystemNode",
+      "file_path": "content/DifficultyEstimator.ts",
+      "functional_summary": "REQ-084 difficulty tier derived from MEASURED evidence (discovery time, unsolved fraction, deaths, optimization delta) via a calibrated DifficultyProfile — never from the authored intent vector. dm-0111.",
+      "gdos_alignment": "Section_9_Difficulty_Distribution",
+      "dependencies": ["content/schema/chapter_framework", "eval/gdos/evidence", "eval/local/optimization", "core/clock"],
+      "dependents": ["content/assembler", "content/campaign_assembler"],
+      "volatile_state_flags": { "has_side_effects": false, "state_dependencies": [] },
+      "last_verified_commit": "uncommitted-session-10-p10",
+      "backlog_refs": ["REQ-084"]
+    },
+    {
+      "node_id": "content/dual_path_proof",
+      "type": "SystemNode",
+      "file_path": "content/DualPathProof.ts",
+      "functional_summary": "REQ-100 Dual-Path axiom proven by composition over OptimizationVerdict (applicable AND deltaSeconds >= floor) — no new path-counting mechanism, no alternate geometry. dm-0110.",
+      "gdos_alignment": "Section_11_Dual_Path_Axiom",
+      "dependencies": ["eval/local/optimization"],
+      "dependents": ["content/assembler"],
+      "volatile_state_flags": { "has_side_effects": false, "state_dependencies": [] },
+      "last_verified_commit": "uncommitted-session-10-p10",
+      "backlog_refs": ["REQ-100", "REQ-101", "REQ-102"]
+    },
+    {
+      "node_id": "content/assembler",
+      "type": "SystemNode",
+      "file_path": "content/Assembler.ts",
+      "functional_summary": "buildConceptFromSlot (only path into the pipeline, dm-0109) + integrateProduct (REQ-090 phase-8 Campaign Integration, dm-0112) + assembleChapterRecord (folds products into a ChapterRecord, runs macro validation, dm-0117 exploit-misfire mapping).",
+      "gdos_alignment": "Section_10_Manufacturing_Pipeline",
+      "dependencies": ["content/schema/chapter_framework", "content/difficulty_estimator", "content/dual_path_proof", "gen/pipeline", "gen/concept", "eval/campaign/campaign_director", "eval/macro/curriculum", "eval/gdos/design_space"],
+      "dependents": ["content/campaign_assembler"],
+      "volatile_state_flags": { "has_side_effects": false, "state_dependencies": [] },
+      "last_verified_commit": "uncommitted-session-10-p10",
+      "backlog_refs": ["REQ-090", "REQ-050", "REQ-142"]
+    },
+    {
+      "node_id": "content/campaign_assembler",
+      "type": "SystemNode",
+      "file_path": "content/CampaignAssembler.ts",
+      "functional_summary": "Campaign-scope: assembleCampaignReport (wraps P6 processCampaign) + assessDifficultyDistribution (REQ-084) + assessArcCompleteness (REQ-015). Honestly measures, never games the target.",
+      "gdos_alignment": "Section_9_Difficulty_Distribution",
+      "dependencies": ["content/schema/campaign_manifest", "content/assembler", "eval/campaign/campaign_director", "eval/gdos/design_space"],
+      "dependents": [],
+      "volatile_state_flags": { "has_side_effects": false, "state_dependencies": [] },
+      "last_verified_commit": "uncommitted-session-10-p10",
+      "backlog_refs": ["REQ-084", "REQ-015", "REQ-013"]
     }
   ],
   "edges": [

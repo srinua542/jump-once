@@ -18,7 +18,7 @@
 | REQ-002 | Eliminate operational friction: no long loads, no complex progression, no text-heavy tutorials. | §1 | P9,P10 | IN_PROGRESS |
 | REQ-003 | Prioritize continuous kinetic momentum and instant gameplay iteration. | §1 | P3,P10 | IN_PROGRESS |
 | REQ-004 | Single unchanging structural constraint: exactly one jump per level. | §1 | P3 | VERIFIED |
-| REQ-005 | Depth via level design (Level Devil–style subversion), not expanded power sets; logical fairness; deterministic rules. | §1 | P10 | NOT_STARTED |
+| REQ-005 | Depth via level design (Level Devil–style subversion), not expanded power sets; logical fairness; deterministic rules. | §1 | P10 | IN_PROGRESS |
 
 ## §2 Core Philosophy & Axiomatic Constraints
 
@@ -26,8 +26,8 @@
 |----|-------------|-----|-------|-------|
 | REQ-010 | Exactly one jump per level, invariant across the entire campaign. | §2 | P3 | VERIFIED |
 | REQ-011 | Exclude upgrades, power-ups, double/wall jumps, jump-refreshing lives, temporary exceptions. | §2 | P3 | VERIFIED |
-| REQ-012 | Every challenge isolates/amplifies/tests the one-jump constraint; omit anything that does not. | §2 | P5,P7,P10 | IN_PROGRESS |
-| REQ-013 | Understandable within seconds; difficulty from player decisions and spatial puzzles. | §2 | P10 | NOT_STARTED |
+| REQ-012 | Every challenge isolates/amplifies/tests the one-jump constraint; omit anything that does not. | §2 | P5,P7,P10 | VERIFIED |
+| REQ-013 | Understandable within seconds; difficulty from player decisions and spatial puzzles. | §2 | P10 | VERIFIED |
 | REQ-014 | The structural puzzle *is* the level layout itself. | §2 | P2,P10 | IN_PROGRESS |
 | REQ-015 | Deliberate six-phase emotional arc: Curiosity, Confidence, Surprise/Betrayal, Realization, Mastery, Renewed Uncertainty. | §2 | P5,P10 | IN_PROGRESS |
 | REQ-016 | No arbitrary trolling/random penalties; failure information always visually present on screen. | §2 | P5,P9,P10 | IN_PROGRESS |
@@ -60,7 +60,7 @@
 
 | ID | Requirement | PRD | Phase | State |
 |----|-------------|-----|-------|-------|
-| REQ-050 | All creative decisions originate from GDOS; no gameplay content created independently of it. | §6 | P5,P10 | IN_PROGRESS |
+| REQ-050 | All creative decisions originate from GDOS; no gameplay content created independently of it. | §6 | P5,P10 | VERIFIED |
 | REQ-051 | Persistent Design Memory: version control for creative intent; record every accepted/rejected idea; parse history before proposing to prevent regression/repetition. | §6 | P0,P5 | VERIFIED |
 | REQ-052 | Continuous Design Research Engine (CDRE): self-improving loop that improves the design process itself and feeds validated discoveries back into GDOS. | §6 | P5 | VERIFIED |
 | REQ-053 | Novelty Search: algorithmic metric targeting layout divergence. | §6 | P5,P7 | VERIFIED |
@@ -89,23 +89,23 @@
 | REQ-080 | Execute the sequential production pipeline in strict order; lock foundational systems/schema/tools before campaign content. | §9 | P0–P11 | IN_PROGRESS |
 | REQ-081 | Creativity & Iteration loop: generate → variations → GDOS eval → mutate/combine → compare to memory → select hybrid → improve → repeat to diminishing returns. | §9 | P5,P7 | VERIFIED |
 | REQ-082 | 9-stage mechanic lifecycle tracking (Introduction→…→Retirement); block reuse of exhausted mechanics; prune/convert on Retirement. | §9 | P5,P7 | VERIFIED |
-| REQ-083 | Strict chapter generation architecture: define 7 framework items (Theme, Learning Goal, Mental Model, Misconceptions, Subversion, Optimization, Final Exam) before any level generation. | §9 | P10 | NOT_STARTED |
-| REQ-084 | Campaign-wide difficulty distribution across the authored level pool: Easy 20% (teach mechanics, build confidence), Medium 35% (core experience, clever betrayals), Hard 25% (mechanic combinations, memorable troll moments), Harder 15% (complex deception for dedicated players), Very Hard 5% (endgame/creator-bait mastery levels). Calibrated data, not hardcoded per-level; enforced at macro curriculum validation (REQ-142). | §9 | P10 | NOT_STARTED |
+| REQ-083 | Strict chapter generation architecture: define 7 framework items (Theme, Learning Goal, Mental Model, Misconceptions, Subversion, Optimization, Final Exam) before any level generation. | §9 | P10 | VERIFIED |
+| REQ-084 | Campaign-wide difficulty distribution across the authored level pool: Easy 20% (teach mechanics, build confidence), Medium 35% (core experience, clever betrayals), Hard 25% (mechanic combinations, memorable troll moments), Harder 15% (complex deception for dedicated players), Very Hard 5% (endgame/creator-bait mastery levels). Calibrated data, not hardcoded per-level; enforced at macro curriculum validation (REQ-142). | §9 | P10 | IN_PROGRESS |
 
 ## §10 Level Production Pipeline & Intent Verification
 
 | ID | Requirement | PRD | Phase | State |
 |----|-------------|-----|-------|-------|
-| REQ-090 | 8-phase level manufacturing pipeline (Concept → Structural Prototyping → Kinetic Simulation → AI Council Eval → Targeted Revision → Optimization Layering → Sign-off/Intent → Campaign Integration). | §10 | P7,P10 | IN_PROGRESS |
-| REQ-091 | Single-Sentence Intent Verification gate; layouts that cannot state their lesson in one rigorous sentence are denied compile and deleted. | §10 | P7,P10 | IN_PROGRESS |
+| REQ-090 | 8-phase level manufacturing pipeline (Concept → Structural Prototyping → Kinetic Simulation → AI Council Eval → Targeted Revision → Optimization Layering → Sign-off/Intent → Campaign Integration). | §10 | P7,P10 | VERIFIED |
+| REQ-091 | Single-Sentence Intent Verification gate; layouts that cannot state their lesson in one rigorous sentence are denied compile and deleted. | §10 | P7,P10 | VERIFIED |
 
 ## §11 Dual-Path Architecture & Optimization Space
 
 | ID | Requirement | PRD | Phase | State |
 |----|-------------|-----|-------|-------|
-| REQ-100 | Dual-Path axiom: every level supports Discovery Path and Mastery Path in one physical space. | §11 | P10 | NOT_STARTED |
-| REQ-101 | Optimization Space Model: five routing tiers (Discovery, Good, Fast, Expert, World Record). | §11 | P4,P10 | IN_PROGRESS |
-| REQ-102 | Optimization delta metric (Time_Discovery − Time_WorldRecord); reject layouts with zero/minimal delta. | §11 | P4,P10 | IN_PROGRESS |
+| REQ-100 | Dual-Path axiom: every level supports Discovery Path and Mastery Path in one physical space. | §11 | P10 | VERIFIED |
+| REQ-101 | Optimization Space Model: five routing tiers (Discovery, Good, Fast, Expert, World Record). | §11 | P4,P10 | VERIFIED |
+| REQ-102 | Optimization delta metric (Time_Discovery − Time_WorldRecord); reject layouts with zero/minimal delta. | §11 | P4,P10 | VERIFIED |
 
 ## §12 20 Core Principles & Design Intent Repository
 
@@ -166,7 +166,7 @@
 | REQ-171 | Responsive UI scaling across resolutions, aspect ratios, and fullscreen transitions. | §18 | P9,P11 | IN_PROGRESS |
 | REQ-172 | Fully automated build pipeline: compile optimized client builds, asset optimization passes, run the validation test suite, package deployment-ready artifacts. | §18 | P11 | NOT_STARTED |
 | REQ-173 | Completion bar: polished, definitive premium-indie quality; complete only when all systems/tools/data/docs are shipped-verified. | §18 | P11 | NOT_STARTED |
-| REQ-174 | Non-IAP monetization: an optional rewarded-ad unlock (Poki SDK `rewardedBreak`) lets a player skip a level or reveal an alternative route/hint; no in-app purchases or paid currency anywhere in the product. | §18 | P9,P10,P11 | NOT_STARTED |
+| REQ-174 | Non-IAP monetization: an optional rewarded-ad unlock (Poki SDK `rewardedBreak`) lets a player skip a level or reveal an alternative route/hint; no in-app purchases or paid currency anywhere in the product. | §18 | P9,P10,P11 | IN_PROGRESS |
 
 ## Protocol Requirements (from `/jump-once-protocol` skill + Directive)
 

@@ -1,0 +1,560 @@
+{
+  "calibrationProfileId": "content-calibration-v1",
+  "generatedLevels": 36,
+  "allGatePass": true,
+  "dualPathCount": 36,
+  "allDualPath": true,
+  "macroPassChapters": 6,
+  "totalChapters": 6,
+  "difficultyDistribution": {
+    "pass": false,
+    "total": 36,
+    "buckets": [
+      {
+        "tier": "easy",
+        "count": 26,
+        "fraction": 0.7222222222222222,
+        "targetFraction": 0.2,
+        "deviation": 0.5222222222222221,
+        "withinTolerance": false
+      },
+      {
+        "tier": "medium",
+        "count": 0,
+        "fraction": 0,
+        "targetFraction": 0.35,
+        "deviation": 0.35,
+        "withinTolerance": false
+      },
+      {
+        "tier": "hard",
+        "count": 10,
+        "fraction": 0.2777777777777778,
+        "targetFraction": 0.25,
+        "deviation": 0.02777777777777779,
+        "withinTolerance": true
+      },
+      {
+        "tier": "harder",
+        "count": 0,
+        "fraction": 0,
+        "targetFraction": 0.15,
+        "deviation": 0.15,
+        "withinTolerance": false
+      },
+      {
+        "tier": "very-hard",
+        "count": 0,
+        "fraction": 0,
+        "targetFraction": 0.05,
+        "deviation": 0.05,
+        "withinTolerance": true
+      }
+    ]
+  },
+  "arcCompleteness": {
+    "pass": true,
+    "chapters": [
+      {
+        "chapterId": "ch1-read-the-rhythm",
+        "pass": true,
+        "phaseSequence": [
+          "curiosity",
+          "confidence",
+          "surpriseBetrayal",
+          "realization",
+          "mastery",
+          "renewedUncertainty"
+        ]
+      },
+      {
+        "chapterId": "ch2-your-arrival-is-a-signal",
+        "pass": true,
+        "phaseSequence": [
+          "curiosity",
+          "confidence",
+          "surpriseBetrayal",
+          "realization",
+          "mastery",
+          "renewedUncertainty"
+        ]
+      },
+      {
+        "chapterId": "ch3-borrowed-motion",
+        "pass": true,
+        "phaseSequence": [
+          "curiosity",
+          "confidence",
+          "surpriseBetrayal",
+          "realization",
+          "mastery",
+          "renewedUncertainty"
+        ]
+      },
+      {
+        "chapterId": "ch4-threat-meets-momentum",
+        "pass": true,
+        "phaseSequence": [
+          "curiosity",
+          "confidence",
+          "surpriseBetrayal",
+          "realization",
+          "mastery",
+          "renewedUncertainty"
+        ]
+      },
+      {
+        "chapterId": "ch5-everything-at-once",
+        "pass": true,
+        "phaseSequence": [
+          "curiosity",
+          "confidence",
+          "surpriseBetrayal",
+          "realization",
+          "mastery",
+          "renewedUncertainty"
+        ]
+      },
+      {
+        "chapterId": "ch6-the-final-commitment",
+        "pass": true,
+        "phaseSequence": [
+          "curiosity",
+          "confidence",
+          "surpriseBetrayal",
+          "realization",
+          "mastery",
+          "renewedUncertainty"
+        ]
+      }
+    ]
+  },
+  "campaign": {
+    "retentionPrediction": 0.9,
+    "alertCount": 0
+  },
+  "perChapter": [
+    {
+      "chapterId": "ch1-read-the-rhythm",
+      "levels": 6,
+      "chapterHealthy": true,
+      "macroOverallPass": true,
+      "cognitiveMapping": true,
+      "degradation": true,
+      "curiosity": true,
+      "graduation": true
+    },
+    {
+      "chapterId": "ch2-your-arrival-is-a-signal",
+      "levels": 6,
+      "chapterHealthy": true,
+      "macroOverallPass": true,
+      "cognitiveMapping": true,
+      "degradation": true,
+      "curiosity": true,
+      "graduation": true
+    },
+    {
+      "chapterId": "ch3-borrowed-motion",
+      "levels": 6,
+      "chapterHealthy": true,
+      "macroOverallPass": true,
+      "cognitiveMapping": true,
+      "degradation": true,
+      "curiosity": true,
+      "graduation": true
+    },
+    {
+      "chapterId": "ch4-threat-meets-momentum",
+      "levels": 6,
+      "chapterHealthy": true,
+      "macroOverallPass": true,
+      "cognitiveMapping": true,
+      "degradation": true,
+      "curiosity": true,
+      "graduation": true
+    },
+    {
+      "chapterId": "ch5-everything-at-once",
+      "levels": 6,
+      "chapterHealthy": true,
+      "macroOverallPass": true,
+      "cognitiveMapping": true,
+      "degradation": true,
+      "curiosity": true,
+      "graduation": true
+    },
+    {
+      "chapterId": "ch6-the-final-commitment",
+      "levels": 6,
+      "chapterHealthy": true,
+      "macroOverallPass": true,
+      "cognitiveMapping": true,
+      "degradation": true,
+      "curiosity": true,
+      "graduation": true
+    }
+  ],
+  "perLevel": [
+    {
+      "levelId": "gen-kg-ch1-read-the-rhythm-ch1-read-the-rhythm-L1-curiosity-L12G5W1",
+      "chapterId": "ch1-read-the-rhythm",
+      "slotId": "ch1-read-the-rhythm-L1-curiosity",
+      "gatePass": true,
+      "measuredTier": "easy",
+      "discoverySeconds": 1.583,
+      "dualPath": true,
+      "deltaSeconds": 0.30000000000000004
+    },
+    {
+      "levelId": "gen-kg-ch1-read-the-rhythm-ch1-read-the-rhythm-L2-confidence-L14G6W1",
+      "chapterId": "ch1-read-the-rhythm",
+      "slotId": "ch1-read-the-rhythm-L2-confidence",
+      "gatePass": true,
+      "measuredTier": "hard",
+      "discoverySeconds": 1.833,
+      "dualPath": true,
+      "deltaSeconds": 0.30000000000000004
+    },
+    {
+      "levelId": "gen-kg-ch1-read-the-rhythm-ch1-read-the-rhythm-L3-surpriseBetrayal-L12G8W1",
+      "chapterId": "ch1-read-the-rhythm",
+      "slotId": "ch1-read-the-rhythm-L3-surpriseBetrayal",
+      "gatePass": true,
+      "measuredTier": "easy",
+      "discoverySeconds": 1.583,
+      "dualPath": true,
+      "deltaSeconds": 0.30000000000000004
+    },
+    {
+      "levelId": "gen-kg-ch1-read-the-rhythm-ch1-read-the-rhythm-L4-realization-L14G9W1",
+      "chapterId": "ch1-read-the-rhythm",
+      "slotId": "ch1-read-the-rhythm-L4-realization",
+      "gatePass": true,
+      "measuredTier": "hard",
+      "discoverySeconds": 1.833,
+      "dualPath": true,
+      "deltaSeconds": 0.30000000000000004
+    },
+    {
+      "levelId": "gen-kg-ch1-read-the-rhythm-ch1-read-the-rhythm-L5-mastery-L12G7W1",
+      "chapterId": "ch1-read-the-rhythm",
+      "slotId": "ch1-read-the-rhythm-L5-mastery",
+      "gatePass": true,
+      "measuredTier": "easy",
+      "discoverySeconds": 1.583,
+      "dualPath": true,
+      "deltaSeconds": 0.30000000000000004
+    },
+    {
+      "levelId": "gen-kg-ch1-read-the-rhythm-ch1-read-the-rhythm-L6-renewedUncertainty-L13G10W1",
+      "chapterId": "ch1-read-the-rhythm",
+      "slotId": "ch1-read-the-rhythm-L6-renewedUncertainty",
+      "gatePass": true,
+      "measuredTier": "easy",
+      "discoverySeconds": 1.7,
+      "dualPath": true,
+      "deltaSeconds": 0.30000000000000004
+    },
+    {
+      "levelId": "gen-kg-ch2-your-arrival-is-a-signal-ch2-your-arrival-is-a-signal-L1-curiosity-L12G6W1",
+      "chapterId": "ch2-your-arrival-is-a-signal",
+      "slotId": "ch2-your-arrival-is-a-signal-L1-curiosity",
+      "gatePass": true,
+      "measuredTier": "easy",
+      "discoverySeconds": 1.583,
+      "dualPath": true,
+      "deltaSeconds": 0.30000000000000004
+    },
+    {
+      "levelId": "gen-kg-ch2-your-arrival-is-a-signal-ch2-your-arrival-is-a-signal-L2-confidence-L12G6W1",
+      "chapterId": "ch2-your-arrival-is-a-signal",
+      "slotId": "ch2-your-arrival-is-a-signal-L2-confidence",
+      "gatePass": true,
+      "measuredTier": "easy",
+      "discoverySeconds": 1.583,
+      "dualPath": true,
+      "deltaSeconds": 0.30000000000000004
+    },
+    {
+      "levelId": "gen-kg-ch2-your-arrival-is-a-signal-ch2-your-arrival-is-a-signal-L3-surpriseBetrayal-L12G6W1",
+      "chapterId": "ch2-your-arrival-is-a-signal",
+      "slotId": "ch2-your-arrival-is-a-signal-L3-surpriseBetrayal",
+      "gatePass": true,
+      "measuredTier": "easy",
+      "discoverySeconds": 1.583,
+      "dualPath": true,
+      "deltaSeconds": 0.30000000000000004
+    },
+    {
+      "levelId": "gen-kg-ch2-your-arrival-is-a-signal-ch2-your-arrival-is-a-signal-L4-realization-L12G4W1",
+      "chapterId": "ch2-your-arrival-is-a-signal",
+      "slotId": "ch2-your-arrival-is-a-signal-L4-realization",
+      "gatePass": true,
+      "measuredTier": "easy",
+      "discoverySeconds": 1.583,
+      "dualPath": true,
+      "deltaSeconds": 0.30000000000000004
+    },
+    {
+      "levelId": "gen-kg-ch2-your-arrival-is-a-signal-ch2-your-arrival-is-a-signal-L5-mastery-L12G4W1",
+      "chapterId": "ch2-your-arrival-is-a-signal",
+      "slotId": "ch2-your-arrival-is-a-signal-L5-mastery",
+      "gatePass": true,
+      "measuredTier": "easy",
+      "discoverySeconds": 1.583,
+      "dualPath": true,
+      "deltaSeconds": 0.30000000000000004
+    },
+    {
+      "levelId": "gen-kg-ch2-your-arrival-is-a-signal-ch2-your-arrival-is-a-signal-L6-renewedUncertainty-L12G5W1",
+      "chapterId": "ch2-your-arrival-is-a-signal",
+      "slotId": "ch2-your-arrival-is-a-signal-L6-renewedUncertainty",
+      "gatePass": true,
+      "measuredTier": "easy",
+      "discoverySeconds": 1.583,
+      "dualPath": true,
+      "deltaSeconds": 0.30000000000000004
+    },
+    {
+      "levelId": "gen-kg-ch3-borrowed-motion-ch3-borrowed-motion-L1-curiosity-L12G6W1",
+      "chapterId": "ch3-borrowed-motion",
+      "slotId": "ch3-borrowed-motion-L1-curiosity",
+      "gatePass": true,
+      "measuredTier": "easy",
+      "discoverySeconds": 1.583,
+      "dualPath": true,
+      "deltaSeconds": 0.30000000000000004
+    },
+    {
+      "levelId": "gen-kg-ch3-borrowed-motion-ch3-borrowed-motion-L2-confidence-L12G6W1",
+      "chapterId": "ch3-borrowed-motion",
+      "slotId": "ch3-borrowed-motion-L2-confidence",
+      "gatePass": true,
+      "measuredTier": "easy",
+      "discoverySeconds": 1.583,
+      "dualPath": true,
+      "deltaSeconds": 0.30000000000000004
+    },
+    {
+      "levelId": "gen-kg-ch3-borrowed-motion-ch3-borrowed-motion-L3-surpriseBetrayal-L12G8W1",
+      "chapterId": "ch3-borrowed-motion",
+      "slotId": "ch3-borrowed-motion-L3-surpriseBetrayal",
+      "gatePass": true,
+      "measuredTier": "easy",
+      "discoverySeconds": 1.583,
+      "dualPath": true,
+      "deltaSeconds": 0.30000000000000004
+    },
+    {
+      "levelId": "gen-kg-ch3-borrowed-motion-ch3-borrowed-motion-L4-realization-L12G7W1",
+      "chapterId": "ch3-borrowed-motion",
+      "slotId": "ch3-borrowed-motion-L4-realization",
+      "gatePass": true,
+      "measuredTier": "easy",
+      "discoverySeconds": 1.583,
+      "dualPath": true,
+      "deltaSeconds": 0.30000000000000004
+    },
+    {
+      "levelId": "gen-kg-ch3-borrowed-motion-ch3-borrowed-motion-L5-mastery-L12G7W1",
+      "chapterId": "ch3-borrowed-motion",
+      "slotId": "ch3-borrowed-motion-L5-mastery",
+      "gatePass": true,
+      "measuredTier": "easy",
+      "discoverySeconds": 1.583,
+      "dualPath": true,
+      "deltaSeconds": 0.30000000000000004
+    },
+    {
+      "levelId": "gen-kg-ch3-borrowed-motion-ch3-borrowed-motion-L6-renewedUncertainty-L12G6W1",
+      "chapterId": "ch3-borrowed-motion",
+      "slotId": "ch3-borrowed-motion-L6-renewedUncertainty",
+      "gatePass": true,
+      "measuredTier": "easy",
+      "discoverySeconds": 1.583,
+      "dualPath": true,
+      "deltaSeconds": 0.30000000000000004
+    },
+    {
+      "levelId": "gen-kg-ch4-threat-meets-momentum-ch4-threat-meets-momentum-L1-curiosity-L12G6W1",
+      "chapterId": "ch4-threat-meets-momentum",
+      "slotId": "ch4-threat-meets-momentum-L1-curiosity",
+      "gatePass": true,
+      "measuredTier": "easy",
+      "discoverySeconds": 1.583,
+      "dualPath": true,
+      "deltaSeconds": 0.30000000000000004
+    },
+    {
+      "levelId": "gen-kg-ch4-threat-meets-momentum-ch4-threat-meets-momentum-L2-confidence-L12G5W2",
+      "chapterId": "ch4-threat-meets-momentum",
+      "slotId": "ch4-threat-meets-momentum-L2-confidence",
+      "gatePass": true,
+      "measuredTier": "hard",
+      "discoverySeconds": 1.583,
+      "dualPath": true,
+      "deltaSeconds": 0.30000000000000004
+    },
+    {
+      "levelId": "gen-kg-ch4-threat-meets-momentum-ch4-threat-meets-momentum-L3-surpriseBetrayal-L12G8W1",
+      "chapterId": "ch4-threat-meets-momentum",
+      "slotId": "ch4-threat-meets-momentum-L3-surpriseBetrayal",
+      "gatePass": true,
+      "measuredTier": "easy",
+      "discoverySeconds": 1.583,
+      "dualPath": true,
+      "deltaSeconds": 0.30000000000000004
+    },
+    {
+      "levelId": "gen-kg-ch4-threat-meets-momentum-ch4-threat-meets-momentum-L4-realization-L13G5W2",
+      "chapterId": "ch4-threat-meets-momentum",
+      "slotId": "ch4-threat-meets-momentum-L4-realization",
+      "gatePass": true,
+      "measuredTier": "hard",
+      "discoverySeconds": 1.7,
+      "dualPath": true,
+      "deltaSeconds": 0.30000000000000004
+    },
+    {
+      "levelId": "gen-kg-ch4-threat-meets-momentum-ch4-threat-meets-momentum-L5-mastery-L12G9W1",
+      "chapterId": "ch4-threat-meets-momentum",
+      "slotId": "ch4-threat-meets-momentum-L5-mastery",
+      "gatePass": true,
+      "measuredTier": "easy",
+      "discoverySeconds": 1.767,
+      "dualPath": true,
+      "deltaSeconds": 0.4833333333333334
+    },
+    {
+      "levelId": "gen-kg-ch4-threat-meets-momentum-ch4-threat-meets-momentum-L6-renewedUncertainty-L15G11W2",
+      "chapterId": "ch4-threat-meets-momentum",
+      "slotId": "ch4-threat-meets-momentum-L6-renewedUncertainty",
+      "gatePass": true,
+      "measuredTier": "easy",
+      "discoverySeconds": 1.95,
+      "dualPath": true,
+      "deltaSeconds": 0.2833333333333332
+    },
+    {
+      "levelId": "gen-kg-ch5-everything-at-once-ch5-everything-at-once-L1-curiosity-L12G4W1",
+      "chapterId": "ch5-everything-at-once",
+      "slotId": "ch5-everything-at-once-L1-curiosity",
+      "gatePass": true,
+      "measuredTier": "easy",
+      "discoverySeconds": 1.583,
+      "dualPath": true,
+      "deltaSeconds": 0.30000000000000004
+    },
+    {
+      "levelId": "gen-kg-ch5-everything-at-once-ch5-everything-at-once-L2-confidence-L14G5W2",
+      "chapterId": "ch5-everything-at-once",
+      "slotId": "ch5-everything-at-once-L2-confidence",
+      "gatePass": true,
+      "measuredTier": "hard",
+      "discoverySeconds": 1.833,
+      "dualPath": true,
+      "deltaSeconds": 0.30000000000000004
+    },
+    {
+      "levelId": "gen-kg-ch5-everything-at-once-ch5-everything-at-once-L3-surpriseBetrayal-L12G7W1",
+      "chapterId": "ch5-everything-at-once",
+      "slotId": "ch5-everything-at-once-L3-surpriseBetrayal",
+      "gatePass": true,
+      "measuredTier": "easy",
+      "discoverySeconds": 1.583,
+      "dualPath": true,
+      "deltaSeconds": 0.30000000000000004
+    },
+    {
+      "levelId": "gen-kg-ch5-everything-at-once-ch5-everything-at-once-L4-realization-L15G6W1",
+      "chapterId": "ch5-everything-at-once",
+      "slotId": "ch5-everything-at-once-L4-realization",
+      "gatePass": true,
+      "measuredTier": "hard",
+      "discoverySeconds": 1.95,
+      "dualPath": true,
+      "deltaSeconds": 0.30000000000000004
+    },
+    {
+      "levelId": "gen-kg-ch5-everything-at-once-ch5-everything-at-once-L5-mastery-L12G8W1",
+      "chapterId": "ch5-everything-at-once",
+      "slotId": "ch5-everything-at-once-L5-mastery",
+      "gatePass": true,
+      "measuredTier": "easy",
+      "discoverySeconds": 1.583,
+      "dualPath": true,
+      "deltaSeconds": 0.30000000000000004
+    },
+    {
+      "levelId": "gen-kg-ch5-everything-at-once-ch5-everything-at-once-L6-renewedUncertainty-L15G5W2",
+      "chapterId": "ch5-everything-at-once",
+      "slotId": "ch5-everything-at-once-L6-renewedUncertainty",
+      "gatePass": true,
+      "measuredTier": "hard",
+      "discoverySeconds": 1.95,
+      "dualPath": true,
+      "deltaSeconds": 0.30000000000000004
+    },
+    {
+      "levelId": "gen-kg-ch6-the-final-commitment-ch6-the-final-commitment-L1-curiosity-L15G5W2",
+      "chapterId": "ch6-the-final-commitment",
+      "slotId": "ch6-the-final-commitment-L1-curiosity",
+      "gatePass": true,
+      "measuredTier": "hard",
+      "discoverySeconds": 1.95,
+      "dualPath": true,
+      "deltaSeconds": 0.30000000000000004
+    },
+    {
+      "levelId": "gen-kg-ch6-the-final-commitment-ch6-the-final-commitment-L2-confidence-L12G9W1",
+      "chapterId": "ch6-the-final-commitment",
+      "slotId": "ch6-the-final-commitment-L2-confidence",
+      "gatePass": true,
+      "measuredTier": "hard",
+      "discoverySeconds": 1.767,
+      "dualPath": true,
+      "deltaSeconds": 0.4833333333333334
+    },
+    {
+      "levelId": "gen-kg-ch6-the-final-commitment-ch6-the-final-commitment-L3-surpriseBetrayal-L12G5W1",
+      "chapterId": "ch6-the-final-commitment",
+      "slotId": "ch6-the-final-commitment-L3-surpriseBetrayal",
+      "gatePass": true,
+      "measuredTier": "easy",
+      "discoverySeconds": 1.583,
+      "dualPath": true,
+      "deltaSeconds": 0.30000000000000004
+    },
+    {
+      "levelId": "gen-kg-ch6-the-final-commitment-ch6-the-final-commitment-L4-realization-L13G9W1",
+      "chapterId": "ch6-the-final-commitment",
+      "slotId": "ch6-the-final-commitment-L4-realization",
+      "gatePass": true,
+      "measuredTier": "hard",
+      "discoverySeconds": 1.767,
+      "dualPath": true,
+      "deltaSeconds": 0.3666666666666667
+    },
+    {
+      "levelId": "gen-kg-ch6-the-final-commitment-ch6-the-final-commitment-L5-mastery-L12G8W1",
+      "chapterId": "ch6-the-final-commitment",
+      "slotId": "ch6-the-final-commitment-L5-mastery",
+      "gatePass": true,
+      "measuredTier": "easy",
+      "discoverySeconds": 1.583,
+      "dualPath": true,
+      "deltaSeconds": 0.30000000000000004
+    },
+    {
+      "levelId": "gen-kg-ch6-the-final-commitment-ch6-the-final-commitment-L6-renewedUncertainty-L14G11W2",
+      "chapterId": "ch6-the-final-commitment",
+      "slotId": "ch6-the-final-commitment-L6-renewedUncertainty",
+      "gatePass": true,
+      "measuredTier": "easy",
+      "discoverySeconds": 1.833,
+      "dualPath": true,
+      "deltaSeconds": 0.30000000000000004
+    }
+  ]
+}

@@ -1,0 +1,148 @@
+{
+  "frameworkSchemaVersion": 1,
+  "chapterId": "ch2-your-arrival-is-a-signal",
+  "title": "Your Arrival Is a Signal",
+  "theme": "the level reacts to where you are",
+  "learningGoal": "anticipate how entering a zone or pressing a plate reshapes the route before spending the jump",
+  "mentalModel": "triggers turn your position into an input the level responds to",
+  "misconceptions": [
+    "an opened door stays open",
+    "stepping onto a plate only ever helps you"
+  ],
+  "subversion": "the plate that opens the exit is the same press that arms the threat behind the jump",
+  "optimizationFocus": "sequencing the trigger so the exit is open exactly for the frame the jump needs it",
+  "finalExam": "open the exit and clear the gap before your own trigger reverses the state",
+  "levelSlots": [
+    {
+      "slotId": "ch2-your-arrival-is-a-signal-L1-curiosity",
+      "archetype": "observation",
+      "intentSentence": "Spend the one jump on the decisive observation read because the bare corridor offers no help and a habitual early commitment falls into the pit.",
+      "oneJumpDecision": "where along the approach to spend the only jump given what the level reveals",
+      "mechanics": [],
+      "difficultyTarget": {
+        "executionPrecision": 0.15,
+        "readingComplexity": 0,
+        "timingStrictness": 0.04999999999999999,
+        "routeAmbiguity": 0
+      },
+      "emotionalPhase": "curiosity",
+      "targetDifficultyTier": "easy",
+      "seed": 2011,
+      "rewardedSkip": {
+        "available": false
+      }
+    },
+    {
+      "slotId": "ch2-your-arrival-is-a-signal-L2-confidence",
+      "archetype": "prediction",
+      "intentSentence": "Spend the one jump on the decisive prediction read because the proximityZone reshapes the approach and a habitual early commitment falls into the pit.",
+      "oneJumpDecision": "where along the approach to spend the only jump given what the level reveals",
+      "mechanics": [
+        "proximityZone"
+      ],
+      "difficultyTarget": {
+        "executionPrecision": 0.15,
+        "readingComplexity": 0,
+        "timingStrictness": 0.04999999999999999,
+        "routeAmbiguity": 0
+      },
+      "emotionalPhase": "confidence",
+      "targetDifficultyTier": "easy",
+      "seed": 2021,
+      "rewardedSkip": {
+        "available": false
+      }
+    },
+    {
+      "slotId": "ch2-your-arrival-is-a-signal-L3-surpriseBetrayal",
+      "archetype": "choice",
+      "intentSentence": "Spend the one jump on the decisive choice read because the pressurePlate and door together reshape the approach and a habitual early commitment falls into the pit.",
+      "oneJumpDecision": "where along the approach to spend the only jump given what the level reveals",
+      "mechanics": [
+        "pressurePlate",
+        "door"
+      ],
+      "difficultyTarget": {
+        "executionPrecision": 0.4,
+        "readingComplexity": 0.25,
+        "timingStrictness": 0.30000000000000004,
+        "routeAmbiguity": 0.2
+      },
+      "emotionalPhase": "surpriseBetrayal",
+      "targetDifficultyTier": "medium",
+      "seed": 2031,
+      "rewardedSkip": {
+        "available": false
+      }
+    },
+    {
+      "slotId": "ch2-your-arrival-is-a-signal-L4-realization",
+      "archetype": "planning",
+      "intentSentence": "Spend the one jump on the decisive planning read because the proximityZone reshapes the approach and a habitual early commitment falls into the pit.",
+      "oneJumpDecision": "where along the approach to spend the only jump given what the level reveals",
+      "mechanics": [
+        "proximityZone"
+      ],
+      "difficultyTarget": {
+        "executionPrecision": 0.4,
+        "readingComplexity": 0.25,
+        "timingStrictness": 0.30000000000000004,
+        "routeAmbiguity": 0.2
+      },
+      "emotionalPhase": "realization",
+      "targetDifficultyTier": "medium",
+      "seed": 2041,
+      "rewardedSkip": {
+        "available": true,
+        "altRouteHint": "the proximityZone route rewards a later, calmer commit"
+      }
+    },
+    {
+      "slotId": "ch2-your-arrival-is-a-signal-L5-mastery",
+      "archetype": "execution",
+      "intentSentence": "Spend the one jump on the decisive execution read because the pressurePlate and door together reshape the approach and a habitual early commitment falls into the pit.",
+      "oneJumpDecision": "where along the approach to spend the only jump given what the level reveals",
+      "mechanics": [
+        "pressurePlate",
+        "door"
+      ],
+      "difficultyTarget": {
+        "executionPrecision": 0.6,
+        "readingComplexity": 0.44999999999999996,
+        "timingStrictness": 0.5,
+        "routeAmbiguity": 0.39999999999999997
+      },
+      "emotionalPhase": "mastery",
+      "targetDifficultyTier": "hard",
+      "seed": 2051,
+      "rewardedSkip": {
+        "available": true,
+        "altRouteHint": "the pressurePlate route rewards a later, calmer commit"
+      }
+    },
+    {
+      "slotId": "ch2-your-arrival-is-a-signal-L6-renewedUncertainty",
+      "archetype": "reverseThinking",
+      "intentSentence": "Spend the one jump on the decisive reverseThinking read because the pressurePlate and door and proximityZone together reshape the approach and a habitual early commitment falls into the pit.",
+      "oneJumpDecision": "where along the approach to spend the only jump given what the level reveals",
+      "mechanics": [
+        "pressurePlate",
+        "door",
+        "proximityZone"
+      ],
+      "difficultyTarget": {
+        "executionPrecision": 0.6,
+        "readingComplexity": 0.44999999999999996,
+        "timingStrictness": 0.5,
+        "routeAmbiguity": 0.39999999999999997
+      },
+      "emotionalPhase": "renewedUncertainty",
+      "targetDifficultyTier": "hard",
+      "seed": 2061,
+      "rewardedSkip": {
+        "available": true,
+        "altRouteHint": "the pressurePlate route rewards a later, calmer commit"
+      }
+    }
+  ]
+}

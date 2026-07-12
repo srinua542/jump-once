@@ -1,0 +1,151 @@
+{
+  "frameworkSchemaVersion": 1,
+  "chapterId": "ch6-the-final-commitment",
+  "title": "The Final Commitment",
+  "theme": "one jump, everything you know, no second chance",
+  "learningGoal": "execute a fully-read plan under pressure without a practice attempt",
+  "mentalModel": "mastery is committing to the correct single jump the first time it is offered",
+  "misconceptions": [
+    "the hardest level must hide its solution",
+    "a creator-bait level is unfair by design"
+  ],
+  "subversion": "the level shows you the whole solution and dares you to distrust it",
+  "optimizationFocus": "the frame-perfect commit a confident expert lands on the first read",
+  "finalExam": "clear the campaign hardest single-jump gauntlet on a fully legible but unforgiving route",
+  "levelSlots": [
+    {
+      "slotId": "ch6-the-final-commitment-L1-curiosity",
+      "archetype": "planning",
+      "intentSentence": "Spend the one jump on the decisive planning read because the laser reshapes the approach and a habitual early commitment falls into the pit.",
+      "oneJumpDecision": "where along the approach to spend the only jump given what the level reveals",
+      "mechanics": [
+        "laser"
+      ],
+      "difficultyTarget": {
+        "executionPrecision": 0.4,
+        "readingComplexity": 0.25,
+        "timingStrictness": 0.30000000000000004,
+        "routeAmbiguity": 0.2
+      },
+      "emotionalPhase": "curiosity",
+      "targetDifficultyTier": "medium",
+      "seed": 6011,
+      "rewardedSkip": {
+        "available": false
+      }
+    },
+    {
+      "slotId": "ch6-the-final-commitment-L2-confidence",
+      "archetype": "timing",
+      "intentSentence": "Spend the one jump on the decisive timing read because the spring and laser together reshape the approach and a habitual early commitment falls into the pit.",
+      "oneJumpDecision": "where along the approach to spend the only jump given what the level reveals",
+      "mechanics": [
+        "spring",
+        "laser"
+      ],
+      "difficultyTarget": {
+        "executionPrecision": 0.4,
+        "readingComplexity": 0.25,
+        "timingStrictness": 0.30000000000000004,
+        "routeAmbiguity": 0.2
+      },
+      "emotionalPhase": "confidence",
+      "targetDifficultyTier": "medium",
+      "seed": 6021,
+      "rewardedSkip": {
+        "available": false
+      }
+    },
+    {
+      "slotId": "ch6-the-final-commitment-L3-surpriseBetrayal",
+      "archetype": "physics",
+      "intentSentence": "Spend the one jump on the decisive physics read because the movingHazard and gravityZone together reshape the approach and a habitual early commitment falls into the pit.",
+      "oneJumpDecision": "where along the approach to spend the only jump given what the level reveals",
+      "mechanics": [
+        "movingHazard",
+        "gravityZone"
+      ],
+      "difficultyTarget": {
+        "executionPrecision": 0.6,
+        "readingComplexity": 0.44999999999999996,
+        "timingStrictness": 0.5,
+        "routeAmbiguity": 0.39999999999999997
+      },
+      "emotionalPhase": "surpriseBetrayal",
+      "targetDifficultyTier": "hard",
+      "seed": 6031,
+      "rewardedSkip": {
+        "available": false
+      }
+    },
+    {
+      "slotId": "ch6-the-final-commitment-L4-realization",
+      "archetype": "execution",
+      "intentSentence": "Spend the one jump on the decisive execution read because the laser and spring together reshape the approach and a habitual early commitment falls into the pit.",
+      "oneJumpDecision": "where along the approach to spend the only jump given what the level reveals",
+      "mechanics": [
+        "laser",
+        "spring"
+      ],
+      "difficultyTarget": {
+        "executionPrecision": 0.8,
+        "readingComplexity": 0.65,
+        "timingStrictness": 0.7000000000000001,
+        "routeAmbiguity": 0.6000000000000001
+      },
+      "emotionalPhase": "realization",
+      "targetDifficultyTier": "harder",
+      "seed": 6041,
+      "rewardedSkip": {
+        "available": true,
+        "altRouteHint": "the laser route rewards a later, calmer commit"
+      }
+    },
+    {
+      "slotId": "ch6-the-final-commitment-L5-mastery",
+      "archetype": "choice",
+      "intentSentence": "Spend the one jump on the decisive choice read because the movingHazard and proximityZone together reshape the approach and a habitual early commitment falls into the pit.",
+      "oneJumpDecision": "where along the approach to spend the only jump given what the level reveals",
+      "mechanics": [
+        "movingHazard",
+        "proximityZone"
+      ],
+      "difficultyTarget": {
+        "executionPrecision": 0.8,
+        "readingComplexity": 0.65,
+        "timingStrictness": 0.7000000000000001,
+        "routeAmbiguity": 0.6000000000000001
+      },
+      "emotionalPhase": "mastery",
+      "targetDifficultyTier": "harder",
+      "seed": 6051,
+      "rewardedSkip": {
+        "available": true,
+        "altRouteHint": "the movingHazard route rewards a later, calmer commit"
+      }
+    },
+    {
+      "slotId": "ch6-the-final-commitment-L6-renewedUncertainty",
+      "archetype": "psychologicalPressure",
+      "intentSentence": "Spend the one jump on the decisive psychologicalPressure read because the laser and movingHazard together reshape the approach and a habitual early commitment falls into the pit.",
+      "oneJumpDecision": "where along the approach to spend the only jump given what the level reveals",
+      "mechanics": [
+        "laser",
+        "movingHazard"
+      ],
+      "difficultyTarget": {
+        "executionPrecision": 1,
+        "readingComplexity": 0.85,
+        "timingStrictness": 0.9,
+        "routeAmbiguity": 0.8
+      },
+      "emotionalPhase": "renewedUncertainty",
+      "targetDifficultyTier": "very-hard",
+      "seed": 6061,
+      "rewardedSkip": {
+        "available": true,
+        "altRouteHint": "the laser route rewards a later, calmer commit"
+      }
+    }
+  ]
+}

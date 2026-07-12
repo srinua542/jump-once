@@ -1,0 +1,149 @@
+{
+  "frameworkSchemaVersion": 1,
+  "chapterId": "ch4-threat-meets-momentum",
+  "title": "Threat Meets Momentum",
+  "theme": "a push and a threat resolve on the same jump",
+  "learningGoal": "combine a borrowed launch with a timed danger on one commitment",
+  "mentalModel": "the jump is the single moment where your momentum and the hazard rhythm must agree",
+  "misconceptions": [
+    "a spring lets you ignore the beam",
+    "two systems can always be solved one at a time"
+  ],
+  "subversion": "the launch that clears the beam is the launch that overshoots into the next hazard",
+  "optimizationFocus": "the single jump that satisfies the launch and the beat at once",
+  "finalExam": "clear a launched gap guarded by two desynchronised hazards on one jump",
+  "levelSlots": [
+    {
+      "slotId": "ch4-threat-meets-momentum-L1-curiosity",
+      "archetype": "physics",
+      "intentSentence": "Spend the one jump on the decisive physics read because the bare corridor offers no help and a habitual early commitment falls into the pit.",
+      "oneJumpDecision": "where along the approach to spend the only jump given what the level reveals",
+      "mechanics": [],
+      "difficultyTarget": {
+        "executionPrecision": 0.4,
+        "readingComplexity": 0.25,
+        "timingStrictness": 0.30000000000000004,
+        "routeAmbiguity": 0.2
+      },
+      "emotionalPhase": "curiosity",
+      "targetDifficultyTier": "medium",
+      "seed": 4011,
+      "rewardedSkip": {
+        "available": false
+      }
+    },
+    {
+      "slotId": "ch4-threat-meets-momentum-L2-confidence",
+      "archetype": "choice",
+      "intentSentence": "Spend the one jump on the decisive choice read because the laser and spring together reshape the approach and a habitual early commitment falls into the pit.",
+      "oneJumpDecision": "where along the approach to spend the only jump given what the level reveals",
+      "mechanics": [
+        "laser",
+        "spring"
+      ],
+      "difficultyTarget": {
+        "executionPrecision": 0.4,
+        "readingComplexity": 0.25,
+        "timingStrictness": 0.30000000000000004,
+        "routeAmbiguity": 0.2
+      },
+      "emotionalPhase": "confidence",
+      "targetDifficultyTier": "medium",
+      "seed": 4021,
+      "rewardedSkip": {
+        "available": false
+      }
+    },
+    {
+      "slotId": "ch4-threat-meets-momentum-L3-surpriseBetrayal",
+      "archetype": "planning",
+      "intentSentence": "Spend the one jump on the decisive planning read because the movingHazard and gravityZone together reshape the approach and a habitual early commitment falls into the pit.",
+      "oneJumpDecision": "where along the approach to spend the only jump given what the level reveals",
+      "mechanics": [
+        "movingHazard",
+        "gravityZone"
+      ],
+      "difficultyTarget": {
+        "executionPrecision": 0.6,
+        "readingComplexity": 0.44999999999999996,
+        "timingStrictness": 0.5,
+        "routeAmbiguity": 0.39999999999999997
+      },
+      "emotionalPhase": "surpriseBetrayal",
+      "targetDifficultyTier": "hard",
+      "seed": 4031,
+      "rewardedSkip": {
+        "available": false
+      }
+    },
+    {
+      "slotId": "ch4-threat-meets-momentum-L4-realization",
+      "archetype": "timing",
+      "intentSentence": "Spend the one jump on the decisive timing read because the laser and gravityZone together reshape the approach and a habitual early commitment falls into the pit.",
+      "oneJumpDecision": "where along the approach to spend the only jump given what the level reveals",
+      "mechanics": [
+        "laser",
+        "gravityZone"
+      ],
+      "difficultyTarget": {
+        "executionPrecision": 0.6,
+        "readingComplexity": 0.44999999999999996,
+        "timingStrictness": 0.5,
+        "routeAmbiguity": 0.39999999999999997
+      },
+      "emotionalPhase": "realization",
+      "targetDifficultyTier": "hard",
+      "seed": 4041,
+      "rewardedSkip": {
+        "available": true,
+        "altRouteHint": "the laser route rewards a later, calmer commit"
+      }
+    },
+    {
+      "slotId": "ch4-threat-meets-momentum-L5-mastery",
+      "archetype": "execution",
+      "intentSentence": "Spend the one jump on the decisive execution read because the movingHazard and spring together reshape the approach and a habitual early commitment falls into the pit.",
+      "oneJumpDecision": "where along the approach to spend the only jump given what the level reveals",
+      "mechanics": [
+        "movingHazard",
+        "spring"
+      ],
+      "difficultyTarget": {
+        "executionPrecision": 0.8,
+        "readingComplexity": 0.65,
+        "timingStrictness": 0.7000000000000001,
+        "routeAmbiguity": 0.6000000000000001
+      },
+      "emotionalPhase": "mastery",
+      "targetDifficultyTier": "harder",
+      "seed": 4051,
+      "rewardedSkip": {
+        "available": true,
+        "altRouteHint": "the movingHazard route rewards a later, calmer commit"
+      }
+    },
+    {
+      "slotId": "ch4-threat-meets-momentum-L6-renewedUncertainty",
+      "archetype": "psychologicalPressure",
+      "intentSentence": "Spend the one jump on the decisive psychologicalPressure read because the laser and movingHazard together reshape the approach and a habitual early commitment falls into the pit.",
+      "oneJumpDecision": "where along the approach to spend the only jump given what the level reveals",
+      "mechanics": [
+        "laser",
+        "movingHazard"
+      ],
+      "difficultyTarget": {
+        "executionPrecision": 1,
+        "readingComplexity": 0.85,
+        "timingStrictness": 0.9,
+        "routeAmbiguity": 0.8
+      },
+      "emotionalPhase": "renewedUncertainty",
+      "targetDifficultyTier": "very-hard",
+      "seed": 4061,
+      "rewardedSkip": {
+        "available": true,
+        "altRouteHint": "the laser route rewards a later, calmer commit"
+      }
+    }
+  ]
+}

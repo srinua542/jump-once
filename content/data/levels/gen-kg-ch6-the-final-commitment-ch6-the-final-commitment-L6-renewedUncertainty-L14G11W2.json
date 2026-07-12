@@ -1,0 +1,318 @@
+{
+  "schemaVersion": 1,
+  "levelId": "gen-kg-ch6-the-final-commitment-ch6-the-final-commitment-L6-renewedUncertainty-L14G11W2",
+  "title": "Generated psychologicalPressure candidate (gen-kg-ch6-the-final-commitment-ch6-the-final-commitment-L6-renewedUncertainty-L14G11W2)",
+  "gdos": {
+    "targetKgNode": "kg:ch6-the-final-commitment/ch6-the-final-commitment-L6-renewedUncertainty",
+    "difficultyVectors": {
+      "executionPrecision": 1,
+      "readingComplexity": 0.85,
+      "timingStrictness": 0.9,
+      "routeAmbiguity": 0.8
+    },
+    "emotionalBudgetCurve": [
+      {
+        "at": 0,
+        "curiosity": 60,
+        "confidence": 60,
+        "surprise": 20,
+        "mastery": 60
+      },
+      {
+        "at": 1,
+        "curiosity": 80,
+        "confidence": 40,
+        "surprise": 50,
+        "mastery": 60
+      }
+    ],
+    "creatorMomentFrame": {
+      "tickWindow": [
+        0,
+        1800
+      ],
+      "description": "where along the approach to spend the only jump given what the level reveals"
+    }
+  },
+  "tilemap": {
+    "width": 16,
+    "height": 9,
+    "tileSize": 1,
+    "tiles": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      0,
+      0,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      0,
+      0,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      0,
+      0,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ]
+  },
+  "entities": [
+    {
+      "id": "pit-spike-11",
+      "transform": {
+        "position": {
+          "x": 11.5,
+          "y": 7.5
+        },
+        "facing": 1
+      },
+      "collider": {
+        "halfExtents": {
+          "x": 0.5,
+          "y": 0.5
+        },
+        "offset": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      "behavior": {
+        "kind": "spike"
+      }
+    },
+    {
+      "id": "pit-spike-12",
+      "transform": {
+        "position": {
+          "x": 12.5,
+          "y": 7.5
+        },
+        "facing": 1
+      },
+      "collider": {
+        "halfExtents": {
+          "x": 0.5,
+          "y": 0.5
+        },
+        "offset": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      "behavior": {
+        "kind": "spike"
+      }
+    },
+    {
+      "id": "laser-0",
+      "transform": {
+        "position": {
+          "x": 12.5,
+          "y": 3.5
+        },
+        "facing": 1
+      },
+      "collider": {
+        "halfExtents": {
+          "x": 0.5,
+          "y": 0.5
+        },
+        "offset": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      "behavior": {
+        "kind": "laser",
+        "periodSeconds": 4,
+        "onFractionOfPeriod": 0.25,
+        "phaseSeconds": 0
+      }
+    },
+    {
+      "id": "movingHazard-1",
+      "transform": {
+        "position": {
+          "x": 12.5,
+          "y": 6.5
+        },
+        "facing": 1
+      },
+      "collider": {
+        "halfExtents": {
+          "x": 0.5,
+          "y": 0.5
+        },
+        "offset": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      "behavior": {
+        "kind": "movingHazard",
+        "waypoints": [
+          {
+            "x": 0,
+            "y": 0
+          },
+          {
+            "x": 0,
+            "y": 0.5
+          }
+        ],
+        "speed": 2,
+        "mode": "looping"
+      }
+    }
+  ],
+  "triggers": [],
+  "constraints": {
+    "spawn": {
+      "x": 1.5,
+      "y": 4.5
+    },
+    "goal": {
+      "position": {
+        "x": 14.5,
+        "y": 4.5
+      },
+      "halfExtents": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "parTimeTiersSeconds": [
+      30,
+      10
+    ]
+  }
+}

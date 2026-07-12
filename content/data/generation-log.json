@@ -1,0 +1,450 @@
+{
+  "calibrationProfileId": "content-calibration-v1",
+  "seedSpread": 24,
+  "chapters": {
+    "ch1-read-the-rhythm": [
+      {
+        "slotId": "ch1-read-the-rhythm-L1-curiosity",
+        "generated": true,
+        "levelId": "gen-kg-ch1-read-the-rhythm-ch1-read-the-rhythm-L1-curiosity-L12G5W1",
+        "winningSeed": 1013,
+        "revisions": 0,
+        "score": 316.8,
+        "targetTier": "easy",
+        "measuredTier": "easy",
+        "dualPath": true,
+        "deltaSeconds": 0.30000000000000004
+      },
+      {
+        "slotId": "ch1-read-the-rhythm-L2-confidence",
+        "generated": true,
+        "levelId": "gen-kg-ch1-read-the-rhythm-ch1-read-the-rhythm-L2-confidence-L14G6W1",
+        "winningSeed": 1024,
+        "revisions": 0,
+        "score": 389.83,
+        "targetTier": "easy",
+        "measuredTier": "hard",
+        "dualPath": true,
+        "deltaSeconds": 0.30000000000000004
+      },
+      {
+        "slotId": "ch1-read-the-rhythm-L3-surpriseBetrayal",
+        "generated": true,
+        "levelId": "gen-kg-ch1-read-the-rhythm-ch1-read-the-rhythm-L3-surpriseBetrayal-L12G8W1",
+        "winningSeed": 1038,
+        "revisions": 0,
+        "score": 399.06,
+        "targetTier": "easy",
+        "measuredTier": "easy",
+        "dualPath": true,
+        "deltaSeconds": 0.30000000000000004
+      },
+      {
+        "slotId": "ch1-read-the-rhythm-L4-realization",
+        "generated": true,
+        "levelId": "gen-kg-ch1-read-the-rhythm-ch1-read-the-rhythm-L4-realization-L14G9W1",
+        "winningSeed": 1043,
+        "revisions": 0,
+        "score": 389.83,
+        "targetTier": "medium",
+        "measuredTier": "hard",
+        "dualPath": true,
+        "deltaSeconds": 0.30000000000000004
+      },
+      {
+        "slotId": "ch1-read-the-rhythm-L5-mastery",
+        "generated": true,
+        "levelId": "gen-kg-ch1-read-the-rhythm-ch1-read-the-rhythm-L5-mastery-L12G7W1",
+        "winningSeed": 1063,
+        "revisions": 0,
+        "score": 400.4,
+        "targetTier": "medium",
+        "measuredTier": "easy",
+        "dualPath": true,
+        "deltaSeconds": 0.30000000000000004
+      },
+      {
+        "slotId": "ch1-read-the-rhythm-L6-renewedUncertainty",
+        "generated": true,
+        "levelId": "gen-kg-ch1-read-the-rhythm-ch1-read-the-rhythm-L6-renewedUncertainty-L13G10W1",
+        "winningSeed": 1079,
+        "revisions": 0,
+        "score": 414.72,
+        "targetTier": "medium",
+        "measuredTier": "easy",
+        "dualPath": true,
+        "deltaSeconds": 0.30000000000000004
+      }
+    ],
+    "ch2-your-arrival-is-a-signal": [
+      {
+        "slotId": "ch2-your-arrival-is-a-signal-L1-curiosity",
+        "generated": true,
+        "levelId": "gen-kg-ch2-your-arrival-is-a-signal-ch2-your-arrival-is-a-signal-L1-curiosity-L12G6W1",
+        "winningSeed": 2031,
+        "revisions": 0,
+        "score": 316.8,
+        "targetTier": "easy",
+        "measuredTier": "easy",
+        "dualPath": true,
+        "deltaSeconds": 0.30000000000000004
+      },
+      {
+        "slotId": "ch2-your-arrival-is-a-signal-L2-confidence",
+        "generated": true,
+        "levelId": "gen-kg-ch2-your-arrival-is-a-signal-ch2-your-arrival-is-a-signal-L2-confidence-L12G6W1",
+        "winningSeed": 2031,
+        "revisions": 0,
+        "score": 317.8,
+        "targetTier": "easy",
+        "measuredTier": "easy",
+        "dualPath": true,
+        "deltaSeconds": 0.30000000000000004
+      },
+      {
+        "slotId": "ch2-your-arrival-is-a-signal-L3-surpriseBetrayal",
+        "generated": true,
+        "levelId": "gen-kg-ch2-your-arrival-is-a-signal-ch2-your-arrival-is-a-signal-L3-surpriseBetrayal-L12G6W1",
+        "winningSeed": 2031,
+        "revisions": 0,
+        "score": 318.8,
+        "targetTier": "medium",
+        "measuredTier": "easy",
+        "dualPath": true,
+        "deltaSeconds": 0.30000000000000004
+      },
+      {
+        "slotId": "ch2-your-arrival-is-a-signal-L4-realization",
+        "generated": true,
+        "levelId": "gen-kg-ch2-your-arrival-is-a-signal-ch2-your-arrival-is-a-signal-L4-realization-L12G4W1",
+        "winningSeed": 2058,
+        "revisions": 0,
+        "score": 317.8,
+        "targetTier": "medium",
+        "measuredTier": "easy",
+        "dualPath": true,
+        "deltaSeconds": 0.30000000000000004
+      },
+      {
+        "slotId": "ch2-your-arrival-is-a-signal-L5-mastery",
+        "generated": true,
+        "levelId": "gen-kg-ch2-your-arrival-is-a-signal-ch2-your-arrival-is-a-signal-L5-mastery-L12G4W1",
+        "winningSeed": 2058,
+        "revisions": 0,
+        "score": 318.8,
+        "targetTier": "hard",
+        "measuredTier": "easy",
+        "dualPath": true,
+        "deltaSeconds": 0.30000000000000004
+      },
+      {
+        "slotId": "ch2-your-arrival-is-a-signal-L6-renewedUncertainty",
+        "generated": true,
+        "levelId": "gen-kg-ch2-your-arrival-is-a-signal-ch2-your-arrival-is-a-signal-L6-renewedUncertainty-L12G5W1",
+        "winningSeed": 2064,
+        "revisions": 0,
+        "score": 319.8,
+        "targetTier": "hard",
+        "measuredTier": "easy",
+        "dualPath": true,
+        "deltaSeconds": 0.30000000000000004
+      }
+    ],
+    "ch3-borrowed-motion": [
+      {
+        "slotId": "ch3-borrowed-motion-L1-curiosity",
+        "generated": true,
+        "levelId": "gen-kg-ch3-borrowed-motion-ch3-borrowed-motion-L1-curiosity-L12G6W1",
+        "winningSeed": 3022,
+        "revisions": 0,
+        "score": 316.8,
+        "targetTier": "easy",
+        "measuredTier": "easy",
+        "dualPath": true,
+        "deltaSeconds": 0.30000000000000004
+      },
+      {
+        "slotId": "ch3-borrowed-motion-L2-confidence",
+        "generated": true,
+        "levelId": "gen-kg-ch3-borrowed-motion-ch3-borrowed-motion-L2-confidence-L12G6W1",
+        "winningSeed": 3022,
+        "revisions": 0,
+        "score": 365.76,
+        "targetTier": "medium",
+        "measuredTier": "easy",
+        "dualPath": true,
+        "deltaSeconds": 0.30000000000000004
+      },
+      {
+        "slotId": "ch3-borrowed-motion-L3-surpriseBetrayal",
+        "generated": true,
+        "levelId": "gen-kg-ch3-borrowed-motion-ch3-borrowed-motion-L3-surpriseBetrayal-L12G8W1",
+        "winningSeed": 3044,
+        "revisions": 0,
+        "score": 364.88,
+        "targetTier": "medium",
+        "measuredTier": "easy",
+        "dualPath": true,
+        "deltaSeconds": 0.30000000000000004
+      },
+      {
+        "slotId": "ch3-borrowed-motion-L4-realization",
+        "generated": true,
+        "levelId": "gen-kg-ch3-borrowed-motion-ch3-borrowed-motion-L4-realization-L12G7W1",
+        "winningSeed": 3055,
+        "revisions": 0,
+        "score": 365.76,
+        "targetTier": "hard",
+        "measuredTier": "easy",
+        "dualPath": true,
+        "deltaSeconds": 0.30000000000000004
+      },
+      {
+        "slotId": "ch3-borrowed-motion-L5-mastery",
+        "generated": true,
+        "levelId": "gen-kg-ch3-borrowed-motion-ch3-borrowed-motion-L5-mastery-L12G7W1",
+        "winningSeed": 3055,
+        "revisions": 0,
+        "score": 365.76,
+        "targetTier": "hard",
+        "measuredTier": "easy",
+        "dualPath": true,
+        "deltaSeconds": 0.30000000000000004
+      },
+      {
+        "slotId": "ch3-borrowed-motion-L6-renewedUncertainty",
+        "generated": true,
+        "levelId": "gen-kg-ch3-borrowed-motion-ch3-borrowed-motion-L6-renewedUncertainty-L12G6W1",
+        "winningSeed": 3079,
+        "revisions": 0,
+        "score": 414.73,
+        "targetTier": "harder",
+        "measuredTier": "easy",
+        "dualPath": true,
+        "deltaSeconds": 0.30000000000000004
+      }
+    ],
+    "ch4-threat-meets-momentum": [
+      {
+        "slotId": "ch4-threat-meets-momentum-L1-curiosity",
+        "generated": true,
+        "levelId": "gen-kg-ch4-threat-meets-momentum-ch4-threat-meets-momentum-L1-curiosity-L12G6W1",
+        "winningSeed": 4021,
+        "revisions": 0,
+        "score": 316.8,
+        "targetTier": "medium",
+        "measuredTier": "easy",
+        "dualPath": true,
+        "deltaSeconds": 0.30000000000000004
+      },
+      {
+        "slotId": "ch4-threat-meets-momentum-L2-confidence",
+        "generated": true,
+        "levelId": "gen-kg-ch4-threat-meets-momentum-ch4-threat-meets-momentum-L2-confidence-L12G5W2",
+        "winningSeed": 4028,
+        "revisions": 2,
+        "score": 405.17,
+        "targetTier": "medium",
+        "measuredTier": "hard",
+        "dualPath": true,
+        "deltaSeconds": 0.30000000000000004
+      },
+      {
+        "slotId": "ch4-threat-meets-momentum-L3-surpriseBetrayal",
+        "generated": true,
+        "levelId": "gen-kg-ch4-threat-meets-momentum-ch4-threat-meets-momentum-L3-surpriseBetrayal-L12G8W1",
+        "winningSeed": 4036,
+        "revisions": 0,
+        "score": 444.17,
+        "targetTier": "hard",
+        "measuredTier": "easy",
+        "dualPath": true,
+        "deltaSeconds": 0.30000000000000004
+      },
+      {
+        "slotId": "ch4-threat-meets-momentum-L4-realization",
+        "generated": true,
+        "levelId": "gen-kg-ch4-threat-meets-momentum-ch4-threat-meets-momentum-L4-realization-L13G5W2",
+        "winningSeed": 4043,
+        "revisions": 2,
+        "score": 405.17,
+        "targetTier": "hard",
+        "measuredTier": "hard",
+        "dualPath": true,
+        "deltaSeconds": 0.30000000000000004
+      },
+      {
+        "slotId": "ch4-threat-meets-momentum-L5-mastery",
+        "generated": true,
+        "levelId": "gen-kg-ch4-threat-meets-momentum-ch4-threat-meets-momentum-L5-mastery-L12G9W1",
+        "winningSeed": 4063,
+        "revisions": 0,
+        "score": 449.16,
+        "targetTier": "harder",
+        "measuredTier": "easy",
+        "dualPath": true,
+        "deltaSeconds": 0.4833333333333334
+      },
+      {
+        "slotId": "ch4-threat-meets-momentum-L6-renewedUncertainty",
+        "generated": true,
+        "levelId": "gen-kg-ch4-threat-meets-momentum-ch4-threat-meets-momentum-L6-renewedUncertainty-L15G11W2",
+        "winningSeed": 4065,
+        "revisions": 0,
+        "score": 431.08,
+        "targetTier": "very-hard",
+        "measuredTier": "easy",
+        "dualPath": true,
+        "deltaSeconds": 0.2833333333333332
+      }
+    ],
+    "ch5-everything-at-once": [
+      {
+        "slotId": "ch5-everything-at-once-L1-curiosity",
+        "generated": true,
+        "levelId": "gen-kg-ch5-everything-at-once-ch5-everything-at-once-L1-curiosity-L12G4W1",
+        "winningSeed": 5023,
+        "revisions": 0,
+        "score": 316.8,
+        "targetTier": "easy",
+        "measuredTier": "easy",
+        "dualPath": true,
+        "deltaSeconds": 0.30000000000000004
+      },
+      {
+        "slotId": "ch5-everything-at-once-L2-confidence",
+        "generated": true,
+        "levelId": "gen-kg-ch5-everything-at-once-ch5-everything-at-once-L2-confidence-L14G5W2",
+        "winningSeed": 5037,
+        "revisions": 1,
+        "score": 405.17,
+        "targetTier": "medium",
+        "measuredTier": "hard",
+        "dualPath": true,
+        "deltaSeconds": 0.30000000000000004
+      },
+      {
+        "slotId": "ch5-everything-at-once-L3-surpriseBetrayal",
+        "generated": true,
+        "levelId": "gen-kg-ch5-everything-at-once-ch5-everything-at-once-L3-surpriseBetrayal-L12G7W1",
+        "winningSeed": 5053,
+        "revisions": 0,
+        "score": 444.17,
+        "targetTier": "medium",
+        "measuredTier": "easy",
+        "dualPath": true,
+        "deltaSeconds": 0.30000000000000004
+      },
+      {
+        "slotId": "ch5-everything-at-once-L4-realization",
+        "generated": true,
+        "levelId": "gen-kg-ch5-everything-at-once-ch5-everything-at-once-L4-realization-L15G6W1",
+        "winningSeed": 5042,
+        "revisions": 2,
+        "score": 404.17,
+        "targetTier": "hard",
+        "measuredTier": "hard",
+        "dualPath": true,
+        "deltaSeconds": 0.30000000000000004
+      },
+      {
+        "slotId": "ch5-everything-at-once-L5-mastery",
+        "generated": true,
+        "levelId": "gen-kg-ch5-everything-at-once-ch5-everything-at-once-L5-mastery-L12G8W1",
+        "winningSeed": 5060,
+        "revisions": 0,
+        "score": 444.17,
+        "targetTier": "hard",
+        "measuredTier": "easy",
+        "dualPath": true,
+        "deltaSeconds": 0.30000000000000004
+      },
+      {
+        "slotId": "ch5-everything-at-once-L6-renewedUncertainty",
+        "generated": true,
+        "levelId": "gen-kg-ch5-everything-at-once-ch5-everything-at-once-L6-renewedUncertainty-L15G5W2",
+        "winningSeed": 5082,
+        "revisions": 2,
+        "score": 405.17,
+        "targetTier": "harder",
+        "measuredTier": "hard",
+        "dualPath": true,
+        "deltaSeconds": 0.30000000000000004
+      }
+    ],
+    "ch6-the-final-commitment": [
+      {
+        "slotId": "ch6-the-final-commitment-L1-curiosity",
+        "generated": true,
+        "levelId": "gen-kg-ch6-the-final-commitment-ch6-the-final-commitment-L1-curiosity-L15G5W2",
+        "winningSeed": 6019,
+        "revisions": 1,
+        "score": 390.83,
+        "targetTier": "medium",
+        "measuredTier": "hard",
+        "dualPath": true,
+        "deltaSeconds": 0.30000000000000004
+      },
+      {
+        "slotId": "ch6-the-final-commitment-L2-confidence",
+        "generated": true,
+        "levelId": "gen-kg-ch6-the-final-commitment-ch6-the-final-commitment-L2-confidence-L12G9W1",
+        "winningSeed": 6027,
+        "revisions": 0,
+        "score": 412.42,
+        "targetTier": "medium",
+        "measuredTier": "hard",
+        "dualPath": true,
+        "deltaSeconds": 0.4833333333333334
+      },
+      {
+        "slotId": "ch6-the-final-commitment-L3-surpriseBetrayal",
+        "generated": true,
+        "levelId": "gen-kg-ch6-the-final-commitment-ch6-the-final-commitment-L3-surpriseBetrayal-L12G5W1",
+        "winningSeed": 6036,
+        "revisions": 0,
+        "score": 444.17,
+        "targetTier": "hard",
+        "measuredTier": "easy",
+        "dualPath": true,
+        "deltaSeconds": 0.30000000000000004
+      },
+      {
+        "slotId": "ch6-the-final-commitment-L4-realization",
+        "generated": true,
+        "levelId": "gen-kg-ch6-the-final-commitment-ch6-the-final-commitment-L4-realization-L13G9W1",
+        "winningSeed": 6041,
+        "revisions": 0,
+        "score": 407.17,
+        "targetTier": "harder",
+        "measuredTier": "hard",
+        "dualPath": true,
+        "deltaSeconds": 0.3666666666666667
+      },
+      {
+        "slotId": "ch6-the-final-commitment-L5-mastery",
+        "generated": true,
+        "levelId": "gen-kg-ch6-the-final-commitment-ch6-the-final-commitment-L5-mastery-L12G8W1",
+        "winningSeed": 6051,
+        "revisions": 0,
+        "score": 400.06,
+        "targetTier": "harder",
+        "measuredTier": "easy",
+        "dualPath": true,
+        "deltaSeconds": 0.30000000000000004
+      },
+      {
+        "slotId": "ch6-the-final-commitment-L6-renewedUncertainty",
+        "generated": true,
+        "levelId": "gen-kg-ch6-the-final-commitment-ch6-the-final-commitment-L6-renewedUncertainty-L14G11W2",
+        "winningSeed": 6076,
+        "revisions": 0,
+        "score": 431.83,
+        "targetTier": "very-hard",
+        "measuredTier": "easy",
+        "dualPath": true,
+        "deltaSeconds": 0.30000000000000004
+      }
+    ]
+  }
+}

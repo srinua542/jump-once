@@ -1,0 +1,216 @@
+{
+  "schemaVersion": 1,
+  "levelId": "gen-kg-ch4-threat-meets-momentum-ch4-threat-meets-momentum-L1-curiosity-L12G6W1",
+  "title": "Generated physics candidate (gen-kg-ch4-threat-meets-momentum-ch4-threat-meets-momentum-L1-curiosity-L12G6W1)",
+  "gdos": {
+    "targetKgNode": "kg:ch4-threat-meets-momentum/ch4-threat-meets-momentum-L1-curiosity",
+    "difficultyVectors": {
+      "executionPrecision": 0.4,
+      "readingComplexity": 0.25,
+      "timingStrictness": 0.30000000000000004,
+      "routeAmbiguity": 0.2
+    },
+    "emotionalBudgetCurve": [
+      {
+        "at": 0,
+        "curiosity": 70,
+        "confidence": 40,
+        "surprise": 10,
+        "mastery": 0
+      },
+      {
+        "at": 1,
+        "curiosity": 80,
+        "confidence": 50,
+        "surprise": 20,
+        "mastery": 10
+      }
+    ],
+    "creatorMomentFrame": {
+      "tickWindow": [
+        0,
+        1800
+      ],
+      "description": "where along the approach to spend the only jump given what the level reveals"
+    }
+  },
+  "tilemap": {
+    "width": 14,
+    "height": 9,
+    "tileSize": 1,
+    "tiles": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      0,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      0,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      0,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ]
+  },
+  "entities": [
+    {
+      "id": "pit-spike-6",
+      "transform": {
+        "position": {
+          "x": 6.5,
+          "y": 7.5
+        },
+        "facing": 1
+      },
+      "collider": {
+        "halfExtents": {
+          "x": 0.5,
+          "y": 0.5
+        },
+        "offset": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      "behavior": {
+        "kind": "spike"
+      }
+    }
+  ],
+  "triggers": [],
+  "constraints": {
+    "spawn": {
+      "x": 1.5,
+      "y": 4.5
+    },
+    "goal": {
+      "position": {
+        "x": 12.5,
+        "y": 4.5
+      },
+      "halfExtents": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "parTimeTiersSeconds": [
+      30,
+      10
+    ]
+  }
+}

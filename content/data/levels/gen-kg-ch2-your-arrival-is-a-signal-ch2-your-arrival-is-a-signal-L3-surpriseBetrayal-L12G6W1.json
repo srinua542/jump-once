@@ -1,0 +1,280 @@
+{
+  "schemaVersion": 1,
+  "levelId": "gen-kg-ch2-your-arrival-is-a-signal-ch2-your-arrival-is-a-signal-L3-surpriseBetrayal-L12G6W1",
+  "title": "Generated choice candidate (gen-kg-ch2-your-arrival-is-a-signal-ch2-your-arrival-is-a-signal-L3-surpriseBetrayal-L12G6W1)",
+  "gdos": {
+    "targetKgNode": "kg:ch2-your-arrival-is-a-signal/ch2-your-arrival-is-a-signal-L3-surpriseBetrayal",
+    "difficultyVectors": {
+      "executionPrecision": 0.4,
+      "readingComplexity": 0.25,
+      "timingStrictness": 0.30000000000000004,
+      "routeAmbiguity": 0.2
+    },
+    "emotionalBudgetCurve": [
+      {
+        "at": 0,
+        "curiosity": 50,
+        "confidence": 60,
+        "surprise": 20,
+        "mastery": 20
+      },
+      {
+        "at": 0.6,
+        "curiosity": 60,
+        "confidence": 30,
+        "surprise": 80,
+        "mastery": 20
+      },
+      {
+        "at": 1,
+        "curiosity": 70,
+        "confidence": 40,
+        "surprise": 60,
+        "mastery": 30
+      }
+    ],
+    "creatorMomentFrame": {
+      "tickWindow": [
+        0,
+        1800
+      ],
+      "description": "where along the approach to spend the only jump given what the level reveals"
+    }
+  },
+  "tilemap": {
+    "width": 14,
+    "height": 9,
+    "tileSize": 1,
+    "tiles": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      0,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      0,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      0,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ]
+  },
+  "entities": [
+    {
+      "id": "pit-spike-6",
+      "transform": {
+        "position": {
+          "x": 6.5,
+          "y": 7.5
+        },
+        "facing": 1
+      },
+      "collider": {
+        "halfExtents": {
+          "x": 0.5,
+          "y": 0.5
+        },
+        "offset": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      "behavior": {
+        "kind": "spike"
+      }
+    },
+    {
+      "id": "pressurePlate-0",
+      "transform": {
+        "position": {
+          "x": 2.5,
+          "y": 4.5
+        },
+        "facing": 1
+      },
+      "collider": {
+        "halfExtents": {
+          "x": 0.5,
+          "y": 0.5
+        },
+        "offset": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      "behavior": {
+        "kind": "pressurePlate"
+      }
+    },
+    {
+      "id": "door-1",
+      "transform": {
+        "position": {
+          "x": 7.5,
+          "y": 4.5
+        },
+        "facing": 1
+      },
+      "collider": {
+        "halfExtents": {
+          "x": 0.5,
+          "y": 0.5
+        },
+        "offset": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      "behavior": {
+        "kind": "door",
+        "initiallyOpen": true
+      }
+    }
+  ],
+  "triggers": [
+    {
+      "id": "wire-0",
+      "source": "pressurePlate-0",
+      "targets": [
+        "door-1"
+      ],
+      "action": "toggleDoor",
+      "once": true
+    }
+  ],
+  "constraints": {
+    "spawn": {
+      "x": 1.5,
+      "y": 4.5
+    },
+    "goal": {
+      "position": {
+        "x": 12.5,
+        "y": 4.5
+      },
+      "halfExtents": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "parTimeTiersSeconds": [
+      30,
+      10
+    ]
+  }
+}

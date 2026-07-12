@@ -1,0 +1,81 @@
+{
+  "slice": "S10.4",
+  "title": "Batch production of remaining chapters + validate:campaign",
+  "reqs": [
+    "REQ-005",
+    "REQ-013",
+    "REQ-012"
+  ],
+  "started_at": "2026-07-12T02:07:35.833Z",
+  "updated_at": "2026-07-12T02:07:36.594Z",
+  "current_stage": "handoff",
+  "stages": {
+    "reboot": {
+      "status": "done",
+      "at": "2026-07-12T02:07:35.834Z",
+      "note": "reboot"
+    },
+    "select": {
+      "status": "done",
+      "at": "2026-07-12T02:07:35.894Z",
+      "note": "select"
+    },
+    "plan": {
+      "status": "done",
+      "at": "2026-07-12T02:07:35.961Z",
+      "note": "plan: generate all 6, build validateCampaign"
+    },
+    "anchor": {
+      "status": "done",
+      "at": "2026-07-12T02:07:36.024Z",
+      "note": "anchor: capped combos at 2 mechanics (cognitive-load rule)"
+    },
+    "implement": {
+      "status": "done",
+      "at": "2026-07-12T02:07:36.087Z",
+      "note": "implement: 36 levels generated, validateCampaign.js, package scripts, ContentValidation test"
+    },
+    "verify": {
+      "status": "done",
+      "at": "2026-07-12T02:07:36.153Z",
+      "note": "verify: 765 green, validate 6/6 macro"
+    },
+    "integrate": {
+      "status": "done",
+      "at": "2026-07-12T02:07:36.402Z",
+      "note": "integrate"
+    },
+    "report": {
+      "status": "done",
+      "at": "2026-07-12T02:07:36.467Z",
+      "note": "report"
+    },
+    "handoff": {
+      "status": "done",
+      "at": "2026-07-12T02:07:36.532Z",
+      "note": "handoff"
+    }
+  },
+  "acceptance": [
+    {
+      "req": "REQ-005",
+      "criterion": "36 real levels via pipeline",
+      "met": true,
+      "note": null
+    },
+    {
+      "req": "REQ-013",
+      "criterion": "levels understandable single-jump corridors",
+      "met": true,
+      "note": null
+    },
+    {
+      "req": "REQ-012",
+      "criterion": "all jump-necessary (pipeline gate)",
+      "met": true,
+      "note": null
+    }
+  ],
+  "outcome": "completed",
+  "closed_at": "2026-07-12T02:07:36.656Z"
+}

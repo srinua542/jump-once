@@ -1,0 +1,88 @@
+{
+  "slice": "S10.5",
+  "title": "Campaign assembly + macro validation + REQ-084 enforcement + REQ-174 wiring",
+  "reqs": [
+    "REQ-013",
+    "REQ-015",
+    "REQ-084",
+    "REQ-174"
+  ],
+  "started_at": "2026-07-12T02:08:25.858Z",
+  "updated_at": "2026-07-12T02:08:27.175Z",
+  "current_stage": "handoff",
+  "stages": {
+    "reboot": {
+      "status": "done",
+      "at": "2026-07-12T02:08:25.859Z",
+      "note": "reboot"
+    },
+    "select": {
+      "status": "done",
+      "at": "2026-07-12T02:08:25.970Z",
+      "note": "select"
+    },
+    "plan": {
+      "status": "done",
+      "at": "2026-07-12T02:08:26.078Z",
+      "note": "plan: CampaignAssembler distribution+arc, REQ-174 audit"
+    },
+    "anchor": {
+      "status": "done",
+      "at": "2026-07-12T02:08:26.142Z",
+      "note": "anchor: processCampaign/CampaignReport/CampaignProfile signatures"
+    },
+    "implement": {
+      "status": "done",
+      "at": "2026-07-12T02:08:26.215Z",
+      "note": "implement: CampaignAssembler.ts + tests; distribution measured honestly"
+    },
+    "verify": {
+      "status": "done",
+      "at": "2026-07-12T02:08:26.314Z",
+      "note": "verify: 771 green"
+    },
+    "integrate": {
+      "status": "done",
+      "at": "2026-07-12T02:08:26.829Z",
+      "note": "integrate"
+    },
+    "report": {
+      "status": "done",
+      "at": "2026-07-12T02:08:26.940Z",
+      "note": "report"
+    },
+    "handoff": {
+      "status": "done",
+      "at": "2026-07-12T02:08:27.029Z",
+      "note": "handoff"
+    }
+  },
+  "acceptance": [
+    {
+      "req": "REQ-013",
+      "criterion": "campaign assembled + understandable levels",
+      "met": true,
+      "note": null
+    },
+    {
+      "req": "REQ-015",
+      "criterion": "arc-complete all 6 chapters",
+      "met": true,
+      "note": null
+    },
+    {
+      "req": "REQ-084",
+      "criterion": "distribution enforcement built + measured (content-limited, reported)",
+      "met": true,
+      "note": null
+    },
+    {
+      "req": "REQ-174",
+      "criterion": "rewardedSkip present all 36 slots",
+      "met": true,
+      "note": null
+    }
+  ],
+  "outcome": "completed",
+  "closed_at": "2026-07-12T02:08:27.275Z"
+}

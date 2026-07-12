@@ -1,0 +1,240 @@
+{
+  "schemaVersion": 1,
+  "levelId": "gen-kg-ch3-borrowed-motion-ch3-borrowed-motion-L5-mastery-L12G7W1",
+  "title": "Generated execution candidate (gen-kg-ch3-borrowed-motion-ch3-borrowed-motion-L5-mastery-L12G7W1)",
+  "gdos": {
+    "targetKgNode": "kg:ch3-borrowed-motion/ch3-borrowed-motion-L5-mastery",
+    "difficultyVectors": {
+      "executionPrecision": 0.6,
+      "readingComplexity": 0.44999999999999996,
+      "timingStrictness": 0.5,
+      "routeAmbiguity": 0.39999999999999997
+    },
+    "emotionalBudgetCurve": [
+      {
+        "at": 0,
+        "curiosity": 30,
+        "confidence": 70,
+        "surprise": 10,
+        "mastery": 60
+      },
+      {
+        "at": 1,
+        "curiosity": 30,
+        "confidence": 80,
+        "surprise": 10,
+        "mastery": 90
+      }
+    ],
+    "creatorMomentFrame": {
+      "tickWindow": [
+        0,
+        1800
+      ],
+      "description": "where along the approach to spend the only jump given what the level reveals"
+    }
+  },
+  "tilemap": {
+    "width": 14,
+    "height": 9,
+    "tileSize": 1,
+    "tiles": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      0,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      0,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      0,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ]
+  },
+  "entities": [
+    {
+      "id": "pit-spike-7",
+      "transform": {
+        "position": {
+          "x": 7.5,
+          "y": 7.5
+        },
+        "facing": 1
+      },
+      "collider": {
+        "halfExtents": {
+          "x": 0.5,
+          "y": 0.5
+        },
+        "offset": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      "behavior": {
+        "kind": "spike"
+      }
+    },
+    {
+      "id": "gravityZone-0",
+      "transform": {
+        "position": {
+          "x": 2.5,
+          "y": 4.5
+        },
+        "facing": 1
+      },
+      "collider": {
+        "halfExtents": {
+          "x": 0.5,
+          "y": 0.5
+        },
+        "offset": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      "behavior": {
+        "kind": "gravityZone",
+        "gravityScale": 0.5
+      }
+    }
+  ],
+  "triggers": [],
+  "constraints": {
+    "spawn": {
+      "x": 1.5,
+      "y": 4.5
+    },
+    "goal": {
+      "position": {
+        "x": 12.5,
+        "y": 4.5
+      },
+      "halfExtents": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "parTimeTiersSeconds": [
+      30,
+      10
+    ]
+  }
+}
