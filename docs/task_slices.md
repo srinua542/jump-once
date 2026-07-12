@@ -169,12 +169,17 @@ Session-sized, dependency-ordered work units. Each slice is small enough to comp
 
 ## Phase 11 — Optimization, Build Pipeline & Ship
 
+> **Restructured from a 4-row stub to 7 slices** by a first-principles adversarial review (execution-plan section authored this session; decisions dm-0118–dm-0124). The stub's `S11.1` framed REQ-160 as literal "zero-allocation," which is impossible against the immutable core (dm-0004/dm-0119) and would violate the single-source-of-truth invariant; it had no slice for the deferred `render/platform/` browser bindings (dm-0103/dm-0121), the real Poki SDK runtime wiring (REQ-174), the generator-enrichment fork that lets REQ-005/084/015 reach VERIFIED (dm-0118, user-decided), or a standalone REQ-P07 audit (never run project-wide). The build pipeline is a zero-dependency hand-rolled bundler (dm-0120, user-decided) — the broken private mirror + zero-new-deps policy forbid esbuild/vite.
+
 | Slice | Title | REQs | Depends | State |
 |-------|-------|------|---------|-------|
-| S11.1 | Zero-allocation runtime audit | REQ-160 | S9.7 | NOT_STARTED |
-| S11.2 | Automated build pipeline (compile+assets+validate+package) | REQ-172 | S10.6 | NOT_STARTED |
-| S11.3 | Final PRD compliance audit | REQ-173, REQ-P07 | S11.2 | NOT_STARTED |
-| S11.4 | Release sign-off | REQ-173 | S11.3 | NOT_STARTED |
+| S11.1 | Allocation-bounded runtime + render-hot-path audit (dm-0119) | REQ-160, REQ-161, REQ-162, REQ-132 | S10.6 | NOT_STARTED |
+| S11.2 | `render/platform/` browser bindings + real Poki SDK + `rewardedBreak` wiring + rAF conformance (dm-0121) | REQ-170, REQ-171, REQ-174, REQ-163 | S11.1 | NOT_STARTED |
+| S11.3 | Zero-dependency build pipeline + `index.html` + packaging (dm-0120) | REQ-172, REQ-001, REQ-002 | S11.2 | NOT_STARTED |
+| S11.4 | Generator subversion-template enrichment + campaign regeneration (dm-0118) | REQ-005, REQ-084, REQ-015 | S11.3 | NOT_STARTED |
+| S11.5 | Full 67-REQ PRD compliance audit (dm-0122) | REQ-P07, REQ-173 | S11.4 | NOT_STARTED |
+| S11.6 | Final Subtractive Removal pass + REQ-173 completion bar | REQ-022, REQ-173 | S11.5 | NOT_STARTED |
+| S11.7 | Phase-11 verification report + M6 closure + release sign-off | REQ-173, REQ-P02 | S11.6 | NOT_STARTED |
 
 ---
 
@@ -186,7 +191,7 @@ Session-sized, dependency-ordered work units. Each slice is small enough to comp
 
 **Milestone M5 — Content Complete is CLOSED** (`docs/verification/P10.md`; P10 ✓, 771/771 tests green, pkg `s10-c4d8e9`). All six P10 slices COMPLETED. The `content/` subtree is real (6 SystemNodes, one-way isolated); a real 36-level campaign is generated through the P1–P9 stack and persisted under `content/data/` (all gate-pass, all dual-path, 6/6 chapters macro-valid, arc-complete, retention 0.90). REQ-083/090/091/100/101/102/012/050/013 flipped VERIFIED; REQ-005/084/174 → IN_PROGRESS; REQ-015/016/002 stay IN_PROGRESS. The honest generator-capability disclosure (dm-0115/0116): the P7 single gap-corridor template cannot express genuine surprise or a five-tier difficulty spread — that needs generator template enrichment (a scoped P7+ follow-on).
 
-**Next: P11 — Optimization, Build Pipeline & Ship.** Author its execution-plan section FIRST (REQ-P02), then start **S11.1** (Zero-allocation runtime audit, REQ-160, depends on S9.7). P11 owns REQ-160/172/173, the release shares of REQ-161/162/163/132/170/171/016/174/002, and the final REQ-022/REQ-P07 compliance audit — including whether to take on the generator template enrichment that would let REQ-005/084/015 reach VERIFIED.
+**P11 — Optimization, Build Pipeline & Ship: execution-plan section AUTHORED** (`docs/execution_plan.md`, dm-0118–dm-0124), restructured to seven slices via a first-principles adversarial review. **Zero P11 code written yet.** Two phase-shaping decisions were taken at planning time: (dm-0118) P11 **enriches the generator** with subversion templates so REQ-005/084/015 reach genuine VERIFIED at restored thresholds, rather than relaxing the IRD exit gate; (dm-0120) the build pipeline is a **zero-dependency hand-rolled bundler** (broken private mirror + zero-new-deps policy forbid esbuild/vite). **Next action: start S11.1** (allocation-bounded runtime + render-hot-path audit, dm-0119 — REQ-160 is *not* literal zero-allocation; the immutable core stays, per dm-0004). Key warnings for the implementer: (a) `render/platform/` (dm-0103) does not exist yet — S11.2 builds it as the sole browser-global-naming subtree; (b) `manufactureLevel`'s seam signature must stay byte-stable through S11.4's `src/gen/` enrichment, and all P7 tests must re-run green (a VERIFIED subtree extended additively, never reopened); (c) every new template's output must pass the unchanged `Solvability`/`Softlock`/`evaluateLevel` gates — the dm-0115 softlock failure mode is the thing to avoid, and those gates are the proof; (d) the real-browser smoke is a documented manual checkpoint, not a Playwright dependency (dm-0121).
 2. The P8 tooling is the substrate P9's UI renders: `tools/debug/Overlay.ts` descriptors, `tools/level_editor/` draft/playtest state, `tools/profiler/` — all plain data awaiting a presentation layer. Consume them; don't re-derive them.
 3. P10 (Content Generation) is now unblocked by M3's closure but sits after P9 in the DAG. When P10 opens, it authors real chapters/levels THROUGH the P7 `manufactureLevel` pipeline + P8 editor, closing out REQ-090/091/012's P10 shares.
 

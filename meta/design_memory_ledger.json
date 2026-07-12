@@ -1295,6 +1295,83 @@
       "emotion_targeted": "N/A.",
       "misconception_created": "A future session must not read hasExploit=false in the assembler as 'exploits are never checked' — it is specifically the one-jump-pit misfire being excluded for pipeline-accepted (jump-necessary) products. If a future generator produces levels with REAL skip exploits that also pass jump-necessity, this mapping must be revisited (distinguish the pit-spike misfire from a genuine bypass via the bypassedHazardIds set).",
       "why_alternatives_rejected": "Propagating ev.exploit.hasExploit verbatim was rejected because it makes every one-jump-pit chapter fail macro health on a documented false positive, contradicting the pipeline's own deliberate non-gating (dm-0041/dm-0064). Adding a real exploit-vs-misfire discriminator to the assembler was deferred as unnecessary while the only generator template IS the one-jump pit — there is no genuine-bypass case to distinguish yet."
+    },
+    {
+      "id": "dm-0118",
+      "date": "2026-07-12",
+      "status": "ACCEPTED",
+      "title": "P11 enriches the generator with subversion templates so REQ-005/084/015 reach genuine VERIFIED, rather than relaxing the IRD every-REQ-VERIFIED exit gate (user-decided)",
+      "why_it_exists": "P10 shipped REQ-005 (Level-Devil subversion), REQ-084 (five-tier difficulty spread) and REQ-015 (emotional-arc delivery) IN_PROGRESS because the single gap-corridor generator scores surprise ~0 and bins bimodally (dm-0115). REQ-173 demands definitive premium-indie quality (complete only when all systems shipped-verified) and the IRD P11 exit gate says every REQ is VERIFIED. Ship-and-disclose would force formally relaxing that gate.",
+      "problem_it_solves": "New subversion candidate templates are added to the src/gen/ parametric generator (telegraph-then-betray geometry, fake/dissolving floors, delayed/triggered hazards) so surprise (deaths-before-clear vs the deterministic archetypes) becomes genuinely nonzero and the difficulty estimator can span all five tiers; content-calibration-v1 thresholds are raised back toward DEFAULT_PROFILE (content-calibration-v2, ledgered CDRE) and the campaign is regenerated and revalidated. Guardrails: manufactureLevel public seam signature stays byte-stable; every new template output passes the UNCHANGED Solvability/Softlock/evaluateLevel gates (the dm-0115 softlock failure mode is provably avoided, not hoped); all P7 tests re-run green -- a VERIFIED subtree extended additively under P11 ownership of REQ-005, never structurally reopened (dm-0064 seven-phase pipeline closure untouched).",
+      "emotion_targeted": "Surprise/Betrayal (REQ-015 phase 3) -- the arc phase the gap-corridor generator could structurally place but not emotionally deliver.",
+      "misconception_created": "A future session might read P11-modifies-src/gen/ as license to reopen the P7 pipeline structure. It is NOT: only the template PALETTE is extended additively behind the frozen manufactureLevel seam; the seven PipelinePhase members and the pipeline control flow are closed and unchanged.",
+      "why_alternatives_rejected": "Ship-and-disclose (keep REQ-005/084/015 IN_PROGRESS, relax the IRD exit gate to VERIFIED-or-honestly-disclosed-generator-limited) was the smaller path but ships M6 with a known content ceiling and fails REQ-173 completion bar literally. Decide-at-audit (defer the fork to S11.5) risks a late scope surprise after build+platform are sunk. The user chose enrichment."
+    },
+    {
+      "id": "dm-0119",
+      "date": "2026-07-12",
+      "status": "ACCEPTED",
+      "title": "REQ-160 is an allocation-BOUNDED audit, not literal zero-allocation -- the immutable copy-on-write core stays; zero-alloc discipline applies only to the render hot path",
+      "why_it_exists": "Engine.tick allocates a fresh spread snapshot per fixed step and every System.step returns a new spread state; StateManager retains current+previous. That copy-on-write IS the determinism/immutability correctness contract (dm-0004), which explicitly deferred allocation optimization to P11 and scoped it to pooled entities (particles), not the top-level tree. A literal zero-allocation sim rewrite would destroy immutability and break the replay determinism the validation agents depend on -- a single-source-of-truth invariant violation.",
+      "problem_it_solves": "S11.1 deliverable is a Profiler-measured PROOF that (a) the sim allocates exactly one snapshot per fixed step -- bounded, predictable, GC-friendly, NOT zero, a deliberate documented correctness tradeoff -- and (b) the render hot path (compileScene, ParticlePool, the GL batcher) is allocation-free in steady state via the pools P9 already built (REQ-161/162). Any steady-state allocation in the render path outside the pools is the actual bug the audit hunts; the sim tree is out of scope by design.",
+      "emotion_targeted": "N/A (performance/architectural decision).",
+      "misconception_created": "A future reader of REQ-160 text (zero-allocation runtime loop) might think the sim loop failed the requirement. It did not: bounded is the correct, deliberate reading given dm-0004; the zero-alloc intent is satisfied where achievable and correct (the render pools) and consciously traded for correctness where it is not (the immutable sim tree).",
+      "why_alternatives_rejected": "Literal zero-alloc sim (mutable pre-allocated state buffers, in-place system updates) rejected: destroys immutability, determinism, replay-tape validity, and the single mutation-point invariant -- the entire correctness foundation P1 established. Pooling the top-level snapshot tree rejected: its shape varies with entity count and pooling it reintroduces the aliasing bugs immutability was adopted to prevent."
+    },
+    {
+      "id": "dm-0120",
+      "date": "2026-07-12",
+      "status": "ACCEPTED",
+      "title": "The REQ-172 build pipeline is a zero-dependency hand-rolled bundler in tools/build/ over tsc dist/ output; the Poki SDK is CDN-referenced not bundled; asset optimization means JS+JSON minify only (user-decided)",
+      "why_it_exists": "package.json has tsc->dist/ ESM and node --test, no bundler, no index.html, no packaging; devDeps limited to typescript+@types/node. A Poki game ships as a browser-loadable bundle, but .npmrc pins the public registry because the private mirror is broken, and the standing policy is zero new npm dependencies. PortalSdk.ts documents that Poki server-pushes SDK updates from its CDN and bundling is not the supported path.",
+      "problem_it_solves": "tools/build/ (bundle.js: zero-dep ESM-graph resolver+concatenator+minifier; emitHtml.js: generates index.html script-tagging the Poki CDN SDK + the bundled client; optimizeData.js: JSON-minifies content/data/) wired to npm run build:release -> dist/release/. Because the art is procedurally rasterized at runtime and cached by key (dm-0080), there are essentially no static image assets, so the REQ-172 asset optimization pass concretely means minifying the client JS and the content/data JSON payloads -- not an image pipeline (stated so the slice is not padded with a stage that has no inputs).",
+      "emotion_targeted": "N/A (build/infrastructure decision).",
+      "misconception_created": "A future session might try to add esbuild/vite for a real build. The mirror is still broken and the zero-dep policy still holds; the hand-rolled bundler is the sanctioned path. Also: the Poki SDK must NEVER be bundled -- index.html references it from the CDN.",
+      "why_alternatives_rejected": "esbuild/vite rejected: one-or-more new deps, install may fail on the broken mirror, breaks the zero-new-deps policy. Native-ESM + import-map with no bundle rejected: dozens of module HTTP requests directly harm REQ-001 first-30-seconds retention and REQ-002 no-long-loads. Bundling the Poki SDK rejected: breaks Poki documented server-push update model (PortalSdk.ts)."
+    },
+    {
+      "id": "dm-0121",
+      "date": "2026-07-12",
+      "status": "ACCEPTED",
+      "title": "S11.2 builds render/platform/ as the sole browser-global-naming subtree (resolving dm-0103 deferral), wires the real Poki rewardedBreak, and is verified by a documented manual browser-open checkpoint -- not a Playwright dependency",
+      "why_it_exists": "render/platform/ does not exist -- dm-0103 deferred the real browser-global bindings to P11. It is the only subtree permitted to name browser globals: Canvas2D/WebGL2 context creation, the requestAnimationFrame FrameScheduler, the fetch AssetFetcher, fullscreen, and the real PokiSDK script-tag binding the PortalSdk seam NullPortalSdk currently doubles for. Every render module below it is already pure logic against injected hexagonal device interfaces (dm-0086), so render/platform/ is thin, logic-free construction glue -- but it is the first time the game runs in a real browser, and it cannot run in node --test.",
+      "problem_it_solves": "S11.2 builds the thin binding modules (Canvas, RafScheduler, HttpAssetFetcher, PokiPortalSdk, Fullscreen) + a Main.ts client entry, wires real rewardedBreak through the shell (NullPortalSdk still the headless test double so the wiring stays fake-testable except the thin real binding), and adds the sixth subtree-scoped isolation scan: no file outside render/platform/ names a browser global, and render/platform/ files contain construction only (no branching/state). Verification is a documented, recorded, repeatable manual browser-open checkpoint in the S11.7 report (render a level, confirm animation/audio-cues, confirm rewardedBreak, confirm fullscreen+responsive resize) -- honest because every module below is fake-proven and the platform files have no logic to unit-test.",
+      "emotion_targeted": "N/A (platform/infrastructure decision).",
+      "misconception_created": "A future session might treat the manual checkpoint as untested-equals-unverified. The coverage is explicitly disclosed, not assumed: the logic is fake-proven headlessly; only the logic-free construction glue relies on the manual open. Automating it (Playwright-class) is out of scope under the zero-dep policy unless that constraint is lifted.",
+      "why_alternatives_rejected": "A Playwright-class automated smoke harness (P9 open question 3) rejected: heavy dependency + browser-binary download, same mirror/zero-dep collision as dm-0120, and the project has never run a real browser in its test loop. Putting browser globals in multiple render modules rejected: destroys the hexagonal-seam testability the whole render/ subtree was built on (dm-0086)."
+    },
+    {
+      "id": "dm-0122",
+      "date": "2026-07-12",
+      "status": "ACCEPTED",
+      "title": "REQ-P07 (full 67-REQ PRD compliance audit) gets its own standalone slice (S11.5), re-checking every prior VERIFIED flip against SHIPPED evidence, not prior reports claims",
+      "why_it_exists": "REQ-P07 (perform a full PRD compliance audit at every milestone) has been NOT_STARTED the entire project despite being chartered per-milestone. The naive stub folded it into one line with REQ-173. Every prior phase flipped REQs to VERIFIED against its OWN exit report; a real audit may surface a VERIFIED flip with a hidden P11 share, a double-count, or a requirement satisfied only for synthetic fixtures.",
+      "problem_it_solves": "S11.5 is a standalone full-backlog sweep producing docs/verification/compliance_audit_M6.md -- every one of the 67 REQs re-checked against shipped evidence, every prior VERIFIED flip re-confirmed or corrected, every remaining IN_PROGRESS resolved to VERIFIED or an explicitly-accepted, ledgered non-goal -- run BEFORE any sign-off (S11.6/S11.7).",
+      "emotion_targeted": "N/A (governance/audit decision).",
+      "misconception_created": "None -- additive discipline. The prior per-phase verification reports remain valid as phase evidence; S11.5 is the final cross-cutting reconciliation, not a repudiation of them.",
+      "why_alternatives_rejected": "Folding REQ-P07 into the REQ-173 sign-off (the stub shape) rejected: a 67-REQ sweep is real work with real findings and must not be a rubber-stamp line item. Trusting prior reports VERIFIED claims without re-checking shipped evidence rejected: defeats the entire purpose of a compliance audit."
+    },
+    {
+      "id": "dm-0123",
+      "date": "2026-07-12",
+      "status": "ACCEPTED",
+      "title": "The P11 slice table is restructured from the naive four-row stub to seven slices (S11.1-S11.7)",
+      "why_it_exists": "The stub (S11.1 zero-alloc / S11.2 build / S11.3 audit / S11.4 sign-off) was authored at P8 close before any runtime/render/build substrate was read. The adversarial review found: S11.1 framed REQ-160 impossibly (dm-0119); no slice existed for the deferred render/platform/ bindings (dm-0121), the real Poki SDK runtime wiring (REQ-174), the generator-enrichment fork (dm-0118), or a standalone REQ-P07 audit (dm-0122); and REQ-161/162/163/132 release shares were invisibly folded into zero-alloc.",
+      "problem_it_solves": "Seven slices: S11.1 allocation-bounded audit; S11.2 render/platform/ + real SDK + rewardedBreak + rAF conformance; S11.3 zero-dep build pipeline; S11.4 generator enrichment + campaign regeneration; S11.5 full 67-REQ compliance audit; S11.6 final subtractive pass + completion bar; S11.7 P11 verification report + M6 closure + sign-off. Sequencing puts the highest-risk slice (S11.4 enrichment) after the build machinery so a threshold miss cannot block shipping the machinery.",
+      "emotion_targeted": "N/A (planning decision).",
+      "misconception_created": "None -- the restructure is documented in both docs/task_slices.md (Phase 11 table note) and docs/execution_plan.md (P11 section).",
+      "why_alternatives_rejected": "Keeping the four-row stub rejected: it mapped four owned/shared REQ clusters to no slice and contained one literally-impossible slice. A single mega-slice rejected: mirrors P10 finding 5 error (sizing generate-the-whole-thing as one session) -- each area (audit, platform, build, enrichment, compliance) is independently session-sized."
+    },
+    {
+      "id": "dm-0124",
+      "date": "2026-07-12",
+      "status": "ACCEPTED",
+      "title": "Production real-time handling is already safe -- Clock.advance clamps to MAX_FRAME_SECONDS; P11 only obligation is an rAF-binding conformance test, not new spiral-of-death code",
+      "why_it_exists": "The whole sim advances on realDeltaSeconds fed to Clock.advance. In production, rAF delivers variable wall-clock deltas that spike after a tab-switch/GC pause; a naive binding could bank hundreds of catch-up steps and hang a frame (Engine.tick loops for i<steps). This production failure mode was never exercised by the headless tests, which feed controlled deltas.",
+      "problem_it_solves": "Direct read of Clock.ts confirms advance() already clamps realDeltaSeconds to MAX_FRAME_SECONDS = 0.25 (<=15 catch-up steps/frame) before banking -- the spiral-of-death is handled in the pure core. So the S11.2 obligation is only a binding-level conformance test that render/platform/RafScheduler feeds TIMESTAMP DELTAS (successive rAF timestamps subtracted), not an accumulated or re-derived clock, honoring the existing contract. No new protection code is written.",
+      "emotion_targeted": "N/A (correctness/robustness decision).",
+      "misconception_created": "A future session might add a second delta-clamp in the rAF binding, duplicating the Clock guarantee with a second source of truth. Do not: the clamp lives in Clock.advance; the binding only supplies an honest raw delta.",
+      "why_alternatives_rejected": "Adding spiral-of-death protection in render/platform/ rejected: duplicates an existing, tested core guarantee (two sources of truth for one invariant). Feeding an accumulated clock from the binding rejected: bypasses the Clock own accumulator and breaks the determinism contract."
     }
   ],
   "rejected_ideas": [],

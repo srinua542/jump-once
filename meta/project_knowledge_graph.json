@@ -1,8 +1,8 @@
 {
   "schema_version": "1.0",
-  "generated_by_session": "2026-07-12T-session-10-p10-close",
-  "pkg_hash": "s10-c4d8e9",
-  "notes": "Machine-readable mirror of the codebase. Read at every session start; update immediately on any structural code change. See references/pkg_schema.md. P10 -- Content Generation -- is VERIFIED (docs/verification/P10.md); milestone M5 -- Content Complete is CLOSED (with the P10.md capability disclosure). The new one-way-isolated content/ subtree is real (6 SystemNodes: schema/chapter_framework, schema/campaign_manifest, difficulty_estimator, dual_path_proof, assembler, campaign_assembler); nothing under src/, tools/, or render/ imports it (ContentIsolation.test.ts). A real 36-level campaign is generated through the P1-P9 stack and persisted under content/data/ (6 chapter frameworks, 36 level defs, manifest, calibration-profile, generation-log, validation-report). KEY HONEST FINDING (dm-0115): the P7 single gap-corridor generator cannot produce genuine surprise (structurally ~0) and the four approach-modifying mechanics softlock the one-jump corridor; content-calibration-v1 (dm-0116) recalibrated gate thresholds via CDRE to the achievable band. REQ-083/090/091/100/101/102/012/050/013 flipped VERIFIED; REQ-005/084/174 NOT_STARTED->IN_PROGRESS; REQ-015/016/002 stay IN_PROGRESS (generator-limited surprise + P11 shares). render/platform/ still deliberately un-created (dm-0103, P11). Next: P11 -- Optimization, Build Pipeline & Ship (S11.1).",
+  "generated_by_session": "2026-07-12T-session-11-p11-plan",
+  "pkg_hash": "s11-e5b9a3",
+  "notes": "Machine-readable mirror of the codebase. Read at every session start; update immediately on any structural code change. See references/pkg_schema.md. P11 -- Optimization, Build Pipeline & Ship -- execution-plan section is AUTHORED (docs/execution_plan.md, dm-0118--dm-0124); ZERO P11 code written yet. The 10 pending_nodes below (render/platform/ browser bindings, tools/build/ zero-dep bundler, and the src/gen/ subversion-template extension) materialize across S11.2/S11.3/S11.4. Two phase-shaping decisions taken at planning: dm-0118 P11 enriches the generator so REQ-005/084/015 reach genuine VERIFIED (not gate-relaxation); dm-0120 zero-dependency hand-rolled bundler (broken mirror + zero-new-deps policy). REQ-160 is reframed allocation-BOUNDED, not literal zero-alloc (dm-0119) -- the immutable core stays. 102 real nodes unchanged; M5 CLOSED (P10 VERIFIED).",
   "nodes": [
     {
       "node_id": "core/vec2",
@@ -2641,10 +2641,22 @@
       "functional_summary": "REQ-083 seven-step chapter framework schema (8th versioned, strict-parsed) + ChapterLevelSlot. Enforces the six-phase emotional arc (REQ-015) as a parse invariant and owns the DifficultyTier vocabulary. dm-0109.",
       "gdos_alignment": "Section_9_Chapter_Architecture",
       "dependencies": [],
-      "dependents": ["content/schema/campaign_manifest", "content/difficulty_estimator", "content/assembler", "content/campaign_assembler"],
-      "volatile_state_flags": { "has_side_effects": false, "state_dependencies": [] },
+      "dependents": [
+        "content/schema/campaign_manifest",
+        "content/difficulty_estimator",
+        "content/assembler",
+        "content/campaign_assembler"
+      ],
+      "volatile_state_flags": {
+        "has_side_effects": false,
+        "state_dependencies": []
+      },
       "last_verified_commit": "uncommitted-session-10-p10",
-      "backlog_refs": ["REQ-083", "REQ-015", "REQ-174"]
+      "backlog_refs": [
+        "REQ-083",
+        "REQ-015",
+        "REQ-174"
+      ]
     },
     {
       "node_id": "content/schema/campaign_manifest",
@@ -2652,11 +2664,20 @@
       "file_path": "content/schema/CampaignManifest.ts",
       "functional_summary": "Campaign roster schema: ordered chapter ids + REQ-084 target difficulty distribution + tolerance. Strict-parsed. dm-0108.",
       "gdos_alignment": "Section_9_Difficulty_Distribution",
-      "dependencies": ["content/schema/chapter_framework"],
-      "dependents": ["content/campaign_assembler"],
-      "volatile_state_flags": { "has_side_effects": false, "state_dependencies": [] },
+      "dependencies": [
+        "content/schema/chapter_framework"
+      ],
+      "dependents": [
+        "content/campaign_assembler"
+      ],
+      "volatile_state_flags": {
+        "has_side_effects": false,
+        "state_dependencies": []
+      },
       "last_verified_commit": "uncommitted-session-10-p10",
-      "backlog_refs": ["REQ-084"]
+      "backlog_refs": [
+        "REQ-084"
+      ]
     },
     {
       "node_id": "content/difficulty_estimator",
@@ -2664,11 +2685,24 @@
       "file_path": "content/DifficultyEstimator.ts",
       "functional_summary": "REQ-084 difficulty tier derived from MEASURED evidence (discovery time, unsolved fraction, deaths, optimization delta) via a calibrated DifficultyProfile — never from the authored intent vector. dm-0111.",
       "gdos_alignment": "Section_9_Difficulty_Distribution",
-      "dependencies": ["content/schema/chapter_framework", "eval/gdos/evidence", "eval/local/optimization", "core/clock"],
-      "dependents": ["content/assembler", "content/campaign_assembler"],
-      "volatile_state_flags": { "has_side_effects": false, "state_dependencies": [] },
+      "dependencies": [
+        "content/schema/chapter_framework",
+        "eval/gdos/evidence",
+        "eval/local/optimization",
+        "core/clock"
+      ],
+      "dependents": [
+        "content/assembler",
+        "content/campaign_assembler"
+      ],
+      "volatile_state_flags": {
+        "has_side_effects": false,
+        "state_dependencies": []
+      },
       "last_verified_commit": "uncommitted-session-10-p10",
-      "backlog_refs": ["REQ-084"]
+      "backlog_refs": [
+        "REQ-084"
+      ]
     },
     {
       "node_id": "content/dual_path_proof",
@@ -2676,11 +2710,22 @@
       "file_path": "content/DualPathProof.ts",
       "functional_summary": "REQ-100 Dual-Path axiom proven by composition over OptimizationVerdict (applicable AND deltaSeconds >= floor) — no new path-counting mechanism, no alternate geometry. dm-0110.",
       "gdos_alignment": "Section_11_Dual_Path_Axiom",
-      "dependencies": ["eval/local/optimization"],
-      "dependents": ["content/assembler"],
-      "volatile_state_flags": { "has_side_effects": false, "state_dependencies": [] },
+      "dependencies": [
+        "eval/local/optimization"
+      ],
+      "dependents": [
+        "content/assembler"
+      ],
+      "volatile_state_flags": {
+        "has_side_effects": false,
+        "state_dependencies": []
+      },
       "last_verified_commit": "uncommitted-session-10-p10",
-      "backlog_refs": ["REQ-100", "REQ-101", "REQ-102"]
+      "backlog_refs": [
+        "REQ-100",
+        "REQ-101",
+        "REQ-102"
+      ]
     },
     {
       "node_id": "content/assembler",
@@ -2688,11 +2733,29 @@
       "file_path": "content/Assembler.ts",
       "functional_summary": "buildConceptFromSlot (only path into the pipeline, dm-0109) + integrateProduct (REQ-090 phase-8 Campaign Integration, dm-0112) + assembleChapterRecord (folds products into a ChapterRecord, runs macro validation, dm-0117 exploit-misfire mapping).",
       "gdos_alignment": "Section_10_Manufacturing_Pipeline",
-      "dependencies": ["content/schema/chapter_framework", "content/difficulty_estimator", "content/dual_path_proof", "gen/pipeline", "gen/concept", "eval/campaign/campaign_director", "eval/macro/curriculum", "eval/gdos/design_space"],
-      "dependents": ["content/campaign_assembler"],
-      "volatile_state_flags": { "has_side_effects": false, "state_dependencies": [] },
+      "dependencies": [
+        "content/schema/chapter_framework",
+        "content/difficulty_estimator",
+        "content/dual_path_proof",
+        "gen/pipeline",
+        "gen/concept",
+        "eval/campaign/campaign_director",
+        "eval/macro/curriculum",
+        "eval/gdos/design_space"
+      ],
+      "dependents": [
+        "content/campaign_assembler"
+      ],
+      "volatile_state_flags": {
+        "has_side_effects": false,
+        "state_dependencies": []
+      },
       "last_verified_commit": "uncommitted-session-10-p10",
-      "backlog_refs": ["REQ-090", "REQ-050", "REQ-142"]
+      "backlog_refs": [
+        "REQ-090",
+        "REQ-050",
+        "REQ-142"
+      ]
     },
     {
       "node_id": "content/campaign_assembler",
@@ -2700,11 +2763,23 @@
       "file_path": "content/CampaignAssembler.ts",
       "functional_summary": "Campaign-scope: assembleCampaignReport (wraps P6 processCampaign) + assessDifficultyDistribution (REQ-084) + assessArcCompleteness (REQ-015). Honestly measures, never games the target.",
       "gdos_alignment": "Section_9_Difficulty_Distribution",
-      "dependencies": ["content/schema/campaign_manifest", "content/assembler", "eval/campaign/campaign_director", "eval/gdos/design_space"],
+      "dependencies": [
+        "content/schema/campaign_manifest",
+        "content/assembler",
+        "eval/campaign/campaign_director",
+        "eval/gdos/design_space"
+      ],
       "dependents": [],
-      "volatile_state_flags": { "has_side_effects": false, "state_dependencies": [] },
+      "volatile_state_flags": {
+        "has_side_effects": false,
+        "state_dependencies": []
+      },
       "last_verified_commit": "uncommitted-session-10-p10",
-      "backlog_refs": ["REQ-084", "REQ-015", "REQ-013"]
+      "backlog_refs": [
+        "REQ-084",
+        "REQ-015",
+        "REQ-013"
+      ]
     }
   ],
   "edges": [
@@ -4876,5 +4951,143 @@
       ]
     }
   ],
-  "pending_nodes": []
+  "pending_nodes": [
+    {
+      "node_id": "render/platform/canvas",
+      "type": "PlannedSystemNode",
+      "planned_file_path": "render/platform/Canvas.ts",
+      "functional_summary": "Sole browser-global binding for Canvas2D/WebGL2 context construction; realizes the Raster2D and Gl2Device hexagonal seams (dm-0086). Logic-free construction glue; scan-enforced (dm-0121).",
+      "gdos_alignment": "Section_18_WebGL_WebAudio",
+      "planned_dependencies": [
+        "render/gl/gl2_device"
+      ],
+      "planned_dependents": [
+        "render/platform/main"
+      ],
+      "target_slice": "S11.2"
+    },
+    {
+      "node_id": "render/platform/raf_scheduler",
+      "type": "PlannedSystemNode",
+      "planned_file_path": "render/platform/RafScheduler.ts",
+      "functional_summary": "requestAnimationFrame binding realizing the FrameScheduler seam; feeds timestamp-deltas honoring Clock MAX_FRAME_SECONDS (dm-0124). No spiral-of-death code (handled in Clock.advance).",
+      "gdos_alignment": "Section_17_Performance",
+      "planned_dependencies": [
+        "core/clock"
+      ],
+      "planned_dependents": [
+        "render/platform/main"
+      ],
+      "target_slice": "S11.2"
+    },
+    {
+      "node_id": "render/platform/http_asset_fetcher",
+      "type": "PlannedSystemNode",
+      "planned_file_path": "render/platform/HttpAssetFetcher.ts",
+      "functional_summary": "fetch binding realizing the AssetFetcher seam for tiered async asset delivery (REQ-163). Logic-free; scan-enforced.",
+      "gdos_alignment": "Section_17_Performance",
+      "planned_dependencies": [],
+      "planned_dependents": [
+        "render/platform/main"
+      ],
+      "target_slice": "S11.2"
+    },
+    {
+      "node_id": "render/platform/poki_portal_sdk",
+      "type": "PlannedSystemNode",
+      "planned_file_path": "render/platform/PokiPortalSdk.ts",
+      "functional_summary": "Real PokiSDK script-tag global binding realizing the PortalSdk seam, incl. rewardedBreak (REQ-174 runtime). NullPortalSdk stays the headless test double (dm-0121). SDK loaded from Poki CDN, never bundled (dm-0120).",
+      "gdos_alignment": "Section_18_Poki_SDK",
+      "planned_dependencies": [
+        "render/shell/portal_sdk"
+      ],
+      "planned_dependents": [
+        "render/platform/main"
+      ],
+      "target_slice": "S11.2"
+    },
+    {
+      "node_id": "render/platform/fullscreen",
+      "type": "PlannedSystemNode",
+      "planned_file_path": "render/platform/Fullscreen.ts",
+      "functional_summary": "Fullscreen + resize browser binding feeding ViewportModel for responsive scaling (REQ-171). Logic-free; scan-enforced.",
+      "gdos_alignment": "Section_18_Responsive",
+      "planned_dependencies": [
+        "render/shell/viewport_model"
+      ],
+      "planned_dependents": [
+        "render/platform/main"
+      ],
+      "target_slice": "S11.2"
+    },
+    {
+      "node_id": "render/platform/main",
+      "type": "PlannedSystemNode",
+      "planned_file_path": "render/platform/Main.ts",
+      "functional_summary": "Single client entry module the bundler starts from; assembles render/platform/ bindings into createGameShell + GL executor + audio + QualityController. The one place real browser globals are wired to the game.",
+      "gdos_alignment": "Section_18_WebGL_WebAudio",
+      "planned_dependencies": [
+        "render/platform/canvas",
+        "render/platform/raf_scheduler",
+        "render/platform/http_asset_fetcher",
+        "render/platform/poki_portal_sdk",
+        "render/platform/fullscreen",
+        "render/shell/game_shell"
+      ],
+      "planned_dependents": [
+        "tools/build/bundle"
+      ],
+      "target_slice": "S11.2"
+    },
+    {
+      "node_id": "tools/build/bundle",
+      "type": "PlannedSystemNode",
+      "planned_file_path": "tools/build/bundle.js",
+      "functional_summary": "Zero-dependency ESM-graph resolver + concatenator + minifier over tsc dist/ output from render/platform/Main.ts; emits one minified client JS. No new npm deps (dm-0120).",
+      "gdos_alignment": "Section_18_Automated_Build",
+      "planned_dependencies": [
+        "render/platform/main"
+      ],
+      "planned_dependents": [
+        "tools/build/emit_html"
+      ],
+      "target_slice": "S11.3"
+    },
+    {
+      "node_id": "tools/build/emit_html",
+      "type": "PlannedSystemNode",
+      "planned_file_path": "tools/build/emitHtml.js",
+      "functional_summary": "Generates index.html script-tagging the Poki CDN SDK URL + the bundled client (dm-0120). Poki SDK is CDN-referenced, never bundled.",
+      "gdos_alignment": "Section_18_Automated_Build",
+      "planned_dependencies": [
+        "tools/build/bundle"
+      ],
+      "planned_dependents": [],
+      "target_slice": "S11.3"
+    },
+    {
+      "node_id": "tools/build/optimize_data",
+      "type": "PlannedSystemNode",
+      "planned_file_path": "tools/build/optimizeData.js",
+      "functional_summary": "JSON-minifies content/data/ campaign payloads for the release bundle (the concrete meaning of REQ-172 asset optimization for a procedural-art game, dm-0120).",
+      "gdos_alignment": "Section_18_Automated_Build",
+      "planned_dependencies": [],
+      "planned_dependents": [],
+      "target_slice": "S11.3"
+    },
+    {
+      "node_id": "gen/subversion_templates",
+      "type": "PlannedSystemNode",
+      "planned_file_path": "src/gen/Generator.ts (extended)",
+      "functional_summary": "Additive subversion candidate templates (telegraph-then-betray, fake/dissolving floor, delayed/triggered hazard) in the existing parametric generator so surprise becomes nonzero and difficulty spans five tiers (dm-0118). manufactureLevel seam frozen; all outputs pass unchanged Solvability/Softlock/evaluateLevel gates; P7 pipeline structure untouched.",
+      "gdos_alignment": "Section_1_Depth_Via_Level_Design",
+      "planned_dependencies": [
+        "gen/concept"
+      ],
+      "planned_dependents": [
+        "content/assembler"
+      ],
+      "target_slice": "S11.4"
+    }
+  ]
 }
