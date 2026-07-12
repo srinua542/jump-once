@@ -138,9 +138,30 @@ test('batching: many same-bitmap terrain tiles collapse into ONE draw call (REQ-
   assert.equal(totalInstances, drawList.length, 'every draw item must land in exactly one batch instance');
   assert.ok(batches.length < drawList.length, `expected fewer batches (${batches.length}) than draw items (${drawList.length}) — that IS the batching win`);
 
-  drawBatches(batches, device, (page) => atlas.pageTexture(page));
+  drawBatches(batches, device, (page) => atlas.pageTexture(page), (page, dev) => atlas.ensureBuffer(page, dev));
   const drawCalls = trace().filter((line) => line.startsWith('drawInstanced'));
   assert.equal(drawCalls.length, batches.length, 'exactly one drawInstanced call per batch (per atlas page)');
+});
+
+test('S11.1: drawBatches never allocates a new GPU buffer per frame — createBuffer fires once per page, ever (dm-0119)', () => {
+  const level = buildWideLevel();
+  const drawList = makeDrawList(level);
+  const atlas = createAtlas();
+  const { device, trace } = createTraceGl2Device();
+  const batches = buildBatches(drawList, PAPER_STYLE_PACK, atlas, device, rasterizeToPixels);
+
+  /* Simulate five consecutive frames drawing the exact same batches (the
+     steady-state case: nothing moved off-page). A per-frame-fresh-buffer bug
+     would fire createBuffer batches.length times PER frame; the fix must
+     fire it exactly once per page, total, across all five frames. */
+  for (let frame = 0; frame < 5; frame++) {
+    drawBatches(batches, device, (page) => atlas.pageTexture(page), (page, dev) => atlas.ensureBuffer(page, dev));
+  }
+
+  const createBufferCalls = trace().filter((line) => line.startsWith('createBuffer'));
+  const uploadCalls = trace().filter((line) => line.startsWith('uploadBufferData'));
+  assert.equal(createBufferCalls.length, batches.length, `expected exactly one createBuffer per page (${batches.length}) across 5 frames, got ${createBufferCalls.length} — a buffer is being recreated per frame`);
+  assert.equal(uploadCalls.length, batches.length * 5, 'data must still be re-uploaded every frame (live per-frame instance transforms), even though the buffer handle is reused');
 });
 
 test('instance floats carry the correct per-instance world position and atlas UV rect', () => {
@@ -167,7 +188,12 @@ test('instance floats carry the correct per-instance world position and atlas UV
 
 test('a batch whose page has no texture is skipped defensively, never throws', () => {
   const { device } = createTraceGl2Device();
-  assert.doesNotThrow(() => drawBatches([{ page: 99, instances: [] }], device, () => null));
+  assert.doesNotThrow(() => drawBatches([{ page: 99, instances: [] }], device, () => null, () => null));
+});
+
+test('a batch whose page has a texture but no buffer yet is skipped defensively, never throws', () => {
+  const { device } = createTraceGl2Device();
+  assert.doesNotThrow(() => drawBatches([{ page: 99, instances: [] }], device, () => 1, () => null));
 });
 
 test('DEFAULT_ATLAS_PROFILE.pageSizePx is data, not a literal buried in Atlas.ts logic — a smaller custom page size is honored', () => {

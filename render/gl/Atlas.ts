@@ -14,9 +14,21 @@
  * actual pixel content, only dimensions, placement, and call counts.
  *
  * Page size is profile data (`AtlasProfile.pageSizePx`), not a literal.
+ *
+ * `ensureBuffer` (S11.1, REQ-161/162 P11 release-audit share, dm-0119): each
+ * page's GPU instance buffer is created ONCE, lazily, on first use, and
+ * memoized exactly like `page.texture` — never recreated per frame. Before
+ * this fix `GlRenderer.drawBatches` called `device.createBuffer()` on every
+ * call, which in production maps to a real `gl.createBuffer()` allocating a
+ * native GPU object every frame forever — an unbounded native-resource churn
+ * that plain JS object garbage never causes (V8's generational GC scavenges
+ * short-lived JS objects almost for free; a GPU driver does not). Buffer
+ * *data* is still re-uploaded every frame via `uploadBufferData` (the
+ * instance transforms are genuinely live per-frame data) — only the buffer
+ * *handle* is persistent.
  */
 
-import type { Gl2Device, PixelData, TextureHandle } from './Gl2Device';
+import type { BufferHandle, Gl2Device, PixelData, TextureHandle } from './Gl2Device';
 
 export interface AtlasRegion {
   readonly page: number;
@@ -39,6 +51,15 @@ export interface Atlas {
   readonly pageCount: number;
   /** The GPU texture backing a page, or null if that page has never been touched. */
   pageTexture(pageIndex: number): TextureHandle | null;
+  /**
+   * The persistent GPU buffer backing a page's per-frame instance data,
+   * created once (lazily, on first call) and reused across every subsequent
+   * call — never recreated per frame. Returns null for a page index that has
+   * never been touched (mirrors `pageTexture`'s null contract; a page must
+   * exist — i.e. `pageTexture(pageIndex)` is non-null — before its buffer
+   * can be ensured).
+   */
+  ensureBuffer(pageIndex: number, device: Gl2Device): BufferHandle | null;
 }
 
 interface Shelf {
@@ -49,6 +70,7 @@ interface Shelf {
 
 interface Page {
   texture: TextureHandle | null;
+  buffer: BufferHandle | null;
   shelves: Shelf[];
 }
 
@@ -77,7 +99,7 @@ export function createAtlas(profile: AtlasProfile = DEFAULT_ATLAS_PROFILE): Atla
         return { page: pageIndex, x: 0, y: baseY };
       }
     }
-    pages.push({ texture: null, shelves: [{ y: 0, height, cursorX: width }] });
+    pages.push({ texture: null, buffer: null, shelves: [{ y: 0, height, cursorX: width }] });
     return { page: pages.length - 1, x: 0, y: 0 };
   }
 
@@ -87,6 +109,14 @@ export function createAtlas(profile: AtlasProfile = DEFAULT_ATLAS_PROFILE): Atla
     },
     pageTexture(pageIndex: number): TextureHandle | null {
       return pages[pageIndex]?.texture ?? null;
+    },
+    ensureBuffer(pageIndex: number, device: Gl2Device): BufferHandle | null {
+      const page = pages[pageIndex];
+      if (page === undefined) return null;
+      if (page.buffer === null) {
+        page.buffer = device.createBuffer();
+      }
+      return page.buffer;
     },
     ensureRegion(bitmapId, width, height, producePixels, device) {
       const cached = regions.get(bitmapId);

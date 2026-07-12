@@ -92,3 +92,57 @@ test('requestBreak still restores audio and input even if the SDK break rejects'
   assert.equal(lifecycle.inputSuspended, false, 'a rejected break must not leave input permanently suspended');
   assert.equal(executor.muted, false, 'a rejected break must not leave audio permanently muted');
 });
+
+test('requestRewardedSkip (REQ-174, S11.2): mutes audio and suspends input for the duration, resolves true when the SDK reports the reward watched through', async () => {
+  const { device, trace } = createTraceAudioDevice();
+  const executor = createAudioExecutor(device);
+  let suspendedDuringBreak: boolean | null = null;
+  const sdk: PortalSdk = {
+    async init() {},
+    gameLoadingFinished() {},
+    gameplayStart() {},
+    gameplayStop() {},
+    async commercialBreak() {},
+    async rewardedBreak(options) {
+      suspendedDuringBreak = lifecycle.inputSuspended;
+      assert.deepEqual(options, { size: 'large' }, 'options must reach the SDK verbatim');
+      return true;
+    },
+  };
+  const lifecycle = createPortalLifecycle(sdk, executor);
+
+  const granted = await lifecycle.requestRewardedSkip({ size: 'large' });
+
+  assert.equal(granted, true, 'must surface the SDK\'s own true/false result, not assume success');
+  assert.equal(suspendedDuringBreak, true, 'input must already be suspended while the rewarded break plays');
+  assert.equal(lifecycle.inputSuspended, false, 'input suspension must lift once the break resolves');
+  assert.equal(executor.muted, false, 'audio must be unmuted again after the break');
+  assert.ok(trace().includes('setMasterGain(0)'));
+  assert.ok(trace().includes('setMasterGain(1)'));
+});
+
+test('requestRewardedSkip resolves false (never throws) when the player declines or the SDK reports no reward — no bypass exists', async () => {
+  const { sdk } = makeRecordingSdk({ async rewardedBreak() { return false; } });
+  const executor = createAudioExecutor(createTraceAudioDevice().device);
+  const lifecycle = createPortalLifecycle(sdk, executor);
+
+  const granted = await lifecycle.requestRewardedSkip();
+
+  assert.equal(granted, false);
+  assert.equal(lifecycle.inputSuspended, false);
+});
+
+test('requestRewardedSkip still restores audio and input even if the SDK rewardedBreak rejects', async () => {
+  const { sdk } = makeRecordingSdk({
+    async rewardedBreak(): Promise<boolean> {
+      throw new Error('ad network unreachable');
+    },
+  });
+  const { device } = createTraceAudioDevice();
+  const executor = createAudioExecutor(device);
+  const lifecycle = createPortalLifecycle(sdk, executor);
+
+  await assert.rejects(() => lifecycle.requestRewardedSkip());
+  assert.equal(lifecycle.inputSuspended, false, 'a rejected rewarded break must not leave input permanently suspended');
+  assert.equal(executor.muted, false, 'a rejected rewarded break must not leave audio permanently muted');
+});

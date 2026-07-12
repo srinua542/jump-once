@@ -6,10 +6,23 @@
  * a flat `Float32Array`; the exact vertex-shader layout is a render/platform/
  * concern (S9.8) — this module only proves the RIGHT data reaches the RIGHT
  * device calls in the RIGHT order.
+ *
+ * Buffer lifecycle (S11.1, REQ-161/162 P11 release-audit share, dm-0119):
+ * `drawBatches` takes an `ensureBuffer` resolver — the caller's `Atlas`
+ * memoizes one persistent GPU buffer per page, created once and reused every
+ * frame — rather than calling `device.createBuffer()` itself. `drawBatches`
+ * never allocates a native GPU resource; it only re-uploads per-frame data
+ * into an already-existing buffer, mirroring how `pageTexture` never creates
+ * a texture. The instance-transform `Float32Array` IS still allocated fresh
+ * per batch per frame — small, contiguous, GC-scavenged JS garbage
+ * proportional to on-screen instance count, the same bounded-allocation
+ * tradeoff already accepted for the sim's per-step snapshot (dm-0119) and
+ * explicitly not the target of this fix (the target is the native GPU
+ * resource, which JS garbage collection cannot reclaim for free).
  */
 
 import type { Batch } from './Batcher';
-import type { Gl2Device, TextureHandle } from './Gl2Device';
+import type { BufferHandle, Gl2Device, TextureHandle } from './Gl2Device';
 
 /** Floats per instance: worldX, worldY, regionX, regionY, regionW, regionH. */
 export const FLOATS_PER_INSTANCE = 6;
@@ -33,14 +46,23 @@ export function packInstanceFloats(batch: Batch): Float32Array {
  * `pageTexture` resolves a batch's page index to its GPU texture (from
  * `Atlas.pageTexture`); a batch whose page has no texture yet is skipped
  * (defensive — cannot happen if the same Atlas produced both the batches
- * and the texture lookup, asserted by S9.4's tests).
+ * and the texture lookup, asserted by S9.4's tests). `ensureBuffer` resolves
+ * a batch's page index to its PERSISTENT GPU buffer (from `Atlas.ensureBuffer`,
+ * S11.1) — created once, reused every call — never `device.createBuffer()`
+ * called directly here.
  */
-export function drawBatches(batches: readonly Batch[], device: Gl2Device, pageTexture: (page: number) => TextureHandle | null): void {
+export function drawBatches(
+  batches: readonly Batch[],
+  device: Gl2Device,
+  pageTexture: (page: number) => TextureHandle | null,
+  ensureBuffer: (page: number, device: Gl2Device) => BufferHandle | null,
+): void {
   for (const batch of batches) {
     const texture = pageTexture(batch.page);
     if (texture === null) continue;
+    const buffer = ensureBuffer(batch.page, device);
+    if (buffer === null) continue;
     const floats = packInstanceFloats(batch);
-    const buffer = device.createBuffer();
     device.uploadBufferData(buffer, floats);
     device.drawInstanced(texture, buffer, batch.instances.length);
   }
