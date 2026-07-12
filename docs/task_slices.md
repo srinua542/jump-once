@@ -160,12 +160,12 @@ Session-sized, dependency-ordered work units. Each slice is small enough to comp
 
 | Slice | Title | REQs | Depends | State |
 |-------|-------|------|---------|-------|
-| S10.1 | Content schema (`ChapterFramework`/`CampaignManifest`) + `content/` subtree + whole-campaign chapter architecture authored (7-step) | REQ-083, REQ-015(applied), REQ-174(P10 share) | S7.6, M2 VERIFIED, M4 VERIFIED | NOT_STARTED |
-| S10.2 | Difficulty estimator + dual-path proof + integration assembler (REQ-090 phase-8 closure), unit-proven against fixtures | REQ-084(mechanism), REQ-100/101/102(applied), REQ-090(applied) | S10.1 | NOT_STARTED |
-| S10.3 | Pilot chapter, end-to-end, real content + GDOS calibration checkpoint | REQ-100, REQ-005, REQ-050, REQ-091(applied) | S10.2 | NOT_STARTED |
-| S10.4 | Batch production of remaining chapters | REQ-100, REQ-005, REQ-013, REQ-012 | S10.3 | NOT_STARTED |
-| S10.5 | Campaign assembly + macro validation + REQ-084 distribution enforcement + REQ-174 wiring closure | REQ-013, REQ-015, REQ-084, REQ-174 | S10.4 | NOT_STARTED |
-| S10.6 | Phase-10 verification report; M5 closure | REQ-P02 | S10.5 | NOT_STARTED |
+| S10.1 | Content schema (`ChapterFramework`/`CampaignManifest`) + `content/` subtree + whole-campaign chapter architecture authored (7-step) | REQ-083, REQ-015(applied), REQ-174(P10 share) | S7.6, M2 VERIFIED, M4 VERIFIED | COMPLETED |
+| S10.2 | Difficulty estimator + dual-path proof + integration assembler (REQ-090 phase-8 closure), unit-proven against fixtures | REQ-084(mechanism), REQ-100/101/102(applied), REQ-090(applied) | S10.1 | COMPLETED |
+| S10.3 | Pilot chapter, end-to-end, real content + GDOS calibration checkpoint | REQ-100, REQ-005, REQ-050, REQ-091(applied) | S10.2 | COMPLETED |
+| S10.4 | Batch production of remaining chapters | REQ-100, REQ-005, REQ-013, REQ-012 | S10.3 | COMPLETED |
+| S10.5 | Campaign assembly + macro validation + REQ-084 distribution enforcement + REQ-174 wiring closure | REQ-013, REQ-015, REQ-084, REQ-174 | S10.4 | COMPLETED |
+| S10.6 | Phase-10 verification report; M5 closure | REQ-P02 | S10.5 | COMPLETED |
 
 ## Phase 11 — Optimization, Build Pipeline & Ship
 
@@ -184,7 +184,9 @@ Session-sized, dependency-ordered work units. Each slice is small enough to comp
 
 **Milestone M3 — Production Capable is CLOSED** (P7 ✓ + P8 ✓). The content-authoring gate is fully open; **P10 unlocks** (it follows P9 in the DAG).
 
-**Milestone M4 — Presentable is CLOSED** (`docs/verification/P9.md`; P9 ✓, 711/711 tests green, pkg `s9-f2a9d7`). **P10 — Content Generation is the current phase.** Its execution-plan section is authored (`docs/execution_plan.md` P10 section, dm-0108–dm-0114, restructured to six slices S10.1–S10.6, pilot-then-batch shape). The new `content/` subtree (schema + assembler + estimator, one-way-isolated per dm-0108) is planned but not yet created — PKG `pending_nodes` holds its 7 `PlannedSystemNode`s, materializing across S10.1/S10.2/S10.4/S10.5. **Next: S10.1** — content schema (`ChapterFramework`/`CampaignManifest`) + `content/` subtree substrate + whole-campaign chapter architecture authored (REQ-083), with campaign size derived from `src/gen/Lifecycle.ts`'s live mechanic registry, not guessed. Start via `node tools/sdlc/stage.js start S10.1 --title "Content schema + content/ subtree + chapter architecture authoring" --reqs REQ-083,REQ-015,REQ-174`.
+**Milestone M5 — Content Complete is CLOSED** (`docs/verification/P10.md`; P10 ✓, 771/771 tests green, pkg `s10-c4d8e9`). All six P10 slices COMPLETED. The `content/` subtree is real (6 SystemNodes, one-way isolated); a real 36-level campaign is generated through the P1–P9 stack and persisted under `content/data/` (all gate-pass, all dual-path, 6/6 chapters macro-valid, arc-complete, retention 0.90). REQ-083/090/091/100/101/102/012/050/013 flipped VERIFIED; REQ-005/084/174 → IN_PROGRESS; REQ-015/016/002 stay IN_PROGRESS. The honest generator-capability disclosure (dm-0115/0116): the P7 single gap-corridor template cannot express genuine surprise or a five-tier difficulty spread — that needs generator template enrichment (a scoped P7+ follow-on).
+
+**Next: P11 — Optimization, Build Pipeline & Ship.** Author its execution-plan section FIRST (REQ-P02), then start **S11.1** (Zero-allocation runtime audit, REQ-160, depends on S9.7). P11 owns REQ-160/172/173, the release shares of REQ-161/162/163/132/170/171/016/174/002, and the final REQ-022/REQ-P07 compliance audit — including whether to take on the generator template enrichment that would let REQ-005/084/015 reach VERIFIED.
 2. The P8 tooling is the substrate P9's UI renders: `tools/debug/Overlay.ts` descriptors, `tools/level_editor/` draft/playtest state, `tools/profiler/` — all plain data awaiting a presentation layer. Consume them; don't re-derive them.
 3. P10 (Content Generation) is now unblocked by M3's closure but sits after P9 in the DAG. When P10 opens, it authors real chapters/levels THROUGH the P7 `manufactureLevel` pipeline + P8 editor, closing out REQ-090/091/012's P10 shares.
 
