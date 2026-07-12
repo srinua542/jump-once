@@ -1185,6 +1185,83 @@
       "emotion_targeted": "N/A (zero-assumption correction of stale planning prose against actual shipped code).",
       "misconception_created": "A future slice must not assume DrawItem carries a decor/particle/grain kind tag — it does not. If P11 or a later phase wants tier-differentiated dropping (e.g. drop grain before decor before entities), that requires a NEW DrawItem field written by the SceneCompiler itself (the same pattern dm-0093 already established for \"pressurePlate/spring pressed state would need a new WorldState field, never re-derived logic\").",
       "why_alternatives_rejected": "Re-deriving a decor/particle/grain classification inside render/quality/ by pattern-matching bitmap ids or VisualRequest.role strings was rejected: it would silently duplicate categorization logic that belongs to whichever module actually produces each DrawItem, and would drift the moment a StylePack or the scene compiler changed its role/state naming."
+    },
+    {
+      "id": "dm-0108",
+      "date": "2026-07-11",
+      "status": "ACCEPTED",
+      "title": "A new top-level content/ subtree, one-way-isolated, holds P10's authored/generated data payloads and their schema+assembler logic",
+      "why_it_exists": "docs/directory_structure.md names no home for persisted level/chapter/campaign data: src/gen/ is design-time LOGIC (dm-0057's own isolation rule), src/eval/campaign/ holds runtime RECORD types that consume data rather than own it, and src/schema/ holds wire-format types with no content of their own. P10 is the first phase to persist real gameplay data into the repo.",
+      "problem_it_solves": "Gives authored content a home that mirrors the project's existing isolation discipline (src/gen/, tools/, render/ each got the same treatment at their phase's start) instead of overloading an existing subtree's meaning. content/ may import src/gen/ and src/eval/ only through named public seams; nothing under src/ may ever import content/.",
+      "emotion_targeted": "N/A (structural/architectural decision).",
+      "misconception_created": "None — content/ is purely additive; no existing subtree's contract changes.",
+      "why_alternatives_rejected": "Putting JSON payloads inside src/gen/ conflates generation logic with generation output and gives the GenIsolation scan an unintended new file class to reason about. Putting them in src/eval/campaign/ couples authored data to the runtime-record shapes that merely consume it. Reusing src/schema/ wholesale ignores that every prior versioned-profile schema (ScoringProfile, CampaignProfile, GenProfile, TelemetryProfile) already lives beside its consuming subtree, not centralized."
+    },
+    {
+      "id": "dm-0109",
+      "date": "2026-07-11",
+      "status": "ACCEPTED",
+      "title": "content/schema/ChapterFramework.ts is a new strict-parsed schema for REQ-083's seven-step framework, and 'before any level generation' is enforced structurally, not by convention",
+      "why_it_exists": "REQ-083 requires Theme/Learning Goal/Mental Model/Misconceptions/Subversion/Optimization/Final Exam be defined before any level generation, but nothing in the codebase enforced 'all seven present' or 'before' as anything other than prose.",
+      "problem_it_solves": "parseChapterFramework rejects incomplete frameworks (empty textual fields, zero misconceptions, duplicate slot ids, out-of-set archetype/arcPhase values). content/Assembler.ts's buildConceptFromSlot is the only code path that constructs a LevelConcept for manufactureLevel, and it only ever takes an already-parsed ChapterFramework slot as input — there is no way to generate a level without a validated framework upstream, making the ordering a structural proof instead of a promise.",
+      "emotion_targeted": "N/A.",
+      "misconception_created": "A future slice must not add any second code path that builds a LevelConcept without going through an already-parsed ChapterFramework slot — that would silently reopen the ordering gap this decision closes.",
+      "why_alternatives_rejected": "Leaving REQ-083 as a documentation-only convention was rejected as exactly the kind of unenforced ordering rule this project's structural-scan culture (GenIsolation, ToolsIsolation, RenderIsolation) exists to avoid."
+    },
+    {
+      "id": "dm-0110",
+      "date": "2026-07-11",
+      "status": "ACCEPTED",
+      "title": "REQ-100 Dual-Path is proven by composition over the existing OptimizationVerdict, not by a new path-counting mechanism or literal alternate geometry",
+      "why_it_exists": "Nothing in src/ names discovery/mastery paths, and a naive reading of REQ-100 risks inventing a whole new simulation-side mechanism. src/eval/local/Optimization.ts's OptimizationVerdict already computes applicable (a discovery completion and a search/archetype-derived optimum both exist) and deltaSeconds (Time_Discovery minus Time_WorldRecord, REQ-102's own metric) — exactly the evidence dual-path-ness requires.",
+      "problem_it_solves": "content/DualPathProof.ts's proveDualPath(verdict, profile) is a pure wrapper: applicable === true AND deltaSeconds >= profile.dualPath.minDeltaSeconds. For a one-jump precision platformer, the 'two paths in one physical space' REQ-100 demands are execution-quality routes through identical geometry, not branching level layout — which is what this composition actually measures.",
+      "emotion_targeted": "N/A.",
+      "misconception_created": "A future slice must not assume REQ-100 requires authored alternate physical routes or branching geometry — it does not, and adding such would violate REQ-005.",
+      "why_alternatives_rejected": "Authoring literal alternate physical routes per level was rejected: REQ-005 explicitly rejects depth via expanded power sets, and duplicate geometry undermines the one-jump constraint's singularity. Inventing a new simulation-side path-counting mechanism was rejected as a repeat of the dm-0107 lesson — never re-derive classification logic a lower layer (Optimization.ts) already computed."
+    },
+    {
+      "id": "dm-0111",
+      "date": "2026-07-11",
+      "status": "ACCEPTED",
+      "title": "REQ-084 difficulty tiers are derived from measured evidence (content/DifficultyEstimator.ts), never substituted from the authored difficultyTarget intent vector",
+      "why_it_exists": "Three unrelated 'tier'/'difficulty' concepts already coexist in the codebase: TierTimes (Optimization.ts's routing tiers — discovery/good/fast/expert/worldRecord, a per-level time-based skill anchor set, REQ-101), DifficultyAxis/difficultyVectors (an authored [0,1] intent vector on LevelConcept, marked provisional since dm-0015 and never validated against outcomes), and CurriculumLevel.difficulty (an unspecified scalar the caller must supply). None of these is the REQ-084 campaign-bucket (Easy/Medium/Hard/Harder/Very-Hard) a level belongs to, and conflating any of them with it was a real risk.",
+      "problem_it_solves": "estimateDifficultyTier(evidence, verdict, profile) is a calibrated, weighted function of measured TierTimes.discovery, agent attempt/failure counts from the EvidenceBundle, and deltaSeconds — never of difficultyTarget, which remains only the generator's aim point (Generator.ts's existing, unchanged usage). Weights and bucket boundaries live in a versioned DifficultyProfile, satisfying REQ-084's own 'calibrated data, not hardcoded' wording.",
+      "emotion_targeted": "N/A.",
+      "misconception_created": "A future slice must not read LevelConcept.difficultyTarget as a level's shipped difficulty tier — it is only the authored aim point the generator targets, not the measured outcome.",
+      "why_alternatives_rejected": "Using difficultyTarget directly as the shipped tier was rejected as the easy-but-wrong path: it validates nothing, since it is exactly the value the generator was told to hit, not what the level was measured to actually demand of a player. Using TierTimes' routing tiers directly was rejected because they answer a different question (skill-routing within one level, not a level's place in a five-bucket campaign curriculum)."
+    },
+    {
+      "id": "dm-0112",
+      "date": "2026-07-11",
+      "status": "ACCEPTED",
+      "title": "content/Assembler.ts::integrateProduct is the literal, previously-unbuilt REQ-090 phase 8 (Campaign Integration) — new P10 code, not a P7 retrofit",
+      "why_it_exists": "PipelinePhase (src/gen/Pipeline.ts) has seven members, not eight: 'Targeted Revision' correctly folds into the evolutionary loop between phases 3/4, but 'Campaign Integration' (REQ-090's prose phase 8) corresponds to no code — manufactureLevel's accept branch returns a PipelineProduct and stops. Assuming this phase already wrote into a campaign structure would have been an unread-file guess.",
+      "problem_it_solves": "integrateProduct(product, chapterId, macroVerdict): LevelRecord derives every LevelRecord field directly from the PipelineProduct's own fields (zero re-computation) and stamps the chapter's MacroVerdict onto it. This closes the actual gap between 'a level was manufactured' and 'a level is part of a validated campaign.'",
+      "emotion_targeted": "N/A.",
+      "misconception_created": "A future slice must not assume P7 already delivered campaign integration — P7 closed VERIFIED on exactly the seven phases it owns (dm-0064); phase 8 is P10's, because it is only meaningful once real chapters exist to integrate into.",
+      "why_alternatives_rejected": "Re-opening src/gen/Pipeline.ts to add an eighth PipelinePhase enum value was rejected: P7 is VERIFIED and dm-0064 already closed its scope; adding campaign-shaped logic to src/gen/ would also violate its own isolation rule (dm-0057: gen/ never reads campaign/ as more than types)."
+    },
+    {
+      "id": "dm-0113",
+      "date": "2026-07-11",
+      "status": "ACCEPTED",
+      "title": "Full-campaign GDOS/macro-curriculum evaluation runs via a separate npm run validate:campaign script, not inside npm test",
+      "why_it_exists": "evaluateLevel runs 5 archetypes x 4 local audits per level; running this across a real campaign's levels plus processCampaign across all chapters inside the existing ~5-second, 711-test suite would make suite runtime grow with content volume instead of code volume, re-running full campaign evaluation on every unrelated code change through P10's batch slices (S10.4) and beyond.",
+      "problem_it_solves": "tools/sdlc/validateCampaign.js (dm-0113) calls the same content/ assembler + evaluateLevel/processCampaign functions already unit-tested in isolation, and writes a committed, schema-versioned content/data/validation-report.json that S10.5/S10.6 read as the source of truth for the phase exit condition. npm test keeps one content-volume-independent smoke chapter (the S10.3 pilot) plus schema/estimator unit tests, so its runtime stays flat as chapters are added.",
+      "emotion_targeted": "N/A.",
+      "misconception_created": "A future slice must not add new levels' evaluation as individual npm test cases — that would silently regress suite runtime growth back to content-volume-coupled, undoing this decision.",
+      "why_alternatives_rejected": "Keeping full-campaign validation inside npm test was rejected as the default because it directly contradicts the pattern established at every prior phase (a flat, fast, code-coupled suite) and would penalize every future session's fast-feedback loop for a content-volume reason unrelated to code correctness."
+    },
+    {
+      "id": "dm-0114",
+      "date": "2026-07-11",
+      "status": "ACCEPTED",
+      "title": "Content generation uses overgenerate-and-curate (Creativity.evolveLevel's existing REQ-081 loop selects the highest-scoring evaluateLevel candidate per slot), not primary hand-authoring via the editor",
+      "why_it_exists": "REQ-050 requires all creative decisions originate from GDOS, with no gameplay content created independently of it. Three generation modes were weighed: fully unattended procedural generation, hand-authoring via the P8/P9 editor then validating after the fact, and overgenerate-and-curate.",
+      "problem_it_solves": "Under overgenerate-and-curate, several candidates per slot are generated via evolveLevel, all scored via evaluateLevel, and the highest-scoring accepted candidate is selected by code in content/Assembler.ts, with the selection ledgered. This makes REQ-050 true by construction rather than by after-the-fact review. The P8/P9 editor remains available only as a touch-up path for a near-miss candidate, and any touch-up re-enters evaluateLevel before acceptance — it never bypasses scoring. Every accepted level's generation seed (already present in PipelineProduct.provenance.seed) is persisted into its content/data/ payload, so campaign regeneration from the same framework + seed set is byte-identical and idempotent.",
+      "emotion_targeted": "N/A.",
+      "misconception_created": "A future slice must not treat the editor as the PRIMARY authoring path for campaign levels — it is a touch-up path only, and any output from it must still pass evaluateLevel before it can be accepted.",
+      "why_alternatives_rejected": "Hand-authoring via the editor as the primary path was rejected: an editor-authored level's creative content would originate from a human/session's taste with GDOS only checking it after the fact, which is close to unsatisfiable under REQ-050's own wording. Fully unattended single-candidate generation was rejected as leaving no mechanism to prefer a better-scoring alternative when one exists, wasting the P7 creativity loop and P5 CDRE machinery that were built for exactly this kind of selection."
     }
   ],
   "rejected_ideas": [],

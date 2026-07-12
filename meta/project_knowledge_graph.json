@@ -1,8 +1,8 @@
 {
   "schema_version": "1.0",
-  "generated_by_session": "2026-07-11T-session-9-p9-s9.11-close",
-  "pkg_hash": "s9-f2a9d7",
-  "notes": "Machine-readable mirror of the codebase. Read at every session start; update immediately on any structural code change. See references/pkg_schema.md. P9 -- Rendering, Audio & Visual Grammar -- is VERIFIED (docs/verification/P9.md); milestone M4 -- Presentable is CLOSED. All eleven render/ subtrees (grammar, style/paper, scene, gl, pool, feel, audio, assets, shell, tooling, quality) are real nodes with zero pending_nodes. render/platform/ (real browser-global bindings) remains deliberately un-created -- deferred to P11 (dm-0103). REQ-070/071/130/131/150 flipped VERIFIED; REQ-001/002/016/132/161/162/163/170/171 stay IN_PROGRESS with a P10/P11 remainder. Next: P10 -- Content Generation (S10.1 chapter architecture authoring).",
+  "generated_by_session": "2026-07-12T-session-10-p10-plan",
+  "pkg_hash": "s10-b7c1e4",
+  "notes": "Machine-readable mirror of the codebase. Read at every session start; update immediately on any structural code change. See references/pkg_schema.md. P9 -- Rendering, Audio & Visual Grammar -- is VERIFIED (docs/verification/P9.md); milestone M4 -- Presentable is CLOSED. All eleven render/ subtrees (grammar, style/paper, scene, gl, pool, feel, audio, assets, shell, tooling, quality) are real nodes with zero pending render/ nodes. render/platform/ (real browser-global bindings) remains deliberately un-created -- deferred to P11 (dm-0103). REQ-070/071/130/131/150 flipped VERIFIED; REQ-001/002/016/132/161/162/163/170/171 stay IN_PROGRESS with a P10/P11 remainder. P10 -- Content Generation execution plan authored via first-principles adversarial review (dm-0108-dm-0114, docs/execution_plan.md P10 section); a new one-way-isolated content/ subtree is planned (7 PlannedSystemNodes below, materializing at S10.1/S10.2/S10.4/S10.5). Next: S10.1 -- content schema + content/ subtree + whole-campaign chapter architecture authoring.",
   "nodes": [
     {
       "node_id": "core/vec2",
@@ -4804,5 +4804,76 @@
       ]
     }
   ],
-  "pending_nodes": []
+  "pending_nodes": [
+    {
+      "node_id": "content/schema/chapter_framework",
+      "type": "PlannedSystemNode",
+      "planned_file_path": "content/schema/ChapterFramework.ts",
+      "functional_summary": "REQ-083 seven-step chapter framework schema (Theme/Learning Goal/Mental Model/Misconceptions/Subversion/Optimization/Final Exam) + ChapterLevelSlot (archetype, targetDifficultyTier, arcPhase, seed, rewardedSkip). Strict-parsed, reject-on-incomplete. The eighth versioned schema, dm-0109.",
+      "gdos_alignment": "Section_9_Chapter_Architecture",
+      "planned_dependencies": ["eval/design_space"],
+      "planned_dependents": ["content/assembler", "content/campaign_assembler"],
+      "target_slice": "S10.1"
+    },
+    {
+      "node_id": "content/schema/campaign_manifest",
+      "type": "PlannedSystemNode",
+      "planned_file_path": "content/schema/CampaignManifest.ts",
+      "functional_summary": "Campaign-level roster schema: campaignId, ordered chapter id list, DifficultyProfile reference. Strict-parsed.",
+      "gdos_alignment": "Section_9_Chapter_Architecture",
+      "planned_dependencies": [],
+      "planned_dependents": ["content/campaign_assembler"],
+      "target_slice": "S10.1"
+    },
+    {
+      "node_id": "content/difficulty_estimator",
+      "type": "PlannedSystemNode",
+      "planned_file_path": "content/DifficultyEstimator.ts",
+      "functional_summary": "REQ-084 difficulty-tier estimator: derives a campaign-bucket DifficultyTier from measured EvidenceBundle/OptimizationVerdict evidence via a calibrated, versioned DifficultyProfile -- never from the authored difficultyTarget intent vector. dm-0111.",
+      "gdos_alignment": "Section_9_Difficulty_Distribution",
+      "planned_dependencies": ["eval/evidence", "eval/local/optimization"],
+      "planned_dependents": ["content/assembler", "content/campaign_assembler"],
+      "target_slice": "S10.2"
+    },
+    {
+      "node_id": "content/dual_path_proof",
+      "type": "PlannedSystemNode",
+      "planned_file_path": "content/DualPathProof.ts",
+      "functional_summary": "REQ-100 Dual-Path axiom proven by composition over the existing OptimizationVerdict (applicable AND deltaSeconds >= profile threshold) rather than a new path-counting mechanism. dm-0110.",
+      "gdos_alignment": "Section_11_Dual_Path_Axiom",
+      "planned_dependencies": ["eval/local/optimization"],
+      "planned_dependents": ["content/assembler"],
+      "target_slice": "S10.2"
+    },
+    {
+      "node_id": "content/assembler",
+      "type": "PlannedSystemNode",
+      "planned_file_path": "content/Assembler.ts",
+      "functional_summary": "buildConceptFromSlot (ChapterFramework slot -> LevelConcept, the only path into manufactureLevel) + integrateProduct (PipelineProduct -> LevelRecord, the literal previously-unbuilt REQ-090 phase 8 'Campaign Integration') + assembleChapterRecord. dm-0112.",
+      "gdos_alignment": "Section_10_Manufacturing_Pipeline",
+      "planned_dependencies": ["content/schema/chapter_framework", "content/difficulty_estimator", "content/dual_path_proof", "gen/pipeline", "gen/concept", "eval/campaign/campaign_director", "eval/macro/curriculum"],
+      "planned_dependents": ["content/campaign_assembler"],
+      "target_slice": "S10.2"
+    },
+    {
+      "node_id": "content/campaign_assembler",
+      "type": "PlannedSystemNode",
+      "planned_file_path": "content/CampaignAssembler.ts",
+      "functional_summary": "Thin wrapper over CampaignDirector.processCampaign plus REQ-084 bucket-percentage enforcement (20/35/25/15/5 within calibrated tolerance) and a structural REQ-015 six-phase arc-completeness check at campaign scope.",
+      "gdos_alignment": "Section_9_Difficulty_Distribution",
+      "planned_dependencies": ["content/schema/campaign_manifest", "content/assembler", "eval/campaign/campaign_director"],
+      "planned_dependents": [],
+      "target_slice": "S10.5"
+    },
+    {
+      "node_id": "tools/sdlc/validate_campaign",
+      "type": "PlannedSystemNode",
+      "planned_file_path": "tools/sdlc/validateCampaign.js",
+      "functional_summary": "npm run validate:campaign entry point (dm-0113): re-runs evaluateLevel/processCampaign over the persisted content/data/ payloads and writes content/data/validation-report.json, keeping full-campaign evaluation cost out of npm test.",
+      "gdos_alignment": "Section_15_Macro_Curriculum_Validation",
+      "planned_dependencies": ["content/campaign_assembler", "eval/evaluate"],
+      "planned_dependents": [],
+      "target_slice": "S10.4"
+    }
+  ]
 }
